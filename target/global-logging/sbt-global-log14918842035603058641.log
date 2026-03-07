@@ -1,0 +1,8 @@
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(rtaJS/fastLinkJS, Some(1b6f46c8-9c7f-494d-a872-97a1568380bd), Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0mEvaluating tasks: rtaJS / Compile / fastLinkJS[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning task... Cancel: Signal, check cycles: false, forcegc: true[0m
+[0m[[0m[0minfo[0m] [0m[0mcompiling 1 Scala source to C:\Users\Utilizador\Desktop\RTATOOL2\js\target\scala-3.3.1\classes ...[0m
+[0m[[0m[0minfo[0m] [0m[0mFast optimizing C:\Users\Utilizador\Desktop\RTATOOL2\js\..\docs\js\gen[0m
+[0m[[0m[0mdebug[0m] [0m[0mGlobal IR cache stats: reused: 101 -- invalidated: 2 -- trees read: 1[0m
+[0m[[0m[32msuccess[0m] [0m[0mTotal time: 1 s, completed 28/02/2026, 12:06:30[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(shell, None, None)[0m

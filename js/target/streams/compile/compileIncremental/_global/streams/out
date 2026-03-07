@@ -1,0 +1,156 @@
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] IncrementalCompile -----------[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncrementalCompile.incrementalCompile[0m
+[0m[[0m[0mdebug[0m] [0m[0mprevious = Stamps for: 98 products, 14 sources, 4 libraries[0m
+[0m[[0m[0mdebug[0m] [0m[0mcurrent source = Set(${BASE}/shared/src/main/scala/rta/backend/MCRL2.scala, ${BASE}/shared/src/main/scala/rta/syntax/Program2.scala, ${BASE}/shared/src/main/scala/rta/syntax/SyntaxElements.scala, ${BASE}/shared/src/main/scala/rta/syntax/PdlProgram.scala, ${BASE}/js/src/main/scala/marge/frontend/RTAAPI.scala, ${BASE}/shared/src/main/scala/rta/backend/PdlEvaluator.scala, ${BASE}/shared/src/main/scala/rta/backend/AnalyseLTS.scala, ${BASE}/shared/src/main/scala/rta/syntax/PdlParser.scala, ${BASE}/shared/src/main/scala/rta/syntax/Translate.scala, ${BASE}/shared/src/main/scala/rta/backend/CytoscapeConverter.scala, ${BASE}/shared/src/main/scala/rta/syntax/Parser2.scala, ${BASE}/shared/src/main/scala/rta/syntax/PdlSyntax.scala, ${BASE}/shared/src/main/scala/rta/backend/RxSemantics.scala, ${BASE}/shared/src/main/scala/rta/syntax/UppaalConvert3.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0m> initialChanges = InitialChanges(Changes(added = Set(), removed = Set(), changed = Set(${BASE}/shared/src/main/scala/rta/syntax/Program2.scala, ${BASE}/shared/src/main/scala/rta/syntax/SyntaxElements.scala), unmodified = ...),Set(),Set(),API Changes: Set())[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial source changes:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	removed: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	added: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(${BASE}/shared/src/main/scala/rta/syntax/Program2.scala, ${BASE}/shared/src/main/scala/rta/syntax/SyntaxElements.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated products: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mExternal API changes: API Changes: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified binary dependencies: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(rta.syntax.Condition$.And, rta.syntax.UpdateExpr$.Sub, rta.syntax.Program2, rta.syntax.UpdateStmt, rta.syntax.CounterUpdate, rta.syntax.Condition$.AtomicCond, rta.syntax.UpdateExpr$.Add, rta.syntax.UpdateExpr$.Lit, rta.syntax.UpdateExpr, rta.syntax.Program2$.RxGraph, rta.syntax.IfThenStmt, rta.syntax.Statement, rta.syntax.UpdateExpr$.Var, rta.syntax.Condition$.Or, rta.syntax.Condition, rta.syntax.Program2$.Examples, rta.syntax.Program2$.QName)[0m
+[0m[[0m[0mdebug[0m] [0m[0mSources indirectly invalidated by:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	product: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	binary dep: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	external source: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated classes: Set(rta.syntax.Condition$.And, rta.syntax.UpdateExpr$.Sub, rta.syntax.Program2, rta.syntax.UpdateStmt, rta.syntax.CounterUpdate, rta.syntax.Condition$.AtomicCond, rta.syntax.UpdateExpr$.Add, rta.syntax.UpdateExpr$.Lit, rta.syntax.UpdateExpr, rta.syntax.Program2$.RxGraph, rta.syntax.IfThenStmt, rta.syntax.Statement, rta.syntax.UpdateExpr$.Var, rta.syntax.Condition$.Or, rta.syntax.Condition, rta.syntax.Program2$.Examples, rta.syntax.Program2$.QName)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated sources:Set(${BASE}/shared/src/main/scala/rta/syntax/Program2.scala, ${BASE}/shared/src/main/scala/rta/syntax/SyntaxElements.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.syntax.Condition$.And, rta.syntax.UpdateExpr$.Sub, rta.syntax.Program2, rta.syntax.UpdateStmt, rta.syntax.CounterUpdate, rta.syntax.Condition$.AtomicCond, rta.syntax.UpdateExpr$.Add, rta.syntax.UpdateExpr$.Lit, rta.syntax.UpdateExpr, rta.syntax.Program2$.RxGraph, rta.syntax.IfThenStmt, rta.syntax.Statement, rta.syntax.UpdateExpr$.Var, rta.syntax.Condition$.Or, rta.syntax.Condition, rta.syntax.Program2$.Examples, rta.syntax.Program2$.QName[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.UpdateExpr$.Var by rta.syntax.UpdateExpr[0m
+[0m[[0m[0mdebug[0m] [0m[0mcompilation cycle 1[0m
+[0m[[0m[0minfo[0m] [0m[0mcompiling 2 Scala sources to C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\js\target\scala-3.3.1\classes ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mReturning already retrieved and compiled bridge: C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala3-sbt-bridge\3.3.1\scala3-sbt-bridge-3.3.1.jar.[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 13e5f123 for Scala Compiler version 3.3.1[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] The Scala compiler is invoked with:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-scalajs[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-feature[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-bootclasspath[0m
+[0m[[0m[0mdebug[0m] [0m[0m	C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala3-library_3\3.3.1\scala3-library_3-3.3.1.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala-library\2.13.10\scala-library-2.13.10.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-classpath[0m
+[0m[[0m[0mdebug[0m] [0m[0m	C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\js\target\scala-3.3.1\classes;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala3-library_sjs1_3\3.3.1\scala3-library_sjs1_3-3.3.1.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-js\scalajs-library_2.13\1.14.0\scalajs-library_2.13-1.14.0.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\modules\scala-xml_sjs1_3\2.2.0\scala-xml_sjs1_3-2.2.0.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-js\scalajs-javalib\1.14.0\scalajs-javalib-1.14.0.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 1.9065959 s[0m
+[0m[[0m[0mdebug[0m] [0m[0mdone compiling[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from rta.syntax.Statement...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.syntax.Statement[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.IfThenStmt by rta.syntax.Statement[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.UpdateStmt by rta.syntax.Statement[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(rta.syntax.UpdateStmt, rta.syntax.IfThenStmt, rta.syntax.Statement)[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Program2. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Parser2. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.RxSemantics. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.backend.CytoscapeConverter: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.syntax.RTATranslator: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.UppaalConverter3. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Program2. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Parser2. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.RxSemantics. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.backend.CytoscapeConverter: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.syntax.RTATranslator: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.UppaalConverter3. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.frontend.RTAAPI. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Program2. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Parser2. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.RxSemantics. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.PdlEvaluator. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.syntax.Program2$.RxGraph: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.backend.CytoscapeConverter: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Program2$.Examples. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.syntax.RTATranslator: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.UppaalConverter3. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Program2$.QName. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(rta.syntax.Statement,ModifiedNames(changes = UsedName(toMermaidString,[Default]))) invalidates 6 classes due to The rta.syntax.Statement has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toMermaidString,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by transitive inheritance: Set(rta.syntax.UpdateStmt, rta.syntax.IfThenStmt, rta.syntax.Statement)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by member reference: Set(rta.backend.CytoscapeConverter, rta.syntax.RTATranslator, rta.syntax.Program2$.RxGraph)[0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from rta.syntax.IfThenStmt...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.syntax.IfThenStmt[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(rta.syntax.IfThenStmt)[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Program2. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Parser2. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.RxSemantics. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.backend.CytoscapeConverter: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.syntax.RTATranslator: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.UppaalConverter3. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(rta.syntax.IfThenStmt,ModifiedNames(changes = UsedName(toMermaidString,[Default]))) invalidates 3 classes due to The rta.syntax.IfThenStmt has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toMermaidString,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by transitive inheritance: Set(rta.syntax.IfThenStmt)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by member reference: Set(rta.backend.CytoscapeConverter, rta.syntax.RTATranslator)[0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from rta.syntax.UpdateStmt...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.syntax.UpdateStmt[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(rta.syntax.UpdateStmt)[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Program2. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.syntax.Parser2. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.RxSemantics. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.backend.CytoscapeConverter: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.syntax.RTATranslator: [UsedName(toMermaidString,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of rta.backend.UppaalConverter3. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(rta.syntax.UpdateStmt,ModifiedNames(changes = UsedName(toMermaidString,[Default]))) invalidates 3 classes due to The rta.syntax.UpdateStmt has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(toMermaidString,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by transitive inheritance: Set(rta.syntax.UpdateStmt)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by member reference: Set(rta.backend.CytoscapeConverter, rta.syntax.RTATranslator)[0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mNew invalidations:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	rta.syntax.Program2$.RxGraph[0m
+[0m[[0m[0mdebug[0m] [0m[0m	rta.backend.CytoscapeConverter[0m
+[0m[[0m[0mdebug[0m] [0m[0m	rta.syntax.RTATranslator[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.syntax.Program2$.RxGraph, rta.backend.CytoscapeConverter, rta.syntax.RTATranslator[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.frontend.RTAAPI by rta.syntax.Program2$.RxGraph[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Parser2 by rta.syntax.Program2$.RxGraph[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.backend.MCRL2 by rta.syntax.Parser2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.backend.AnalyseLTS by rta.syntax.Program2$.RxGraph[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.backend.RxSemantics by rta.syntax.Program2$.RxGraph[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Program2 by rta.backend.RxSemantics[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.UpdateExpr$.Sub by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.backend.UppaalConverter3 by rta.syntax.UpdateExpr$.Sub[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.PdlParser by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.PdlProgram$.Act by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.backend.PdlEvaluator by rta.syntax.PdlProgram$.Act[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.PdlProgram by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Formula by rta.syntax.PdlProgram[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Formula$.BoxP by rta.syntax.PdlProgram[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Formula$.DiamondP by rta.syntax.PdlProgram[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.CounterUpdate by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.backend.CytoscapeConverter by rta.syntax.CounterUpdate[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.RTATranslator by rta.syntax.CounterUpdate[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Condition$.AtomicCond by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.RTATranslator$.Effect by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.UpdateExpr$.Add by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Parser2$.TokenReader by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.UpdateExpr by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.UpdateExpr$.Var by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Condition by rta.syntax.Program2[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Formula$.CondProp by rta.syntax.Condition[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Program2$.Examples by rta.syntax.Condition[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Program2$.QName by rta.syntax.Condition[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding rta.syntax.Formula$.StateProp by rta.syntax.Program2$.QName[0m
+[0m[[0m[0mdebug[0m] [0m[0mPreviously invalidated, but (transitively) depend on new invalidations:[0m
+[0m[[0m[0mdebug[0m] [0m[0mFinal step, transitive dependencies:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Set(rta.syntax.Program2$.RxGraph, rta.backend.CytoscapeConverter, rta.syntax.RTATranslator)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.syntax.Program2, rta.syntax.RTATranslator$.Effect, rta.syntax.Program2$.RxGraph, rta.backend.CytoscapeConverter, rta.syntax.Program2$.Examples, rta.syntax.RTATranslator, rta.syntax.Program2$.QName[0m
+[0m[[0m[0mdebug[0m] [0m[0mcompilation cycle 2[0m
+[0m[[0m[0minfo[0m] [0m[0mcompiling 3 Scala sources to C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\js\target\scala-3.3.1\classes ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mReturning already retrieved and compiled bridge: C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala3-sbt-bridge\3.3.1\scala3-sbt-bridge-3.3.1.jar.[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 3e1ca975 for Scala Compiler version 3.3.1[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] The Scala compiler is invoked with:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-scalajs[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-feature[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-bootclasspath[0m
+[0m[[0m[0mdebug[0m] [0m[0m	C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala3-library_3\3.3.1\scala3-library_3-3.3.1.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala-library\2.13.10\scala-library-2.13.10.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-classpath[0m
+[0m[[0m[0mdebug[0m] [0m[0m	C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\js\target\scala-3.3.1\classes;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala3-library_sjs1_3\3.3.1\scala3-library_sjs1_3-3.3.1.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-js\scalajs-library_2.13\1.14.0\scalajs-library_2.13-1.14.0.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\modules\scala-xml_sjs1_3\2.2.0\scala-xml_sjs1_3-2.2.0.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-js\scalajs-javalib\1.14.0\scalajs-javalib-1.14.0.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 1.9017151 s[0m
+[0m[[0m[0mdebug[0m] [0m[0mdone compiling[0m
+[0m[[0m[0mdebug[0m] [0m[0mNew invalidations:[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: [0m
+[0m[[0m[0mdebug[0m] [0m[0mPreviously invalidated, but (transitively) depend on new invalidations:[0m
+[0m[[0m[0mdebug[0m] [0m[0mFinal step, transitive dependencies:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mNo classes were invalidated.[0m

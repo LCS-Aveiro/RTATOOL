@@ -1,0 +1,24 @@
+[0m[[0m[0minfo[0m] [0m[0mFast optimizing C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\js\..\docs\js\gen[0m
+[0m[[0m[0mdebug[0m] [0m[0mLinker: Compute reachability: 21967 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mLinker: Assemble LinkedClasses: 13204 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mLinker: 56192 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mOptimizer: Batch mode: false[0m
+[0m[[0m[0mdebug[0m] [0m[0mOptimizer: Incremental part: 84899 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mOptimizer: Optimizing 354 methods.[0m
+[0m[[0m[0mdebug[0m] [0m[0mOptimizer: Optimizer part: 159085 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mOptimizer: 251202 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mRefiner: Compute reachability: 21216 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mRefiner: Assemble LinkedClasses: 12549 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mRefiner: 34356 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mModule Splitter: Calculate Dependency Info: 407 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mModule Splitter: Analyze Modules: 334 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mModule Splitter: Assemble Modules: 1616 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mModule Splitter: 2522 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mEmitter: Generate Classes: 58927 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mEmitter: Write trees: 1923 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mEmitter: Class tree cache stats: reused: 663 -- invalidated: 22[0m
+[0m[[0m[0mdebug[0m] [0m[0mEmitter: Method tree cache stats: reused: 3892 -- invalidated: 131[0m
+[0m[[0m[0mdebug[0m] [0m[0mEmitter: 71985 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mBasicBackend: Write result: 45773 us[0m
+[0m[[0m[0mdebug[0m] [0m[0mBasicBackend: total top-level trees: 8817; re-computed: 388[0m
+[0m[[0m[0mdebug[0m] [0m[0mBasicBackend: total modules: 1; re-written: 1[0m

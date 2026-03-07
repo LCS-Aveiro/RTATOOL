@@ -1,0 +1,625 @@
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(rtaJS/fastLinkJS, Some(9aa8955a-7703-4b25-bf83-147ad0c027e1), Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0mEvaluating tasks: rtaJS / Compile / fastLinkJS[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning task... Cancel: Signal, check cycles: false, forcegc: true[0m
+[0m[[0m[0minfo[0m] [0m[0mcompiling 16 Scala sources to C:\Users\Utilizador\Desktop\RTATOOL2\js\target\scala-3.3.1\classes ...[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\js\src\main\scala\marge\frontend\RTAAPI.scala:124:34 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m124 |[0m          [33mval[0m [36mclickedEdge[0m: [35mEdge[0m = (from, to, lbl)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                  ^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mFound:    (rta.syntax.Program2.QName, rta.syntax.Program2.QName, rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m  )[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mRequired: rta.syntax.Program2.Edge[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\js\src\main\scala\marge\frontend\RTAAPI.scala:482:69 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m482 |[0m       [31ms"""{"from":"[0m$from[31m", "to":"[0m$to[31m", "lbl":"[0m$lbl[31m", "label":"[0m${lbl.show}[31m", "isDelay": false}"""[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                 ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                     value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\AnalyseLTS.scala:28:52 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m28 |[0m            (rx.inits ++ fired.map(_._2)).intersect(states) -- done.flatMap(_.inits)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                    ^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m               Found:    (states : Set[Any])[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m               Required: scala.collection.Set[rta.syntax.Program2.QName][0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\AnalyseLTS.scala:30:12 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m30 |[0m            ([33mfor[0m (a,dests)<-rx.edg.toSet; (b,c)<-dests [33myield[0m (a,b,c)) ++[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m            ^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mFound:    Set[rta.syntax.Program2.QName *: ((Any, Any) | (rta.syntax.Program2.QName,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  rta.syntax.Program2.QName, rta.syntax.Program2.QName))][0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mRequired: rta.syntax.Program2.Edges[0m
+[0m[[0m[31merror[0m] [0m[0m[31m31 |[0m            ([33mfor[0m (a,dests)<-rx.on.toSet;  (b,c)<-dests [33myield[0m (a,b,c)) ++[0m
+[0m[[0m[31merror[0m] [0m[0m[31m32 |[0m            ([33mfor[0m (a,dests)<-rx.off.toSet; (b,c)<-dests [33myield[0m (a,b,c))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m33 |[0m              -- fired[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m[33m-- Warning: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\AnalyseLTS.scala:18:43 [0m[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m18 |[0m    [33mval[0m [36mstates[0m = [33mfor[0m (a,bs)<-rx.edg.toSet; (b,_)<-bs; s<-Set(a,b) [33myield[0m s[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m[33m   |[0m                                           ^^^^^[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mpattern's type (Any, Any) does not match the right hand side expression's type (rta.syntax.Program2.QName, rta.syntax.Program2.QName, rta.syntax.Program2.QName[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0m  )[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mIf the narrowing is intentional, this can be communicated by adding the `case` keyword before the full pattern,[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mwhich will result in a filtering for expression (using `withFilter`).[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mThis patch can be rewritten automatically under -rewrite -source 3.2-migration.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:60:48 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m60 |[0m      [33mval[0m [36mvisualLabel[0m = [33mif[0m (transId == lbl) lbl.show [33melse[0m [31ms"[0m${lbl.show}[31m([0m${transId.show}[31m)"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                            ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                       value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:60:66 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m60 |[0m      [33mval[0m [36mvisualLabel[0m = [33mif[0m (transId == lbl) lbl.show [33melse[0m [31ms"[0m${lbl.show}[31m([0m${transId.show}[31m)"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                              ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                       value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:60:82 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m60 |[0m      [33mval[0m [36mvisualLabel[0m = [33mif[0m (transId == lbl) lbl.show [33melse[0m [31ms"[0m${lbl.show}[31m([0m${transId.show}[31m)"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                                          ^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                       value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:63:16 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m63 |[0m        .find(_.n.size > [31m1[0m)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m              ^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m              value n is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:64:15 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m64 |[0m        .map(_.scope.toString)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m             ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m             value scope is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:68:38 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m68 |[0m      [33mval[0m [36misEnabled[0m = rx.act.contains(edge)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                      ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mFound:    (edge : (rta.syntax.Program2.QName, rta.syntax.Program2.QName,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  rta.syntax.Program2.QName))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mRequired: rta.syntax.Program2.Edge[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:77:40 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m77 |[0m      [33mval[0m [36misDisabled[0m = !rx.act.contains(edge)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                        ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mFound:    (edge : (rta.syntax.Program2.QName, rta.syntax.Program2.QName,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  rta.syntax.Program2.QName))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mRequired: rta.syntax.Program2.Edge[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:81:59 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m81 |[0m      [33mval[0m [36mfullConditionLabel[0m = rx.edgeConditions.getOrElse(edge, None)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                           ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mFound:    (edge : (rta.syntax.Program2.QName, rta.syntax.Program2.QName,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  rta.syntax.Program2.QName))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mRequired: rta.syntax.Program2.Edge[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:95:45 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m95 |[0m      [33mval[0m [36mupdates[0m = rx.edgeUpdates.getOrElse(edge, Nil)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                             ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mFound:    (edge : (rta.syntax.Program2.QName, rta.syntax.Program2.QName,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  rta.syntax.Program2.QName))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mRequired: rta.syntax.Program2.Edge[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:120:44 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m120 |[0m      [33mval[0m [36misRuleDisabled[0m = !rx.act.contains(ruleEdge)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                            ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mFound:    (ruleEdge : (rta.syntax.Program2.QName, rta.syntax.Program2.QName,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m  rta.syntax.Program2.QName))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mRequired: rta.syntax.Program2.Edge[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m[33m-- Warning: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\backend\CytoscapeConverter.scala:57:37 [0m[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m57 |[0m      [33mval[0m (from, to, transId, lbl) = edge[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m[33m   |[0m                                     ^^^^[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mpattern's type (Any, Any, Any, Any) does not match the right hand side expression's type (rta.syntax.Program2.QName, rta.syntax.Program2.QName, rta.syntax.Program2.QName[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0m  )[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mIf the narrowing is intentional, this can be communicated by adding `: @unchecked` after the expression,[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mwhich may result in a MatchError at runtime.[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mThis patch can be rewritten automatically under -rewrite -source 3.2-migration.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Parser2.scala:153:46 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m153 |[0m      [33mcase[0m [31m"->>"[0m => rx.addOn(from, to, label, cond, updates)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                              ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                       Found:    (cond : Option[rta.syntax.Condition])[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                       Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Parser2.scala:153:52 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m153 |[0m      [33mcase[0m [31m"->>"[0m => rx.addOn(from, to, label, cond, updates)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                    ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                      Found:    (updates : List[rta.syntax.Statement])[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                      Required: Option[rta.syntax.Condition][0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Parser2.scala:154:55 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m154 |[0m      [33mcase[0m [31m"--!"[0m | [31m"--x"[0m => rx.addOff(from, to, label, cond, updates)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                       ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                       Found:    (cond : Option[rta.syntax.Condition])[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                       Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Parser2.scala:154:61 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m154 |[0m      [33mcase[0m [31m"--!"[0m | [31m"--x"[0m => rx.addOff(from, to, label, cond, updates)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                             ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                      Found:    (updates : List[rta.syntax.Statement])[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                      Required: Option[rta.syntax.Condition][0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Parser2.scala:155:48 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m155 |[0m      [33mcase[0m [31m"---->"[0m => rx.addOn(from, to, label, cond, updates).addOff(to, to, label, cond, updates)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                       Found:    (cond : Option[rta.syntax.Condition])[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                       Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Parser2.scala:155:54 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m155 |[0m      [33mcase[0m [31m"---->"[0m => rx.addOn(from, to, label, cond, updates).addOff(to, to, label, cond, updates)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                      ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                      Found:    (updates : List[rta.syntax.Statement])[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                      Required: Option[rta.syntax.Condition][0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Parser2.scala:156:49 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m156 |[0m      [33mcase[0m [31m"--#--"[0m => rx.addOff(from, to, label, cond, updates).addOff(to, from, label, cond, updates)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                 ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                       Found:    (cond : Option[rta.syntax.Condition])[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                       Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Parser2.scala:156:55 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m156 |[0m      [33mcase[0m [31m"--#--"[0m => rx.addOff(from, to, label, cond, updates).addOff(to, from, label, cond, updates)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                       ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                      Found:    (updates : List[rta.syntax.Statement])[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                      Required: Option[rta.syntax.Condition][0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E171] Type Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Parser2.scala:160:34 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m160 |[0m    [33mif[0m (disabled) newRx.deactivate(from, to, label) [33melse[0m newRx[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mmissing argument for parameter l of [33mmethod[0m [35mdeactivate[0m in [33mclass[0m [35mRxGraph[0m: (s1: rta.syntax.Program2.QName, s2: rta.syntax.Program2.QName,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m  tId: rta.syntax.Program2.QName, l: rta.syntax.Program2.QName):[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m  rta.syntax.Program2.RxGraph[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:66:26 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m66 |[0m      stx.edgeUpdates.get(simpleEdge).foreach { [36mupdates[0m =>[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                          ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m          Found:    [1m[31m([0m[1m[31msimpleEdge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m          Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:73:47 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m73 |[0m      [33mval[0m [36mallEffects[0m = findAllTriggeredEffects(label, stx)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                               ^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                     Found:    (label : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                     Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:105:37 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m105 |[0m      [33mval[0m [36medgeDefinition[0m = [33mif[0m (label.n.nonEmpty) [31ms"[0m${source.show}[31m --> [0m${target.show}[31m: [0m${label.show}[31m"[0m [33melse[0m [31ms"[0m${source.show}[31m --> [0m${target.show}[31m"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                               ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                               value n is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:105:79 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m105 |[0m      [33mval[0m [36medgeDefinition[0m = [33mif[0m (label.n.nonEmpty) [31ms"[0m${source.show}[31m --> [0m${target.show}[31m: [0m${label.show}[31m"[0m [33melse[0m [31ms"[0m${source.show}[31m --> [0m${target.show}[31m"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                        ^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                     value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:105:94 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m105 |[0m      [33mval[0m [36medgeDefinition[0m = [33mif[0m (label.n.nonEmpty) [31ms"[0m${source.show}[31m --> [0m${target.show}[31m: [0m${label.show}[31m"[0m [33melse[0m [31ms"[0m${source.show}[31m --> [0m${target.show}[31m"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                                        ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                     value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:105:136 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m105 |[0m      [33mval[0m [36medgeDefinition[0m = [33mif[0m (label.n.nonEmpty) [31ms"[0m${source.show}[31m --> [0m${target.show}[31m: [0m${label.show}[31m"[0m [33melse[0m [31ms"[0m${source.show}[31m --> [0m${target.show}[31m"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                                                                                 ^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                     value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:106:52 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m106 |[0m      [33mval[0m [36moriginalGuardOpt[0m = stx.edgeConditions.get(simpleEdge).flatten.map(conditionToString)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                    ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m        Found:    [1m[31m([0m[1m[31msimpleEdge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m        Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:108:16 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m108 |[0m      [33mif[0m (label.n.nonEmpty) mainGuardParts += [31ms"[0m${label.show}[31m_active == 1"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m          ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m          value n is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:108:56 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m108 |[0m      [33mif[0m (label.n.nonEmpty) mainGuardParts += [31ms"[0m${label.show}[31m_active == 1"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                  ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                     value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:136:70 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m136 |[0m      .filterNot { [33mcase[0m (trigger, ruleName) => isPhantomRule(trigger, ruleName) }[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                      ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (ruleName : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:139:92 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m139 |[0m    [33mval[0m [36mallActiveLabels[0m = (simpleEdgeLabels ++ hyperEdgeTargets ++ hyperEdgeNames).filter(_.n.nonEmpty)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                                          ^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                        value n is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:143:43 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m143 |[0m      [33mval[0m [36misInitiallyActive[0m = stx.lbls.get(label).exists(_.exists(stx.act.contains))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                           ^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (label : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:144:44 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m144 |[0m      builder.append([31ms"int [0m${sanitizeForVar(label)}[31m_active = [0m${[33mif[0m (isInitiallyActive) [31m1[0m [33melse[0m [31m0[0m}[31m\n"[0m)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                            ^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (label : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:177:46 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m177 |[0m        builder.append(generateTransitionCode(edge, stx))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                              ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mFound:    (edge : (rta.syntax.Program2.QName, rta.syntax.Program2.QName,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m  rta.syntax.Program2.QName))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mRequired: rta.syntax.Program2.Edge[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:196:14 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m196 |[0m    [33mif[0m (label.n.nonEmpty) {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m        ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m        value n is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:197:43 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m197 |[0m      mainGuardParts += [31ms"[0m${sanitizeForVar(label)}[31m_active == 1"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                           ^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (label : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:201:45 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m201 |[0m    [33mval[0m [36mallEffects[0m = findAllTriggeredEffects(label, stx)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                             ^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (label : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:228:29 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m228 |[0m    [33mval[0m [36mu_source[0m = unqualify(source)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                             ^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                             Found:    (source : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                             Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:229:29 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m229 |[0m    [33mval[0m [36mu_target[0m = unqualify(target)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                             ^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                             Found:    (target : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                             Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:230:28 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m230 |[0m    [33mval[0m [36mu_label[0m = unqualify(label)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                            ^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                            Found:    (label : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                            Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:264:34 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m264 |[0m          effects += Effect([31m"on"[0m, target, ruleName, currentTrigger)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                  ^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                  Found:    (target : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                  Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:264:42 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m264 |[0m          effects += Effect([31m"on"[0m, target, ruleName, currentTrigger)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                          ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (ruleName : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:265:24 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m265 |[0m          [33mif[0m (!ruleName.n.isEmpty) queue.enqueue(ruleName)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m               ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m               value n is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:265:49 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m265 |[0m          [33mif[0m (!ruleName.n.isEmpty) queue.enqueue(ruleName)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                 ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (ruleName : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:268:35 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m268 |[0m          effects += Effect([31m"off"[0m, target, ruleName, currentTrigger)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                   ^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (target : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:268:43 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m268 |[0m          effects += Effect([31m"off"[0m, target, ruleName, currentTrigger)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                           ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (ruleName : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:269:24 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m269 |[0m          [33mif[0m (!ruleName.n.isEmpty) queue.enqueue(ruleName)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m               ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m               value n is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:269:49 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m269 |[0m          [33mif[0m (!ruleName.n.isEmpty) queue.enqueue(ruleName)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                 ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (ruleName : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m[33m-- Warning: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:62:39 [0m[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m62 |[0m    [33mfor[0m ((source, targets) <- stx.edg; (target, label) <- targets) {[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m[33m   |[0m                                       ^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mpattern's type (Any, Any) does not match the right hand side expression's type (rta.syntax.Program2.QName, rta.syntax.Program2.QName, rta.syntax.Program2.QName[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0m  )[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mIf the narrowing is intentional, this can be communicated by adding the `case` keyword before the full pattern,[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mwhich will result in a filtering for expression (using `withFilter`).[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mThis patch can be rewritten automatically under -rewrite -source 3.2-migration.[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m[33m-- Warning: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\Translate.scala:191:34 [0m[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m191 |[0m    [33mval[0m (source, target, label) = edge[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m[33m    |[0m                                  ^^^^[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m    |[0mpattern's type (Any, Any, Any) does not match the right hand side expression's type rta.syntax.Program2.Edge[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m    |[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m    |[0mIf the narrowing is intentional, this can be communicated by adding `: @unchecked` after the expression,[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m    |[0mwhich may result in a MatchError at runtime.[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m    |[0mThis patch can be rewritten automatically under -rewrite -source 3.2-migration.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert2.scala:73:44 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m73 |[0m      [33mval[0m [36mguardOpt[0m = stx.edgeConditions.get(edge).flatten.map(conditionToString)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                            ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert2.scala:75:49 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m75 |[0m      [33mval[0m [36mstatements[0m = stx.edgeUpdates.getOrElse(edge, Nil)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                 ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert2.scala:131:12 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m131 |[0m            guardOpt.map([36mg[0m => <label kind=[31m"guard"[0m>{g}</label>).getOrElse(NodeSeq.Empty)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m            ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mFound:    (guardOpt : Nothing)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mRequired: ?{ map: ? }[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mNote that implicit conversions were not tried because the result of an implicit conversion[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mmust be more specific than ?{ map: [applied to ([0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m  g =>[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m    {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m      {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m        [33mvar[0m [36m$md[0m: _root_.scala.xml.MetaData = _root_.scala.xml.Null[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m        $md =[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m          [33mnew [0m_root_.scala.xml.UnprefixedAttribute([32m"kind"[0m,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m            [33mnew [0m_root_.scala.xml.Text([32m"guard"[0m), $md)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m        [33mnew [0m_root_.scala.xml.Elem([31mnull[0m, [32m"label"[0m, $md, $scope, [31mfalse[0m,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m          {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m            [33mval[0m [36m$buf[0m = [33mnew [0m_root_.scala.xml.NodeBuffer()[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m            $buf.&+([0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                g[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              }[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m            )[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m            $buf[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m          }*[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m        )[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m      }[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m    }[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m) returning ?{ getOrElse: [applied to (NodeSeq.Empty) returning Any] }] }[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m[33m-- Warning: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert2.scala:70:6 [0m[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m70 |[0m      (target, label) <- targets[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m[33m   |[0m      ^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mpattern's type (Any, Any) does not match the right hand side expression's type (rta.syntax.Program2.QName, rta.syntax.Program2.QName, rta.syntax.Program2.QName[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0m  )[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0m[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mIf the narrowing is intentional, this can be communicated by adding the `case` keyword before the full pattern,[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mwhich will result in a filtering for expression (using `withFilter`).[0m
+[0m[[0m[33mwarn[0m] [0m[0m[33m   |[0mThis patch can be rewritten automatically under -rewrite -source 3.2-migration.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:111:63 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m111 |[0m    }.toList.distinct.sortBy(edge => (labelToId.getOrElse(edge._3, -[31m1[0m), edge._1.toString, edge._2.toString))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                          ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E172] Type Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:112:68 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m112 |[0m    [33mval[0m [36medgeToIndex[0m: [35mMap[0m[[35mEdge[0m, [35mInt[0m] = simpleEdges.zipWithIndex.toMap[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                    ^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mCannot prove that ((rta.syntax.Program2.QName, Any, Any) @uncheckedVariance, Int) <:< ([0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m  (rta.syntax.Program2.QName, rta.syntax.Program2.QName,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m    rta.syntax.Program2.QName, rta.syntax.Program2.QName),[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mV).[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mwhere:    V is a type variable with constraint <: Int[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:163:34 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m163 |[0m        .map(e => ([31m1[0m, edgeToIndex(e))) [0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                  ^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                 Found:    [1m[31m([0m[1m[31me[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                 Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:171:44 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m171 |[0m      [33mval[0m [36mstatus[0m = [33mif[0m (rxGraph.act.contains((triggerLbl, targetLbl, selfLbl))) [31m"1"[0m [33melse[0m [31m"0"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mFound:    (rta.syntax.Program2.QName, rta.syntax.Program2.QName, rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m  )[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mRequired: rta.syntax.Program2.Edge[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:230:40 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m230 |[0m      [33mval[0m [36mid[0m = labelToId.getOrElse(edge._3, -[31m1[0m)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                   ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:231:44 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m231 |[0m      [33mval[0m [36mstatus[0m = [33mif[0m (rxGraph.act.contains(edge)) [31m"1"[0m [33melse[0m [31m"0"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                            ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:232:50 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m232 |[0m      [31ms"    { [0m$id[31m, [0m$status[31m } /* Idx [0m${edgeToIndex(edge)}[31m: [0m${edge._1.show}[31m->[0m${edge._2.show}[31m:[0m${edge._3.show}[31m */"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                  ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:232:85 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m232 |[0m      [31ms"    { [0m$id[31m, [0m$status[31m } /* Idx [0m${edgeToIndex(edge)}[31m: [0m${edge._1.show}[31m->[0m${edge._2.show}[31m:[0m${edge._3.show}[31m */"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                             ^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                     value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:232:101 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m232 |[0m      [31ms"    { [0m$id[31m, [0m$status[31m } /* Idx [0m${edgeToIndex(edge)}[31m: [0m${edge._1.show}[31m->[0m${edge._2.show}[31m:[0m${edge._3.show}[31m */"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                                             ^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                     value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:301:36 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m301 |[0m        [33mval[0m [36medgeIndex[0m = edgeToIndex(edge)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                    ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:302:43 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m302 |[0m        [33mval[0m [36mactionId[0m = labelToId.getOrElse(lbl, -[31m1[0m)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                           ^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (lbl : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:318:54 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m318 |[0m        [33mval[0m [36mdataGuardOpt[0m = rxGraph.edgeConditions.get(edge).flatten.map(conditionToString)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                      ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:321:53 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m321 |[0m            [33mcase[0m Some(dg) => [31ms"([0m$reactiveGuard[31m) && ([0m$dg[31m)"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                     ^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                                     Not found: dg[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:325:55 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m325 |[0m        [33mval[0m [36mstatements[0m = rxGraph.edgeUpdates.getOrElse(edge, Nil)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                       ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConvert3.scala:344:33 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m344 |[0m          <target ref={stateToId(target)}/>[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                 ^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                 Found:    (target : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                 Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:41:63 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m41 |[0m    }.toList.distinct.sortBy(edge => (labelToId.getOrElse(edge._3, -[31m1[0m), edge._1.toString, edge._2.toString))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                          ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                     Found:    Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                     Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E172] Type Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:42:68 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m42 |[0m    [33mval[0m [36medgeToIndex[0m: [35mMap[0m[[35mEdge[0m, [35mInt[0m] = simpleEdges.zipWithIndex.toMap[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                                    ^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mCannot prove that ((rta.syntax.Program2.QName, Any, Any) @uncheckedVariance, Int) <:< ([0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  (rta.syntax.Program2.QName, rta.syntax.Program2.QName,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m    rta.syntax.Program2.QName, rta.syntax.Program2.QName),[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mV).[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mwhere:    V is a type variable with constraint <: Int[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:110:34 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m110 |[0m        .map(e => ([31m1[0m, edgeToIndex(e))) [0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                  ^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                 Found:    [1m[31m([0m[1m[31me[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                 Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:122:44 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m122 |[0m      [33mval[0m [36mstatus[0m = [33mif[0m (rxGraph.act.contains((triggerLbl, targetLbl, selfLbl))) [31m"1"[0m [33melse[0m [31m"0"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mFound:    (rta.syntax.Program2.QName, rta.syntax.Program2.QName, rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m  )[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0mRequired: rta.syntax.Program2.Edge[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:174:40 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m174 |[0m      [33mval[0m [36mid[0m = labelToId.getOrElse(edge._3, -[31m1[0m)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                   ^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:175:44 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m175 |[0m      [33mval[0m [36mstatus[0m = [33mif[0m (rxGraph.act.contains(edge)) [31m"1"[0m [33melse[0m [31m"0"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                            ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:176:52 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m176 |[0m      [31ms"    { [0m$id[31m, [0m$status[31m } /* Index [0m${edgeToIndex(edge)}[31m: [0m${edge._1.show}[31m -> [0m${edge._2.show}[31m : [0m${edge._3.show}[31m */"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                    ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:176:89 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m176 |[0m      [31ms"    { [0m$id[31m, [0m$status[31m } /* Index [0m${edgeToIndex(edge)}[31m: [0m${edge._1.show}[31m -> [0m${edge._2.show}[31m : [0m${edge._3.show}[31m */"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                                 ^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                     value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:176:107 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m176 |[0m      [31ms"    { [0m$id[31m, [0m$status[31m } /* Index [0m${edgeToIndex(edge)}[31m: [0m${edge._1.show}[31m -> [0m${edge._2.show}[31m : [0m${edge._3.show}[31m */"[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                                                   ^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                     value show is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:248:36 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m248 |[0m        [33mval[0m [36medgeIndex[0m = edgeToIndex(edge)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                    ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:249:43 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m249 |[0m        [33mval[0m [36mactionId[0m = labelToId.getOrElse(lbl, -[31m1[0m)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                           ^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (lbl : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:251:54 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m251 |[0m        [33mval[0m [36mextraCondOpt[0m = rxGraph.edgeConditions.get(edge).flatten.map(conditionToString)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                      ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Found:    [1m[31m([0m[1m[31medge[0m[1m[31m [0m[1m[31m:[0m[1m[31m [0m[1m[31m([0mrta.syntax.Program2.[1m[31mQName[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m,[0m[1m[31m [0m[1m[31mAny[0m[1m[31m)[0m[1m[31m)[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m              Required: rta.syntax.Program2.[1m[32mEdge[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:256:46 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m256 |[0m        [33mval[0m (targetX, targetY) = locationData(target)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                              ^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Found:    (target : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                   Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E045] Cyclic Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:256:13 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m256 |[0m        [33mval[0m (targetX, targetY) = locationData(target)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m             ^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m             Recursive [33mvalue[0m [35m$5$[0m needs type[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E045] Cyclic Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:256:22 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m256 |[0m        [33mval[0m (targetX, targetY) = locationData(target)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                      ^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                      Recursive [33mvalue[0m [35m$5$[0m needs type[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\RTATOOL2\shared\src\main\scala\rta\syntax\UppaalConverter.scala:263:33 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m263 |[0m          <target ref={stateToId(target)}/>[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                 ^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                 Found:    (target : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                 Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[33mwarn[0m] [0m[0m5 warnings found[0m
+[0m[[0m[31merror[0m] [0m[0m85 errors found[0m
+[0m[[0m[0mdebug[0m] [0m[0mGlobal IR cache stats: reused: 0 -- invalidated: 0 -- trees read: 0[0m
+[0m[[0m[31merror[0m] [0m[0m(rtaJS / Compile / [31mcompileIncremental[0m) Compilation failed[0m
+[0m[[0m[31merror[0m] [0m[0mTotal time: 5 s, completed 27/02/2026, 14:44:39[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(shell, None, None)[0m

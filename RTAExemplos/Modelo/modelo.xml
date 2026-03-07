@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>
+		// -----------------------------------------------------------
+// 1. Variáveis e Clocks Globais
+// -----------------------------------------------------------
+clock t;
+int score = 10;
+
+// Constantes do Sistema
+const int NUM_EDGES = 9;
+const int NUM_HYPEREDGES = 6;
+const int NUM_IDS = 9;
+
+// -----------------------------------------------------------
+// 2. Definições de Estrutura Reativa
+// -----------------------------------------------------------
+typedef struct {
+		int id;		// ID da ação
+		bool stat; // Estado (1=ativo, 0=inativo)
+} Edge;
+
+typedef struct {
+		int id;		// ID da ação gatilho
+		bool type; // Tipo de efeito (1=ativa, 0=desativa)
+		bool stat; // Estado da regra
+		bool is_edge_target; // 1 se alvo é Aresta, 0 se Regra
+		int trg_index;			 // Índice no array alvo
+} Hyperedge;
+
+// -----------------------------------------------------------
+// 3. Inicialização dos Arrays
+// -----------------------------------------------------------
+Edge A[NUM_EDGES] = {
+		{ 0, 1 } /* Idx 0: Watch_Init-&gt;Watch_View:beginView */,
+		{ 1, 1 } /* Idx 1: Watch_React-&gt;Feed:dontLike */,
+		{ 2, 1 } /* Idx 2: Watch_View-&gt;Watch_React:dwellTime */,
+		{ 3, 1 } /* Idx 3: Watch_React-&gt;Watch_React:like */,
+		{ 4, 0 } /* Idx 4: Watch_React-&gt;Feed:refresh */,
+		{ 5, 1 } /* Idx 5: Watch_View-&gt;Feed:timeout */,
+		{ 6, 1 } /* Idx 6: Feed-&gt;Watch_Init:watch */,
+		{ 7, 1 } /* Idx 7: List-&gt;Watch_Init:watch2 */,
+		{ 8, 0 } /* Idx 8: Feed-&gt;List:watchLike */
+};
+Hyperedge L[NUM_HYPEREDGES] = {
+		{ 3, 1, 1, 1, 4 } /* Rule 'lr' */,
+		{ 3, 1, 1, 1, 8 } /* Rule 'lw' */,
+		{ 2, 1, 1, 1, 4 } /* Rule 'dr' */,
+		{ 2, 1, 1, 1, 8 } /* Rule 'dwll' */,
+		{ 1, 0, 1, 1, 8 } /* Rule 'dww' */,
+		{ 1, 0, 1, 1, 4 } /* Rule 'dref' */
+};
+
+// -----------------------------------------------------------
+// 4. Lógica de Atualização Reativa
+// -----------------------------------------------------------
+void update_hyperedges_by_id(int edge_id) {
+		int i;
+		for (i = 0; i &lt; NUM_HYPEREDGES; i++) {
+				if (L[i].id == edge_id &amp;&amp; L[i].stat) { 
+						if (L[i].is_edge_target) {
+								A[L[i].trg_index].stat = L[i].type;
+						} else {
+								L[L[i].trg_index].stat = L[i].type;
+						}
+				}
+		}
+}
+
+// -----------------------------------------------------------
+// 5. Funções de Dados (Geradas)
+// -----------------------------------------------------------
+void update_data_0() {
+	t = 0;
+}
+void update_data_1() {
+	if (score &gt;= 10) {
+	score = score - 10;
+}
+	t = 0;
+}
+void update_data_2() {
+	t = 0;
+}
+void update_data_3() {
+	if (score &lt;= 90) {
+	score = score + 10;
+}
+	t = 0;
+}
+void update_data_4() {
+	t = 0;
+}
+void update_data_5() {
+	if (score &gt;= 5) {
+	score = score - 5;
+}
+	t = 0;
+}
+void update_data_6() {
+	t = 0;
+}
+void update_data_7() {
+	t = 0;
+}
+void update_data_8() {
+	t = 0;
+}
+	</declaration>
+	<template>
+		<name x="5" y="5">Template</name>
+		<location id="id0" x="-85" y="314">
+			<name x="-95" y="284">Feed</name>
+			<label kind="invariant" x="-95" y="329">t &lt;= 5</label>
+		</location>
+		<location id="id1" x="136" y="544">
+			<name x="126" y="514">List</name>
+			<label kind="invariant" x="126" y="559">t &lt;= 8</label>
+		</location>
+		<location id="id2" x="178" y="450">
+			<name x="168" y="420">Watch_Init</name>
+			<label kind="invariant" x="168" y="465">t &lt;= 1</label>
+		</location>
+		<location id="id3" x="40" y="230">
+			<name x="30" y="200">Watch_React</name>
+			<label kind="invariant" x="30" y="245">t &lt;= 4</label>
+		</location>
+		<location id="id4" x="476" y="391">
+			<name x="466" y="361">Watch_View</name>
+			<label kind="invariant" x="466" y="406">t &lt;= 10</label>
+		</location>
+		<init ref="id0"/>
+		<transition id="id5">
+			<source ref="id2"/>
+			<target ref="id4"/>
+			<label kind="guard" x="416" y="425">(A[0].stat == 1) &amp;&amp; (t &gt;= 1)</label>
+			<label kind="assignment" x="408" y="442">update_data_0(), update_hyperedges_by_id(0)</label>
+			<nail x="380" y="449"/>
+		</transition>
+		<transition id="id6">
+			<source ref="id3"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-246" y="170">(A[1].stat == 1) &amp;&amp; (0 == 0)</label>
+			<label kind="assignment" x="-365" y="187">update_data_1(), update_hyperedges_by_id(1)</label>
+			<nail x="-85" y="212"/>
+		</transition>
+		<transition id="id7">
+			<source ref="id4"/>
+			<target ref="id3"/>
+			<label kind="guard" x="484" y="212">(A[2].stat == 1) &amp;&amp; (t &gt;= 3)</label>
+			<label kind="assignment" x="493" y="229">update_data_2(), update_hyperedges_by_id(2)</label>
+			<nail x="476" y="331"/>
+			<nail x="477" y="297"/>
+			<nail x="493" y="229"/>
+		</transition>
+		<transition id="id8">
+			<source ref="id3"/>
+			<target ref="id3"/>
+			<label kind="guard" x="646" y="85">(A[3].stat == 1) &amp;&amp; (0 == 0)</label>
+			<label kind="assignment" x="646" y="102">update_data_3(), update_hyperedges_by_id(3)</label>
+			<nail x="648" y="99"/>
+		</transition>
+		<transition id="id9">
+			<source ref="id3"/>
+			<target ref="id0"/>
+			<label kind="guard" x="76" y="272">(A[4].stat == 1)</label>
+			<label kind="assignment" x="76" y="289">update_data_4(), update_hyperedges_by_id(4)</label>
+			<nail x="127" y="306"/>
+		</transition>
+		<transition id="id10">
+			<source ref="id4"/>
+			<target ref="id0"/>
+			<label kind="guard" x="190" y="341">(A[5].stat == 1) &amp;&amp; (t &gt;= 10)</label>
+			<label kind="assignment" x="76" y="357">update_data_5(), update_hyperedges_by_id(5)</label>
+			<nail x="314" y="391"/>
+			<nail x="230" y="376"/>
+			<nail x="150" y="366"/>
+		</transition>
+		<transition id="id11">
+			<source ref="id0"/>
+			<target ref="id2"/>
+			<label kind="guard" x="83" y="415">A[6].stat == 1</label>
+			<label kind="assignment" x="8" y="399">update_data_6(), update_hyperedges_by_id(6)</label>
+			<nail x="123" y="450"/>
+		</transition>
+		<transition id="id12">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="229" y="544">A[7].stat == 1</label>
+			<label kind="assignment" x="221" y="561">update_data_7(), update_hyperedges_by_id(7)</label>
+			<nail x="186" y="557"/>
+			<nail x="231" y="556"/>
+		</transition>
+		<transition id="id13">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-289" y="450">(A[8].stat == 1) &amp;&amp; (score &gt;= 60)</label>
+			<label kind="assignment" x="-365" y="467">update_data_8(), update_hyperedges_by_id(8)</label>
+			<nail x="17" y="497"/>
+			<nail x="70" y="530"/>
+		</transition>
+	</template>
+	<system>Process = Template(); system Process;</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-01-22 19:38:04 +0000">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Process.Feed</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-01-22 19:38:03 +0000">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Process.Watch_Init</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-01-22 19:38:05 +0000">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Process.List</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-01-22 19:38:00 +0000">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Process.Watch_View</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-01-22 19:38:06 +0000">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Process.Watch_React</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-01-22 19:38:07 +0000">
+			</result>
+		</query>
+	</queries>
+</nta>

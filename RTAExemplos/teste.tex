@@ -1,0 +1,183 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\geometry{margin=2cm}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{parskip} 
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codeblue}{rgb}{0,0,0.8}
+\definecolor{codegreen}{rgb}{0,0.5,0}
+\definecolor{codegray}{rgb}{0.4,0.4,0.4}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+
+\lstdefinelanguage{RTA}{
+    keywords={init, int, clock, inv, if, then, disabled, AND, OR, aut, name},
+    sensitive=true,
+    morecomment=[l]{//},
+}
+
+\lstset{
+    language=RTA,
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{codegray}\itshape,
+    stringstyle=\color{codegreen},
+    numbers=left,
+    numberstyle=\tiny\color{codegray},
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    xleftmargin=15pt,
+    belowskip=0pt,
+    aboveskip=10pt,
+    literate={-->}{{\texttt{-->}}}3 {->>}{{\texttt{->>}}}3 {--!}{{\texttt{--!}}}3 {--\#--}{{\texttt{--\#--}}}5 {---->}{{\texttt{---->}}}5 {':=}{{\texttt{':=}}}3
+}
+
+\begin{document}
+
+\begin{center}
+    {\huge \textbf{Guia de Modelação e Verificação RTA}} \\
+    \vspace{2mm}
+    {\large Documentação Técnica -- \today}
+\end{center}
+
+
+
+\section{A Sintaxe da Linguagem RTA}
+
+\subsection{Declarações Globais}
+\begin{table}[h]
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Sintaxe} & \textbf{Exemplo} & \textbf{Descrição} \\ \midrule
+\texttt{init} & \texttt{init s0;} & Define o estado inicial do sistema. \\
+\texttt{int} & \texttt{int c = 0;} & Declara uma variável inteira e o seu valor inicial. \\
+\texttt{clock} & \texttt{clock t1;} & Declara relógios (iniciam sempre a 0). \\
+\texttt{inv} & \texttt{inv s: t <= 5;} & Associa uma condição invariante a um estado. \\
+\texttt{aut} & \texttt{\{ init s0; s0 --> s1: act \}} & Autómatos, permitem encapsular lógica. \\  \bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Arestas e Reconfiguração}
+A estrutura base é: \texttt{origem <SETA> destino <ATRIBUTOS...>;}
+\begin{table}[h]
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Seta} & \textbf{Comportamento Reativo} \\ \midrule
+\texttt{-->} & Transição simples de estado. \\
+\texttt{->>} & \textbf{Ativação:} O disparo ativa o rótulo alvo. \\
+\texttt{--!} & \textbf{Desativação:} O disparo desativa o rótulo alvo. \\
+\texttt{----> } & \textbf{Dependência:} Ativa o alvo e desativa-se a si próprio (atalho). \\ \bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{itemize}[noitemsep, topsep=0pt]
+    \item \textbf{Rótulo:} \texttt{: nome} (ex: \texttt{s0 --> s1: clicar})
+    \item \textbf{Guarda/Atualização:} \texttt{if (cond) then \{ var' := expr \}}
+    \item \textbf{Estado Inicial:} \texttt{disabled} (começa inativa).
+\end{itemize}
+
+
+\section{Modelação na Prática}
+
+
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+\begin{lstlisting}[caption={Modularidade e Escopo}]
+name EX1
+aut Motor {
+  init Parado
+  Parado --> Andamento: ligar
+}
+\end{lstlisting}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\begin{lstlisting}[caption={Grafos Reativos}]
+name EX2
+init Off
+Off --> On: ligar
+On  --> Off: desligar
+ligar --! ligar
+desligar ->> ligar
+\end{lstlisting}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\begin{lstlisting}[caption={Guardados}]
+name EX3
+int c = 0
+init Ready
+Ready --> Ready: step if (c < 3) then {
+    c' := c + 1
+}
+\end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.48\textwidth}
+\begin{lstlisting}[caption={Temporizados}]
+name EX4
+clock t
+init Idle
+inv Work: t <= 10
+Idle --> Work: start t' := 0
+Work --> Idle: tout if (t >= 10)
+\end{lstlisting}
+\end{minipage}
+
+
+
+
+
+
+
+\section{Verificação PDL (Lógica Proposicional Dinâmica)}
+
+A plataforma traduz fórmulas visuais para lógica de backend. 
+
+\subsection{Operadores Especiais}
+\begin{itemize}[noitemsep]
+    \item \textbf{Delay no PDL:} É possível verificar estados temporais futuros. \\
+    Exemplo: \texttt{<delay:5>true} verifica se o sistema pode sobreviver 5 unidades de tempo.
+    \item \textbf{Proposições de Estado:} \texttt{s1} é verdade se o sistema estiver no estado \texttt{s1}.
+    \item \textbf{Proposições de Dados:} \texttt{c == 2} verifica o valor das variáveis.
+\end{itemize}
+
+\textbf{Exemplos Práticos:}
+\begin{enumerate}[label=\arabic*., noitemsep]
+    \item \textbf{Alcançabilidade:} $\langle \text{turn\_on} \rangle \text{S\_On}$
+    \item \textbf{Lógica de Reset:} $[ \text{turn\_off} ] \langle \text{turn\_on} \rangle \text{true}$
+    \item \textbf{Verificação de Variável:} $\langle \text{step; step} \rangle [\text{counter} == 2]$
+    \item \textbf{Ausência de Bloqueio:} $\langle \text{move\_left} + \text{move\_right} \rangle \text{true}$
+\end{enumerate}
+
+\subsection{Exemplos de Verificação}
+\begin{enumerate}[label=\arabic*., noitemsep]
+    \item \textbf{Reconfiguração:} \texttt{<ligar> ligar\_active == 0} (Após ligar, a ação de ligar fica desativada?)
+\end{enumerate}
+
+\section{Exportação e Análise}
+\begin{itemize}
+    \item \textbf{Uppaal (TGRG):} Gera um modelo XML compatível com o Uppaal, mapeando a reconfiguração para uma estrutura de dados de matriz (\texttt{Edge A} e \texttt{Hyperedge L}).
+    \item \textbf{Tradução GLTS:} Converte o modelo reconfigurável num modelo de estados padrão (plano), facilitando a leitura de ferramentas externas.
+\end{itemize}
+
+
+
+
+
+\end{document}

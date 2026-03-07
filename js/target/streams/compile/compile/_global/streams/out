@@ -1,0 +1,210 @@
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\SyntaxElements.scala:9:1 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m9 |[0m}[33mcase class[0m IfThenStmt(condition: Condition, thenStmts: List[Statement]) [33mextends[0m Statement {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m  |[0m ^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m end of toplevel definition expected but 'case class' found[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:5:19 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m5 |[0m[33mimport[0m rta.syntax.{Condition, CounterUpdate, UpdateExpr, Statement, UpdateStmt, IfThenStmt}[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m  |[0m                   ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m                   value Condition is not a member of rta.syntax[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:5:30 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m5 |[0m[33mimport[0m rta.syntax.{Condition, CounterUpdate, UpdateExpr, Statement, UpdateStmt, IfThenStmt}[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m  |[0m                              ^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m                         value CounterUpdate is not a member of rta.syntax[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:5:45 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m5 |[0m[33mimport[0m rta.syntax.{Condition, CounterUpdate, UpdateExpr, Statement, UpdateStmt, IfThenStmt}[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m  |[0m                                             ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m                            value UpdateExpr is not a member of rta.syntax[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:5:80 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m5 |[0m[33mimport[0m rta.syntax.{Condition, CounterUpdate, UpdateExpr, Statement, UpdateStmt, IfThenStmt}[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m  |[0m                                                                                ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m                            value IfThenStmt is not a member of rta.syntax[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:122:44 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m122 |[0m                     invariants: [35mMap[0m[[35mQName[0m, [35mCondition[0m],[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                            ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                            Not found: type Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:123:54 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m123 |[0m                     edgeConditions: [35mMap[0m[[35mEdge[0m, [35mOption[0m[[35mCondition[0m]], [0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                      ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                             Not found: type Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:55:50 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m55 |[0m  [33mdef[0m [36mapplyPrefixToCondition[0m([36mprefix[0m: [35mQName[0m, [36mcond[0m: [35mCondition[0m): [35mCondition[0m = {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                  ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                               Not found: type Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:55:62 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m55 |[0m  [33mdef[0m [36mapplyPrefixToCondition[0m([36mprefix[0m: [35mQName[0m, [36mcond[0m: [35mCondition[0m): [35mCondition[0m = {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                              ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                               Not found: type Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:57:11 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m57 |[0m      [33mcase[0m Condition.AtomicCond(left, op, right) =>[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m           ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m           Not found: Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:58:45 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m58 |[0m        [33mval[0m [36mnewLeft[0m = [33mif[0m (isGlobalControlVar(left)) left [33melse[0m prefix / left[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                             ^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                     Found:    (left : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                     Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E134] Type Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:58:69 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m58 |[0m        [33mval[0m [36mnewLeft[0m = [33mif[0m (isGlobalControlVar(left)) left [33melse[0m prefix / left[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                              ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mNone of the overloaded alternatives of [33mmethod[0m [35m/[0m in [33mclass[0m [35mQName[0m with types[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m (rx: rta.syntax.Program2.RxGraph): rta.syntax.Program2.RxGraph[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m (es: rta.syntax.Program2.Edges): rta.syntax.Program2.Edges[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m (e: rta.syntax.Program2.EdgeMap): rta.syntax.Program2.EdgeMap[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m (other: String): rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m (other: rta.syntax.Program2.QName): rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mmatch arguments ((left : Any))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:61:50 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m61 |[0m          [33mcase[0m Right(q) => [33mif[0m (isGlobalControlVar(q)) Right(q) [33melse[0m Right(prefix / q)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                  ^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                     Found:    (q : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                     Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E134] Type Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:61:81 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m61 |[0m          [33mcase[0m Right(q) => [33mif[0m (isGlobalControlVar(q)) Right(q) [33melse[0m Right(prefix / q)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                                          ^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mNone of the overloaded alternatives of [33mmethod[0m [35m/[0m in [33mclass[0m [35mQName[0m with types[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m (rx: rta.syntax.Program2.RxGraph): rta.syntax.Program2.RxGraph[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m (es: rta.syntax.Program2.Edges): rta.syntax.Program2.Edges[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m (e: rta.syntax.Program2.EdgeMap): rta.syntax.Program2.EdgeMap[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m (other: String): rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m (other: rta.syntax.Program2.QName): rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mmatch arguments ((q : Any))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:63:8 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m63 |[0m        Condition.AtomicCond(newLeft, op, newRight)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m        ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m        Not found: Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:64:11 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m64 |[0m      [33mcase[0m Condition.And(l, r) => Condition.And(applyPrefixToCondition(prefix, l), applyPrefixToCondition(prefix, r))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m           ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m           Not found: Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:64:34 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m64 |[0m      [33mcase[0m Condition.And(l, r) => Condition.And(applyPrefixToCondition(prefix, l), applyPrefixToCondition(prefix, r))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                  ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                  Not found: Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:65:11 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m65 |[0m      [33mcase[0m Condition.Or(l, r) => Condition.Or(applyPrefixToCondition(prefix, l), applyPrefixToCondition(prefix, r))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m           ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m           Not found: Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:65:33 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m65 |[0m      [33mcase[0m Condition.Or(l, r) => Condition.Or(applyPrefixToCondition(prefix, l), applyPrefixToCondition(prefix, r))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                 ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                 Not found: Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\SyntaxElements.scala:7:30 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m7 |[0m[33mcase class[0m [35mUpdateStmt[0m([36mupdate[0m: [35mCounterUpdate[0m) [33mextends[0m [35mStatement[0m {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m  |[0m                              ^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m                              Not found: type CounterUpdate[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:74:17 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m74 |[0m            [33mcase[0m UpdateExpr.Add(v, e) => UpdateExpr.Add([33mif[0m(isGlobalControlVar(v)) v [33melse[0m prefix/v, e [33mmatch[0m {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                 ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                 Not found: UpdateExpr[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:74:41 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m74 |[0m            [33mcase[0m UpdateExpr.Add(v, e) => UpdateExpr.Add([33mif[0m(isGlobalControlVar(v)) v [33melse[0m prefix/v, e [33mmatch[0m {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                         ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                         Not found: UpdateExpr[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:78:17 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m78 |[0m            [33mcase[0m UpdateExpr.Sub(v, e) => UpdateExpr.Sub([33mif[0m(isGlobalControlVar(v)) v [33melse[0m prefix/v, e [33mmatch[0m {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                 ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                 Not found: UpdateExpr[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:78:41 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m78 |[0m            [33mcase[0m UpdateExpr.Sub(v, e) => UpdateExpr.Sub([33mif[0m(isGlobalControlVar(v)) v [33melse[0m prefix/v, e [33mmatch[0m {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                         ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                         Not found: UpdateExpr[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:82:17 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m82 |[0m            [33mcase[0m UpdateExpr.Var(q) [33mif[0m !isGlobalControlVar(q) => UpdateExpr.Var(prefix/q)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                 ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                 Not found: UpdateExpr[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E007] Type Mismatch Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:82:58 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m82 |[0m            [33mcase[0m UpdateExpr.Var(q) [33mif[0m !isGlobalControlVar(q) => UpdateExpr.Var(prefix/q)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                          ^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                     Found:    (q : Any)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                     Required: rta.syntax.Program2.QName[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:82:64 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m82 |[0m            [33mcase[0m UpdateExpr.Var(q) [33mif[0m !isGlobalControlVar(q) => UpdateExpr.Var(prefix/q)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                                                ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                                   Not found: UpdateExpr[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:86:11 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m86 |[0m      [33mcase[0m IfThenStmt(cond, thenStmts) =>[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m           ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m           Not found: IfThenStmt[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:87:8 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m87 |[0m        IfThenStmt([0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m        ^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m        Not found: IfThenStmt[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:89:20 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m89 |[0m          thenStmts.map([36ms[0m => applyPrefixToStatement(prefix, s))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m          ^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m          value map is not a member of Any[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:140:41 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m140 |[0m    [33mdef[0m [36maddInvariant[0m([36mstate[0m: [35mQName[0m, [36mcond[0m: [35mCondition[0m) =[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                         ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                         Not found: type Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:158:77 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m158 |[0m    [33mdef[0m [36maddEdge[0m([36ms1[0m:[35mQName[0m, [36ms2[0m:[35mQName[0m, [36mtransId[0m:[35mQName[0m, [36mlabel[0m:[35mQName[0m, [36mcond[0m: [35mOption[0m[[35mCondition[0m] = None, [36mupd[0m: [35mList[0m[[35mStatement[0m] = Nil) = {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                             ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                             Not found: type Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:169:71 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m169 |[0m    [33mdef[0m [36maddOn[0m([36ms1[0m: [35mQName[0m, [36ms2[0m: [35mQName[0m, [36mtId[0m: [35mQName[0m, [36ml[0m: [35mQName[0m, [36mcond[0m: [35mOption[0m[[35mCondition[0m] = None, [36mupd[0m: [35mList[0m[[35mStatement[0m] = Nil) = {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                       ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                             Not found: type Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:179:72 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m179 |[0m    [33mdef[0m [36maddOff[0m([36ms1[0m: [35mQName[0m, [36ms2[0m: [35mQName[0m, [36mtId[0m: [35mQName[0m, [36ml[0m: [35mQName[0m, [36mcond[0m: [35mOption[0m[[35mCondition[0m] = None, [36mupd[0m: [35mList[0m[[35mStatement[0m] = Nil) = {[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                                                        ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                             Not found: type Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\shared\src\main\scala\rta\syntax\Program2.scala:263:34 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m263 |[0m          [33mcase[0m Some(condition) => Condition.evaluate(condition, rx.val_env,rx.clock_env)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m    |[0m                                  ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m                                  Not found: Condition[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m    |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m35 errors found[0m
