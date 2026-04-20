@@ -268,12 +268,6 @@ object RTAAPI {
   @JSExport
   def getExamples(): String = {
     val examples = List(
-      "Simple" ->
-    """name Simple
-      |init s0
-      |s0 ---> s1: a
-      |s1 ---> s0: b
-      |a  --! a: offA""".stripMargin,
 
   "Conditions" ->
     """name Conditions
@@ -384,16 +378,7 @@ object RTAAPI {
       |act ->> offAct: on1 disabled
       |act ->> on1""".stripMargin,
 
-  "Penguim" ->
-    """name Penguim
-      |init Son_of_Tweetie
-      |Son_of_Tweetie ---> Special_Penguin: ss
-      |Special_Penguin ---> Penguin: Penguim
-      |Penguin ---> Bird: Bird
-      |Bird ---> Does_Fly: Fly
-      |
-      |Bird --! Fly: noFly
-      |Penguim --! noFly""".stripMargin,
+
 
   "Vending (max eur1)" ->
     """name Vending1eur
@@ -440,44 +425,6 @@ object RTAAPI {
       |}
       |// intrusion
       |w.c ->> s.b""".stripMargin,
-
-  "Conflict" ->
-    """name Conflict
-      |init i0
-      |i0 ---> i1: a
-      |i1 ---> i2: b
-      |i2 ---> i3: c disabled
-      |
-      |a ->> b: on
-      |on --! b: off""".stripMargin,
-
-
-  "Dynamic SPL" ->
-    """name DynamicSPL
-      |init setup
-      |setup ---> setup: Safe
-      |setup ---> setup: Unsafe
-      |setup ---> setup: Encrypt
-      |setup ---> setup: Dencrypt
-      |setup ---> ready
-      |ready ---> setup
-      |ready ---> received: Receive
-      |received ---> routed_safe: ERoute  disabled
-      |received ---> routed_unsafe: Route
-      |routed_safe ---> sent: ESend       disabled
-      |routed_unsafe ---> sent: Send
-      |routed_unsafe ---> sent_encrypt: ESend disabled
-      |sent_encrypt ---> ready: Ready
-      |sent ---> ready: Ready
-      |
-      |Safe ->> ERoute
-      |Safe --! Route
-      |Unsafe --! ERoute
-      |Unsafe ->> Route
-      |Encrypt --! Send
-      |Encrypt ->> ESend
-      |Dencrypt ->> Send
-      |Dencrypt --! ESend""".stripMargin,
     )
     "{" + examples.map{ case (k,v) => s""""$k": ${js.JSON.stringify(v)}""" }.mkString(",") + "}"
   }

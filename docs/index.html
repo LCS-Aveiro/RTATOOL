@@ -25,6 +25,10 @@
                 <span style="font-size: 18px; font-weight: bold; margin-right: 20px;">RTA Tool</span>
                 <span style="font-size: 12px; opacity: 0.8;" data-i18n="subtitle">Reconfigurable Timed Automata:
                     Animated Analysis</span>
+                <a href="#" data-toggle="modal" data-target="#aboutModal"
+                    style="color: #add8e6; margin-left: 15px; font-size: 13px; text-decoration: none;">
+                    <span class="glyphicon glyphicon-info-sign"></span> <span data-i18n="about_btn">About the Project</span>
+                </a>
             </div>
             <div class="btn-group btn-group-xs">
                 <button class="btn btn-primary" onclick="changeLanguage('pt')">PT</button>
@@ -268,10 +272,12 @@
 
 
                 <div id="pdl-group" class="right-panel-item open">
-                    <div class="panel-header" data-toggle="collapse" data-target="#pdlBody" style="cursor: pointer; background: #f8f9fa;">
-            <span><span class="glyphicon glyphicon-check"></span> <span data-i18n="panel_verif">Verificação PDL</span></span>
-            <span class="glyphicon glyphicon-chevron-up toggle-icon"></span>
-        </div>
+                    <div class="panel-header" data-toggle="collapse" data-target="#pdlBody"
+                        style="cursor: pointer; background: #f8f9fa;">
+                        <span><span class="glyphicon glyphicon-check"></span> <span data-i18n="panel_verif">Verificação
+                                PDL</span></span>
+                        <span class="glyphicon glyphicon-chevron-up toggle-icon"></span>
+                    </div>
                     <div id="pdlBody" class="collapse in"
                         style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
                         <div class="scroll-area" style="padding: 10px;">
@@ -321,7 +327,7 @@
                                     <button class="btn btn-default" onclick="insertPdl('true')">⊤</button>
                                     <button class="btn btn-default" onclick="insertPdl('false')">⊥</button>
 
-                                    
+
                                 </div>
                                 <input type="text" id="pdlFormula" class="form-control input-sm"
                                     placeholder="Fórmula (Ex: <a>true)">
@@ -337,6 +343,56 @@
 
 
 
+        </div>
+        <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" style="z-index: 100060;">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: #36569c; color: white;">
+                        <button type="button" class="close" data-dismiss="modal"
+                            style="color: white; opacity: 1;">&times;</button>
+                        <h4 class="modal-title" style="color: white;">Reconfigurable Timed Automata Tool</h4>
+                    </div>
+                    <div class="modal-body" style="line-height: 1.6; font-size: 14px;">
+                        <div id="aboutContent">
+                            <p><strong data-i18n="about_p1_title">Reconfigurable Timed Automata Tool</strong></p>
+                            <p>This project provides a graphical tool for modeling and analyzing Reconfigurable Timed
+                                Automata (RTA) a semantic framework that combines the dynamic reconfiguration mechanisms
+                                of reactive graphs (via hyperedges) with the quantitative timing constraints of timed
+                                automata, including clock guards and invariants.
+                                The tool offers an intuitive graphical interface that allows users to design transition
+                                systems, visualize their structure, and interactively explore their behavior through
+                                animation and analysis features. It is designed to support both the development and
+                                verification of dynamic timed systems.
+                                A key feature of the tool is its ability to automatically export RTA models to UPPAAL,
+                                enabling further formal verification and model checking using established analysis
+                                techniques.</p>
+
+
+                            <h5 style="font-weight: bold; margin-top: 20px;" data-i18n="about_features_header">Features:
+                            </h5>
+                            <ul style="padding-left: 20px;">
+                                <li data-i18n="f1">Graphical editor for creating Reconfigurable Timed Automata</li>
+                                <li data-i18n="f2">Support for hyperedges to model system reconfiguration</li>
+                                <li data-i18n="f3">Integration of clock guards and invariants</li>
+                                <li data-i18n="f4">Simulation and animation of system behavior</li>
+                                <li data-i18n="f5">Export to UPPAAL for formal verification and analysis</li>
+                            </ul>
+
+                            <h5 style="font-weight: bold; margin-top: 20px;" data-i18n="about_team_header">Team:</h5>
+                            <p>
+                                Joshua Dourado — Developer<br>
+                                A. Iglesias<br>
+                                A. Madeira<br>
+                                M. Martins
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal"
+                            data-i18n="btn_close">Fechar</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <script src="js/static/jquery-1.10.2.min.js"></script>
         <script src="js/static/bootstrap.min.js"></script>
@@ -414,7 +470,7 @@
                     var examplesJson = RTA.getExamples();
                     var examples = JSON.parse(examplesJson);
                     var select = document.getElementById("examplesSelect");
-                    var exampleToLoad = "Simple";
+                    var exampleToLoad = "Conditions";
 
                     if (examples[exampleToLoad]) {
                         select.value = examples[exampleToLoad];

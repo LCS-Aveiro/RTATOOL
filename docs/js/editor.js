@@ -1,4 +1,3 @@
-const USER_MODELS_KEY = 'rta_user_custom_models';
 
 function updateExamplesDropdown() {
     const select = document.getElementById("examplesSelect");
@@ -10,7 +9,7 @@ function updateExamplesDropdown() {
     } catch (e) { console.error("Erro ao carregar exemplos nativos", e); }
 
     let userModels = {};
-    const saved = localStorage.getItem(USER_MODELS_KEY);
+    const saved = localStorage.getItem('rta_user_custom_models');
     if (saved) userModels = JSON.parse(saved);
 
     select.innerHTML = `<option value="">${i18n[currentLang].select_example}</option>`;
@@ -46,10 +45,10 @@ function saveUserModel() {
     const name = prompt(currentLang === 'pt' ? "Nome do modelo:" : "Model name:");
     if (!name) return;
 
-    let userModels = JSON.parse(localStorage.getItem(USER_MODELS_KEY) || '{}');
+    let userModels = JSON.parse(localStorage.getItem('rta_user_custom_models') || '{}');
     userModels[name] = editor.getValue();
     
-    localStorage.setItem(USER_MODELS_KEY, JSON.stringify(userModels));
+    localStorage.setItem('rta_user_custom_models', JSON.stringify(userModels));
     updateExamplesDropdown();
     alert(currentLang === 'pt' ? "Salvo com sucesso!" : "Saved successfully!");
 }
@@ -64,10 +63,10 @@ function overwriteUserModel() {
     }
 
     const name = selectedOpt.getAttribute('data-raw-name');
-    let userModels = JSON.parse(localStorage.getItem(USER_MODELS_KEY) || '{}');
+    let userModels = JSON.parse(localStorage.getItem('rta_user_custom_models') || '{}');
     userModels[name] = editor.getValue();
     
-    localStorage.setItem(USER_MODELS_KEY, JSON.stringify(userModels));
+    localStorage.setItem('rta_user_custom_models', JSON.stringify(userModels));
     alert(currentLang === 'pt' ? "Modelo '" + name + "' atualizado!" : "Model '" + name + "' updated!");
 }
 
@@ -82,9 +81,9 @@ function deleteUserModel() {
 
     const name = selectedOpt.getAttribute('data-raw-name');
     if (confirm((currentLang === 'pt' ? "Excluir " : "Delete ") + name + "?")) {
-        let userModels = JSON.parse(localStorage.getItem(USER_MODELS_KEY) || '{}');
+        let userModels = JSON.parse(localStorage.getItem('rta_user_custom_models') || '{}');
         delete userModels[name];
-        localStorage.setItem(USER_MODELS_KEY, JSON.stringify(userModels));
+        localStorage.setItem('rta_user_custom_models', JSON.stringify(userModels));
         updateExamplesDropdown();
     }
 }

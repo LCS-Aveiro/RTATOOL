@@ -62,3 +62,20 @@ $(document).ready(function() {
         $(this).css('height', '');
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    try {
+        var examplesJson = RTA.getExamples();
+        var examples = JSON.parse(examplesJson);
+        var select = document.getElementById("examplesSelect");
+
+        select.innerHTML = '<option value="">Carregar Exemplo...</option>';
+
+        for (var key in examples) {
+            var opt = document.createElement("option");
+            opt.value = examples[key];
+            opt.innerHTML = key;
+            select.appendChild(opt);
+        }
+    } catch (e) { console.error("Erro ao carregar exemplos", e); }
+});

@@ -279,6 +279,30 @@ function translateToGLTS() {
     }
 }
 
+function downloadString(filename, content) {
+    var blob = new Blob([content], { type: 'text/plain' });
+    var a = document.createElement('a');
+    a.href = window.URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+}
+
+
+
+
+function downloadUppaal(type) {
+    var sourceCode = editor.getValue();
+    const graphId = getLayoutKey(sourceCode);
+    var layoutJson = localStorage.getItem(`cyLayout_${graphId}`) || "{}";
+    var content = ""; var name = "model.xml";
+
+    if (type === 'tgrg') { 
+        content = RTA.getUppaalTGRG(layoutJson); 
+        name = "model_tgrg.xml"; 
+    }
+    if (content) downloadString(name, content);
+    else alert("Modelo não carregado.");
+}
 
 
 function autoSaveLayoutToLocalStorage(cy, graphId) {
