@@ -25,6 +25,61 @@ object RTAAPI {
       .replace("\t", "\\t")
   }
 
+
+  
+  @JSExport
+  def findBestPath(targetStr: String): String = {
+    currentGraph match {
+      case Some(rx) =>
+        val adaptedTarget = targetStr.replace('/', '.')
+        Parser2.pp[QName](Parser2.qname, adaptedTarget) match {
+          case Right(targetQName) =>
+            AnalyseLTS.findShortestPath(rx, targetQName) match {
+              case Some(steps) => 
+                js.JSON.stringify(js.Array(steps: _*))
+              case None => 
+                """{"error": "Caminho não encontrado ou muito longo."}"""
+            }
+          case Left(err) => 
+            s"""{"error": "Estado inválido: $err"}"""
+        }
+      case None => 
+        """{"error": "Carregue o modelo primeiro."}"""
+    }
+  }
+
+  @JSExport
+  def findPathToValue(condStr: String): js.Any = {
+    currentGraph match {
+      case Some(rx) =>
+        try {
+          val formatted = condStr
+            .replace("&&", "] &&[")
+            .replace("AND", "] && [")
+          
+          val formulaStr = s"[$formatted]"
+          val formula = PdlParser.parsePdlFormula(formulaStr)
+          
+          def formulaToCondition(f: rta.syntax.Formula): rta.syntax.Condition = f match {
+            case rta.syntax.Formula.CondProp(c) => c
+            case rta.syntax.Formula.And(f1, f2) => rta.syntax.Condition.And(formulaToCondition(f1), formulaToCondition(f2))
+            case _ => throw new Exception("Use apenas comparações simples unidas por && ou AND")
+          }
+
+          val finalCond = formulaToCondition(formula)
+
+          AnalyseLTS.findShortestPathToCondition(rx, finalCond) match {
+            case Some(steps) => js.Array(steps: _*)
+            case None => js.Dynamic.literal(error = "Caminho não encontrado ou inatingível.")
+          }
+        } catch {
+          case e: Throwable => js.Dynamic.literal(error = s"Erro: ${e.getMessage}")
+        }
+      case None => js.Dynamic.literal(error = "Modelo não carregado.")
+    }
+  }
+
+
   @JSExport
   def getAllStepsMermaid(): String = {
     currentGraph.map { root =>

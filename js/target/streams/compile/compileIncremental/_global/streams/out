@@ -2,27 +2,27 @@
 [0m[[0m[0mdebug[0m] [0m[0mIncrementalCompile.incrementalCompile[0m
 [0m[[0m[0mdebug[0m] [0m[0mprevious = Stamps for: 98 products, 14 sources, 4 libraries[0m
 [0m[[0m[0mdebug[0m] [0m[0mcurrent source = Set(${BASE}/shared/src/main/scala/rta/backend/MCRL2.scala, ${BASE}/shared/src/main/scala/rta/syntax/Program2.scala, ${BASE}/shared/src/main/scala/rta/syntax/SyntaxElements.scala, ${BASE}/shared/src/main/scala/rta/syntax/PdlProgram.scala, ${BASE}/js/src/main/scala/marge/frontend/RTAAPI.scala, ${BASE}/shared/src/main/scala/rta/backend/PdlEvaluator.scala, ${BASE}/shared/src/main/scala/rta/backend/AnalyseLTS.scala, ${BASE}/shared/src/main/scala/rta/syntax/PdlParser.scala, ${BASE}/shared/src/main/scala/rta/syntax/Translate.scala, ${BASE}/shared/src/main/scala/rta/backend/CytoscapeConverter.scala, ${BASE}/shared/src/main/scala/rta/syntax/Parser2.scala, ${BASE}/shared/src/main/scala/rta/syntax/PdlSyntax.scala, ${BASE}/shared/src/main/scala/rta/backend/RxSemantics.scala, ${BASE}/shared/src/main/scala/rta/syntax/UppaalConvert3.scala)[0m
-[0m[[0m[0mdebug[0m] [0m[0m> initialChanges = InitialChanges(Changes(added = Set(), removed = Set(), changed = Set(${BASE}/shared/src/main/scala/rta/backend/RxSemantics.scala, ${BASE}/js/src/main/scala/marge/frontend/RTAAPI.scala), unmodified = ...),Set(),Set(),API Changes: Set())[0m
+[0m[[0m[0mdebug[0m] [0m[0m> initialChanges = InitialChanges(Changes(added = Set(), removed = Set(), changed = Set(${BASE}/js/src/main/scala/marge/frontend/RTAAPI.scala, ${BASE}/shared/src/main/scala/rta/backend/AnalyseLTS.scala), unmodified = ...),Set(),Set(),API Changes: Set())[0m
 [0m[[0m[0mdebug[0m] [0m[0m[0m
 [0m[[0m[0mdebug[0m] [0m[0mInitial source changes:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	removed: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0m	added: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(${BASE}/shared/src/main/scala/rta/backend/RxSemantics.scala, ${BASE}/js/src/main/scala/marge/frontend/RTAAPI.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(${BASE}/js/src/main/scala/marge/frontend/RTAAPI.scala, ${BASE}/shared/src/main/scala/rta/backend/AnalyseLTS.scala)[0m
 [0m[[0m[0mdebug[0m] [0m[0mInvalidated products: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mExternal API changes: API Changes: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mModified binary dependencies: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(rta.backend.RxSemantics, rta.frontend.RTAAPI)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(rta.frontend.RTAAPI, rta.backend.AnalyseLTS)[0m
 [0m[[0m[0mdebug[0m] [0m[0mSources indirectly invalidated by:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	product: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0m	binary dep: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0m	external source: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated classes: Set(rta.backend.RxSemantics, rta.frontend.RTAAPI)[0m
-[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated sources:Set(${BASE}/shared/src/main/scala/rta/backend/RxSemantics.scala, ${BASE}/js/src/main/scala/marge/frontend/RTAAPI.scala)[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.backend.RxSemantics, rta.frontend.RTAAPI[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated classes: Set(rta.frontend.RTAAPI, rta.backend.AnalyseLTS)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated sources:Set(${BASE}/js/src/main/scala/marge/frontend/RTAAPI.scala, ${BASE}/shared/src/main/scala/rta/backend/AnalyseLTS.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.frontend.RTAAPI, rta.backend.AnalyseLTS[0m
 [0m[[0m[0mdebug[0m] [0m[0mcompilation cycle 1[0m
 [0m[[0m[0minfo[0m] [0m[0mcompiling 2 Scala sources to C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\js\target\scala-3.3.1\classes ...[0m
 [0m[[0m[0mdebug[0m] [0m[0mReturning already retrieved and compiled bridge: C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala3-sbt-bridge\3.3.1\scala3-sbt-bridge-3.3.1.jar.[0m
-[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 5fb47f2d for Scala Compiler version 3.3.1[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler e34756e for Scala Compiler version 3.3.1[0m
 [0m[[0m[0mdebug[0m] [0m[0m[zinc] The Scala compiler is invoked with:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-scalajs[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-feature[0m
@@ -30,8 +30,36 @@
 [0m[[0m[0mdebug[0m] [0m[0m	C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala3-library_3\3.3.1\scala3-library_3-3.3.1.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala-library\2.13.10\scala-library-2.13.10.jar[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-classpath[0m
 [0m[[0m[0mdebug[0m] [0m[0m	C:\Users\Utilizador\Desktop\ProjetosUA\RTATOOL2\js\target\scala-3.3.1\classes;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\scala3-library_sjs1_3\3.3.1\scala3-library_sjs1_3-3.3.1.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-js\scalajs-library_2.13\1.14.0\scalajs-library_2.13-1.14.0.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-lang\modules\scala-xml_sjs1_3\2.2.0\scala-xml_sjs1_3-2.2.0.jar;C:\Users\Utilizador\AppData\Local\Coursier\Cache\v1\https\repo1.maven.org\maven2\org\scala-js\scalajs-javalib\1.14.0\scalajs-javalib-1.14.0.jar[0m
-[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 9.5279353 s[0m
+[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 7.7215203 s[0m
 [0m[[0m[0mdebug[0m] [0m[0mdone compiling[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from rta.frontend.RTAAPI...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.frontend.RTAAPI[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(rta.frontend.RTAAPI)[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(rta.frontend.RTAAPI,ModifiedNames(changes = UsedName($js$exported$meth$findPathToValue,[Default]), UsedName(findPathToValue,[Default]), UsedName(findBestPath,[Default]), UsedName($js$exported$meth$findBestPath,[Default]))) invalidates 1 classes due to The rta.frontend.RTAAPI has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName($js$exported$meth$findPathToValue,[Default]), UsedName(findPathToValue,[Default]), UsedName(findBestPath,[Default]), UsedName($js$exported$meth$findBestPath,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by transitive inheritance: Set(rta.frontend.RTAAPI)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from rta.backend.AnalyseLTS...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.backend.AnalyseLTS[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(rta.backend.AnalyseLTS)[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of rta.frontend.RTAAPI: [UsedName(findShortestPathToCondition,[Default]), UsedName(findShortestPath,[Default]), UsedName(findShortestPath$default$3,[Default]), UsedName(findShortestPathToCondition$default$3,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(rta.backend.AnalyseLTS,ModifiedNames(changes = UsedName(findShortestPath,[Default]), UsedName(findShortestPath$default$3,[Default]), UsedName(findShortestPathToCondition,[Default]), UsedName(FastStateKey,[Default]), UsedName(findShortestPathToCondition$default$3,[Default]))) invalidates 2 classes due to The rta.backend.AnalyseLTS has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(findShortestPath,[Default]), UsedName(findShortestPath$default$3,[Default]), UsedName(findShortestPathToCondition,[Default]), UsedName(FastStateKey,[Default]), UsedName(findShortestPathToCondition$default$3,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by transitive inheritance: Set(rta.backend.AnalyseLTS)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by member reference: Set(rta.frontend.RTAAPI)[0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from rta.backend.AnalyseLTS$.FastStateKey...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: rta.backend.AnalyseLTS$.FastStateKey[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(rta.backend.AnalyseLTS$.FastStateKey)[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(rta.backend.AnalyseLTS$.FastStateKey,ModifiedNames(changes = UsedName(_3,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(FastStateKey;init;,[Default]), UsedName(wait,[Default]), UsedName(Mirror;init;,[Default]), UsedName(Object;init;,[Default]), UsedName(MirroredElemLabels,[Default]), UsedName(ne,[Default]), UsedName(getClass,[Default]), UsedName(unapply,[Default]), UsedName(fromProduct,[Default]), UsedName(!=,[Default]), UsedName(productElement,[Default]), UsedName(MirroredLabel,[Default]), UsedName(productPrefix,[Default]), UsedName(vars,[Default]), UsedName(finalize,[Default]), UsedName(clone,[Default]), UsedName(notify,[Default]), UsedName(FastStateKey;init;$,[Default]), UsedName(Serializable;init;,[Default]), UsedName(copy$default$2,[Default]), UsedName(synchronized,[Default]), UsedName(hashCode,[Default]), UsedName(productArity,[Default]), UsedName(_1,[Default]), UsedName(copy$default$1,[Default]), UsedName(notifyAll,[Default]), UsedName(equals,[Default]), UsedName(MirroredMonoType,[Default]), UsedName(copy,[Default]), UsedName(toString,[Default]), UsedName(inits,[Default]), UsedName(apply,[Default]), UsedName(Product;init;,[Default]), UsedName(copy$default$3,[Default]), UsedName(FastStateKey,[Default]), UsedName(asInstanceOf,[Default]), UsedName(eq,[Default]), UsedName(productElementName,[Default]), UsedName($asInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(==,[Default]), UsedName(_2,[Default]), UsedName($isInstanceOf,[Default]), UsedName(clocks,[Default]))) invalidates 1 classes due to The rta.backend.AnalyseLTS$.FastStateKey has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(_3,[Default]), UsedName(isInstanceOf,[Default]), UsedName(##,[Default]), UsedName(FastStateKey;init;,[Default]), UsedName(wait,[Default]), UsedName(Mirror;init;,[Default]), UsedName(Object;init;,[Default]), UsedName(MirroredElemLabels,[Default]), UsedName(ne,[Default]), UsedName(getClass,[Default]), UsedName(unapply,[Default]), UsedName(fromProduct,[Default]), UsedName(!=,[Default]), UsedName(productElement,[Default]), UsedName(MirroredLabel,[Default]), UsedName(productPrefix,[Default]), UsedName(vars,[Default]), UsedName(finalize,[Default]), UsedName(clone,[Default]), UsedName(notify,[Default]), UsedName(FastStateKey;init;$,[Default]), UsedName(Serializable;init;,[Default]), UsedName(copy$default$2,[Default]), UsedName(synchronized,[Default]), UsedName(hashCode,[Default]), UsedName(productArity,[Default]), UsedName(_1,[Default]), UsedName(copy$default$1,[Default]), UsedName(notifyAll,[Default]), UsedName(equals,[Default]), UsedName(MirroredMonoType,[Default]), UsedName(copy,[Default]), UsedName(toString,[Default]), UsedName(inits,[Default]), UsedName(apply,[Default]), UsedName(Product;init;,[Default]), UsedName(copy$default$3,[Default]), UsedName(FastStateKey,[Default]), UsedName(asInstanceOf,[Default]), UsedName(eq,[Default]), UsedName(productElementName,[Default]), UsedName($asInstanceOf,[Default]), UsedName(canEqual,[Default]), UsedName(==,[Default]), UsedName(_2,[Default]), UsedName($isInstanceOf,[Default]), UsedName(clocks,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by transitive inheritance: Set(rta.backend.AnalyseLTS$.FastStateKey)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
 [0m[[0m[0mdebug[0m] [0m[0mNew invalidations:[0m
 [0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: [0m
 [0m[[0m[0mdebug[0m] [0m[0mPreviously invalidated, but (transitively) depend on new invalidations:[0m
