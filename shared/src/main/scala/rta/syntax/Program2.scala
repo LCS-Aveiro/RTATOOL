@@ -36,7 +36,7 @@ object Program2:
     def scope: QName = if n.isEmpty then this else QName(n.init)
 
     def /(rx: RxGraph): RxGraph =
-      rx.copy( 
+      rx.copy(
         edg = this / rx.edg,
         on = this / rx.on,
         off = this / rx.off,
@@ -44,12 +44,17 @@ object Program2:
         inits = this /- rx.inits,
         act = this / rx.act,
         val_env = rx.val_env.map { case (k, v) => (this / k) -> v },
+        clocks = rx.clocks.map(this / _),
+        clock_env = rx.clock_env.map { case (k, v) => (this / k) -> v },
+        invariants = rx.invariants.map { case (k, v) => (this / k) -> applyPrefixToCondition(this, v) },
         edgeConditions = rx.edgeConditions.map { case (edge, condOpt) =>
           (this / edge._1, this / edge._2, this / edge._3, this / edge._4) -> condOpt.map(c => applyPrefixToCondition(this, c))
         },
         edgeUpdates = rx.edgeUpdates.map { case (edge, stmtList) =>
           (this / edge._1, this / edge._2, this / edge._3, this / edge._4) -> stmtList.map(stmt => applyPrefixToStatement(this, stmt))
-        }
+        },
+        delays = rx.delays.map { case (rule, (clock, value)) => (this / rule) -> (this / clock, value) },
+        pendingDelays = rx.pendingDelays.map { case (edge, op, clock, value) => ((this / edge._1, this / edge._2, this / edge._3, this / edge._4), op, this / clock, value) }
       )
   
   def applyPrefixToCondition(prefix: QName, cond: Condition): Condition = {
@@ -121,7 +126,9 @@ object Program2:
                      clock_env: Map[QName, Double],
                      invariants: Map[QName, Condition],
                      edgeConditions: Map[Edge, Option[Condition]], 
-                     edgeUpdates: Map[Edge, List[Statement]] 
+                     edgeUpdates: Map[Edge, List[Statement]] ,
+                     delays: Map[QName, (QName, Double)] = Map.empty,
+                     pendingDelays: Set[(Edge, String, QName, Double)] = Set.empty
                     ):
 
     def showSimple: String =
@@ -129,7 +136,8 @@ object Program2:
       s"${if invariants.nonEmpty then s" [inv] ${invariants.map(kv => s"${kv._1.show}:(${kv._2.toMermaidString})").mkString(", ")}" else ""}" +
       s"${if clock_env.nonEmpty then s" [clocks] ${clock_env.map(kv => s"${kv._1}=${kv._2}").mkString(", ")}" else ""}" +
       s"${if val_env.nonEmpty then s" [vars] ${val_env.map(kv => s"${kv._1}=${kv._2}").mkString(", ")}" else ""}" +
-      s" [active] ${showEdges(act)}"
+      s" [active] ${showEdges(act)}" +
+      s"${if pendingDelays.nonEmpty then s" [pending] ${pendingDelays.map(p => s"${p._1._4.show}(${p._2})@${p._3}=${p._4}").mkString(", ")}" else ""}"
 
     def addClock(name: QName) =
       this.copy(
@@ -139,6 +147,9 @@ object Program2:
     
     def addInvariant(state: QName, cond: Condition) =
       this.copy(invariants = invariants + (state -> cond))
+    
+    def addDelay(rule: QName, clock: QName, value: Double) =
+      this.copy(delays = delays + (rule -> (clock, value)))
 
     override def toString: String =
       s"""[init]  ${inits.mkString(",")}
@@ -150,7 +161,9 @@ object Program2:
          |[on]    ${showEdgeMap(on)}
          |[off]   ${showEdgeMap(off)}
          |[conds] ${edgeConditions.filter(_._2.isDefined).map(kv => s"${showEdge(kv._1)} -> ${kv._2.get.toMermaidString}").mkString(", ")}
-         |[upd]   ${edgeUpdates.filter(_._2.nonEmpty).map(kv => s"${showEdge(kv._1)} -> ${kv._2.map(_.toString).mkString("; ")}").mkString(", ")}"""
+         |[upd]   ${edgeUpdates.filter(_._2.nonEmpty).map(kv => s"${showEdge(kv._1)} -> ${kv._2.map(_.toString).mkString("; ")}").mkString(", ")}
+         |[delays] ${delays.map(kv => s"${kv._1.show} -> ${kv._2._1.show},${kv._2._2}").mkString(", ")}
+         |[pending] ${pendingDelays.map(p => s"${p._1._4.show}(${p._2})@${p._3}=${p._4}").mkString(", ")}"""
     
     def states =
       for (src, dests) <- edg.toSet; (d, _, _) <- dests; st <- Set(src, d) yield st
@@ -204,7 +217,9 @@ object Program2:
         clock_env ++ r.clock_env,
         invariants ++ r.invariants,
         edgeConditions ++ r.edgeConditions, 
-        edgeUpdates ++ r.edgeUpdates 
+        edgeUpdates ++ r.edgeUpdates,
+        delays ++ r.delays,
+        pendingDelays ++ r.pendingDelays
       )
 
 

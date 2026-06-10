@@ -8,7 +8,7 @@ import scala.util.matching.Regex
 object Parser2 {
 
   private def tokenize(input: String): List[String] = {
-    val pattern = """(//.*)|(->>|--!|--x|--->|---->|--#--|->)|(\b(?:AND|OR|if|then|else|disabled|init|aut|int|clock|inv)\b)|(:=|==|!=|<=|>=|&&|\|\||[{}();,:=\+\-\*\/<>])|([a-zA-Z_][\w\.]*'?)|(-?\d+(\.\d+)?)""".r
+    val pattern = """(//.*)|(->>|--!|--x|--->|---->|--#--|->)|(\b(?:AND|OR|if|then|else|disabled|init|aut|int|clock|inv|delay)\b)|(:=|==|!=|<=|>=|&&|\|\||[{}();,:=\+\-\*\/<>])|([a-zA-Z_][\w\.]*'?)|(-?\d+(\.\d+)?)""".r
 
     pattern.findAllMatchIn(input).flatMap { m =>
       if (m.group(1) != null) None 
@@ -102,6 +102,14 @@ object Parser2 {
         reader.expect(":")
         val cond = parseCondition(reader)
         rx = rx.addInvariant(state, cond)
+      }
+      else if (reader.eat("delay")) {
+        val ruleName = reader.parseQName()
+        reader.expect(":")
+        val clockName = reader.parseQName()
+        reader.expect(",")
+        val delayValue = reader.tryParseDouble()
+        rx = rx.addDelay(ruleName, clockName, delayValue)
       }
       else if (reader.eat("aut")) {
         val name = reader.parseQName()

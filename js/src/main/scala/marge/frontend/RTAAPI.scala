@@ -219,7 +219,9 @@ object RTAAPI {
           generateSimulationJson(currentState, None)
         } else {
           val delayedClockEnv = currentState.clock_env.map { case (c, v) => (c, v + delayAmount) }
-          val potentialNextState = currentState.copy(clock_env = delayedClockEnv)
+          val stateWithTime = currentState.copy(clock_env = delayedClockEnv)
+
+          val potentialNextState = RxSemantics.applyTimeouts(stateWithTime)
 
           val allInvariantsHold = potentialNextState.inits.forall { s =>
             potentialNextState.invariants.get(s) match {
