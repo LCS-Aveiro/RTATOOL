@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RTALang Reference — RTA Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+    --red:        #2bc044;
+    --red-dark:   #25961b;
+    --red-light:  #f1fdea;
+    --black:      #1a1a1a;
+    --gray-900:   #2d2d2d;
+    --gray-700:   #4b5563;
+    --gray-500:   #6b7280;
+    --gray-300:   #d1d5db;
+    --gray-200:   #e5e7eb;
+    --gray-100:   #f3f4f6;
+    --gray-50:    #f9fafb;
+    --white:      #ffffff;
+    --border:     #dde1e7;
+
+    --font-ui:    'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono:  'JetBrains Mono', monospace;
+}
+
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100vh; 
+    width: 100vw;
+    overflow: hidden;
+    background: #dde1e7;
+    color: var(--black);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gray-500); }
+
+  /* ── NAV ── */
+  nav {
+    height: 34px;
+    background: #f0f0f0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    flex-shrink: 0;
+    user-select: none;
+    z-index: 1000;
+  }
+  .nav-brand {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--black);
+    text-decoration: none;
+    letter-spacing: 0.3px;
+  }
+  .nav-brand span { color: var(--red); }
+  
+  .nav-links {
+    display: flex;
+    list-style: none;
+    height: 100%;
+  }
+  .nav-links li {
+    display: flex;
+    align-items: center;
+  }
+  .nav-links a {
+    padding: 0 12px;
+    font-size: 12px;
+    color: var(--gray-900);
+    text-decoration: none;
+    font-weight: 500;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid transparent;
+    border-left: 1px solid transparent;
+  }
+  .nav-links a:hover { 
+    background: var(--red); 
+    color: var(--white); 
+  }
+
+  /* ── LAYOUT ── */
+  .wrapper {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    gap: 2px;
+    padding: 2px;
+    background: #dde1e7;
+    min-height: 0;
+  }
+
+  /* ── SIDEBAR ── */
+  aside {
+    width: 220px;
+    min-width: 200px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+
+  .side-section {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 8px;
+  }
+  .side-label {
+    height: 26px;
+    background: #e8e8e8;
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin-bottom: 4px;
+    margin-top: -1px;
+  }
+  .side-link {
+    display: flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px 0 16px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--black);
+    text-decoration: none;
+    white-space: nowrap;
+    border-left: 3px solid transparent;
+  }
+  .side-link:hover { 
+    background: #e8f0fe; 
+  }
+  .side-link.active {
+    background: var(--red-light);
+    color: var(--red);
+    border-left-color: var(--red);
+    font-weight: 600;
+  }
+
+  /* ── MAIN ── */
+  main {
+    flex: 1;
+    background: var(--white);
+    border: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 40px 60px;
+    position: relative;
+    scroll-behavior: smooth;
+  }
+  .doc-container {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-500);
+    margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 12px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 span { color: var(--red); }
+  .hero-sub {
+    font-size: 14px;
+    color: var(--gray-700);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  /* ── SECTIONS ── */
+  .doc-section {
+    margin-bottom: 60px;
+    scroll-margin-top: 30px;
+  }
+  .section-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+  .doc-section > h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 16px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--red);
+    display: inline-block;
+  }
+  .doc-section > h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--black);
+    margin: 30px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .doc-section p {
+    color: var(--black);
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .doc-section ul {
+    color: var(--black);
+    padding-left: 20px;
+    margin-bottom: 16px;
+  }
+  .doc-section li { margin-bottom: 6px; }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .code-header {
+    height: 26px;
+    background: #e8e8e8;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-700);
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    justify-content: space-between;
+  }
+  .code-header .dots { display: none; }
+  .code-body {
+    padding: 12px;
+    overflow-x: auto;
+    background: var(--gray-50);
+  }
+  .code-body pre { 
+    margin: 0; 
+    font-family: var(--font-mono); 
+    font-size: 12px; 
+    line-height: 1.6; 
+  }
+
+  .kw  { color: var(--red); font-weight: 600; }    
+  .st  { color: #7c3aed; font-weight: 600; }       
+  .ac  { color: #1d4ed8; font-weight: 600; }       
+  .ar  { color: var(--gray-700); font-weight: 600;}
+  .nu  { color: #b45309; }                         
+  .cm  { color: #16a34a; font-style: italic; }     
+  .op  { color: var(--gray-700); font-weight: 600;}
+  .va  { color: #1e3a5f; }                         
+  .rl  { color: #991b1b; font-weight: 600; }       
+  .pdl { color: #065f46; font-weight: 600; }       
+
+  /* ── CARDS ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .card {
+    background: var(--gray-50);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 16px;
+    transition: all 0.1s;
+  }
+  .card:hover { 
+    border-color: var(--red);
+    background: var(--white);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .card-icon { font-size: 18px; margin-bottom: 10px; }
+  .card h4 { font-size: 13px; font-weight: 600; color: var(--black); margin-bottom: 6px; }
+  .card p  { font-size: 12px; color: var(--gray-700); margin: 0; line-height: 1.5; }
+
+  /* ── TABLES ── */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 12px;
+    border: 1px solid var(--border);
+  }
+  .ref-table th {
+    background: var(--gray-50);
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  .ref-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--black);
+  }
+  .ref-table tr:hover td { background: var(--gray-50); }
+  .ref-table td:first-child { font-family: var(--font-mono); color: var(--red-dark); font-weight: 600; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    padding: 12px 14px;
+    margin: 16px 0;
+    font-size: 12px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    border-left: 3px solid;
+    line-height: 1.5;
+  }
+  .callout-info  { background: #eff6ff; border-left-color: #1d4ed8; color: #1e3a8a; }
+  .callout-tip   { background: #f0fdf4; border-left-color: #16a34a; color: #14532d; }
+  .callout-warn  { background: var(--red-light); border-left-color: var(--red); color: var(--red-dark); }
+  .callout strong { 
+    font-weight: 700; 
+    color: inherit; 
+    display: block; 
+    margin-bottom: 4px; 
+    text-transform: uppercase; 
+    font-size: 10px; 
+    letter-spacing: 0.5px; 
+  }
+
+  /* ── INLINE CODE ── */
+  code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--gray-50);
+    color: var(--red-dark);
+    padding: 2px 5px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    font-weight: 500;
+  }
+
+  /* ── FORMULA BOX ── */
+  .formula-box {
+    background: var(--gray-50);
+    color: var(--black);
+    padding: 12px 16px;
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    margin: 16px 0;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    line-height: 1.6;
+  }
+
+  /* ── EXAMPLE TABS ── */
+  .tab-group { 
+    border: 1px solid var(--border); 
+    border-radius: 2px; 
+    margin: 20px 0; 
+    background: var(--white);
+  }
+  .tab-bar { 
+    height: 26px; 
+    background: #e8e8e8; 
+    border-bottom: 1px solid var(--border); 
+    display: flex; 
+  }
+  .tab-btn {
+    padding: 0 14px;
+    font-size: 11px;
+    color: var(--gray-700);
+    cursor: pointer;
+    border: none;
+    border-right: 1px solid var(--border);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: var(--font-ui);
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    outline: none;
+    margin-bottom: -1px;
+    display: flex;
+    align-items: center;
+  }
+  .tab-btn:hover { background: #ddd; }
+  .tab-btn.active {
+    background: var(--white);
+    color: var(--red);
+    border-bottom: 2px solid var(--red);
+  }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+  .tab-pane .code-block { border: none; margin: 0; border-radius: 0; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--gray-500);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  footer a { color: var(--red); text-decoration: none; font-weight: 600; }
+
+  @media (max-width: 900px) {
+    .wrapper { flex-direction: column; overflow: auto; }
+    aside { display: none; }
+    main { padding: 20px; overflow: visible; border: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="#">RTA<span> Tool</span></a>
+  <ul class="nav-links">
+    <li><a href="#basics">Basics</a></li>
+    <li><a href="#timed">Time & Clocks</a></li>
+    <li><a href="#edges">Edges</a></li>
+    <li><a href="#rules">Rules</a></li>
+    <li><a href="#variables">Variables</a></li>
+    <li><a href="#pdl">PDL</a></li>
+    <li><a href="#examples">Examples</a></li>
+  </ul>
+</nav>
+
+<div class="wrapper">
+
+  <!-- ── SIDEBAR ── -->
+  <aside>
+    <div class="side-section">
+      <div class="side-label">Getting Started</div>
+      <a class="side-link" href="#basics">What is RTA?</a>
+      <a class="side-link" href="#structure">File Structure</a>
+    </div>
+    <div class="side-section">
+      <div class="side-label">Language Reference</div>
+      <a class="side-link" href="#timed">Time, Clocks & Invariants</a>
+      <a class="side-link" href="#edges">Transitions & Edges</a>
+      <a class="side-link" href="#rules">Hyper-Edges (Rules)</a>
+      <a class="side-link" href="#variables">Variables & Types</a>
+      <a class="side-link" href="#conditions">Conditions & Guards</a>
+      <a class="side-link" href="#updates">Updates (Actions)</a>
+      <a class="side-link" href="#functions">Functions</a>
+      <a class="side-link" href="#modules">Modules (aut)</a>
+    </div>
+    <div class="side-section">
+      <div class="side-label">Verification</div>
+      <a class="side-link" href="#pdl">PDL Logic</a>
+      <a class="side-link" href="#path">Path Optimizer</a>
+    </div>
+    <div class="side-section">
+      <div class="side-label">Full Examples</div>
+      <a class="side-link" href="#examples">Complete Models</a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main>
+    <div class="doc-container">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-eyebrow">RTA Tool — Language Reference</div>
+        <h1>The <span>RTALang</span> Handbook</h1>
+        <p class="hero-sub">Everything you need to model, simulate, and verify Reconfigurable Timed Automata. From basic states and clocks to dynamic reconfiguration rules and PDL formulae.</p>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 1. BASICS -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="basics">
+        <div class="section-eyebrow">Section 01</div>
+        <h2>What is RTA?</h2>
+        <p>RTA (Reconfigurable Timed Automata) lets you describe a system as a set of <strong>states</strong> connected by <strong>transitions</strong>, governed by continuous <strong>clocks</strong>. On top of that, you can add <strong>hyper-edges</strong> (rules) that dynamically activate or deactivate transitions — making the system <em>reconfigurable</em> at runtime.</p>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-icon">⏱</div>
+            <h4>Timed</h4>
+            <p>Declare continuous clocks, state invariants, and transition guards to enforce real-time constraints.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">⚡</div>
+            <h4>Reconfigurable</h4>
+            <p>Hyper-edges allow transitions to dynamically turn each other ON or OFF during execution.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🔒</div>
+            <h4>Guarded</h4>
+            <p>Any edge can carry an <code>if (condition)</code> guard evaluated before it is allowed to fire.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">📐</div>
+            <h4>Verifiable</h4>
+            <p>Export models to UPPAAL for model checking, or use built-in Propositional Dynamic Logic (PDL).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 2. STRUCTURE -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="structure">
+        <div class="section-eyebrow">Section 02</div>
+        <h2>File Structure</h2>
+        <p>An <code>.rta</code> file is plain text. The order of declarations is flexible — but a recommended layout is shown below.</p>
+
+        <div class="code-block">
+          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>timer-model.rta</span></div>
+          <div class="code-body"><pre><span class="cm">// 1. Optional model name</span>
+<span class="kw">name</span> MyModel
+
+<span class="cm">// 2. Clocks and variables</span>
+<span class="kw">clock</span> <span class="va">t</span>
+<span class="kw">int</span>   <span class="va">counter</span> = <span class="nu">0</span>
+
+<span class="cm">// 3. Initial state and invariants</span>
+<span class="kw">init</span> <span class="st">start</span>
+<span class="kw">inv</span>  <span class="st">start</span> : <span class="va">t</span> <span class="op"><=</span> <span class="nu">10</span>
+
+<span class="cm">// 4. Transitions</span>
+<span class="st">start</span> <span class="ar">---></span> <span class="st">end</span> : <span class="ac">timeout</span> <span class="kw">if</span> (<span class="va">t</span> <span class="op">>=</span> <span class="nu">10</span>) <span class="kw">then</span> { <span class="va">t</span>' := <span class="nu">0</span> }
+
+<span class="cm">// 5. Hyper-edges (rules)</span>
+<span class="ac">timeout</span> <span class="ar">--!</span> <span class="ac">timeout</span> : <span class="rl">disableSelf</span></pre></div>
+        </div>
+      </section>
+
+      <hr class="divider">
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 3. TIMED FEATURES -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="timed">
+        <div class="section-eyebrow">Section 03</div>
+        <h2>Time, Clocks &amp; Invariants</h2>
+        <p>RTA extends traditional automata with dense time. Time passes automatically, increasing the value of all declared clocks at the same rate, unless constrained by a state invariant.</p>
+
+        <h3>Clocks</h3>
+        <p>Clocks are continuous variables that start at 0.0.</p>
+        <div class="code-block">
+          <div class="code-body"><pre><span class="kw">clock</span> <span class="va">x</span>
+<span class="kw">clock</span> <span class="va">y</span>, <span class="va">z</span>
+
+<span class="cm">// You can reset clocks during transitions:</span>
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s1</span> : <span class="ac">resetTime</span> <span class="kw">then</span> { <span class="va">x</span>' := <span class="nu">0</span> }</pre></div>
+        </div>
+
+        <h3>Invariants</h3>
+        <p>Invariants dictate how long the system is allowed to stay in a given state. If time passing would violate the invariant, the system must take a transition before that happens.</p>
+        <div class="code-block">
+          <div class="code-body"><pre><span class="kw">inv</span> <span class="st">working</span> : <span class="va">x</span> <span class="op"><=</span> <span class="nu">5</span>
+<span class="cm">// The system cannot stay in 'working' if clock x > 5.</span></pre></div>
+        </div>
+
+        <h3>Delays on Rules</h3>
+        <p>You can force a rule (hyper-edge) to only take effect a certain amount of time <em>after</em> the trigger transition fired.</p>
+        <div class="code-block">
+          <div class="code-body"><pre><span class="cm">// delay ruleName : clockToUse , timeAmount</span>
+<span class="kw">delay</span> <span class="rl">slowEnable</span> : <span class="va">x</span>, <span class="nu">2.0</span>
+
+<span class="ac">trigger</span> <span class="ar">->></span> <span class="ac">target</span> : <span class="rl">slowEnable</span>
+<span class="cm">// When 'trigger' fires, 'target' will only be enabled after 2.0 time units.</span></pre></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 4. EDGES -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="edges">
+        <div class="section-eyebrow">Section 04</div>
+        <h2>Transitions &amp; Edges</h2>
+        <p>A transition moves the system from one state to another. The canonical syntax is:</p>
+
+        <div class="formula-box">
+          <span class="st">SOURCE</span>  <span class="ar">---></span>  <span class="st">TARGET</span>  :  <span class="ac">label</span>  [<span class="kw">disabled</span>]  [<span class="kw">if</span> (<span class="op">condition</span>)]  [<span class="kw">then</span> { <span class="va">updates</span> }]
+        </div>
+
+        <h3>Arrow styles</h3>
+        <table class="ref-table">
+          <tr><th>Arrow</th><th>Meaning</th></tr>
+          <tr><td>---></td><td>Standard transition (shorthand, auto-ID = label)</td></tr>
+          <tr><td>-transId-></td><td>Transition with an explicit transId distinct from the label</td></tr>
+        </table>
+
+        <div class="callout callout-info">
+          <strong>transId vs label</strong>
+          When you write <code>s0 -step-> s1 : myLabel</code>, the edge has <em>transId = step</em> and <em>label = myLabel</em>. Using <code>---></code> makes both equal. The label is what rules target; the transId is used to uniquely identify the edge in the graph.
+        </div>
+
+        <h3>Basic examples</h3>
+        <div class="code-block">
+          <div class="code-body"><pre><span class="st">s0</span> <span class="ar">---></span> <span class="st">s1</span> : <span class="ac">go</span>
+
+<span class="cm">// With named transId</span>
+<span class="st">s0</span> -<span class="ac">t1</span>-> <span class="st">s1</span> : <span class="ac">myAction</span>
+
+<span class="cm">// Starts disabled (inactive until a rule enables it)</span>
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s1</span> : <span class="ac">secret</span> <span class="kw">disabled</span>
+
+<span class="cm">// Self-loop</span>
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s0</span> : <span class="ac">idle</span></pre></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 5. RULES -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="rules">
+        <div class="section-eyebrow">Section 05</div>
+        <h2>Hyper-Edges (Rules)</h2>
+        <p>Rules are directed edges between <em>labels</em>, not states. When the source label fires, the rule dynamically changes the topology of the automata by turning the target label ON or OFF.</p>
+
+        <table class="ref-table">
+          <tr><th>Arrow</th><th>Name</th><th>Effect</th></tr>
+          <tr><td>->></td><td>Activation</td><td>Enables the target edge (turns it ON).</td></tr>
+          <tr><td>--!</td><td>Deactivation</td><td>Disables the target edge (turns it OFF).</td></tr>
+          <tr><td>--x</td><td>Deactivation (alias)</td><td>Same as <code>--!</code></td></tr>
+          <tr><td>----></td><td>Strong Dep.</td><td>Adds an ON rule to the target, and an OFF rule to itself.</td></tr>
+          <tr><td>--#--</td><td>Mutual Exc.</td><td>Adds cross-disabling OFF rules between both labels.</td></tr>
+        </table>
+
+        <h3>Syntax</h3>
+        <div class="formula-box">
+          <span class="ac">triggerLabel</span>  <span class="ar">->></span>  <span class="ac">targetLabel</span>  [: <span class="rl">ruleLabel</span>]  [<span class="kw">disabled</span>]  [<span class="kw">if</span> (<span class="op">condition</span>)]  [<span class="kw">then</span> { <span class="va">updates</span> }]
+        </div>
+
+        <div class="code-block">
+          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>rules.rta</span></div>
+          <div class="code-body"><pre><span class="cm">// Every time 'unlock' fires, it activates the 'open' transition</span>
+<span class="ac">unlock</span>  <span class="ar">->></span>  <span class="ac">open</span> : <span class="rl">rule1</span>
+
+<span class="cm">// Every time 'lock' fires, it deactivates 'open'</span>
+<span class="ac">lock</span>    <span class="ar">--!</span>  <span class="ac">open</span> : <span class="rl">rule2</span>
+
+<span class="cm">// Rule only fires if a condition is met</span>
+<span class="ac">login</span>   <span class="ar">->></span>  <span class="ac">premiumFeature</span> <span class="kw">if</span> (<span class="va">userTier</span> <span class="op">>=</span> <span class="nu">2</span>)
+
+<span class="cm">// Rule that also updates a variable when triggered</span>
+<span class="ac">purchase</span> <span class="ar">->></span> <span class="ac">upsell</span> <span class="kw">if</span> (<span class="va">cart</span> <span class="op">></span> <span class="nu">0</span>) <span class="kw">then</span> {
+    <span class="va">revenue</span>' := <span class="va">revenue</span> + <span class="nu">1</span>
+}</pre></div>
+        </div>
+
+        <div class="callout callout-warn">
+          <strong>Cascade propagation</strong>
+          Rules can target other rule labels, creating chains. If <code>a ->> b</code> and <code>b ->> c</code>, firing <code>a</code> will cascade through <code>b</code> and reach <code>c</code>.
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 6. VARIABLES -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="variables">
+        <div class="section-eyebrow">Section 06</div>
+        <h2>Variables &amp; Types</h2>
+
+        <h3>Scalar types</h3>
+        <div class="code-block">
+          <div class="code-body"><pre><span class="kw">int</span>   <span class="va">count</span>    = <span class="nu">0</span>           <span class="cm">// integer, default 0</span>
+<span class="kw">int</span>   <span class="va">level[<span class="nu">0</span>..<span class="nu">10</span>]</span>    = <span class="nu">1</span>   <span class="cm">// bounded integer [min..max]</span>
+<span class="kw">float</span> <span class="va">ratio</span>    = <span class="nu">0.5</span>
+<span class="kw">float</span> <span class="va">temperature[<span class="nu">0.0</span>..<span class="nu">100.0</span>]</span> = <span class="nu">20.0</span> 
+<span class="kw">bool</span>  <span class="va">isActive</span> = <span class="nu">false</span></pre></div>
+        </div>
+
+        <h3 id="arrays">Arrays</h3>
+        <div class="code-block">
+          <div class="code-body"><pre><span class="cm">// Static array</span>
+<span class="kw">int</span>[] <span class="va">scores</span> = [<span class="nu">10</span>, <span class="nu">20</span>, <span class="nu">30</span>]
+
+<span class="cm">// Dynamic array (grows when you assign to index == length)</span>
+<span class="kw">dyn int</span>[] <span class="va">log</span> = []
+
+<span class="cm">// Dynamic with max size</span>
+<span class="kw">dyn int</span>[] <span class="va">recent</span> [<span class="kw">max</span>=<span class="nu">5</span>] = []   <span class="cm">// keeps only last 5 items</span>
+
+<span class="cm">// Access in an expression</span>
+<span class="va">x</span>' := <span class="va">scores</span>[<span class="nu">1</span>]          <span class="cm">// x = 20</span>
+
+<span class="cm">// Write</span>
+<span class="va">scores</span>[<span class="nu">0</span>]' := <span class="nu">99</span>         <span class="cm">// scores becomes [99, 20, 30]</span></pre></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 7. CONDITIONS -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="conditions">
+        <div class="section-eyebrow">Section 07</div>
+        <h2>Conditions (Guards)</h2>
+        <p>A guard is an <code>if (...)</code> clause attached to any edge or rule. The transition only fires if the condition is <strong>true</strong> in the current state.</p>
+
+        <h3>Comparison operators</h3>
+        <table class="ref-table">
+          <tr><th>Operator</th><th>Meaning</th></tr>
+          <tr><td>==</td><td>Equal (also accepted as <code>=</code>)</td></tr>
+          <tr><td>!=</td><td>Not equal</td></tr>
+          <tr><td>&lt;</td><td>Less than</td></tr>
+          <tr><td>&lt;=</td><td>Less than or equal</td></tr>
+          <tr><td>&gt;</td><td>Greater than</td></tr>
+          <tr><td>&gt;=</td><td>Greater than or equal</td></tr>
+        </table>
+
+        <h3>Logical connectives</h3>
+        <table class="ref-table">
+          <tr><th>Keyword</th><th>Symbol</th><th>Meaning</th></tr>
+          <tr><td>AND</td><td>&&</td><td>Both conditions must hold</td></tr>
+          <tr><td>OR</td><td>||</td><td>At least one must hold</td></tr>
+        </table>
+
+        <h3>Examples</h3>
+        <div class="code-block">
+          <div class="code-body"><pre><span class="cm">// Clock guard</span>
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s1</span> : <span class="ac">timeout</span> <span class="kw">if</span> (<span class="va">t</span> <span class="op">>=</span> <span class="nu">10</span>)
+
+<span class="cm">// Compound guard (clock + variable)</span>
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s2</span> : <span class="ac">jump</span>  <span class="kw">if</span> (<span class="va">t</span> <span class="op">>=</span> <span class="nu">5</span> <span class="op">AND</span> <span class="va">score</span> <span class="op">>=</span> <span class="nu">10</span>)
+
+<span class="cm">// Guard with then-block</span>
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s1</span> : <span class="ac">advance</span> <span class="kw">if</span> (<span class="va">n</span> <span class="op"><</span> <span class="nu">3</span>) <span class="kw">then</span> {
+    <span class="va">n</span>' := <span class="va">n</span> + <span class="nu">1</span>
+}</pre></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 8. UPDATES -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="updates">
+        <div class="section-eyebrow">Section 08</div>
+        <h2>Updates (Side Effects)</h2>
+        <p>When a transition fires, it can update variables and reset clocks. Updates appear in a <code>then { ... }</code> block, or inline for a single assignment.</p>
+
+        <h3>Assignment</h3>
+        <div class="code-block">
+          <div class="code-body"><pre><span class="cm">// Inline</span>
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s1</span> : <span class="ac">pay</span>  <span class="va">total</span>' := <span class="va">total</span> + <span class="nu">10</span>
+
+<span class="cm">// then-block for multiple statements (like resetting a clock)</span>
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s1</span> : <span class="ac">buy</span>  <span class="kw">then</span> {
+    <span class="va">balance</span>' := <span class="va">balance</span> - <span class="nu">5</span>
+    <span class="va">t</span>'       := <span class="nu">0</span>
+}
+
+<span class="cm">// Nested if inside then</span>
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s1</span> : <span class="ac">check</span> <span class="kw">then</span> {
+    <span class="kw">if</span> (<span class="va">score</span> <span class="op">></span> <span class="nu">50</span>) <span class="kw">then</span> {
+        <span class="va">grade</span>' := <span class="nu">1</span>
+    }
+}</pre></div>
+        </div>
+
+        <h3>Math expressions</h3>
+        <table class="ref-table">
+          <tr><th>Operator</th><th>Meaning</th></tr>
+          <tr><td>+</td><td>Addition</td></tr>
+          <tr><td>-</td><td>Subtraction</td></tr>
+          <tr><td>*</td><td>Multiplication</td></tr>
+          <tr><td>/</td><td>Division</td></tr>
+        </table>
+        
+        <h3>Print statement</h3>
+        <div class="code-block">
+          <div class="code-body"><pre><span class="kw">print</span>(<span class="va">counter</span>)        <span class="cm">// prints value to browser console</span></pre></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 9. FUNCTIONS -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="functions">
+        <div class="section-eyebrow">Section 09</div>
+        <h2>Functions</h2>
+        <p>You can define reusable functions and call them inside expressions or updates.</p>
+
+        <div class="code-block">
+          <div class="code-body"><pre><span class="kw">def</span> <span class="ac">clamp</span>(<span class="va">x</span>, <span class="va">lo</span>, <span class="va">hi</span>) {
+    <span class="kw">if</span> (<span class="va">x</span> <span class="op"><</span> <span class="va">lo</span>) <span class="kw">then</span> { <span class="kw">return</span> <span class="va">lo</span> }
+    <span class="kw">if</span> (<span class="va">x</span> <span class="op">></span> <span class="va">hi</span>) <span class="kw">then</span> { <span class="kw">return</span> <span class="va">hi</span> }
+    <span class="kw">return</span> <span class="va">x</span>
+}
+
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s1</span> : <span class="ac">adjust</span> <span class="kw">then</span> {
+    <span class="va">volume</span>' := <span class="ac">clamp</span>(<span class="va">volume</span> + <span class="nu">10</span>, <span class="nu">0</span>, <span class="nu">100</span>)
+}
+
+<span class="cm">// foreach loop (works on arrays)</span>
+<span class="kw">def</span> <span class="ac">sumArr</span>(<span class="va">arr</span>) {
+    <span class="va">total</span>' := <span class="nu">0</span>
+    <span class="kw">foreach</span> (<span class="va">item</span> <span class="kw">in</span> <span class="va">arr</span>) {
+        <span class="va">total</span>' := <span class="va">total</span> + <span class="va">item</span>
+    }
+    <span class="kw">return</span> <span class="va">total</span>
+}</pre></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 10. MODULES -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="modules">
+        <div class="section-eyebrow">Section 10</div>
+        <h2>Modules — <code>aut</code></h2>
+        <p>The <code>aut</code> keyword creates a named sub-automaton. State and label names inside are automatically prefixed, so there are no name collisions between modules.</p>
+
+        <div class="code-block">
+          <div class="code-body"><pre><span class="kw">aut</span> RobotA {
+    <span class="kw">init</span> <span class="st">idle</span>
+    <span class="st">idle</span>    <span class="ar">---></span> <span class="st">working</span> : <span class="ac">start</span>
+    <span class="st">working</span> <span class="ar">---></span> <span class="st">idle</span>    : <span class="ac">stop</span>
+}
+
+<span class="kw">aut</span> RobotB {
+    <span class="kw">init</span> <span class="st">idle</span>
+    <span class="st">idle</span>    <span class="ar">---></span> <span class="st">busy</span>    : <span class="ac">start</span> <span class="kw">disabled</span>
+    <span class="st">busy</span>    <span class="ar">---></span> <span class="st">idle</span>    : <span class="ac">done</span>
+}
+
+<span class="cm">// Cross-module rule: RobotA's 'start' enables RobotB's 'start'</span>
+RobotA.start <span class="ar">->></span> RobotB.start : <span class="rl">sync</span></pre></div>
+        </div>
+      </section>
+
+      <hr class="divider">
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 11. PDL -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="pdl">
+        <div class="section-eyebrow">Section 11</div>
+        <h2>PDL Verification</h2>
+        <p>The PDL (Propositional Dynamic Logic) verifier checks logical properties of your model starting from any state.</p>
+
+        <h3>Propositional connectives</h3>
+        <div class="formula-box">
+          <span class="pdl">true</span>  &nbsp;|&nbsp;  <span class="pdl">false</span>  &nbsp;|&nbsp;  <span class="pdl">¬φ</span>  &nbsp;|&nbsp;  <span class="pdl">φ ∧ ψ</span>  &nbsp;|&nbsp;  <span class="pdl">φ ∨ ψ</span>  &nbsp;|&nbsp;  <span class="pdl">φ → ψ</span>  &nbsp;|&nbsp;  <span class="pdl">φ ↔ ψ</span>
+        </div>
+
+        <h3>State &amp; condition propositions</h3>
+        <div class="formula-box">
+          <span class="pdl">s0</span>               <span class="cm">// true if current state = s0</span><br>
+          <span class="pdl">counter == 3</span>     <span class="cm">// variable condition</span><br>
+          <span class="pdl">t <= 5</span>           <span class="cm">// clock condition</span>
+        </div>
+
+        <h3>Modal operators</h3>
+        <table class="ref-table">
+          <tr><th>Formula</th><th>Meaning</th></tr>
+          <tr><td>&lt;&gt; φ</td><td>Diamond: <em>some</em> next state satisfies φ</td></tr>
+          <tr><td>[] φ</td><td>Box: <em>all</em> next states satisfy φ</td></tr>
+          <tr><td>&lt;α&gt; φ</td><td>After program α there exists a state satisfying φ</td></tr>
+          <tr><td>[α] φ</td><td>After program α all reachable states satisfy φ</td></tr>
+        </table>
+
+        <h3>PDL programs (α)</h3>
+        <table class="ref-table">
+          <tr><th>Syntax</th><th>Meaning</th></tr>
+          <tr><td>actionName</td><td>Fire this action once</td></tr>
+          <tr><td>delay:1.0</td><td>Explicitly let 1.0 time unit pass</td></tr>
+          <tr><td>a ; b</td><td>Sequence: fire a then b</td></tr>
+          <tr><td>a + b</td><td>Choice: fire a or b</td></tr>
+          <tr><td>a*</td><td>Kleene star: repeat a zero or more times</td></tr>
+        </table>
+
+        <div class="callout callout-info">
+          <strong>Where to type PDL</strong>
+          Use the <strong>PDL</strong> tab in the right panel. Select a starting state, then type your formula. Click the coloured buttons to insert state names, actions, and operators automatically.
+        </div>
+
+        <h3>PDL examples</h3>
+        <div class="tab-group">
+          <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab(this,'pdl1')">Reachability</button>
+            <button class="tab-btn" onclick="switchTab(this,'pdl3')">Programs</button>
+            <button class="tab-btn" onclick="switchTab(this,'pdl4')">Variables</button>
+          </div>
+          <div id="pdl1" class="tab-pane active">
+            <div class="code-block">
+              <div class="code-body"><pre><span class="cm">// Can we reach state 'win'?</span>
+<span class="pdl">&lt;&gt; win</span>
+
+<span class="cm">// Is it true that every next step goes to 'safe'?</span>
+<span class="pdl">[] safe</span>
+
+<span class="cm">// After firing 'timeout', can we reach 'end'?</span>
+<span class="pdl">&lt;timeout&gt; end</span>
+
+<span class="cm">// No matter how we fire 'move', we stay in 'valid'?</span>
+<span class="pdl">[move*] valid</span></pre></div>
+            </div>
+          </div>
+          <div id="pdl3" class="tab-pane">
+            <div class="code-block">
+              <div class="code-body"><pre><span class="cm">// After firing 'a' then 'b', is 'target' reachable?</span>
+<span class="pdl">&lt;a ; b&gt; target</span>
+
+<span class="cm">// After letting 5.0 time units pass, is 'timeout' available?</span>
+<span class="pdl">&lt;delay:5.0&gt; &lt;timeout&gt; true</span>
+
+<span class="cm">// After any number of 'loop' firings, is 'done' reachable?</span>
+<span class="pdl">&lt;loop*&gt; done</span></pre></div>
+            </div>
+          </div>
+          <div id="pdl4" class="tab-pane">
+            <div class="code-block">
+              <div class="code-body"><pre><span class="cm">// Does every reachable state keep score >= 0?</span>
+<span class="pdl">[] score >= 0</span>
+
+<span class="cm">// Combination: in state 'end' with clock t > 10</span>
+<span class="pdl">end && t > 10</span></pre></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 13. PATH OPTIMIZER -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="path">
+        <div class="section-eyebrow">Section 13</div>
+        <h2>Path Optimizer</h2>
+        <p>The <strong>Path</strong> tab in the bottom panel uses a breadth-first search to find the shortest path from the initial state to a target.</p>
+
+        <table class="ref-table">
+          <tr><th>Option</th><th>Meaning</th></tr>
+          <tr><td>Reach State</td><td>Finds the shortest sequence of actions/delays to reach a specific state.</td></tr>
+          <tr><td>Variable Condition</td><td>Finds the shortest sequence of actions/delays until a specific boolean condition holds (e.g. <code>counter == 5</code>).</td></tr>
+        </table>
+      </section>
+
+      <hr class="divider">
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 15. EXAMPLES -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="examples">
+        <div class="section-eyebrow">Section 14</div>
+        <h2>Complete Model Examples</h2>
+
+        <!-- Example 1 -->
+        <h3>1. Simple Timer</h3>
+        <p>A fundamental example using clocks, invariants, and time-based guards.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>timer.rta</span></div>
+          <div class="code-body"><pre><span class="kw">name</span> TIMER
+<span class="kw">clock</span> <span class="va">t</span>
+<span class="kw">init</span> <span class="st">s0</span>
+
+<span class="cm">// Cannot stay in s1 if t > 10</span>
+<span class="kw">inv</span> <span class="st">s1</span>: <span class="va">t</span> <span class="op"><=</span> <span class="nu">10</span>
+
+<span class="st">s0</span> <span class="ar">---></span> <span class="st">s1</span>: <span class="ac">start</span> <span class="kw">then</span> { <span class="va">t</span>' := <span class="nu">0</span> }
+
+<span class="cm">// Forced to take this before t exceeds 10</span>
+<span class="st">s1</span> <span class="ar">---></span> <span class="st">s2</span>: <span class="ac">timeout</span> <span class="kw">if</span> (<span class="va">t</span> <span class="op">>=</span> <span class="nu">10</span>)
+
+<span class="cm">// Premature exit</span>
+<span class="st">s1</span> <span class="ar">---></span> <span class="st">s0</span>: <span class="ac">escape</span> <span class="kw">if</span> (<span class="va">t</span> <span class="op"><</span> <span class="nu">5</span>)</pre></div>
+        </div>
+
+        <!-- Example 2 -->
+        <h3>2. Reconfigurable Content Feed</h3>
+        <div class="code-block">
+          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>feed.rta</span></div>
+          <div class="code-body"><pre><span class="kw">name</span> LikeAlgorithm
+<span class="kw">init</span> <span class="st">Feed</span>
+
+<span class="st">Feed</span>    <span class="ar">---></span> <span class="st">Watch</span>  : <span class="ac">watch</span>
+<span class="st">Watch</span>   <span class="ar">---></span> <span class="st">Watch</span>  : <span class="ac">like</span>
+<span class="st">Watch</span>   <span class="ar">---></span> <span class="st">Feed</span>   : <span class="ac">dontLike</span>
+<span class="st">Watch</span>   <span class="ar">---></span> <span class="st">Feed</span>   : <span class="ac">refresh</span>   <span class="kw">disabled</span>
+<span class="st">Feed</span>    <span class="ar">---></span> <span class="st">List</span>   : <span class="ac">watchLike</span> <span class="kw">disabled</span>
+<span class="st">List</span>    <span class="ar">---></span> <span class="st">Watch</span>  : <span class="ac">watch2</span>
+
+<span class="cm">// Rules</span>
+<span class="ac">watch</span>     <span class="ar">->></span>  <span class="ac">dontLike</span>  : <span class="rl">wd</span>
+<span class="ac">like</span>      <span class="ar">--!</span>  <span class="ac">dontLike</span>  : <span class="rl">ld</span>
+<span class="ac">like</span>      <span class="ar">->></span>  <span class="ac">refresh</span>   : <span class="rl">lr</span>
+<span class="ac">like</span>      <span class="ar">->></span>  <span class="ac">watchLike</span> : <span class="rl">lw</span>
+<span class="ac">dontLike</span>  <span class="ar">--!</span>  <span class="ac">watchLike</span> : <span class="rl">dw</span></pre></div>
+        </div>
+
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- QUICK REFERENCE CARD -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="cheatsheet">
+        <div class="section-eyebrow">Appendix</div>
+        <h2>Quick Reference Card</h2>
+
+        <h3>Declaration keywords</h3>
+        <table class="ref-table">
+          <tr><th>Keyword</th><th>Example</th><th>Meaning</th></tr>
+          <tr><td>name</td><td>name MyModel</td><td>Model identifier (optional)</td></tr>
+          <tr><td>init</td><td>init s0</td><td>Set initial state</td></tr>
+          <tr><td>clock</td><td>clock t</td><td>Declares a continuous time clock</td></tr>
+          <tr><td>inv</td><td>inv s1: t &lt;= 5</td><td>State invariant restricting time progress</td></tr>
+          <tr><td>delay</td><td>delay rule: t, 2.5</td><td>Delays a rule execution by 2.5 time units</td></tr>
+          <tr><td>int</td><td>int x = 0</td><td>Integer variable</td></tr>
+          <tr><td>float</td><td>float r = 0.5</td><td>Float variable</td></tr>
+          <tr><td>bool</td><td>bool ok = true</td><td>Boolean variable</td></tr>
+          <tr><td>dyn int[]</td><td>dyn int[] q = []</td><td>Dynamic array</td></tr>
+          <tr><td>def</td><td>def f(x) { ... }</td><td>Function definition</td></tr>
+          <tr><td>aut</td><td>aut Worker { ... }</td><td>Module / sub-automaton</td></tr>
+        </table>
+
+        <h3>Edge arrows</h3>
+        <table class="ref-table">
+          <tr><th>Arrow</th><th>Type</th><th>Usage</th></tr>
+          <tr><td>---></td><td>Standard</td><td>Simple state transition</td></tr>
+          <tr><td>-id-></td><td>Named</td><td>Transition with explicit transId</td></tr>
+          <tr><td>->></td><td>Rule ON</td><td>Hyper-edge: activate target transition</td></tr>
+          <tr><td>--!</td><td>Rule OFF</td><td>Hyper-edge: deactivate target transition</td></tr>
+          <tr><td>--x</td><td>Rule OFF</td><td>Alias for --!</td></tr>
+          <tr><td>----></td><td>Strong Dep.</td><td>Activate target, deactivate self</td></tr>
+          <tr><td>--#--</td><td>Mutual Exc.</td><td>Cross-disable both labels</td></tr>
+        </table>
+      </section>
+
+      <footer>
+        <p>RTA Tool — RTALang Reference &nbsp;·&nbsp; <a href="index.html">← Back to Tool</a></p>
+      </footer>
+
+    </div>
+  </main>
+</div>
+
+<script>
+// Tab switching
+function switchTab(btn, paneId) {
+  const group = btn.closest('.tab-group');
+  group.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  group.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(paneId).classList.add('active');
+}
+
+// Active sidebar link on scroll
+const links = document.querySelectorAll('.side-link');
+const sections = document.querySelectorAll('.doc-section');
+const mainEl = document.querySelector('main');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const target = document.querySelector(`.side-link[href="#${entry.target.id}"]`);
+      if (target) target.classList.add('active');
+    }
+  });
+}, { 
+  root: mainEl,
+  rootMargin: '-20% 0px -70% 0px' 
+});
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

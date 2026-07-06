@@ -2,11 +2,127 @@ package rta.backend
 
 import rta.syntax.Program2.{Edges, RxGraph, QName, Edge, showEdges}
 import rta.syntax.Condition
+import rta.syntax.RuntimeValue
 import scala.util.boundary, boundary.break
+import rta.syntax.Formula
+import rta.syntax.Formula.*
+
 
 object AnalyseLTS:
 
-  case class FastStateKey(inits: Set[QName], vars: Map[QName, Int], clocks: Map[QName, Double])
+  case class FastStateKey(inits: Set[QName], vars: Map[QName, RuntimeValue], clocks: Map[QName, Double])
+
+  // =======================================================================
+  // LTL AST & EQUIVALENCE CHECKER (ReTA vs ReGA)
+  // =======================================================================
+
+  def evalReTA(trace: List[RxGraph], phi: Formula): Boolean = {
+    if (trace.isEmpty) return false
+    phi match {
+      case True => true
+      case False => false
+      case StateProp(e) => trace.head.act.exists(_._4 == e) // No ReTA as folhas são Arestas Ativas
+      case CondProp(_) => throw new Exception("ReTA usa semântica de aresta, não condições de variável.")
+      case Not(p) => !evalReTA(trace, p)
+      case And(p, q) => evalReTA(trace, p) && evalReTA(trace, q)
+      case Or(p, q) => evalReTA(trace, p) || evalReTA(trace, q)
+      case Impl(p, q) => !evalReTA(trace, p) || evalReTA(trace, q)
+      case Iff(p, q) => evalReTA(trace, p) == evalReTA(trace, q)
+      case LtlNext(p) => if (trace.tail.isEmpty) false else evalReTA(trace.tail, p)
+      case LtlUntil(p, q) =>
+        trace.indices.find(i => evalReTA(trace.drop(i), q)) match {
+          case Some(idx) => (0 until idx).forall(i => evalReTA(trace.drop(i), p))
+          case None => false
+        }
+      case LtlGlobally(p) => trace.indices.forall(i => evalReTA(trace.drop(i), p))
+      case LtlEventually(p) => trace.indices.exists(i => evalReTA(trace.drop(i), p))
+      case _ => throw new Exception(s"Operador PDL ($phi) não é suportado na avaliação linear LTL.")
+    }
+  }
+
+  def evalReGA(trace: List[RxGraph], phi: Formula): Boolean = {
+    if (trace.isEmpty) return false
+    phi match {
+      case True => true
+      case False => false
+      case CondProp(c) => RxSemantics.evalCondition(c, trace.head) // No ReGA as folhas são Avaliação de Variáveis
+      case StateProp(_) => throw new Exception("ReGA usa variáveis (ex: [x == 1]), não arestas diretas.")
+      case Not(p) => !evalReGA(trace, p)
+      case And(p, q) => evalReGA(trace, p) && evalReGA(trace, q)
+      case Or(p, q) => evalReGA(trace, p) || evalReGA(trace, q)
+      case Impl(p, q) => !evalReGA(trace, p) || evalReGA(trace, q)
+      case Iff(p, q) => evalReGA(trace, p) == evalReGA(trace, q)
+      case LtlNext(p) => if (trace.tail.isEmpty) false else evalReGA(trace.tail, p)
+      case LtlUntil(p, q) =>
+        trace.indices.find(i => evalReGA(trace.drop(i), q)) match {
+          case Some(idx) => (0 until idx).forall(i => evalReGA(trace.drop(i), p))
+          case None => false
+        }
+      case LtlGlobally(p) => trace.indices.forall(i => evalReGA(trace.drop(i), p))
+      case LtlEventually(p) => trace.indices.exists(i => evalReGA(trace.drop(i), p))
+      case _ => throw new Exception(s"Operador PDL ($phi) não é suportado na avaliação linear LTL.")
+    }
+  }
+
+
+  // Avaliador Híbrido para o Frontend (Aceita Arestas e Variáveis em simultâneo)
+  def evalLTLUser(trace: List[RxGraph], phi: Formula): Boolean = {
+    if (trace.isEmpty) return false
+    phi match {
+      case True => true
+      case False => false
+      case StateProp(e) => trace.head.act.exists(_._4 == e)        // Verifica Arestas
+      case CondProp(c) => RxSemantics.evalCondition(c, trace.head) // Verifica Variáveis
+      case Not(p) => !evalLTLUser(trace, p)
+      case And(p, q) => evalLTLUser(trace, p) && evalLTLUser(trace, q)
+      case Or(p, q) => evalLTLUser(trace, p) || evalLTLUser(trace, q)
+      case Impl(p, q) => !evalLTLUser(trace, p) || evalLTLUser(trace, q)
+      case Iff(p, q) => evalLTLUser(trace, p) == evalLTLUser(trace, q)
+      case LtlNext(p) => if (trace.tail.isEmpty) false else evalLTLUser(trace.tail, p)
+      case LtlUntil(p, q) =>
+        trace.indices.find(i => evalLTLUser(trace.drop(i), q)) match {
+          case Some(idx) => (0 until idx).forall(i => evalLTLUser(trace.drop(i), p))
+          case None => false
+        }
+      case LtlGlobally(p) => trace.indices.forall(i => evalLTLUser(trace.drop(i), p))
+      case LtlEventually(p) => trace.indices.exists(i => evalLTLUser(trace.drop(i), p))
+      case _ => throw new Exception(s"Operador ($phi) não suportado em LTL Dinâmico.")
+    }
+  }
+
+  def generateRandomTrace(start: RxGraph, length: Int): (List[RxGraph], List[String]) = {
+    var trace = List(start)
+    var labels = List[String]()
+    var current = start
+    for (_ <- 0 until length) {
+      val nexts = RxSemantics.nextEdge(current).toList
+      if (nexts.nonEmpty) {
+        val step = nexts.head
+        current = step._2
+        trace = trace :+ current
+        labels = labels :+ step._1._4.show
+      }
+    }
+    (trace, labels)
+  }
+
+  def followPath(start: RxGraph, labels: List[String]): List[RxGraph] = {
+    @scala.annotation.tailrec
+    def loop(current: RxGraph, remaining: List[String], acc: List[RxGraph]): List[RxGraph] = {
+      remaining match {
+        case Nil => acc
+        case lbl :: tail =>
+          val nexts = RxSemantics.nextEdge(current).toList
+          nexts.find(_._1._4.show == lbl) match {
+            case Some(step) =>
+              loop(step._2, tail, acc :+ step._2)
+            case None =>
+              acc
+          }
+      }
+    }
+    loop(start, labels, List(start))
+  }
 
   def randomWalk(rx:RxGraph, max:Int=5000): (Set[RxGraph],Int,Edges,List[String]) =
     val states = for (a, bs) <- rx.edg.toSet; (b, id, lbl) <- bs; s <- Set(a, b) yield s
@@ -101,7 +217,8 @@ object AnalyseLTS:
           
           val canTimePass = current.inits.forall(s => 
             nextTimeState.invariants.get(s) match {
-              case Some(inv) => Condition.evaluate(inv, nextTimeState.val_env, nextTimeState.clock_env)
+              
+              case Some(inv) => RxSemantics.evalCondition(inv, nextTimeState)
               case None => true
             }
           )
@@ -116,7 +233,8 @@ object AnalyseLTS:
   }
 
   def findShortestPathToCondition(start: RxGraph, targetCond: Condition, maxStates: Int = 50000): Option[List[String]] = boundary:
-    if (Condition.evaluate(targetCond, start.val_env, start.clock_env)) break(Some(Nil))
+
+    if (RxSemantics.evalCondition(targetCond, start)) break(Some(Nil))
 
     val queue = collection.mutable.Queue[RxGraph]()
     val parentOf = collection.mutable.Map[FastStateKey, (RxGraph, String)]()
@@ -138,7 +256,8 @@ object AnalyseLTS:
         
         val canTimePass = current.inits.forall(s => 
           nextTimeState.invariants.get(s) match {
-            case Some(inv) => Condition.evaluate(inv, nextTimeState.val_env, nextTimeState.clock_env)
+            
+            case Some(inv) => RxSemantics.evalCondition(inv, nextTimeState)
             case None => true
           }
         )
@@ -152,7 +271,7 @@ object AnalyseLTS:
         if (!parentOf.contains(nextKey) && nextKey != startKey) {
           parentOf(nextKey) = (current, label)
 
-          if (Condition.evaluate(targetCond, nextGraph.val_env, nextGraph.clock_env)) {
+          if (RxSemantics.evalCondition(targetCond, nextGraph)) {
             break(Some(reconstructFastPath(nextKey, parentOf)))
           }
 

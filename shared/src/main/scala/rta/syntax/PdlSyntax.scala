@@ -17,13 +17,20 @@ object Formula {
   case class Impl(p: Formula, q: Formula) extends Formula
   case class Iff(p: Formula, q: Formula) extends Formula
 
-  case class PipeAnd(p: Formula, q: Formula) extends Formula // Nosso novo operador '&|&'
+  case class PipeAnd(p: Formula, q: Formula) extends Formula //  '&|&'
+
+  // --- NÓS PDL ---
   case class Box(p: Formula) extends Formula
   case class Diamond(p: Formula) extends Formula
-
-
   case class BoxP(act: PdlProgram, p: Formula) extends Formula      // [α]φ
   case class DiamondP(act: PdlProgram, p: Formula) extends Formula  // <α>φ
+
+
+  // --- NÓS LTL (Traços) ---
+  case class LtlNext(p: Formula) extends Formula              // X φ
+  case class LtlUntil(p: Formula, q: Formula) extends Formula // φ U ψ
+  case class LtlGlobally(p: Formula) extends Formula          // G φ
+  case class LtlEventually(p: Formula) extends Formula        // F φ
 
   
 

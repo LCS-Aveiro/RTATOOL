@@ -1,19 +1,30 @@
 package rta.backend
 
 import rta.syntax.Program2.{Edge, RxGraph, QName}
-import rta.syntax.{Condition, UpdateExpr, Statement, UpdateStmt, IfThenStmt}
+import rta.syntax.{Condition, UpdateExpr, Statement, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt}
 
 object CytoscapeConverter {
 
   private def formatStatements(stmts: List[Statement], indent: String = ""): String = {
     stmts.map {
-      case UpdateStmt(upd) =>
-        s"${indent}${upd.variable.show}' := ${UpdateExpr.show(upd.expr)}"
+      case AssignStmt(variable, expr) =>
+        s"${indent}${variable.show}' := ${UpdateExpr.show(expr)}"
+      case ArrayAssignStmt(arrName, index, expr) =>
+        s"${indent}${arrName.show}[${UpdateExpr.show(index)}]' := ${UpdateExpr.show(expr)}"
       case IfThenStmt(condition, thenStmts) =>
         val conditionLine = s"${indent}if (${condition.toMermaidString}) then {"
         val thenBlock = formatStatements(thenStmts, indent + "  ")
         val closingBrace = s"${indent}}"
         Seq(conditionLine, thenBlock, closingBrace).filter(_.nonEmpty).mkString("\n")
+      case ForeachStmt(iter, arr, body) =>
+        val foreachLine = s"${indent}foreach (${iter.show} in ${arr.show}) {"
+        val bodyBlock = formatStatements(body, indent + "  ")
+        val closingBrace = s"${indent}}"
+        Seq(foreachLine, bodyBlock, closingBrace).filter(_.nonEmpty).mkString("\n")
+      case ReturnStmt(expr) =>
+        s"${indent}return ${UpdateExpr.show(expr)}"
+      case PrintStmt(expr) =>
+        s"${indent}print(${UpdateExpr.show(expr)})"
     }.mkString("\n")
   }
 

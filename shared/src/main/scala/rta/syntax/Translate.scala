@@ -1,7 +1,7 @@
 package rta.syntax
 
 import rta.syntax.Program2.{Edge, QName, RxGraph}
-import rta.syntax.{Condition, Statement, UpdateStmt, IfThenStmt, UpdateExpr}
+import rta.syntax.{Condition, Statement, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt, UpdateExpr}
 
 object RTATranslator {
 
@@ -51,7 +51,7 @@ object RTATranslator {
     builder.append("\n// Declarations\n")
     originalLines.foreach { line =>
       val trim = line.trim
-      if (trim.startsWith("int ") || trim.startsWith("init ") || trim.startsWith("clock ") || trim.startsWith("inv ")) {
+      if (trim.startsWith("int ") || trim.startsWith("init ") || trim.startsWith("clock ") || trim.startsWith("inv ") || trim.startsWith("float ") || trim.startsWith("bool ")) {
         if (!trim.contains("_active =")) builder.append(line).append("\n")
       }
     }
@@ -185,8 +185,17 @@ object RTATranslator {
   private def sanitizeForVar(q: QName): String = q.n.mkString("_")
   private def unqualify(q: QName): QName = if (q.n.length > 1) QName(q.n.tail) else q
 
+  private def getExprVars(expr: UpdateExpr): Set[QName] = expr match {
+    case UpdateExpr.Var(q) => Set(q)
+    case UpdateExpr.ArrayAccess(arr, idx) => Set(arr) ++ getExprVars(idx)
+    case UpdateExpr.MathOp(l, _, r) => getExprVars(l) ++ getExprVars(r)
+    case UpdateExpr.FuncCall(f, args) => Set(f) ++ args.flatMap(getExprVars).toSet
+    case UpdateExpr.LitArray(elems) => elems.flatMap(getExprVars).toSet
+    case _ => Set.empty
+  }
+
   private def getConditionVars(cond: Condition): Set[QName] = cond match {
-    case Condition.AtomicCond(left, _, right) => Set(left) ++ (right match { case Right(q) => Set(q); case _ => Set.empty })
+    case Condition.AtomicCond(left, _, right) => getExprVars(left) ++ getExprVars(right)
     case Condition.And(l, r) => getConditionVars(l) ++ getConditionVars(r)
     case Condition.Or(l, r) => getConditionVars(l) ++ getConditionVars(r)
   }
@@ -215,7 +224,11 @@ object RTATranslator {
   private def conditionToString(cond: Condition): String = cond.toMermaidString
 
   private def statementToString(stmt: Statement): String = stmt match {
-    case UpdateStmt(upd) => s"${upd.variable.show}' := ${UpdateExpr.show(upd.expr)}"
+    case AssignStmt(variable, expr) => s"${variable.show}' := ${UpdateExpr.show(expr)}"
+    case ArrayAssignStmt(arrName, index, expr) => s"${arrName.show}[${UpdateExpr.show(index)}]' := ${UpdateExpr.show(expr)}"
     case IfThenStmt(c, ts) => s"if (${conditionToString(c)}) then { ${ts.map(statementToString).mkString("; ")} }"
+    case ForeachStmt(iter, arr, body) => s"foreach (${iter.show} in ${arr.show}) { ${body.map(statementToString).mkString("; ")} }"
+    case ReturnStmt(expr) => s"return ${UpdateExpr.show(expr)}"
+    case PrintStmt(expr) => s"print(${UpdateExpr.show(expr)})"
   }
 }

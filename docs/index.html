@@ -10,6 +10,8 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/codemirror/codemirror.css" rel="stylesheet">
     <link href="css/codemirror/theme/elegant.css" rel="stylesheet">
+        <link rel="stylesheet" href="js/static/codemirror/addon/hint/show-hint.css">
+
     <link
         href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
         rel="stylesheet">
@@ -230,17 +232,38 @@
 
                     <div id="bottom-content">
 
-                        <div class="bottom-pane" id="bpane-analysis">
-                            <div class="sec-label">Analysis Tools</div>
-                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                                <button class="u-btn" onclick="showStats()"><span
-                                        class="glyphicon glyphicon-stats"></span> Statistics</button>
-                                <button class="u-btn" style="border-color:#991b1b; color:#991b1b;"
-                                    onclick="checkProblems()"><span class="glyphicon glyphicon-warning-sign"></span>
-                                    Check Problems</button>
-                            </div>
-                            <div id="analysisResult"></div>
-                        </div>
+<div class="bottom-pane" id="bpane-analysis">
+    <div class="sec-label">Analysis Tools</div>
+    <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 15px;">
+        <button class="u-btn" onclick="showStats()"><span class="glyphicon glyphicon-stats"></span> Statistics</button>
+        <button class="u-btn" style="border-color:#991b1b; color:#991b1b;" onclick="checkProblems()"><span class="glyphicon glyphicon-warning-sign"></span> Check Problems</button>
+    </div>
+
+<div class="sec-label" style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">LTL Equivalence Proofs (Theorem 1)</div>
+
+<div style="margin-bottom: 8px;">
+    <span style="font-size:10px; color:#666; margin-right:5px; display:block;">Presets (Pág 24):</span>
+    <div style="display:flex; gap:4px; flex-wrap:wrap;">
+        <button class="btn btn-xs btn-default" onclick="fillLTLPreset(1)">1. Reverse Config</button>
+        <button class="btn btn-xs btn-default" onclick="fillLTLPreset(2)">2. Mutual Excl</button>
+        <button class="btn btn-xs btn-default" onclick="fillLTLPreset(3)">3. Act. Correl</button>
+        <button class="btn btn-xs btn-default" onclick="fillLTLPreset(4)">4. Perpt. Oscil</button>
+    </div>
+</div>
+
+<div style="display:flex; flex-direction:column; gap:6px; margin-bottom: 10px;">
+    <label style="font-size:10px; color:#666; margin:0;">Fórmula ReTA (Arestas):</label>
+    <input type="text" id="ltlRetaInput" class="form-control input-sm" placeholder="ex: □(¬e2 → ♢e2)">
+    
+    <label style="font-size:10px; color:#666; margin:0;">Fórmula ReGA (Variáveis GLTS):</label>
+    <input type="text" id="ltlRegaInput" class="form-control input-sm" placeholder="ex: □(¬[X_e2 == 1] → ♢[X_e2 == 1])">
+    
+    <button class="u-btn primary" onclick="runLTLTest()" style="margin-top: 5px;">
+        <span class="glyphicon glyphicon-play"></span> Traduzir e Provar
+    </button>
+</div>
+<pre id="ltlResultBox" style="display:none; font-size:11px; background:#1e1e1e; color:#00ff00; max-height:250px; overflow:auto;"></pre>
+</div>
 
                         <div class="bottom-pane" id="bpane-bestpath">
                             <div class="sec-label">Path Optimizer</div>
@@ -329,6 +352,10 @@
                             <button class="u-btn" onclick="insertPdl(' → ')">→</button>
                             <button class="u-btn" onclick="insertPdl('true')">⊤</button>
                             <button class="u-btn" onclick="insertPdl('false')">⊥</button>
+                            <button class="u-btn" onclick="insertPdl('□')">□</button>
+                            <button class="u-btn" onclick="insertPdl('♢')">♢</button>
+                            <button class="u-btn" onclick="insertPdl('X')">X</button>
+                            <button class="u-btn" onclick="insertPdl('U')">U</button>
                         </div>
 
                         <input type="text" id="pdlFormula" class="form-control" placeholder="Formula (e.g. ⟨a⟩true)"
@@ -469,10 +496,11 @@
     </div>
 
 
-    <script src="js/static/jquery-1.10.2.min.js"></script>
+<script src="js/static/jquery-1.10.2.min.js"></script>
     <script src="js/static/bootstrap.min.js"></script>
     <script src="js/static/codemirror/codemirror.js"></script>
     <script src="js/static/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="js/static/codemirror/addon/hint/show-hint.js"></script>
     <script src="js/static/codemirror/mode/caos/caos.js"></script>
     <script src="js/static/mermaid.min.js"></script>
     <script src="js/cy/cytoscape.min.js"></script>
@@ -482,37 +510,33 @@
     <script src="js/cy/layout-base.js"></script>
     <script src="js/cy/cytoscape-edge-editing.js"></script>
     <script src="js/cy/all-cytoscape-layouts-backup.js"></script>
+    <script src="js/static/codemirror/addon/hint/show-hint.js"></script>
 
-    <script src="js/main.js"></script>
+    <!-- Motor RTA (Scala.js) -->
     <script src="js/gen/main.js"></script>
-    <script src="js/cy/beatifulEditor.js"></script>
-    <script src="js/export.js"></script>
-    <script src="js/pdlverify.js"></script>
-    <script src="js/cy/main.js"></script>
-    <script src="js/mermaidConfig.js"></script>
-
+ 
     <script>
-
+ 
         function showCanvasTab(id) {
             document.querySelectorAll('.canvas-pane').forEach(p => {
                 p.style.display = 'none';
                 p.classList.remove('active');
             });
-
+ 
             document.querySelectorAll('.canvas-tab').forEach(t => {
                 t.classList.remove('active');
             });
-
+ 
             const targetPane = document.getElementById(id);
             const targetTab = document.getElementById('ctab-' + id);
-
+ 
             if (targetPane) {
                 targetPane.style.display = (id === 'editorTab' || id === 'cyTab') ? 'flex' : 'block';
                 targetPane.classList.add('active');
             }
-
+ 
             if (targetTab) targetTab.classList.add('active');
-
+ 
             if (id === 'editorTab' && typeof editor !== 'undefined') {
                 setTimeout(() => editor.refresh(), 50);
             }
@@ -520,23 +544,23 @@
                 setTimeout(renderMermaidView, 10);
             }
         }
-
+ 
         function showBottomTab(id) {
             const tabs = document.querySelectorAll('#bottom-tabs .bottom-tab');
             tabs.forEach(t => t.classList.remove('active'));
-
+ 
             const panes = document.querySelectorAll('#bottom-content .bottom-pane');
             panes.forEach(p => {
                 p.style.display = 'none';
                 p.classList.remove('active');
             });
-
+ 
             const targetPane = document.getElementById('bpane-' + id);
             if (targetPane) {
                 targetPane.style.display = 'block';
                 targetPane.classList.add('active');
             }
-
+ 
             tabs.forEach(t => {
                 if (t.getAttribute('onclick').includes(`'${id}'`)) {
                     t.classList.add('active');
@@ -550,29 +574,13 @@
             if (pane) pane.classList.add('active');
             var tab = document.getElementById('rtab-' + id);
             if (tab) tab.classList.add('active');
+            if (id === 'pctl' && typeof openPctlGenerator === 'function') openPctlGenerator();
         }
-
-        function showLeftSection(id) {
-            document.querySelectorAll('.tree-item').forEach(i => i.classList.remove('selected'));
-            event && event.currentTarget && event.currentTarget.classList.add('selected');
-            var map = { editor: 'editor', export: 'export' };
-            if (map[id]) showBottomTab(map[id]);
-        }
-
-        function doUndo() {
-            if (typeof RTA !== 'undefined') {
-                var json = RTA.undo();
-                var data = JSON.parse(json);
-                if (!data.error) updateAllViews(json);
-            }
-        }
-
-
-
+ 
         mermaid.initialize({ startOnLoad: false });
-
+ 
         CodeMirror.defineMode("rta", function () {
-            var keywords = ["name", "init", "aut", "int", "if", "then", "else", "disabled"];
+            var keywords = ["name", "init", "aut", "int", "float", "bool", "dyn", "if", "then", "else", "disabled"];
             return {
                 token: function (stream) {
                     if (stream.eatSpace()) return null;
@@ -588,61 +596,157 @@
                 }
             };
         });
-
+ 
         var editor = CodeMirror.fromTextArea(document.getElementById("codeEditor"), {
             lineNumbers: true,
             mode: "rta",
             theme: "rta-light",
             matchBrackets: true
         });
-
+ 
         editor.setSize("100%", "100%");
-
-
+ 
+ 
         document.addEventListener("DOMContentLoaded", function () {
             updateProjectTree();
             const projectPanel = document.getElementById('left-panel');
             const projectMenu = document.getElementById('project-context-menu');
-
+ 
             projectPanel.addEventListener('contextmenu', function (e) {
                 e.preventDefault();
                 projectMenu.style.display = 'block';
                 projectMenu.style.left = e.clientX + 'px';
                 projectMenu.style.top = e.clientY + 'px';
             });
-
+ 
             document.addEventListener('click', function (e) {
                 if (!projectMenu.contains(e.target)) {
                     projectMenu.style.display = 'none';
                 }
             });
-
+ 
             try {
                 const examples = JSON.parse(RTA.getExamples());
                 if (examples["TIMER"]) {
                     editor.setValue(examples["TIMER"]);
-
                     loadAndRender();
-
                     showCanvasTab('cyTab');
-
-                    setTimeout(() => {
-                        const items = document.querySelectorAll('.tree-item');
-                        items.forEach(it => {
-                            if (it.innerText.includes("TIMER.rta")) it.classList.add('selected');
-                        });
-                        document.getElementById('sb-model').textContent = "TIMER.rta";
-                    }, 200);
                 }
             } catch (e) {
                 console.error("Erro na inicialização:", e);
             }
         });
-
+ 
     </script>
+ 
 
-    <script src="js/editor.js"></script>
-    <script src="js/translate.js"></script>
+ 
+    <script src="js/script/translate.js"></script>
+    <script src="js/script/settings.js"></script>
+ 
+    <script src="js/script/styles.js"></script>
+    <script src="js/script/layout.js"></script>
+    <script src="js/script/graph.js"></script>
+ 
+    <script src="js/script/panel.js"></script>
+    <script src="js/script/filters.js"></script>
+    <script src="js/script/views.js"></script>
+ 
+    <script src="js/script/model.js"></script>
+    <script src="js/script/bestpath.js"></script>
+    <script src="js/script/beatifulEditor.js"></script>
+ 
+    <script src="js/script/pdlverify.js"></script>
+    <script src="js/script/animation.js"></script>
+    <script src="js/script/export.js"></script>
+    <script src="js/script/project.js"></script>
+ 
+    <script src="js/script/mermaidConfig.js"></script>
+ 
+    <script src="js/script/autocomplete.js"></script>
+    <script src="js/script/linting.js"></script>
+    <script src="js/script/undo-guard.js"></script>
+ <script>
+function runLTLTest() {
+    if (typeof RTA === 'undefined') {
+        alert("O backend Scala não está carregado!");
+        return;
+    }
+    
+    var retaFormula = document.getElementById('ltlRetaInput').value.trim();
+    var regaFormula = document.getElementById('ltlRegaInput').value.trim();
+    var resBox = document.getElementById('ltlResultBox');
+    
+    if (!retaFormula || !regaFormula) {
+        alert("Por favor, preencha ambas as fórmulas nas caixas para provar a equivalência.");
+        return;
+    }
+
+    var parseSymbols = function(formula) {
+        var p1 = formula.replace(/□/g, 'G').replace(/♢/g, 'F').replace(/¬/g, '!')
+                        .replace(/∧/g, '&&').replace(/∨/g, '||').replace(/→/g, '->').replace(/↔/g, '<->');
+
+        var regexComparison = /\b([a-zA-Z_][\w\.]*)\s*(=|==|≠|!=|≤|<=|≥|>=|<|>)\s*(-?\d+(?:\.\d+)?|[a-zA-Z_][\w\.]*)\b/g;
+        var codeWithVars = p1.replace(regexComparison, function (match, v1, op, v2) {
+            var backendOp = op;
+            if (op === '=' || op === '==') backendOp = '==';
+            if (op === '≠' || op === '!=') backendOp = '!=';
+            if (op === '≤' || op === '<=') backendOp = '<=';
+            if (op === '≥' || op === '>=') backendOp = '>=';
+            return '[' + v1 + ' ' + backendOp + ' ' + v2 + ']';
+        });
+        return codeWithVars.replace(/\[\[/g, '[').replace(/\]\]/g, ']'); // Remove colchetes duplos
+    };
+
+    var parsedReta = parseSymbols(retaFormula);
+    var parsedRega = parseSymbols(regaFormula);
+    
+    resBox.style.display = "block";
+    resBox.innerText = "A Traduzir modelo Original para GLTS...\nA testar as fórmulas em ambos os grafos independentes...\nPor favor aguarde...";
+    
+    setTimeout(function() {
+        try {
+            var result = RTA.testLTLEquivalence(parsedReta, parsedRega);
+            resBox.innerText = result;
+        } catch (e) {
+            resBox.innerText = "Erro ao executar o teste LTL: " + e;
+        }
+    }, 50);
+}
+
+
+function fillLTLPreset(type) {
+    var retaInp = document.getElementById('ltlRetaInput');
+    var regaInp = document.getElementById('ltlRegaInput');
+    
+    
+    switch(type) {
+        case 1:
+            retaInp.value = "□(¬e2 → ♢e2)";
+            regaInp.value = "□(¬[e2 == 1] → ♢[e2 == 1])";
+            break;
+        case 2:
+            retaInp.value = "□¬(e2 ∧ e3)";
+            regaInp.value = "□¬([e2 == 1] ∧ [e3 == 1])";
+            break;
+        case 3:
+            retaInp.value = "♢(e2 → □¬e3)";
+            regaInp.value = "♢([e2 == 1] → □¬[e3 == 1])";
+            break;
+        case 4:
+            retaInp.value = "(□♢e2) ∧ (□♢e3)";
+            regaInp.value = "(□♢[e2 == 1]) ∧ (□♢[e3 == 1])";
+            break;
+    }
+    
+    retaInp.style.backgroundColor = "#e0f7fa";
+    regaInp.style.backgroundColor = "#e0f7fa";
+    setTimeout(function() {
+        retaInp.style.backgroundColor = "";
+        regaInp.style.backgroundColor = "";
+    }, 300);
+}
+</script>
 
 </body>
 

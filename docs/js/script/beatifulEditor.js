@@ -53,7 +53,6 @@ function setupContextMenu(cy) {
 
         if (isBackground) {
             addMenuItem(list, '➕ Create Variable (int)', createVariable);
-            addMenuItem(list, '⏰ Create Clock', createClock);
             addMenuItem(list, '➜ New Transition (-->)', function() { createTransition(); }); 
             addMenuItem(list, '🚩 New Initial State (init)', createInitState);
         } 
@@ -61,10 +60,8 @@ function setupContextMenu(cy) {
             var cls = target.classes() || [];
             var data = target.data();
 
-            if (cls.includes('state-node')) {
-                addMenuItem(list, '🛡️ Add Invariant (inv)', () => createInvariant(data.label));
-            } 
-            else if (cls.includes('event-node')) {
+
+            if (cls.includes('event-node')) {
                 var parts = data.id.split('_'); 
                 if (parts.length >= 5) {
                     var from = parts[1];
@@ -141,7 +138,8 @@ function getModelSuggestions() {
                 states.add(data.label);
             }
             if (cls.includes('event-node') && data.label) {
-                actions.add(data.label);
+                var cleanName = data.label.split('\n')[0].split('(')[0].trim();
+                actions.add(cleanName);
             }
         });
     }
@@ -233,13 +231,7 @@ function createVariable() {
     });
 }
 
-function createClock() {
-    openSmartModal('New Clock', [
-        { label: 'Clock Name:', placeholder: 'e.g.: c1', required: true }
-    ], function(name) {
-        prependToCode(`clock ${name};`);
-    });
-}
+
 
 function createInitState() {
     openSmartModal('Initial State', [
@@ -264,7 +256,7 @@ function createTransition() {
             suggestions: data.states
         },
         { 
-            label: 'Transition ID:', 
+            label: 'Act:', 
             placeholder: 'e.g.: t1 (leave empty for default)', 
             required: false 
         },
@@ -273,23 +265,32 @@ function createTransition() {
             placeholder: 'e.g.: insertCoin', 
             required: true,
             suggestions: data.actions 
+        },
+        { 
+            label: 'Weight (P):', 
+            type: 'number', 
+            value: '1.0', 
+            required: true 
+        },
+        { 
+            label: 'Aggregation:', 
+            value: 'arith', 
+            required: false,
+            suggestions: ['arith', 'prod', 'max', 'min', 'geom']
         }
-    ], function(source, target, tId, label) {
+    ], function(source, target, tId, label, weight, agg) {
+        let weightPart = `(${weight})`;
+        let aggPart = (agg && agg !== 'arith') ? ` ${agg}` : "";
+        
         if (!tId || tId.trim() === "") {
-            appendToCode(`${source} ---> ${target}: ${label}`);
+            appendToCode(`${source} ---> ${target}: ${label} ${weightPart}${aggPart}`);
         } else {
-            appendToCode(`${source} -${tId}-> ${target}: ${label}`);
+            appendToCode(`${source} -${tId}-> ${target}: ${label} ${weightPart}${aggPart}`);
         }
     });
 }
 
-function createInvariant(state) {
-    openSmartModal(`Invariant in '${state}'`, [
-        { label: 'Condition:', placeholder: 'e.g.: x < 10', required: true }
-    ], function(cond) {
-        appendToCode(`inv ${state}: ${cond};`);
-    });
-}
+
 
 function createInteraction(sourceLabel, symbol) {
     var data = getModelSuggestions();
@@ -301,9 +302,23 @@ function createInteraction(sourceLabel, symbol) {
             placeholder: 'Select target action...', 
             required: true,
             suggestions: data.actions 
+        },
+        { 
+            label: 'Rule Weight (Δ):', 
+            type: 'number', 
+            value: '0.1', 
+            required: true 
+        },
+        { 
+            label: 'Aggregation:', 
+            value: 'arith', 
+            required: false,
+            suggestions: ['arith', 'prod', 'max', 'min', 'geom']
         }
-    ], function(targetLabel) {
-        appendToCode(`${sourceLabel} ${symbol} ${targetLabel}`);
+    ], function(targetLabel, weight, agg) {
+        let weightPart = `(${weight})`;
+        let aggPart = (agg && agg !== 'arith') ? ` ${agg}` : "";
+        appendToCode(`${sourceLabel} ${symbol} ${targetLabel} ${weightPart}${aggPart}`);
     });
 }
 

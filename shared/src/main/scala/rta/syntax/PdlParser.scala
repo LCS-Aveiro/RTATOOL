@@ -18,8 +18,7 @@ object PdlParser {
   }
 
   private def tokenize(input: String): List[String] = {
-    val pattern = """(<->|->|=>|&&|\|\||&\|&|\[\]|<>|==|!=|<=|>=|[!~\[\]\(\)\{\};\+\*<>:]|[a-zA-Z_][\w\.]*(\/[a-zA-Z_][\w\.]*)*|-?\d+(\.\d+)?)""".r
-    //"""(<->|->|=>|&&|\|\||&\|&|\[\]|<>|==|!=|<=|>=|[!~\[\]\(\)\{\};\+\*<>]|[a-zA-Z_][\w\.]*(\/[a-zA-Z_][\w\.]*)*|-?\d+(\.\d+)?)""".r
+    val pattern = """(<->|->|=>|&&|\|\||&\|&|\[\]|<>|==|!=|<=|>=|[!~\[\]\(\)\{\};\+\*<>:]|X|U|G|F|[a-zA-Z_][\w\.]*(\/[a-zA-Z_][\w\.]*)*|-?\d+(\.\d+)?)""".r
     pattern.findAllIn(input).toList
   }
 
@@ -30,6 +29,17 @@ object PdlParser {
     def consume(): String = { val t = current; pos += 1; t }
     def eat(s: String): Boolean = if (current == s) { pos += 1; true } else false
     def expect(s: String): Unit = if (!eat(s)) throw new RuntimeException(s"Esperado '$s', encontrado '$current'")
+  }
+
+
+  private def parseUntil(reader: TokenReader): Formula = {
+    var left = parseOr(reader)
+    while (reader.current == "U") {
+      reader.consume()
+      val right = parseOr(reader)
+      left = LtlUntil(left, right)
+    }
+    left
   }
 
 
@@ -46,7 +56,7 @@ object PdlParser {
   }
 
   private def parseImpl(reader: TokenReader): Formula = {
-    var left = parseOr(reader)
+    var left = parseUntil(reader)
     if (reader.current == "->" || reader.current == "=>") {
       reader.consume()
       val right = parseImpl(reader) 
@@ -90,6 +100,15 @@ object PdlParser {
     if (t == "!" || t == "~" || t == "¬") {
       reader.consume()
       Not(parseUnary(reader))
+    } else if (t == "X") {
+      reader.consume()
+      LtlNext(parseUnary(reader))
+    } else if (t == "G") {
+      reader.consume()
+      LtlGlobally(parseUnary(reader))
+    } else if (t == "F") {
+      reader.consume()
+      LtlEventually(parseUnary(reader))
     } else if (t == "[]") {
       reader.consume()
       Box(parseUnary(reader))
@@ -168,16 +187,6 @@ object PdlParser {
     prog
   }
 
-  /*private def parseProgAtom(reader: TokenReader): PdlProgram = {
-    if (reader.eat("(")) {
-      val p = parseProgram(reader)
-      reader.expect(")")
-      p
-    } else {
-      Act(parseQName(reader))
-    }
-  }*/
-
   private def parseProgAtom(reader: TokenReader): PdlProgram = {
     if (reader.eat("(")) {
       val p = parseProgram(reader)
@@ -210,7 +219,7 @@ object PdlParser {
   }
 
   private def parseCondition(reader: TokenReader): Condition = {
-      val lhs = parseQName(reader)
+      val lhsName = parseQName(reader)
       val op = reader.consume()
       
       val validOps = Set("==", "!=", "<=", ">=", "<", ">")
@@ -220,8 +229,15 @@ object PdlParser {
       }
       
       val rhsToken = reader.consume()
-      val rhs = if (rhsToken.matches("-?\\d+(\\.\\d+)?")) Left(rhsToken.toDouble) else Right(parseQNameDummy(rhsToken))
-      Condition.AtomicCond(lhs, op, rhs)
+      
+      val rhsExpr: UpdateExpr = if (rhsToken.matches("-?\\d+(\\.\\d+)?")) {
+          if (rhsToken.contains(".")) UpdateExpr.LitFloat(rhsToken.toDouble)
+          else UpdateExpr.LitInt(rhsToken.toInt)
+      } else {
+          UpdateExpr.Var(parseQNameDummy(rhsToken))
+      }
+      
+      Condition.AtomicCond(UpdateExpr.Var(lhsName), op, rhsExpr)
   }
   
   private def parseQNameDummy(s: String): QName = {

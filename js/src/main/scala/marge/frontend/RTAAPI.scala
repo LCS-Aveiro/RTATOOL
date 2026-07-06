@@ -8,6 +8,8 @@ import rta.backend.{RxSemantics, CytoscapeConverter, PdlEvaluator, MCRL2, Uppaal
 import rta.syntax.PdlParser
 import rta.syntax.RTATranslator
 import rta.syntax.Condition
+import rta.syntax.Formula
+import rta.syntax.Formula.*
 
 @JSExportTopLevel("RTA")
 object RTAAPI {
@@ -126,7 +128,7 @@ object RTAAPI {
           
           val canTimePass = current.inits.forall(s => 
             nextTimeState.invariants.get(s) match {
-              case Some(inv) => Condition.evaluate(inv, nextTimeState.val_env, nextTimeState.clock_env)
+              case Some(inv) => RxSemantics.evalCondition(inv, nextTimeState)
               case None => true
             }
           )
@@ -211,6 +213,14 @@ object RTAAPI {
     }
   }
 
+
+  private def runtimeValueToJson(v: rta.syntax.RuntimeValue): String = v match {
+    case rta.syntax.RuntimeValue.VInt(i, _, _) => i.toString
+    case rta.syntax.RuntimeValue.VFloat(f, _, _) => f.toString
+    case rta.syntax.RuntimeValue.VBool(b) => b.toString
+    case rta.syntax.RuntimeValue.VArray(elems, _, _) => "[" + elems.map(runtimeValueToJson).mkString(", ") + "]"
+  }
+
   @JSExport
   def advanceTime(delayAmount: Double): String = {
     currentGraph match {
@@ -225,7 +235,8 @@ object RTAAPI {
 
           val allInvariantsHold = potentialNextState.inits.forall { s =>
             potentialNextState.invariants.get(s) match {
-              case Some(inv) => Condition.evaluate(inv, potentialNextState.val_env, potentialNextState.clock_env)
+              
+              case Some(inv) => RxSemantics.evalCondition(inv, potentialNextState)
               case None => true
             }
           }
@@ -242,6 +253,46 @@ object RTAAPI {
     }
   }
 
+  @JSExport
+  def testLTLEquivalence(retaFormulaStr: String, regaFormulaStr: String): String = {
+    currentGraph match {
+      case Some(rx) =>
+        try {
+          val retaFormula = PdlParser.parsePdlFormula(retaFormulaStr)
+          val regaFormula = PdlParser.parsePdlFormula(regaFormulaStr)
+
+          val gltsSource = RTATranslator.translate_syntax(rx, currentSource)
+          
+          val gltsGraph = Parser2.parseProgram(gltsSource)
+
+          val (retaTrace, pathLabels) = AnalyseLTS.generateRandomTrace(rx, 20)
+
+          val regaTrace = AnalyseLTS.followPath(gltsGraph, pathLabels)
+
+          val resReta = AnalyseLTS.evalReTA(retaTrace, retaFormula)
+          val resRega = AnalyseLTS.evalReGA(regaTrace, regaFormula)
+
+          val traceStr = pathLabels.mkString(" ➔ ")
+          
+          s"""
+          | === TEOREMA 1: PROVA DE EQUIVALÊNCIA REAL ===
+          |
+          | Traço percorrido (σ) [${pathLabels.size} passos]: 
+          | Start ➔ $traceStr
+          |
+          | [ReTA Semantics] σ ⊨ φ : $resReta
+          | [ReGA (GLTS) Semantics] τ ⊨ ∆φ : $resRega
+          |
+          | Equivalência: ${if (resReta == resRega) "VERIFICADO ✓" else "FALHOU ✗"}
+          """.stripMargin
+
+        } catch {
+          case e: Throwable => s"Erro ao testar equivalência LTL:\n${e.getMessage}"
+        }
+      case None => "Erro: Carrega um modelo primeiro."
+    }
+  }
+  
 
   @JSExport
   def getMcrl2(): String = currentGraph.map(g => MCRL2(g)).getOrElse("Modelo vazio")
@@ -254,11 +305,6 @@ object RTAAPI {
     }
   }
 
-  //@JSExport
-  //def getUppaalGLTS(): String = currentGraph.map(g => UppaalConverter2.convert(g, currentSource)).getOrElse("")
-  
-  //@JSExport
-  //def getUppaalRG(): String = currentGraph.map(g => UppaalConverter.convert(g, currentSource)).getOrElse("")
   
   @JSExport
   def getUppaalTGRG(layoutJson: String): String = currentGraph.map(g => UppaalConverter3.convert(g, currentSource, layoutJson)).getOrElse("")
@@ -296,6 +342,24 @@ object RTAAPI {
     }.getOrElse("Modelo vazio")
   }
 
+  def hasLTL(f: rta.syntax.Formula): Boolean = {
+    import rta.syntax.Formula.*
+    f match {
+      case LtlNext(_) | LtlUntil(_, _) | LtlGlobally(_) | LtlEventually(_) => true
+      case Not(p) => hasLTL(p)
+      case And(p, q) => hasLTL(p) || hasLTL(q)
+      case Or(p, q) => hasLTL(p) || hasLTL(q)
+      case Impl(p, q) => hasLTL(p) || hasLTL(q)
+      case Iff(p, q) => hasLTL(p) || hasLTL(q)
+      case PipeAnd(p, q) => hasLTL(p) || hasLTL(q)
+      case Box(p) => hasLTL(p)
+      case Diamond(p) => hasLTL(p)
+      case BoxP(_, p) => hasLTL(p)
+      case DiamondP(_, p) => hasLTL(p)
+      case _ => false
+    }
+  }
+
   @JSExport
   def runPdl(stateStr: String, formulaStr: String): String = {
     currentGraph match {
@@ -309,8 +373,16 @@ object RTAAPI {
                  s"State '${startState.show}' not found in the current model."
               } else {
                  val formula = PdlParser.parsePdlFormula(formulaStr)
-                 val result = PdlEvaluator.evaluateFormula(startState, formula, rx)
-                 s"Result: $result"
+                 
+                 if (hasLTL(formula)) {
+                    val startGraph = rx.copy(inits = Set(startState))
+                    val (trace, _) = AnalyseLTS.generateRandomTrace(startGraph, 30)
+                    val result = AnalyseLTS.evalLTLUser(trace, formula)
+                    s"Result: $result (via Bounded LTL Trace)"
+                 } else {
+                    val result = PdlEvaluator.evaluateFormula(startState, formula, rx)
+                    s"Result: $result"
+                 }
               }
           }
         } catch {
@@ -512,7 +584,9 @@ object RTAAPI {
      val allEnabledTransitions = Seq(eventTransitionsJson, delayTransitionJson).filter(_.nonEmpty).mkString(",")
 
      val clocksJson = graph.clock_env.map { case (n, v) => s""""${n.show}": $v""" }.mkString(",")
-     val valEnvJson = graph.val_env.map { case (n, v) => s""""${n.show}": $v""" }.mkString(",")
+     val valEnvJson = graph.val_env.map { case (n, v) => 
+       s""""${n.show}": ${runtimeValueToJson(v)}""" 
+     }.mkString(",")
 
      val traversedJson = traversedEdge match {
        case Some((from, to, tId, label)) => s"""{"from":"$from", "to":"$to", "tId":"$tId", "label":"$label"}"""

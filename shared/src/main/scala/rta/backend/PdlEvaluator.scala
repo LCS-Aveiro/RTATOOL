@@ -77,7 +77,8 @@ object PdlEvaluator {
     
     val canTimePass = config.inits.forall(s => 
       config.invariants.get(s) match {
-        case Some(inv) => Condition.evaluate(inv, nextRx.val_env, nextRx.clock_env)
+        
+        case Some(inv) => RxSemantics.evalCondition(inv, nextRx)
         case None => true
       }
     )
@@ -96,7 +97,7 @@ object PdlEvaluator {
         config.inits.contains(name)
 
       case CondProp(cond) =>
-        Condition.evaluate(cond, config.val_env,config.clock_env)
+        RxSemantics.evalCondition(cond, config)
 
 
       case Not(p) => !evaluateFormula(config, p)
@@ -145,8 +146,13 @@ object PdlEvaluator {
       case PipeAnd(p, q) =>
         val configsAfterP = getFinalConfigs(config, p)
         configsAfterP.flatMap(intermediateConfig => getFinalConfigs(intermediateConfig, q))
+
+      case LtlNext(_) | LtlUntil(_, _) | LtlGlobally(_) | LtlEventually(_) =>
+        throw new Exception("Fórmulas LTL (X, U, G, F) devem ser verificadas sobre traços temporais (Trace Checking), e não como avaliação clássica de estado PDL.")
       case _ =>
         if (evaluateFormula(config, formula)) Set(config) else Set.empty
+
+      
     }
   }
 

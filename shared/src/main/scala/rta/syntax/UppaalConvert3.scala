@@ -2,7 +2,7 @@ package rta.backend
 
 import rta.syntax.Program2
 import rta.syntax.Program2.{Edge, QName, RxGraph}
-import rta.syntax.{Condition, Statement, UpdateExpr, UpdateStmt, IfThenStmt}
+import rta.syntax.{Condition, Statement, UpdateExpr, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt, RuntimeValue}
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 import java.util.concurrent.atomic.AtomicInteger
@@ -19,32 +19,38 @@ object UppaalConverter3 {
   private def sanitizeQName(qname: QName): String = sanitize(qname.show)
 
   private def exprToString(expr: UpdateExpr): String = expr match {
-    case UpdateExpr.Lit(i) => i.toString
+    case UpdateExpr.LitInt(i) => i.toString
+    case UpdateExpr.LitFloat(f) => f.toString
+    case UpdateExpr.LitBool(b) => if (b) "true" else "false"
+    case UpdateExpr.LitArray(elems) => "{" + elems.map(exprToString).mkString(", ") + "}"
     case UpdateExpr.Var(q) => sanitizeQName(q)
-    case UpdateExpr.Add(v, Right(q)) => s"${sanitizeQName(v)} + ${sanitizeQName(q)}"
-    case UpdateExpr.Add(v, Left(i)) => s"${sanitizeQName(v)} + $i"
-    case UpdateExpr.Sub(v, Right(q)) => s"${sanitizeQName(v)} - ${sanitizeQName(q)}"
-    case UpdateExpr.Sub(v, Left(i)) => s"${sanitizeQName(v)} - $i"
+    case UpdateExpr.ArrayAccess(arr, idx) => s"${sanitizeQName(arr)}[${exprToString(idx)}]"
+    case UpdateExpr.MathOp(l, op, r) => s"${exprToString(l)} $op ${exprToString(r)}"
+    case UpdateExpr.FuncCall(f, args) => s"${sanitizeQName(f)}(${args.map(exprToString).mkString(", ")})"
   }
 
   private def conditionToString(cond: Condition): String = cond match {
     case Condition.AtomicCond(l, op, r) =>
-      val leftStr = sanitizeQName(l)
-      val rightStr = r match {
-        case Left(i) => i.toString
-        case Right(q) => sanitizeQName(q)
-      }
-      s"$leftStr $op $rightStr"
+      s"${exprToString(l)} $op ${exprToString(r)}"
     case Condition.And(l, r) => s"(${conditionToString(l)}) && (${conditionToString(r)})"
     case Condition.Or(l, r) => s"(${conditionToString(l)}) || (${conditionToString(r)})"
   }
 
   private def statementToString(stmt: Statement): String = stmt match {
-    case UpdateStmt(update) =>
-      s"${sanitizeQName(update.variable)} = ${exprToString(update.expr)};"
+    case AssignStmt(variable, expr) =>
+      s"${sanitizeQName(variable)} = ${exprToString(expr)};"
+    case ArrayAssignStmt(arrName, index, expr) =>
+      s"${sanitizeQName(arrName)}[${exprToString(index)}] = ${exprToString(expr)};"
     case IfThenStmt(condition, thenStmts) =>
       val thenBlock = thenStmts.map(statementToString).map("\t" + _).mkString("\n")
       s"if (${conditionToString(condition)}) {\n$thenBlock\n}"
+    case ForeachStmt(iter, arr, body) =>
+      val bodyBlock = body.map(statementToString).map("\t" + _).mkString("\n")
+      s"for (${sanitizeQName(iter)} : ${sanitizeQName(arr)}) {\n$bodyBlock\n}" // UPPAAL C-like syntax
+    case ReturnStmt(expr) =>
+      s"return ${exprToString(expr)};"
+    case PrintStmt(_) =>
+      "// print not supported in UPPAAL"
   }
 
   private def stringToQName(str: String): QName = {
@@ -203,7 +209,22 @@ object UppaalConverter3 {
     val dataFunctions = new StringBuilder
 
     val clockDecl = if (rxGraph.clocks.nonEmpty) s"clock ${rxGraph.clocks.map(sanitizeQName).mkString(", ")};" else ""
-    val varDecl = rxGraph.val_env.map { case (q, v) => s"int ${sanitizeQName(q)} = $v;" }.mkString("\n")
+    val varDecl = rxGraph.val_env.map { case (q, v) => 
+      val typeStr = v match {
+        case _: RuntimeValue.VBool => "bool"
+        case _: RuntimeValue.VFloat => "double"
+        case _ => "int"
+      }
+      val valStr = v match {
+        case RuntimeValue.VArray(elems, _, _) => "{" + elems.map(_.value).mkString(", ") + "}"
+        case _ => v.value.toString
+      }
+      val arrBrackets = v match {
+        case RuntimeValue.VArray(_, _, maxOpt) => s"[${maxOpt.getOrElse(100)}]"
+        case _ => ""
+      }
+      s"$typeStr ${sanitizeQName(q)}$arrBrackets = $valStr;" 
+    }.mkString("\n")
 
     val declarationBuilder = new StringBuilder(
       s"""// -----------------------------------------------------------

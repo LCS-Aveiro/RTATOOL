@@ -1,34 +1,169 @@
 package rta.backend
 
-import rta.syntax.Program2.{ Edge, Edges, QName, RxGraph}
-import rta.syntax.{Condition, CounterUpdate, Statement, UpdateExpr, UpdateStmt, IfThenStmt}
+import rta.syntax.Program2.{Edge, Edges, QName, RxGraph}
+import rta.syntax.{Condition, Statement, UpdateExpr, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt, RuntimeValue}
 import scala.annotation.tailrec
 
 object RxSemantics {
 
-  def from(e: Edge, rx: RxGraph): Set[Edge] =
-    cascade(Set(e._4), Set())(using rx)
+  private val EPSILON = 1e-7
 
-  @tailrec
-  private def cascade(pendingLabels: Set[QName], doneEdges: Set[Edge])(using rx: RxGraph): Edges = {
-    if (pendingLabels.isEmpty) doneEdges
-    else {
-      val currentLabel = pendingLabels.head
-      val remainingLabels = pendingLabels.tail
-      val rulesOn = rx.on.getOrElse(currentLabel, Set.empty).map(t => (currentLabel, t._1, t._2, t._3))
-      val rulesOff = rx.off.getOrElse(currentLabel, Set.empty).map(t => (currentLabel, t._1, t._2, t._3))
-      val allNewRules = (rulesOn ++ rulesOff).filter(rx.act.contains) -- doneEdges
-      val newLabels = allNewRules.map(_._4).filter(_.n.nonEmpty)
-      cascade(remainingLabels ++ newLabels, doneEdges ++ allNewRules)
-    }
+  // Avaliação de Expressões (lê clocks como floats se a variável for um clock)
+  def evalExpr(expr: UpdateExpr, env: Map[QName, RuntimeValue], rx: RxGraph): RuntimeValue = expr match {
+    case UpdateExpr.LitInt(i) => RuntimeValue.VInt(i)
+    case UpdateExpr.LitFloat(f) => RuntimeValue.VFloat(f)
+    case UpdateExpr.LitBool(b) => RuntimeValue.VBool(b)
+    case UpdateExpr.LitArray(elems) => RuntimeValue.VArray(elems.map(e => evalExpr(e, env, rx)), isDynamic = true)
+    
+    case UpdateExpr.Var(q) => 
+      if (rx.clock_env.contains(q)) RuntimeValue.VFloat(rx.clock_env(q))
+      else env.get(q).orElse {
+        if (q.n.size > 1) {
+           val globalName = QName(List(q.n.last))
+           rx.clock_env.get(globalName).map(RuntimeValue.VFloat(_))
+             .orElse(env.get(globalName))
+        } else None
+      }.getOrElse(RuntimeValue.VInt(0)) 
+    
+    case UpdateExpr.ArrayAccess(arrName, idxExpr) =>
+      val idx = Condition.extractDouble(evalExpr(idxExpr, env, rx)).toInt
+      env.get(arrName) match {
+        case Some(RuntimeValue.VArray(elems, _, _)) if idx >= 0 && idx < elems.size => elems(idx)
+        case _ => RuntimeValue.VInt(0)
+      }
+      
+    case UpdateExpr.MathOp(l, op, r) =>
+      val leftVal = evalExpr(l, env, rx)
+      val rightVal = evalExpr(r, env, rx)
+      val isFloat = leftVal.isInstanceOf[RuntimeValue.VFloat] || rightVal.isInstanceOf[RuntimeValue.VFloat]
+      val lD = Condition.extractDouble(leftVal)
+      val rD = Condition.extractDouble(rightVal)
+
+      op match {
+        case "+" => if(isFloat) RuntimeValue.VFloat(lD + rD) else RuntimeValue.VInt((lD + rD).toInt)
+        case "-" => if(isFloat) RuntimeValue.VFloat(lD - rD) else RuntimeValue.VInt((lD - rD).toInt)
+        case "*" => if(isFloat) RuntimeValue.VFloat(lD * rD) else RuntimeValue.VInt((lD * rD).toInt)
+        case "/" => if(rD != 0) { if(isFloat) RuntimeValue.VFloat(lD / rD) else RuntimeValue.VInt((lD / rD).toInt) } else RuntimeValue.VInt(0)
+        case _ => RuntimeValue.VInt(0)
+      }
+
+    case UpdateExpr.FuncCall(funcName, args) =>
+      rx.functions.get(funcName) match {
+        case Some(funcDef) =>
+          val evalArgs = args.map(a => evalExpr(a, env, rx))
+          var localEnv = env
+          funcDef.params.zip(evalArgs).foreach { case (param, v) => localEnv += (param -> v) }
+          // Executa a função localmente (clocks não são alterados em scope de função puramente lógico)
+          val (finalEnv, _) = applyUpdates(funcDef.body, rx.copy(val_env = localEnv))
+          finalEnv.getOrElse(QName(List("__return")), RuntimeValue.VInt(0))
+        case None => RuntimeValue.VInt(0)
+      }
   }
 
-  def toOnOff(e: Edge, rx0: RxGraph): (Edges, Edges, Map[QName, Int]) = {
-    val rx = applyTimeouts(rx0)
-    val (toA, toD, upds, _) = getHyperEdgeEffects(e, rx)
-    // Aqui usamos o snapshot para o val_env reativo
-    val (nextEnv, _) = applyUpdates(upds, rx)
-    (toA, toD, nextEnv)
+  def evalCondition(cond: Condition, rx: RxGraph): Boolean = cond match {
+    case Condition.AtomicCond(l, op, r) =>
+      Condition.compareValues(evalExpr(l, rx.val_env, rx), op, evalExpr(r, rx.val_env, rx))
+    case Condition.And(l, r) => evalCondition(l, rx) && evalCondition(r, rx)
+    case Condition.Or(l, r) => evalCondition(l, rx) || evalCondition(r, rx)
+  }
+
+  def applyUpdates(stmts: List[Statement], rx: RxGraph): (Map[QName, RuntimeValue], Map[QName, Double]) = {
+    var currentEnv = rx.val_env
+    var currentClockEnv = rx.clock_env
+    val returnKey = QName(List("__return"))
+
+    def assignWithBounds(q: QName, newVal: RuntimeValue): Unit = {
+      val existing = currentEnv.get(q)
+      existing match {
+        case Some(RuntimeValue.VInt(_, minOpt, maxOpt)) =>
+          val v = newVal match {
+            case RuntimeValue.VInt(i, _, _) => i
+            case RuntimeValue.VFloat(f, _, _) => f.toInt
+            case _ => 0
+          }
+          val cappedMin = minOpt.map(m => Math.max(m, v)).getOrElse(v)
+          val finalVal = maxOpt.map(m => Math.min(m, cappedMin)).getOrElse(cappedMin)
+          currentEnv += (q -> RuntimeValue.VInt(finalVal, minOpt, maxOpt))
+        case Some(RuntimeValue.VFloat(_, minOpt, maxOpt)) =>
+          val v = newVal match {
+            case RuntimeValue.VFloat(f, _, _) => f
+            case RuntimeValue.VInt(i, _, _) => i.toDouble
+            case _ => 0.0
+          }
+          val cappedMin = minOpt.map(m => Math.max(m, v)).getOrElse(v)
+          val finalVal = maxOpt.map(m => Math.min(m, cappedMin)).getOrElse(cappedMin)
+          currentEnv += (q -> RuntimeValue.VFloat(finalVal, minOpt, maxOpt))
+        case _ => currentEnv += (q -> newVal)
+      }
+    }
+
+    def process(ss: List[Statement]): Unit = {
+      val it = ss.iterator
+      while (it.hasNext && !currentEnv.contains(returnKey)) {
+        it.next() match {
+          case AssignStmt(v, expr) =>
+            val evaluated = evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv))
+            if (rx.clocks.contains(v)) {
+               currentClockEnv += (v -> Condition.extractDouble(evaluated))
+            } else {
+               assignWithBounds(v, evaluated)
+            }
+
+          case ArrayAssignStmt(arrName, idxExpr, valExpr) =>
+            val idx = Condition.extractDouble(evalExpr(idxExpr, currentEnv, rx.copy(clock_env = currentClockEnv))).toInt
+            val value = evalExpr(valExpr, currentEnv, rx.copy(clock_env = currentClockEnv))
+            currentEnv.get(arrName) match {
+              case Some(RuntimeValue.VArray(elems, isDyn, maxOpt)) =>
+                if (idx >= 0 && idx < elems.length) {
+                  currentEnv += (arrName -> RuntimeValue.VArray(elems.updated(idx, value), isDyn, maxOpt))
+                } else if (isDyn && idx == elems.length) {
+                  val newElems = elems :+ value
+                  currentEnv += (arrName -> RuntimeValue.VArray(maxOpt.map(m => newElems.takeRight(m)).getOrElse(newElems), isDyn, maxOpt))
+                }
+              case _ =>
+            }
+
+          case IfThenStmt(cond, thens) =>
+            if (evalCondition(cond, rx.copy(val_env = currentEnv, clock_env = currentClockEnv))) process(thens)
+
+          case ForeachStmt(iter, arr, body) =>
+            currentEnv.get(arr) match {
+              case Some(RuntimeValue.VArray(elems, _, _)) =>
+                val eIt = elems.iterator
+                while(eIt.hasNext && !currentEnv.contains(returnKey)) {
+                  currentEnv += (iter -> eIt.next())
+                  process(body)
+                }
+                currentEnv -= iter
+              case _ =>
+            }
+
+          case ReturnStmt(expr) =>
+            currentEnv += (returnKey -> evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv)))
+
+          case PrintStmt(expr) =>
+            val evaluated = evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv))
+            println(s"🖨️ RTA Print | ${UpdateExpr.show(expr)} = ${evaluated.value}")
+        }
+      }
+    }
+
+    process(stmts)
+    (currentEnv, currentClockEnv)
+  }
+
+  def from(e: Edge, rx: RxGraph): Set[Edge] = cascade(Set(e._4), Set())(using rx)
+
+  @tailrec
+  private def cascade(pending: Set[QName], done: Set[Edge])(using rx: RxGraph): Edges = {
+    if (pending.isEmpty) done
+    else {
+      val curr = pending.head
+      val rulesOn = rx.on.getOrElse(curr, Set.empty).map(t => (curr, t._1, t._2, t._3))
+      val rulesOff = rx.off.getOrElse(curr, Set.empty).map(t => (curr, t._1, t._2, t._3))
+      val newRules = (rulesOn ++ rulesOff).filter(rx.act.contains) -- done
+      cascade(pending.tail ++ newRules.map(_._4).filter(_.n.nonEmpty), done ++ newRules)
+    }
   }
 
   private def getHyperEdgeEffects(e: Edge, rx: RxGraph): (Edges, Edges, List[Statement], Set[(Edge, String, QName, Double)]) = {
@@ -40,11 +175,8 @@ object RxSemantics {
 
     for (hyperEdge <- triggeredHyperEdges) {
       if (rx.act.contains(hyperEdge)) {
-        // IMPORTANTE: Avalia a condição da regra usando os valores atuais do grafo
-        val conditionHolds = rx.edgeConditions.getOrElse(hyperEdge, None) match {
-          case Some(cond) => Condition.evaluate(cond, rx.val_env, rx.clock_env)
-          case None => true
-        }
+        val conditionHolds = rx.edgeConditions.getOrElse(hyperEdge, None).forall(c => evalCondition(c, rx))
+        
         if (conditionHolds) {
           updatesToApply = updatesToApply ::: rx.edgeUpdates.getOrElse(hyperEdge, Nil)
           val (triggerLabel, targetLabel, ruleId, ruleLabel) = hyperEdge
@@ -67,86 +199,45 @@ object RxSemantics {
     (toActivate, toDeactivate, updatesToApply, newPending)
   }
 
-  // --- AQUI ESTÁ A SUA LÓGICA DE SNAPSHOT ADAPTADA ---
-  def applyUpdates(stmts: List[Statement], rx: RxGraph): (Map[QName, Int], Map[QName, Double]) = {
-    def evaluateUpdateExpr(expr: UpdateExpr, env: Map[QName, Int]): Int = {
-      expr match {
-        case UpdateExpr.Lit(i) => i
-        case UpdateExpr.Var(q) => env.getOrElse(q, 0)
-        case UpdateExpr.Add(v, e) =>
-          val vVal = env.getOrElse(v, 0)
-          val eVal = e match { case Left(i) => i; case Right(q) => env.getOrElse(q, 0) }
-          vVal + eVal
-        case UpdateExpr.Sub(v, e) =>
-          val vVal = env.getOrElse(v, 0)
-          val eVal = e match { case Left(i) => i; case Right(q) => env.getOrElse(q, 0) }
-          vVal - eVal
-      }
-    }
-
-    // Snapshots: Valores originais antes de qualquer mudança
-    val originalValEnv = rx.val_env
-    val originalClockEnv = rx.clock_env
-    
-    var nextValUpdates = Map[QName, Int]()
-    var nextClockResets = Map[QName, Double]()
-
-    def processStatements(s_list: List[Statement]): Unit = {
-      for (stmt <- s_list) {
-        stmt match {
-          case UpdateStmt(upd) =>
-            if (rx.clocks.contains(upd.variable)) {
-              // Reset de Relógio: x' := 0
-              upd.expr match {
-                case UpdateExpr.Lit(0) => nextClockResets += (upd.variable -> 0.0)
-                case _ => // Outros valores ignorados em relógios simples
-              }
-            } else {
-              // Variável Inteira: t' := c (c é lido do snapshot)
-              val newValue = evaluateUpdateExpr(upd.expr, originalValEnv)
-              nextValUpdates += (upd.variable -> newValue)
-            }
-          case IfThenStmt(condition, thenStmts) =>
-            // Condição avaliada no snapshot
-            if (Condition.evaluate(condition, originalValEnv, originalClockEnv)) {
-              processStatements(thenStmts)
-            }
-        }
-      }
-    }
-
-    processStatements(stmts)
-    
-    // Aplica os updates sobre os valores originais
-    (originalValEnv ++ nextValUpdates, originalClockEnv ++ nextClockResets)
+  def toOnOff(e: Edge, rx0: RxGraph): (Edges, Edges, Map[QName, RuntimeValue]) = {
+    val rx = applyTimeouts(rx0)
+    val (toA, toD, stmts, _) = getHyperEdgeEffects(e, rx)
+    val (nextEnv, _) = applyUpdates(stmts, rx)
+    (toA, toD, nextEnv)
   }
 
   private def checkInvariant(state: QName, rx: RxGraph): Boolean = {
     rx.invariants.get(state) match {
-      case Some(inv) => Condition.evaluate(inv, rx.val_env, rx.clock_env)
+      case Some(inv) => evalCondition(inv, rx)
       case None => true
     }
   }
 
   def nextEdge(rx0: RxGraph): Set[(Edge, RxGraph)] = {
     val rx = applyTimeouts(rx0)
-    (for
+    val transitions = for {
       st <- rx.inits
-      (st2, tId, lbl) <- rx.edg.getOrElse(st, Set.empty)
-      edge: Edge = (st, st2, tId, lbl)
+      (st2, tid, lbl) <- rx.edg.getOrElse(st, Set.empty)
+      edge = (st, st2, tid, lbl)
       if rx.act.contains(edge)
-      // Condição da aresta no snapshot inicial
-      if rx.edgeConditions.getOrElse(edge, None).forall(c => Condition.evaluate(c, rx.val_env, rx.clock_env))
-    yield
-      val (toAct, toDeact, hyperStmts, newPending) = getHyperEdgeEffects(edge, rx)
-      val allStatements = rx.edgeUpdates.getOrElse(edge, Nil) ++ hyperStmts
-      // Aplica a lógica de snapshot para obter os novos ambientes
-      val (finalValEnv, finalClockEnv) = applyUpdates(allStatements, rx)
-      val newAct = (rx.act ++ toAct) -- toDeact
-      val newInits = (rx.inits - st) + st2
-      (edge, rx.copy(inits = newInits, act = newAct, val_env = finalValEnv, clock_env = finalClockEnv, pendingDelays = rx.pendingDelays ++ newPending))
-    ).filter { case (_, nextRx) =>
-      // Verifica se o novo estado respeita os invariantes com os novos valores
+      if rx.edgeConditions.getOrElse(edge, None).forall(c => evalCondition(c, rx))
+    } yield {
+      val (toAct, toDeact, hStmts, newPending) = getHyperEdgeEffects(edge, rx)
+      val currentAct = (rx.act ++ toAct) -- toDeact
+      
+      val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ hStmts
+      val (nextEnv, nextClockEnv) = applyUpdates(allStmts, rx)
+      
+      (edge, rx.copy(
+        inits = (rx.inits - st) + st2,
+        act = currentAct,
+        val_env = nextEnv,
+        clock_env = nextClockEnv,
+        pendingDelays = rx.pendingDelays ++ newPending
+      ))
+    }
+
+    transitions.filter { case (_, nextRx) =>
       nextRx.inits.forall(s => checkInvariant(s, nextRx))
     }
   }
@@ -154,15 +245,16 @@ object RxSemantics {
   def nextDelay(rx0: RxGraph): Set[(QName, RxGraph)] = {
     val rx = applyTimeouts(rx0)
     if (rx.clocks.isEmpty) return Set.empty
-    val step = 0.000001 // Pequeno incremento para verificar se o tempo pode passar
+    val step = 0.000001 
         
     val canPass = rx.pendingDelays.forall { case (_, _, clock, targetVal) => 
-        rx.clock_env.getOrElse(clock, 0.0) + step <= targetVal + 1e-9
+        rx.clock_env.getOrElse(clock, 0.0) + step <= targetVal + EPSILON
     }
     if (!canPass) return Set.empty
 
     val delayedClockEnv = rx.clock_env.map { case (c, v) => (c, v + step) }
     val potentialNextRx = applyTimeouts(rx.copy(clock_env = delayedClockEnv))
+    
     if (rx.inits.forall(s => checkInvariant(s, potentialNextRx))) 
         Set((QName(List("delay")), potentialNextRx))
     else Set.empty
@@ -171,7 +263,7 @@ object RxSemantics {
   @tailrec
   def applyTimeouts(rx: RxGraph): RxGraph = {
     val matured = rx.pendingDelays.filter { case (_, _, clock, targetVal) => 
-       rx.clock_env.getOrElse(clock, 0.0) >= targetVal - 1e-9
+       rx.clock_env.getOrElse(clock, 0.0) >= targetVal - EPSILON
     }
     
     if (matured.nonEmpty) {
@@ -181,7 +273,6 @@ object RxSemantics {
        for (m <- matured) {
           val (hyperEdge, opType, _, _) = m
           val targetLabel = hyperEdge._2
-          
           if (opType == "on") toAct = toAct ++ rx.lbls.getOrElse(targetLabel, Set.empty)
           if (opType == "off") toDeact = toDeact ++ rx.lbls.getOrElse(targetLabel, Set.empty)
        }
@@ -190,7 +281,6 @@ object RxSemantics {
          act = (rx.act ++ toAct) -- toDeact, 
          pendingDelays = rx.pendingDelays -- matured
        )
-       
        applyTimeouts(nextRx)
     } else rx
   }
