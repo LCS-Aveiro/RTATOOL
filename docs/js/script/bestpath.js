@@ -1,70 +1,88 @@
-// ============================================================
-// bestpath.js — Path Optimizer panel
-// ============================================================
 
-function updateBPValueDropdown() {
-    const type         = document.getElementById('bpType').value;
-    const valueSelect  = document.getElementById('bpValue');
-    const intContainer = document.getElementById('bpIntContainer');
-    const suggestions  = getModelSuggestions();
 
-    valueSelect.innerHTML = '';
+function updateBPField() {
+    const type  = document.getElementById('bpType').value;
+    const label = document.getElementById('bpValueLabel');
+    const input = document.getElementById('bpValue');
 
     if (type === 'state') {
-        intContainer.style.display = 'none';
-        suggestions.states.forEach(st => {
-            let opt = document.createElement('option');
-            opt.value   = st;
-            opt.innerText = st;
-            valueSelect.appendChild(opt);
-        });
-    } else if (type === 'variable') {
-        intContainer.style.display = 'block';
-        const vars = Object.keys(lastModelData?.panelData?.variables || {});
-        vars.forEach(v => {
-            if (!v.startsWith("__")) {
-                let opt = document.createElement('option');
-                opt.value   = v;
-                opt.innerText = v;
-                valueSelect.appendChild(opt);
-            }
-        });
+        label.innerText = "Target State";
+        input.placeholder = "e.g. s1";
+    } else {
+        label.innerText = "Condition (Boolean Expression)";
+        input.placeholder = "e.g. u1==0 && u2==0 && d1==1";
     }
 }
 
-function runBestPath() {
-    const type       = document.getElementById('bpType').value;
-    const val        = document.getElementById('bpValue').value;
-    const targetInt  = parseInt(document.getElementById('bpInt').value);
-    const criterion  = document.getElementById('bpCriterion').value;
-    const resBox     = document.getElementById('bpResultBox');
-    const resSummary = document.getElementById('bpResultSummary');
-    const resPath    = document.getElementById('bpResultPath');
+function findPathByValue() {
+    const type        = document.getElementById('bpType').value;
+    const targetValue  = document.getElementById('bpValue').value.trim();
+    const summaryDiv   = document.getElementById('bpResultSummary');
+    const pathDiv       = document.getElementById('bpResultPath');
+    const resultBox     = document.getElementById('bpResultBox');
 
-    if (!val) {
-        alert("Selecione um alvo primeiro!");
+    if (!targetValue) {
+        alert("Please enter a target (state name or condition).");
         return;
     }
 
-    const resultRaw = RTA.findBestPath({
-        targetType:  type,
-        targetValue: val,
-        targetInt:   targetInt,
-        criterion:   criterion
-    });
+    resultBox.style.display = 'block';
+    summaryDiv.innerHTML = "Analyzing model...";
+    summaryDiv.style.color = "var(--gray-700)";
+    pathDiv.innerHTML = "";
 
-    resBox.style.display = 'block';
-
-    if (resultRaw.startsWith("Caminho")) {
-        const parts = resultRaw.split('\n');
-        resSummary.innerHTML         = `<span class="glyphicon glyphicon-ok"></span> ${parts[0]}<br><small>${parts[1]}</small>`;
-        resPath.innerText            = parts[2].replace("Caminho: ", "");
-        resBox.style.borderLeftColor = "#28a745";
-        resBox.style.background      = "#f4fff4";
+    let response;
+    if (type === 'state') {
+        response = RTA.findBestPath(targetValue);
     } else {
-        resSummary.innerHTML         = `<span class="glyphicon glyphicon-exclamation-sign"></span> Falha`;
-        resPath.innerText            = resultRaw;
-        resBox.style.borderLeftColor = "#dc3545";
-        resBox.style.background      = "#fff5f5";
+        response = RTA.findPathToValue(targetValue);
+    }
+
+    try {
+        const data = (typeof response === 'string') ? JSON.parse(response) : response;
+
+        if (data.error) {
+            summaryDiv.innerHTML = "No path found";
+            summaryDiv.style.color = "var(--red)";
+            pathDiv.innerHTML = `<span style="font-size:11px; color:var(--gray-500)">${data.error}</span>`;
+        } else if (Array.isArray(data)) {
+            if (data.length === 0) {
+                summaryDiv.innerHTML = "Target already reached!";
+                summaryDiv.style.color = "#16a34a";
+            } else {
+                const pdlSequence = `⟨${data.join('; ')}⟩true`;
+                summaryDiv.innerHTML = `Path found! (${data.length} steps)`;
+                summaryDiv.style.color = "#2563eb";
+
+                pathDiv.innerHTML = `
+                    <div style="background:#f1f5f9; padding:10px; border:1px solid #e2e8f0; border-radius:4px; margin-top:5px;">
+                        <code style="display:block; margin-bottom:8px; word-break: break-all; color:#334155;">${pdlSequence}</code>
+                        <button class="u-btn primary" style="padding:2px 8px; font-size:10px;"
+                                onclick="useInPdl('${pdlSequence}')">
+                            <span class="glyphicon glyphicon-share-alt"></span> Send to PDL Verifier
+                        </button>
+                    </div>
+                `;
+            }
+        }
+    } catch (e) {
+        console.error("Analysis error:", e);
+        summaryDiv.innerHTML = "Error processing engine response.";
+        summaryDiv.style.color = "var(--red)";
+    }
+}
+
+
+function useInPdl(formula) {
+    const pdlInput = document.getElementById('pdlFormula');
+    if (pdlInput) {
+        pdlInput.value = formula;
+
+        pdlInput.style.backgroundColor = "#d9edf7";
+        setTimeout(() => pdlInput.style.backgroundColor = "#fff", 500);
+
+        pdlInput.focus();
+    } else {
+        alert("Campo PDL não encontrado!");
     }
 }

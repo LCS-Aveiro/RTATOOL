@@ -1,6 +1,3 @@
-// ============================================================
-// cy/panel.js — Simulation side panel + layout controls UI
-// ============================================================
 
 var currentEdgeStyle = 'straight';
 
@@ -16,7 +13,6 @@ function renderGlobalPanel(data, targetId) {
     var t      = i18n[currentLang];
     var suffix = containerId === 'sidePanel' ? '' : ('-' + containerId);
 
-    // ── Undo button ──────────────────────────────────────────
     var undoBtn       = document.createElement('button');
     undoBtn.className = 'btn btn-warning btn-block btn-sm undo-btn';
     undoBtn.innerHTML = '<span class="glyphicon glyphicon-step-backward"></span> ' + (t.btn_undo || 'Desfazer (Undo)');
@@ -28,7 +24,6 @@ function renderGlobalPanel(data, targetId) {
     };
     panelDiv.appendChild(undoBtn);
 
-    // ── Variables / clocks ───────────────────────────────────
     if (
         (panelData.clocks   && Object.keys(panelData.clocks).length   > 0) ||
         (panelData.variables && Object.keys(panelData.variables).length > 0)
@@ -42,6 +37,11 @@ function renderGlobalPanel(data, targetId) {
         infoList.className = "list-unstyled";
         infoList.style.cssText = "font-size:12px; background:#fff; padding:10px; border:1px solid var(--border); border-radius:2px;";
 
+        for (let [k, v] of Object.entries(panelData.clocks || {})) {
+            let li       = document.createElement('li');
+            li.innerHTML = `<span class="text-info">🕒 ${k}</span>: <b>${v.toFixed(5)}</b>`;
+            infoList.appendChild(li);
+        }
         for (let [k, v] of Object.entries(panelData.variables || {})) {
             if (k.startsWith("__")) continue;
             let li       = document.createElement('li');
@@ -49,15 +49,14 @@ function renderGlobalPanel(data, targetId) {
             infoList.appendChild(li);
         }
         panelDiv.appendChild(infoList);
+        panelDiv.appendChild(document.createElement('hr'));
     }
 
-    // ── Enabled transitions header ───────────────────────────
     var transHeader       = document.createElement('div');
     transHeader.className = 'sec-label';
     transHeader.innerText = t.enabled_trans || 'Transições:';
     panelDiv.appendChild(transHeader);
 
-    // ── Deadlock indicator ───────────────────────────────────
     var isDeadlock = panelData.enabled.length === 0 ||
         (panelData.enabled.length === 1 && panelData.enabled[0].label === "deadlock");
 
@@ -69,7 +68,6 @@ function renderGlobalPanel(data, targetId) {
         panelDiv.appendChild(dead);
     }
 
-    // ── Transition buttons ───────────────────────────────────
     if (panelData.enabled.length > 0) {
         panelData.enabled.forEach(function (edge) {
             if (edge.p !== undefined && edge.p < window.currentDeltaCut && !edge.isDelay && edge.label !== 'deadlock') return;
@@ -82,26 +80,28 @@ function renderGlobalPanel(data, targetId) {
         });
     }
 
-    // ── Layout settings collapsible (left panel only) ────────
     if (containerId === 'sidePanel') {
         _renderLayoutPanel(panelDiv, t, suffix);
     }
 }
 
-// ── Private helpers ──────────────────────────────────────────
 
 function _renderDelayControl(panelDiv, edge, suffix, containerId) {
     var btnGroup       = document.createElement('div');
-    btnGroup.className = 'input-group input-group-sm';
+    btnGroup.style.display     = 'flex';
+    btnGroup.style.gap         = '5px';
+    btnGroup.style.width       = '100%';
     btnGroup.style.marginBottom = '5px';
 
     var input    = document.createElement('input');
     input.type   = 'number';
-    input.className = 'form-control';
+    input.className = 'form-control input-sm';
     input.value  = storedDelayValue;
     input.step   = '0.001';
     input.min    = '0.000001';
     input.id     = 'delayInputVal' + suffix;
+    input.style.flex     = '1';
+    input.style.minWidth = '0';
     input.onchange = function () {
         var val = parseFloat(this.value);
         if (!isNaN(val)) {
@@ -112,20 +112,18 @@ function _renderDelayControl(panelDiv, edge, suffix, containerId) {
         }
     };
 
-    var spanBtn    = document.createElement('span');
-    spanBtn.className = 'input-group-btn';
-
     var btn        = document.createElement('button');
-    btn.className  = 'btn btn-default';
+    btn.className  = 'btn btn-default btn-sm';
     btn.innerHTML  = '⏱ Delay';
+    btn.style.whiteSpace = 'nowrap';
+    btn.style.flexShrink = '0';
     btn.onclick    = function () {
         storedDelayValue = parseFloat(input.value);
         updateAllViews(RTA.advanceTime(storedDelayValue));
     };
 
-    spanBtn.appendChild(btn);
     btnGroup.appendChild(input);
-    btnGroup.appendChild(spanBtn);
+    btnGroup.appendChild(btn);
     panelDiv.appendChild(btnGroup);
 }
 
@@ -201,12 +199,10 @@ function _renderLayoutPanel(panelDiv, t, suffix) {
     panelDiv.appendChild(panelGroup);
 }
 
-// ── Layout controls ──────────────────────────────────────────
 
 function renderLayoutControls(container) {
     var t = i18n[currentLang];
 
-    // Layout algorithm select
     var layoutGroup   = document.createElement('div');
     layoutGroup.className = 'form-group';
     var layoutLabel   = document.createElement('label');
@@ -235,7 +231,6 @@ function renderLayoutControls(container) {
     layoutGroup.appendChild(layoutSelect);
     container.appendChild(layoutGroup);
 
-    // Edge style select
     var styleGroup   = document.createElement('div');
     styleGroup.className = 'form-group';
     var styleLabel   = document.createElement('label');
@@ -257,7 +252,6 @@ function renderLayoutControls(container) {
 
     container.appendChild(document.createElement('hr'));
 
-    // Save / load layout buttons
     var btnGroup       = document.createElement('div');
     btnGroup.className = 'btn-group-vertical btn-block';
 

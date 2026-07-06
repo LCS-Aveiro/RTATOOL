@@ -1,20 +1,5 @@
-// ============================================================
-// AUTOCOMPLETE — sugestões de estados/labels já usados no editor
-// ============================================================
-// Requer: CodeMirror já criado como `editor` (ver index.html),
-// e os addons show-hint.js / show-hint.css do CodeMirror.
-//
-// Adicionar ao <head>/antes de </body> do index.html:
-//   <link rel="stylesheet" href="js/static/codemirror/addon/hint/show-hint.css">
-//   <script src="js/static/codemirror/addon/hint/show-hint.js"></script>
-//   <script src="js/script/autocomplete.js"></script>
-//
-// (os ficheiros show-hint.js/css vêm do addon oficial "hint" do
-// CodeMirror 5, mesma família dos addons "edit/matchbrackets" que
-// já usas — basta copiar para js/static/codemirror/addon/hint/)
 
 (function () {
-  // Palavras-chave da DSL (extraídas do modo "rta" e do parser)
   var KEYWORDS = [
     "name", "init", "aut", "int", "float", "bool", "dyn",
     "training", "laplace", "aggregation",
@@ -26,11 +11,7 @@
     "def"
   ];
 
-  // Regex para identificadores usados como estado/label ao longo do texto:
-  //   from ---> to : label
-  //   from -id-> to
-  //   trigger ->> target : rule
-  //   trigger --! target : rule
+
   var IDENT = "[A-Za-z_][A-Za-z0-9_.]*";
   var lineRe = new RegExp(
     "(" + IDENT + ")\\s*(?:-\\s*(" + IDENT + ")\\s*)?(?:--->|-->|->>|--!|--x|->)\\s*(" + IDENT + ")(?:\\s*:\\s*(" + IDENT + "))?",
@@ -46,7 +27,6 @@
         if (m[i]) set.add(m[i]);
       }
     }
-    // também variáveis declaradas: "int x = 0", "float y [..] = 0"
     var varRe = /\b(?:int|float|bool|dyn\s+int\[\])\s+([A-Za-z_][A-Za-z0-9_.]*)/g;
     while ((m = varRe.exec(text)) !== null) set.add(m[1]);
     return Array.from(set);
@@ -83,7 +63,6 @@
       }
     }));
 
-    // Autocomplete "enquanto escreve" (só depois de 2+ caracteres, com debounce)
     var timer = null;
     cmInstance.on("inputRead", function (cm, change) {
       if (change.text.join("") === "") return;
@@ -100,7 +79,6 @@
     });
   }
 
-  // Espera que `editor` (definido em index.html) exista.
   document.addEventListener("DOMContentLoaded", function () {
     var tries = 0;
     var iv = setInterval(function () {

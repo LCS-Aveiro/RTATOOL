@@ -1,6 +1,4 @@
-// ============================================================
-// layout.js — Cytoscape layout persistence (localStorage + file)
-// ============================================================
+
 
 function autoSaveLayoutToLocalStorage(cy, graphId) {
     if (!cy || !graphId || typeof localStorage === 'undefined') return;

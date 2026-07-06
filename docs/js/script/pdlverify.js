@@ -139,7 +139,6 @@ function runPdl() {
     var s = document.getElementById("pdlState").value;
     var visualFormula = document.getElementById("pdlFormula").value;
 
-    // Converte os símbolos bonitos para os operadores de parsing do Backend
     var protectedCode = visualFormula
         .replace(/⟨/g, '___DIAM_OPEN___')
         .replace(/⟩/g, '___DIAM_CLOSE___')
@@ -170,7 +169,7 @@ function runPdl() {
     var finalCode = codeWithVars
         .replace(/___DIAM_OPEN___/g, '<')
         .replace(/___DIAM_CLOSE___/g, '>')
-        .replace(/\[\[/g, '[') // PREVINE ERRO DE DUPLOS BRACKETS se o utilizador escrever manualmente [x == 1]
+        .replace(/\[\[/g, '[') 
         .replace(/\]\]/g, ']');
 
     console.log("Fórmula Original:", visualFormula);
@@ -181,7 +180,6 @@ function runPdl() {
     var resDiv = document.getElementById("pdlResult");
     resDiv.innerText = res;
 
-    // Se o backend atirar a exceção do LTL ("Evaluation Error: Fórmulas LTL..."), isto apanha e pinta de laranja
     if (res.includes("Error:") || res.includes("Erro:")) {
         resDiv.style.color = "darkorange";
     } else if (res.includes("true") || res.includes("Result: true")) {

@@ -1,6 +1,4 @@
-// ============================================================
-// cy/graph.js — Cytoscape init, update, updateAllViews
-// ============================================================
+
 
 var currentCytoscapeInstance = null;
 var textTraceHistory = [];
@@ -8,7 +6,6 @@ var autoDelayTimer   = null;
 var storedDelayValue = 1.0;
 var jsTextHistory    = [];
 
-// ── Key helpers ──────────────────────────────────────────────
 
 const simpleHash = s => {
     let h = 0;
@@ -21,7 +18,6 @@ const getLayoutKey = s => {
     return match && match[1] ? "name_" + match[1] : simpleHash(s.replace(/\s+/g, ''));
 };
 
-// ── updateAllViews ───────────────────────────────────────────
 
 window.updateAllViews = function (json) {
     try {
@@ -54,7 +50,6 @@ window.updateAllViews = function (json) {
     }
 };
 
-// ── Graph render (initial / incremental) ─────────────────────
 
 function renderCytoscapeGraph(mainContainerId, dataOrJson, isFirstRender) {
     var mainContainer = document.getElementById(mainContainerId);
@@ -77,7 +72,6 @@ function renderCytoscapeGraph(mainContainerId, dataOrJson, isFirstRender) {
         currentCytoscapeInstance.remove(toRemove);
         currentCytoscapeInstance.json({ elements: data.graphElements });
 
-        // Position brand-new event/deadlock nodes near their source state
         currentCytoscapeInstance.nodes().filter(n => !existingNodes.includes(n.id())).forEach(node => {
             if (node.hasClass('event-node') || node.hasClass('deadlock-node')) {
                 var parts     = node.id().split('_');
@@ -89,7 +83,6 @@ function renderCytoscapeGraph(mainContainerId, dataOrJson, isFirstRender) {
             }
         });
 
-        // Flash the last taken transition
         if (data.lastTransition) {
             var trans       = data.lastTransition;
             var actionNodeId = `event_${trans.from}_${trans.to}_${trans.tId}_${trans.label}`;
@@ -109,7 +102,6 @@ function renderCytoscapeGraph(mainContainerId, dataOrJson, isFirstRender) {
     }
 }
 
-// ── Full Cytoscape setup ─────────────────────────────────────
 
 async function setupInitialCytoscape(mainContainerId, data) {
     var mainContainer = document.getElementById(mainContainerId);
@@ -193,17 +185,31 @@ async function setupInitialCytoscape(mainContainerId, data) {
         }
     });
 
-    // Hover cursor
+    // Hover: restore original hover_label swap (technical/full name preview)
+    // plus the 'hovered' class / cursor handling used elsewhere in the styles.
     cy.on('mouseover', 'node.event-node, edge', function (evt) {
-        evt.target.addClass('hovered');
-        if (evt.target.isNode() && evt.target.hasClass('event-node') && evt.target.hasClass('enabled')) {
-            evt.target.cy().container().style.cursor = 'pointer';
+        var target = evt.target;
+        target.addClass('hovered');
+
+        if (target.isNode() && target.hasClass('event-node')) {
+            if (target.data('hover_label')) {
+                target.data('original_label', target.data('label'));
+                target.data('label', target.data('hover_label'));
+            }
+            if (target.hasClass('enabled')) {
+                target.cy().container().style.cursor = 'pointer';
+            }
         }
     });
     cy.on('mouseout', 'node.event-node, edge', function (evt) {
-        evt.target.removeClass('hovered');
-        if (evt.target.isNode() && evt.target.hasClass('event-node')) {
-            evt.target.cy().container().style.cursor = 'default';
+        var target = evt.target;
+        target.removeClass('hovered');
+
+        if (target.isNode() && target.hasClass('event-node')) {
+            if (target.data('original_label')) {
+                target.data('label', target.data('original_label'));
+            }
+            target.cy().container().style.cursor = 'default';
         }
     });
 

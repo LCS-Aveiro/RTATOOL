@@ -1,6 +1,4 @@
-// ============================================================
-// cy/filters.js — Delta-cut filter, possibilistic view, export cut model
-// ============================================================
+
 
 window.isPossibilisticView = false;
 window.currentDeltaCut     = 0.0;

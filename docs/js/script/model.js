@@ -1,17 +1,12 @@
-// ============================================================
-// model.js — loadAndRender, loadExample, helpers
-// ============================================================
+
 
 let lastModelData = null;
 
-/**
- * Strips the `name <identifier>` command from source code before
- * sending it to the engine (the engine doesn't need it).
- */
+
 const stripNameCommand = s =>
     s.replace(/^\s*name\s+[a-zA-Z0-9_]+[;\s]*/gm, '');
 
-// ── Load example from the dropdown ──────────────────────────
+
 
 function loadExample() {
     var select   = document.getElementById("examplesSelect");
@@ -57,8 +52,6 @@ function loadAndRender() {
         console.log(data);
         renderPdlHelpers(data);
     }
-
-    updateBPValueDropdown();
 }
 
 // ── GLTS translation ─────────────────────────────────────────
