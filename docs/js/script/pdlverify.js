@@ -135,9 +135,22 @@ function insertPdl(text, suffix) {
     input.focus();
 }
 
-function runPdl() {
+
+function _executePdlRequest(isAnimation) {
     var s = document.getElementById("pdlState").value;
+    if (!s && typeof currentCytoscapeInstance !== 'undefined' && currentCytoscapeInstance) {
+        var currentNodes = currentCytoscapeInstance.nodes('.current-state');
+        if (currentNodes.length > 0) s = currentNodes[0].data('label');
+    }
+
     var visualFormula = document.getElementById("pdlFormula").value;
+    if (!visualFormula || visualFormula.trim() === "") {
+        alert("Escreva uma fórmula PDL/LTL para verificar.");
+        return;
+    }
+    
+    var traceLengthInput = document.getElementById("pdlTraceLength");
+    var traceLength = traceLengthInput ? (parseInt(traceLengthInput.value) || 30) : 30;
 
     var protectedCode = visualFormula
         .replace(/⟨/g, '___DIAM_OPEN___')
@@ -149,20 +162,18 @@ function runPdl() {
         .replace(/↔/g, '<->')
         .replace(/⊤/g, 'true')
         .replace(/⊥/g, 'false')
-        .replace(/□/g, 'G')   // Mapeia □ para Globally
-        .replace(/♢/g, 'F');  // Mapeia ♢ para Eventually
+        .replace(/□/g, 'G')
+        .replace(/♢/g, 'F');
 
     var regexComparison = /\b([a-zA-Z_][\w\.]*)\s*(=|==|≠|!=|≤|<=|≥|>=|<|>)\s*(-?\d+(?:\.\d+)?|[a-zA-Z_][\w\.]*)\b/g;
 
     var codeWithVars = protectedCode.replace(regexComparison, function (match, v1, op, v2) {
         if (['true', 'false', '___DIAM_OPEN___', '___DIAM_CLOSE___'].includes(v1)) return match;
-
         var backendOp = op;
         if (op === '=' || op === '==') backendOp = '==';
         if (op === '≠' || op === '!=') backendOp = '!=';
         if (op === '≤' || op === '<=') backendOp = '<=';
         if (op === '≥' || op === '>=') backendOp = '>=';
-
         return '[' + v1 + ' ' + backendOp + ' ' + v2 + ']';
     });
 
@@ -172,42 +183,44 @@ function runPdl() {
         .replace(/\[\[/g, '[') 
         .replace(/\]\]/g, ']');
 
-    console.log("Fórmula Original:", visualFormula);
-    console.log("Enviando Backend:", finalCode);
-
-    var res = RTA.runPdl(s, finalCode);
-
+    var resStr = RTA.runPdl(s, finalCode, traceLength);
     var resDiv = document.getElementById("pdlResult");
-    resDiv.innerText = res;
 
-    if (res.includes("Error:") || res.includes("Erro:")) {
+    try {
+        var resObj = JSON.parse(resStr);
+        if (resObj.error) {
+            resDiv.style.color = "darkorange";
+            resDiv.innerText = resObj.error;
+            return;
+        }
+
+        var text = resObj.text;
+        var lines = text.split('\n');
+        var resultLine = lines[0];
+        var extraInfo = lines.slice(1).join('<br/>');
+        
+        var isTrue = resObj.result;
+        
+        resDiv.style.color = isTrue ? "green" : "red";
+        var icon = isTrue ? '<span class="glyphicon glyphicon-ok"></span> Verdadeiro' : '<span class="glyphicon glyphicon-remove"></span> Falso';
+        
+        resDiv.innerHTML = icon + '<div style="font-size:10px; font-weight:normal; color:#555; margin-top:6px; background:#f9f9f9; padding:6px; border:1px solid #eee; border-radius:3px;">' + extraInfo + '</div>';
+
+        if (isAnimation) {
+            if (resObj.path && resObj.path.length > 0) {
+                window.lastCounterexample = resObj.path;
+                if (typeof playCounterexample === 'function') {
+                    playCounterexample(isTrue);
+                }
+            } else {
+                alert("Nenhum traço linear encontrado para animar (provavelmente esta é uma avaliação clássica PDL ou o traço é vazio). Apenas traços LTL geram caminho animado por enquanto.");
+            }
+        }
+    } catch (e) {
         resDiv.style.color = "darkorange";
-    } else if (res.includes("true") || res.includes("Result: true")) {
-        resDiv.style.color = "green";
-        resDiv.innerHTML = '<span class="glyphicon glyphicon-ok"></span> Verdadeiro';
-    } else if (res.includes("false") || res.includes("Result: false")) {
-        resDiv.style.color = "red";
-        resDiv.innerHTML = '<span class="glyphicon glyphicon-remove"></span> Falso';
-    } else {
-        resDiv.style.color = "#e0e0e0ff";
+        resDiv.innerText = "Internal error parsing result: " + resStr;
     }
 }
-function animatePdl() {
-    var s = document.getElementById("pdlState").value;
-    if (!s && typeof currentCytoscapeInstance !== 'undefined' && currentCytoscapeInstance) {
-        var currentNodes = currentCytoscapeInstance.nodes('.current-state');
-        if (currentNodes.length > 0) s = currentNodes[0].data('label');
-    }
 
-    var visualFormula = document.getElementById("pdlFormula").value;
-    if (!visualFormula || visualFormula.trim() === "") {
-        alert("Escreva uma fórmula PDL para animar.");
-        return;
-    }
-
-    runPdl();
-    
-    if (typeof runGraphAnimationTrace === 'function' && window.lastPdlTrace) {
-        runGraphAnimationTrace(window.lastPdlTrace, s);
-    }
-}
+function runPdl() { _executePdlRequest(false); }
+function animatePdl() { _executePdlRequest(true); }

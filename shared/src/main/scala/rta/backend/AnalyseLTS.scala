@@ -6,7 +6,7 @@ import rta.syntax.RuntimeValue
 import scala.util.boundary, boundary.break
 import rta.syntax.Formula
 import rta.syntax.Formula.*
-
+import scala.util.Random
 
 object AnalyseLTS:
 
@@ -94,16 +94,41 @@ object AnalyseLTS:
     var trace = List(start)
     var labels = List[String]()
     var current = start
+    val rand = new Random()
+    
     for (_ <- 0 until length) {
       val nexts = RxSemantics.nextEdge(current).toList
       if (nexts.nonEmpty) {
-        val step = nexts.head
+        val step = nexts(rand.nextInt(nexts.size)) 
         current = step._2
         trace = trace :+ current
         labels = labels :+ step._1._4.show
       }
     }
     (trace, labels)
+  }
+
+
+  def generateRandomTraceDetailed(start: RxGraph, length: Int): (List[RxGraph], List[String], List[String]) = {
+    var trace = List(start)
+    var labels = List[String]()
+    var edgeIds = List[String]()
+    var current = start
+    val rand = new Random()
+    
+    for (_ <- 0 until length) {
+      val nexts = RxSemantics.nextEdge(current).toList
+      if (nexts.nonEmpty) {
+        val step = nexts(rand.nextInt(nexts.size)) 
+        current = step._2
+        trace = trace :+ current
+        val edge = step._1
+        labels = labels :+ edge._4.show
+        val edgeId = s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
+        edgeIds = edgeIds :+ edgeId
+      }
+    }
+    (trace, labels, edgeIds)
   }
 
   def followPath(start: RxGraph, labels: List[String]): List[RxGraph] = {

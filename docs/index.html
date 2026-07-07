@@ -264,6 +264,9 @@
     <label style="font-size:10px; color:#666; margin:0;">Fórmula ReGA (Variáveis GLTS):</label>
     <input type="text" id="ltlRegaInput" class="form-control input-sm" placeholder="ex: □(¬[X_e2 == 1] → ♢[X_e2 == 1])">
     
+    <label style="font-size:10px; color:#666; margin:0;">Tamanho do Traço (Passos):</label>
+    <input type="number" id="ltlTraceLength" class="form-control input-sm" value="20" min="1">
+
     <button class="u-btn primary" onclick="runLTLTest()" style="margin-top: 5px;">
         <span class="glyphicon glyphicon-play"></span> Traduzir e Provar
     </button>
@@ -366,9 +369,20 @@
 
                         <input type="text" id="pdlFormula" class="form-control" placeholder="Formula (e.g. ⟨a⟩true)"
                             data-i18n="pdl_placeholder" style="margin-bottom:6px;">
-                        <button class="u-btn success block" onclick="runPdl()" data-i18n="btn_verify">
-                            <span class="glyphicon glyphicon-ok"></span> Verify
-                        </button>
+                        
+                        <div style="margin-bottom:6px; display:flex; align-items:center; gap:5px;">
+                            <label style="font-size:10px; margin:0; color:#666;">Tamanho do Traço LTL:</label>
+                            <input type="number" id="pdlTraceLength" class="form-control input-sm" value="30" min="1" style="width:60px; height:24px; padding:2px 5px;">
+                        </div>
+
+                        <div style="display:flex; gap:5px; margin-bottom: 6px;">
+                            <button class="u-btn success block" style="flex:1;" onclick="runPdl()" data-i18n="btn_verify">
+                                <span class="glyphicon glyphicon-ok"></span> Verify
+                            </button>
+                            <button class="u-btn primary block" style="flex:1;" onclick="animatePdl()">
+                                <span class="glyphicon glyphicon-film"></span> Animate
+                            </button>
+                        </div>
                         <div id="pdlResult" style="margin-top:8px; font-size:12px; font-weight:bold;"></div>
                     </div>
 
@@ -681,6 +695,7 @@ function runLTLTest() {
     
     var retaFormula = document.getElementById('ltlRetaInput').value.trim();
     var regaFormula = document.getElementById('ltlRegaInput').value.trim();
+    var traceLength = parseInt(document.getElementById('ltlTraceLength').value) || 20; // Lê o novo input
     var resBox = document.getElementById('ltlResultBox');
     
     if (!retaFormula || !regaFormula) {
@@ -712,7 +727,7 @@ function runLTLTest() {
     
     setTimeout(function() {
         try {
-            var result = RTA.testLTLEquivalence(parsedReta, parsedRega);
+            var result = RTA.testLTLEquivalence(parsedReta, parsedRega, traceLength);
             resBox.innerText = result;
         } catch (e) {
             resBox.innerText = "Erro ao executar o teste LTL: " + e;
@@ -729,19 +744,19 @@ function fillLTLPreset(type) {
     switch(type) {
         case 1:
             retaInp.value = "□(¬e2 → ♢e2)";
-            regaInp.value = "□(¬[e2 == 1] → ♢[e2 == 1])";
+            regaInp.value = "□(¬[e2_activate == 1] → ♢[e2_activate == 1])";
             break;
         case 2:
             retaInp.value = "□¬(e2 ∧ e3)";
-            regaInp.value = "□¬([e2 == 1] ∧ [e3 == 1])";
+            regaInp.value = "□¬([e2_activate == 1] ∧ [e3_activate == 1])";
             break;
         case 3:
             retaInp.value = "♢(e2 → □¬e3)";
-            regaInp.value = "♢([e2 == 1] → □¬[e3 == 1])";
+            regaInp.value = "♢([e2_activate == 1] → □¬[e3_activate == 1])";
             break;
         case 4:
             retaInp.value = "(□♢e2) ∧ (□♢e3)";
-            regaInp.value = "(□♢[e2 == 1]) ∧ (□♢[e3 == 1])";
+            regaInp.value = "(□♢[e2_activate == 1]) ∧ (□♢[e3_activate == 1])";
             break;
     }
     

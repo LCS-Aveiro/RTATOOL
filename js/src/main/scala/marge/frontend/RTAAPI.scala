@@ -11,6 +11,7 @@ import rta.syntax.Condition
 import rta.syntax.Formula
 import rta.syntax.Formula.*
 
+
 @JSExportTopLevel("RTA")
 object RTAAPI {
 
@@ -182,7 +183,6 @@ object RTAAPI {
           val from = stringToQName(edgeData.selectDynamic("from").toString)
           val to = stringToQName(edgeData.selectDynamic("to").toString)
           
-          // O JS agora deve enviar tanto o tId quanto o label
           val tId = stringToQName(edgeData.selectDynamic("tId").toString)
           val label = stringToQName(edgeData.selectDynamic("label").toString)
           
@@ -254,7 +254,7 @@ object RTAAPI {
   }
 
   @JSExport
-  def testLTLEquivalence(retaFormulaStr: String, regaFormulaStr: String): String = {
+  def testLTLEquivalence(retaFormulaStr: String, regaFormulaStr: String,traceLength: Int): String = {
     currentGraph match {
       case Some(rx) =>
         try {
@@ -265,7 +265,7 @@ object RTAAPI {
           
           val gltsGraph = Parser2.parseProgram(gltsSource)
 
-          val (retaTrace, pathLabels) = AnalyseLTS.generateRandomTrace(rx, 20)
+          val (retaTrace, pathLabels) = AnalyseLTS.generateRandomTrace(rx, traceLength)
 
           val regaTrace = AnalyseLTS.followPath(gltsGraph, pathLabels)
 
@@ -361,36 +361,43 @@ object RTAAPI {
   }
 
   @JSExport
-  def runPdl(stateStr: String, formulaStr: String): String = {
+  def runPdl(stateStr: String, formulaStr: String, traceLength: Int): String = {
     currentGraph match {
       case Some(rx) =>
         try {
           val adaptedState = stateStr.replace('/', '.')
           Parser2.pp[QName](Parser2.qname, adaptedState) match {
-            case Left(err) => s"Error parsing state '$stateStr': $err"
+            case Left(err) => s"""{"error": "${escapeJson(s"Error parsing state '$stateStr': $err")}"}"""
             case Right(startState) =>
               if (!rx.states.contains(startState)) {
-                 s"State '${startState.show}' not found in the current model."
+                 s"""{"error": "${escapeJson(s"State '${startState.show}' not found in the current model.")}"}"""
               } else {
                  val formula = PdlParser.parsePdlFormula(formulaStr)
                  
                  if (hasLTL(formula)) {
                     val startGraph = rx.copy(inits = Set(startState))
-                    val (trace, _) = AnalyseLTS.generateRandomTrace(startGraph, 30)
+                    val (trace, pathLabels, edgeIds) = AnalyseLTS.generateRandomTraceDetailed(startGraph, traceLength)
                     val result = AnalyseLTS.evalLTLUser(trace, formula)
-                    s"Result: $result (via Bounded LTL Trace)"
+                    
+                    val traceStr = if (pathLabels.isEmpty) "Nenhum traço gerado (deadlock ou vazio)" else pathLabels.mkString(" ➔ ")
+                    
+                    val msg = s"Result: $result\n[LTL Trace: $traceLength steps]\nStart ➔ $traceStr"
+                    val pathJson = js.JSON.stringify(js.Array(edgeIds: _*))
+                    
+                    s"""{"result": $result, "text": "${escapeJson(msg)}", "path": $pathJson}"""
                  } else {
                     val result = PdlEvaluator.evaluateFormula(startState, formula, rx)
-                    s"Result: $result"
+                    val msg = s"Result: $result\n(Standard PDL Evaluation / Trace Not Used)"
+                    s"""{"result": $result, "text": "${escapeJson(msg)}", "path": []}"""
                  }
               }
           }
         } catch {
           case e: Throwable => 
             val msg = if (e.getMessage != null) e.getMessage else e.toString
-            s"Evaluation Error: $msg"
+            s"""{"error": "${escapeJson(s"Evaluation Error: $msg")}"}"""
         }
-      case None => "Model not loaded."
+      case None => """{"error": "Model not loaded."}"""
     }
   }
 
