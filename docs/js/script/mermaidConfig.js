@@ -33,7 +33,7 @@ function initMermaidInteractivity() {
 
 function adjustMermaidZoom(factor) {
     mZoom *= factor;
-    if (mZoom < 0.1) mZoom = 0.1;
+    if (mZoom < 0.001) mZoom = 0.001;
     if (mZoom > 10) mZoom = 5;
     applyMermaidTransform();
 }

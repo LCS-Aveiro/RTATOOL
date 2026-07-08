@@ -1,26 +1,25 @@
+window.playCounterexample = function (isSuccess, customPath, speedMs) {
+    var path = customPath || window.lastCounterexample;
+    if (!path || !currentCytoscapeInstance) return;
 
-window.playCounterexample = function (isSuccess) {
-    if (!window.lastCounterexample || !currentCytoscapeInstance) return;
+    var cy = currentCytoscapeInstance;
+    var duration = speedMs || 900; // Por defeito é 900ms, mas aceita custom!
 
-    var cy   = currentCytoscapeInstance;
-    var path = window.lastCounterexample;
-
-    var pathColor = isSuccess ? '#2563EB' : '#DC2626';
-    var nodeColor = isSuccess ? '#BFDBFE' : '#FECACA';
-    var borderColor = isSuccess ? '#1D4ED8' : '#B91C1C';
+    var pathColor = isSuccess ? '#10B981' : '#DC2626'; // Verde para sucesso
+    var nodeColor = isSuccess ? '#D1FAE5' : '#FECACA';
+    var borderColor = isSuccess ? '#059669' : '#B91C1C';
 
     cy.elements().removeClass('anim-visiting anim-visited anim-target cx-node cx-path');
 
     cy.style()
-        .selector('.cx-path').style({ 'line-color': pathColor, 'target-arrow-color': pathColor, 'width': 5, 'line-style': 'solid', 'transition-property': 'line-color, target-arrow-color, width', 'transition-duration': '0.3s' })
-        .selector('.cx-node').style({ 'background-color': nodeColor, 'border-color': borderColor, 'border-width': 4, 'transition-property': 'background-color, border-color', 'transition-duration': '0.3s' })
+        .selector('.cx-path').style({ 'line-color': pathColor, 'target-arrow-color': pathColor, 'width': 5, 'transition-property': 'line-color, target-arrow-color, width', 'transition-duration': '0.1s' })
+        .selector('.cx-node').style({ 'background-color': nodeColor, 'border-color': borderColor, 'border-width': 4, 'transition-property': 'background-color, border-color', 'transition-duration': '0.1s' })
         .update();
 
     let step = 0;
     function nextStep() {
         if (step >= path.length) {
-            // Remove highlighting after 4 seconds
-            setTimeout(() => cy.elements().removeClass('cx-node cx-path'), 4000);
+            setTimeout(() => cy.elements().removeClass('cx-node cx-path'), 2000);
             return;
         }
 
@@ -29,11 +28,13 @@ window.playCounterexample = function (isSuccess) {
             eventNode.addClass('cx-node');
             eventNode.incomers('edge').addClass('cx-path').sources().addClass('cx-node');
             eventNode.outgoers('edge').addClass('cx-path').targets().addClass('cx-node');
-            cy.animate({ center: { eles: eventNode }, zoom: 1.2 }, { duration: 400 });
+            
+            // Só faz Zoom in se for lento (erro), não faz no rápido
+            if(duration > 100) cy.animate({ center: { eles: eventNode }, zoom: 1.2 }, { duration: duration/2 });
         }
 
         step++;
-        setTimeout(nextStep, 900);
+        setTimeout(nextStep, duration);
     }
     nextStep();
 };

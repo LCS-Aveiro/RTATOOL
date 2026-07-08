@@ -26,13 +26,6 @@ object Formula {
   case class DiamondP(act: PdlProgram, p: Formula) extends Formula  // <α>φ
 
 
-  // --- NÓS LTL (Traços) ---
-  case class LtlNext(p: Formula) extends Formula              // X φ
-  case class LtlUntil(p: Formula, q: Formula) extends Formula // φ U ψ
-  case class LtlGlobally(p: Formula) extends Formula          // G φ
-  case class LtlEventually(p: Formula) extends Formula        // F φ
-
-  
 
 
 

@@ -86,6 +86,7 @@ function renderMermaidView() {
 
     var mermaidCode = "";
     if      (currentMermaidMode === 'lts')    mermaidCode = RTA.getAllStepsMermaid();
+    else if (currentMermaidMode === 'symbolic') mermaidCode = RTA.getSymbolicStepsMermaid();
     else if (currentMermaidMode === 'simple') mermaidCode = RTA.getCurrentStateMermaidSimple();
     else                                      mermaidCode = RTA.getCurrentStateMermaid();
 

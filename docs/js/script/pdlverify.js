@@ -1,70 +1,98 @@
+// Rastreador global para saber qual caixa de input tem o foco (útil se tivermos múltiplos inputs de fórmulas)
+let lastFocusedInput = null;
+
+document.addEventListener('focusin', function(e) {
+    if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
+        lastFocusedInput = e.target;
+    }
+});
+
+// -------------------------------------------------------------
+// RENDERIZAÇÃO DOS BOTÕES DE AJUDA (ESTADOS, VARIÁVEIS, REGRAS)
+// -------------------------------------------------------------
 function renderPdlHelpers(data) {
-    var statesDiv = document.getElementById('pdl-states-list');
-    var actionsDiv = document.getElementById('pdl-actions-list');
-    var varsDiv = document.getElementById('pdl-vars-list');
-
-    if (!statesDiv || !actionsDiv || !data || !data.graphElements) return;
-
-    statesDiv.innerHTML = '';
-    actionsDiv.innerHTML = '';
-    if (varsDiv) varsDiv.innerHTML = '';
+    if (!data || !data.graphElements) return;
 
     var uniqueStates = new Set();
     var actionMap = new Map();
 
+    // Extrai estados e ações do grafo atual
     data.graphElements.forEach(function (el) {
         var cls = el.classes || "";
         var d = el.data;
-
         if (cls.indexOf('state-node') !== -1 && d && d.label) {
             uniqueStates.add(d.label);
         }
-
-        if (cls.indexOf('event-node') !== -1 && d && d.action_name) {
+        if (cls.indexOf('event-node') !== -1 && d && (d.action_name || d.label)) {
             var display = d.hover_label || d.label.replace(/\\n/g, ' ').replace('\n', ' ');
-            var technicalName = d.action_name;
-
+            var technicalName = d.action_name || d.label;
             actionMap.set(display, technicalName);
         }
     });
 
+    var allVars = {};
+    if (data.panelData) {
+        if (data.panelData.variables) Object.assign(allVars, data.panelData.variables);
+        if (data.panelData.clocks) Object.assign(allVars, data.panelData.clocks);
+    }
+
+    // Popula todas as abas lógicas simultaneamente (PDL e LTL)
+    ['pdl', 'ltl'].forEach(prefix => {
+        populateHelperForTab(prefix, uniqueStates, actionMap, allVars);
+    });
+}
+
+function populateHelperForTab(prefix, uniqueStates, actionMap, allVars) {
+    var statesDiv = document.getElementById(prefix + '-states-list');
+    var actionsDiv = document.getElementById(prefix + '-actions-list');
+    var varsDiv = document.getElementById(prefix + '-vars-list');
+
+    if (statesDiv) statesDiv.innerHTML = '';
+    if (actionsDiv) actionsDiv.innerHTML = '';
+    if (varsDiv) varsDiv.innerHTML = '';
+
+    // 1. Estados
     if (uniqueStates.size === 0) {
-        statesDiv.innerHTML = '<span class="text-muted" style="font-size:10px;">Nenhum estado.</span>';
+        if (statesDiv) statesDiv.innerHTML = '<span class="text-muted" style="font-size:10px;">Sem estados.</span>';
     } else {
         Array.from(uniqueStates).sort().forEach(function (st) {
             var btn = document.createElement('button');
             btn.className = 'btn btn-xs btn-primary';
             btn.style.margin = '2px';
             btn.innerText = st;
-            btn.onclick = function () { setState(st); };
-            statesDiv.appendChild(btn);
+            btn.onclick = function () {
+                var stateInput = document.getElementById(prefix + 'State');
+                if (stateInput) {
+                    stateInput.value = st;
+                    stateInput.style.backgroundColor = "#d1e7dd";
+                    setTimeout(() => stateInput.style.backgroundColor = "#fff", 300);
+                } else {
+                    insertSymbol(prefix, st);
+                }
+            };
+            if (statesDiv) statesDiv.appendChild(btn);
         });
     }
 
-    var hasVars = false;
-    if (data.panelData) {
-        var allVars = {};
-        if (data.panelData.variables) Object.assign(allVars, data.panelData.variables);
-        if (data.panelData.clocks) Object.assign(allVars, data.panelData.clocks);
-
+    // 2. Variáveis
+    var hasVars = Object.keys(allVars).length > 0;
+    if (hasVars) {
         for (var vName in allVars) {
-            hasVars = true;
             var btn = document.createElement('button');
             btn.className = 'btn btn-xs btn-success';
             btn.style.margin = '2px';
             btn.innerText = vName;
             btn.onclick = (function (name) {
-                return function () { insertPdl(name); };
+                return function () { insertSymbol(prefix, name); };
             })(vName);
             if (varsDiv) varsDiv.appendChild(btn);
         }
-    }
-    if (!hasVars && varsDiv) {
-        varsDiv.innerHTML = '<span class="text-muted" style="font-size:10px;">No variables.</span>';
+    } else {
+        if (varsDiv) varsDiv.innerHTML = '<span class="text-muted" style="font-size:10px;">Sem variáveis.</span>';
     }
 
+    // 3. Ações / Hyperedges
     var hasActions = false;
-
     if (actionMap.size > 0) {
         Array.from(actionMap.keys()).sort().forEach(function (display) {
             var techName = actionMap.get(display);
@@ -72,15 +100,14 @@ function renderPdlHelpers(data) {
             btn.className = 'btn btn-xs btn-warning';
             btn.style.margin = '2px';
             btn.innerText = display;
-            btn.onclick = function () {
-                insertPdl(techName);
-            };
-            actionsDiv.appendChild(btn);
+            btn.onclick = function () { insertSymbol(prefix, techName); };
+            if (actionsDiv) actionsDiv.appendChild(btn);
         });
         hasActions = true;
     }
 
-    if (uniqueStates.size > 0) {
+    // 4. Injetar Estados também nos atalhos de Ações (para PDL)
+    if (uniqueStates.size > 0 && actionsDiv) {
         if (hasActions) {
             var divider = document.createElement('span');
             divider.style.display = "inline-block";
@@ -96,39 +123,50 @@ function renderPdlHelpers(data) {
             btn.className = 'btn btn-xs btn-primary';
             btn.style.margin = '2px';
             btn.innerText = st;
-            btn.onclick = function () { insertPdl(st); };
+            btn.onclick = function () { insertSymbol(prefix, st); };
             actionsDiv.appendChild(btn);
         });
         hasActions = true;
     }
 
-    if (!hasActions) {
-        actionsDiv.innerHTML = '<span class="text-muted" style="font-size:10px;">Nenhum elemento disponível.</span>';
+    if (!hasActions && actionsDiv) {
+        actionsDiv.innerHTML = '<span class="text-muted" style="font-size:10px;">Sem elementos.</span>';
     }
 }
-function setState(val) {
-    var input = document.getElementById('pdlState');
-    input.value = val;
-    input.style.backgroundColor = "#d1e7dd";
-    setTimeout(() => input.style.backgroundColor = "#fff", 300);
-}
 
-function insertPdl(text, suffix) {
-    var input = document.getElementById('pdlFormula');
+// Inserção direcionada para as caixas PDL ou LTL
+function insertSymbol(prefix, text, suffix) {
+    var input = document.getElementById(prefix + 'Formula');
+    if (!input) return;
     var valToInsert = text + (suffix || "");
 
-    if (input.selectionStart || input.selectionStart == '0') {
+    if (input.selectionStart !== undefined) {
         var startPos = input.selectionStart;
         var endPos = input.selectionEnd;
         input.value = input.value.substring(0, startPos) + valToInsert + input.value.substring(endPos, input.value.length);
+        
+        var newPos = startPos + (suffix ? text.length : valToInsert.length);
+        input.selectionStart = newPos;
+        input.selectionEnd = newPos;
+    } else {
+        input.value += valToInsert;
+    }
+    input.focus();
+}
 
-        if (suffix) {
-            input.selectionStart = startPos + text.length;
-            input.selectionEnd = startPos + text.length;
-        } else {
-            input.selectionStart = startPos + valToInsert.length;
-            input.selectionEnd = startPos + valToInsert.length;
-        }
+function insertSymbolFocused(text, suffix) {
+    if (!lastFocusedInput) return;
+    var input = lastFocusedInput;
+    var valToInsert = text + (suffix || "");
+    
+    if (input.selectionStart !== undefined) {
+        var startPos = input.selectionStart;
+        var endPos = input.selectionEnd;
+        input.value = input.value.substring(0, startPos) + valToInsert + input.value.substring(endPos, input.value.length);
+        
+        var newPos = startPos + (suffix ? text.length : valToInsert.length);
+        input.selectionStart = newPos;
+        input.selectionEnd = newPos;
     } else {
         input.value += valToInsert;
     }
@@ -136,22 +174,26 @@ function insertPdl(text, suffix) {
 }
 
 
-function _executePdlRequest(isAnimation) {
-    var s = document.getElementById("pdlState").value;
+// -------------------------------------------------------------
+// AVALIAÇÃO PDL CLÁSSICA (Lógica Standard Modal)
+// -------------------------------------------------------------
+function runPdl() {
+    var prefix = 'pdl';
+    var stateInput = document.getElementById(prefix + "State");
+    var s = stateInput ? stateInput.value : "";
+    
+    // Se não há estado, inferir do grafo atual (estado verde)
     if (!s && typeof currentCytoscapeInstance !== 'undefined' && currentCytoscapeInstance) {
         var currentNodes = currentCytoscapeInstance.nodes('.current-state');
         if (currentNodes.length > 0) s = currentNodes[0].data('label');
     }
 
-    var visualFormula = document.getElementById("pdlFormula").value;
+    var visualFormula = document.getElementById(prefix + "Formula").value;
     if (!visualFormula || visualFormula.trim() === "") {
-        alert("Escreva uma fórmula PDL/LTL para verificar.");
+        alert("Escreva uma fórmula PDL para verificar.");
         return;
     }
     
-    var traceLengthInput = document.getElementById("pdlTraceLength");
-    var traceLength = traceLengthInput ? (parseInt(traceLengthInput.value) || 30) : 30;
-
     var protectedCode = visualFormula
         .replace(/⟨/g, '___DIAM_OPEN___')
         .replace(/⟩/g, '___DIAM_CLOSE___')
@@ -183,8 +225,8 @@ function _executePdlRequest(isAnimation) {
         .replace(/\[\[/g, '[') 
         .replace(/\]\]/g, ']');
 
-    var resStr = RTA.runPdl(s, finalCode, traceLength);
-    var resDiv = document.getElementById("pdlResult");
+    var resStr = RTA.runPdl(s, finalCode, 0);
+    var resDiv = document.getElementById(prefix + "Result");
 
     try {
         var resObj = JSON.parse(resStr);
@@ -196,9 +238,7 @@ function _executePdlRequest(isAnimation) {
 
         var text = resObj.text;
         var lines = text.split('\n');
-        var resultLine = lines[0];
         var extraInfo = lines.slice(1).join('<br/>');
-        
         var isTrue = resObj.result;
         
         resDiv.style.color = isTrue ? "green" : "red";
@@ -206,21 +246,199 @@ function _executePdlRequest(isAnimation) {
         
         resDiv.innerHTML = icon + '<div style="font-size:10px; font-weight:normal; color:#555; margin-top:6px; background:#f9f9f9; padding:6px; border:1px solid #eee; border-radius:3px;">' + extraInfo + '</div>';
 
-        if (isAnimation) {
-            if (resObj.path && resObj.path.length > 0) {
-                window.lastCounterexample = resObj.path;
-                if (typeof playCounterexample === 'function') {
-                    playCounterexample(isTrue);
-                }
-            } else {
-                alert("Nenhum traço linear encontrado para animar (provavelmente esta é uma avaliação clássica PDL ou o traço é vazio). Apenas traços LTL geram caminho animado por enquanto.");
-            }
-        }
     } catch (e) {
         resDiv.style.color = "darkorange";
         resDiv.innerText = "Internal error parsing result: " + resStr;
     }
 }
 
-function runPdl() { _executePdlRequest(false); }
-function animatePdl() { _executePdlRequest(true); }
+
+// -------------------------------------------------------------
+// LÓGICA DO SIMULADOR CONTÍNUO LTL (Estilo UPPAAL SMC com Delays)
+// -------------------------------------------------------------
+let ltlSimTimer = null;
+let ltlTotalTraces = 0;
+let isLtlSimulating = false;
+
+function toggleLTLSimulation() {
+    if (isLtlSimulating) stopLTLSimulation();
+    else startLTLSimulation();
+}
+
+function startLTLSimulation() {
+    var visualFormula = document.getElementById("ltlFormula").value;
+    if (!visualFormula || visualFormula.trim() === "") {
+        alert("Escreva uma fórmula LTL para verificar.");
+        return;
+    }
+
+    var finalCode = visualFormula
+        .replace(/¬/g, '!').replace(/∧/g, '&&').replace(/∨/g, '||')
+        .replace(/→/g, '->').replace(/↔/g, '<->').replace(/⊤/g, 'true')
+        .replace(/⊥/g, 'false').replace(/□/g, 'G').replace(/♢/g, 'F');
+
+    var traceLength = parseInt(document.getElementById("ltlTraceLength").value) || 30;
+    var batchSize = parseInt(document.getElementById("ltlBatchSize").value) || 10;
+
+    isLtlSimulating = true;
+    ltlTotalTraces = 0;
+    
+    var btn = document.getElementById("btnLtlSim");
+    btn.innerHTML = '<span class="glyphicon glyphicon-stop"></span> Parar Simulador';
+    btn.style.backgroundColor = '#DC2626';
+    btn.style.color = '#fff';
+
+    var consoleDiv = document.getElementById("ltlLiveConsole");
+    consoleDiv.innerHTML = "🔧 Iniciando Simulador LTL Contínuo...\n";
+    document.getElementById("ltlSimStats").innerText = "Avaliados: 0";
+    document.getElementById("ltlResult").innerHTML = "";
+
+    function simLoop() {
+        if (!isLtlSimulating) return;
+
+        var resStr = RTA.verifyLTLBatch(finalCode, traceLength, batchSize);
+        try {
+            var resObj = JSON.parse(resStr);
+            if (resObj.error) {
+                consoleDiv.innerHTML += `<span style="color:#FF6B6B">Erro: ${resObj.error}</span>\n`;
+                stopLTLSimulation();
+                return;
+            }
+
+            ltlTotalTraces += resObj.passedCount;
+            document.getElementById("ltlSimStats").innerText = "Avaliados: " + ltlTotalTraces;
+
+            // Escreve uma amostra visual do lote no terminal (com os Delays!)
+            // Escreve uma amostra visual do lote no terminal
+            if (resObj.sample && resObj.passedCount > 0) {
+                var line = `[Pass ${ltlTotalTraces}] ➔ ${resObj.sample}\n`;
+                consoleDiv.innerHTML += line;
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+
+                // NOVO: PISCA O TRAÇO DE SUCESSO ULTRA-RÁPIDO!
+                if (resObj.samplePath && resObj.samplePath.length > 0) {
+                    if (typeof playCounterexample === 'function') {
+                        playCounterexample(true, resObj.samplePath, 40); // 40ms speed!
+                    }
+                }
+            }
+
+            // Se falhou num dos traços deste lote
+            if (!resObj.success) {
+                ltlTotalTraces += 1;
+                document.getElementById("ltlSimStats").innerText = "Avaliados: " + ltlTotalTraces + " (FALHOU!)";
+                document.getElementById("ltlSimStats").style.color = "#DC2626";
+
+                consoleDiv.innerHTML += `\n<span style="color:#FF6B6B; font-weight:bold;">❌ CONTRA-EXEMPLO ENCONTRADO!</span>\n`;
+                consoleDiv.innerHTML += `<span style="color:#FF6B6B">Traço: Start ➔ ${resObj.counterExample}</span>\n`;
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                
+                document.getElementById("ltlResult").innerHTML = '<span style="color:red"><span class="glyphicon glyphicon-remove"></span> A fórmula falhou num dos percursos. A animar o erro...</span>';
+
+                // Toca a animação vermelha do contra-exemplo no grafo
+                window.lastCounterexample = resObj.path;
+                if (typeof playCounterexample === 'function') {
+                    playCounterexample(false);
+                }
+                stopLTLSimulation();
+                return;
+            }
+
+            // Continua a pedir o próximo lote
+            if (isLtlSimulating) {
+                ltlSimTimer = setTimeout(simLoop, 20); // 20ms de delay para não travar o ecrã
+            }
+        } catch (e) {
+            consoleDiv.innerHTML += "<span style='color:orange'>Erro interno de parsing.</span>\n";
+            stopLTLSimulation();
+        }
+    }
+
+    simLoop(); // Arranca a máquina!
+}
+
+function stopLTLSimulation() {
+    isLtlSimulating = false;
+    clearTimeout(ltlSimTimer);
+    var btn = document.getElementById("btnLtlSim");
+    if (btn) {
+        btn.innerHTML = '<span class="glyphicon glyphicon-play"></span> Sim. Contínua';
+        btn.style.backgroundColor = '';
+        btn.style.color = '';
+    }
+}
+
+// Botão para testar apenas 1 vez (dispara 1 lote de tamanho 1)
+function runLtlMultiple() {
+    var backupSize = document.getElementById("ltlBatchSize").value;
+    document.getElementById("ltlBatchSize").value = 1;
+    startLTLSimulation();
+    
+    // Paramos logo após iniciar para que ele faça apenas 1 iteração
+    setTimeout(() => {
+        stopLTLSimulation();
+        document.getElementById("ltlBatchSize").value = backupSize;
+    }, 100);
+}
+
+
+
+
+
+function runLTLExhaustive() {
+    var visualFormula = document.getElementById("ltlFormula").value;
+    if (!visualFormula || visualFormula.trim() === "") {
+        alert("Escreva uma fórmula LTL para verificar.");
+        return;
+    }
+
+    var finalCode = visualFormula
+        .replace(/¬/g, '!').replace(/∧/g, '&&').replace(/∨/g, '||')
+        .replace(/→/g, '->').replace(/↔/g, '<->').replace(/⊤/g, 'true')
+        .replace(/⊥/g, 'false').replace(/□/g, 'G').replace(/♢/g, 'F');
+
+    // Usamos o campo do Trace Length para definir a profundidade máxima da prova
+    var maxDepth = parseInt(document.getElementById("ltlTraceLength").value) || 30;
+    
+    var consoleDiv = document.getElementById("ltlLiveConsole");
+    consoleDiv.innerHTML = "🧠 Iniciando Motor Simbólico (DBM)...\nExplorando todos os Universos Temporais...\n";
+    document.getElementById("ltlSimStats").innerText = "A Iniciar Prova...";
+    document.getElementById("ltlResult").innerHTML = "";
+
+    // Timeout ligeiro para deixar a UI renderizar a mensagem "A iniciar"
+    setTimeout(() => {
+        var resStr = RTA.runLTLExhaustive(finalCode, 50000, maxDepth);
+        try {
+            var resObj = JSON.parse(resStr);
+            if (resObj.error) {
+                consoleDiv.innerHTML += `<span style="color:#FF6B6B">Erro: ${resObj.error}</span>\n`;
+                return;
+            }
+
+            document.getElementById("ltlSimStats").innerText = "Zonas Exploradas: " + resObj.explored;
+
+            if (resObj.success) {
+                let msg = resObj.limitReached ? 
+                    `\n✅ VERIFICADO (Limitado a ${resObj.explored} zonas)\nNenhuma violação encontrada neste limite de profundidade.` :
+                    `\n🏆 PROVA MATEMÁTICA A 100%\nA fórmula é válida para *qualquer* valor de tempo possível!`;
+                
+                consoleDiv.innerHTML += `<span style="color:#10B981; font-weight:bold;">${msg}</span>\n`;
+                document.getElementById("ltlResult").innerHTML = '<span style="color:green"><span class="glyphicon glyphicon-ok"></span> Prova Exaustiva Concluída com Sucesso!</span>';
+            } else {
+                consoleDiv.innerHTML += `\n<span style="color:#FF6B6B; font-weight:bold;">❌ CONTRA-EXEMPLO ENCONTRADO!</span>\n`;
+                consoleDiv.innerHTML += `<span style="color:#FF6B6B">Traço (DBM): Start ➔ ${resObj.counterExample}</span>\n`;
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                
+                document.getElementById("ltlResult").innerHTML = '<span style="color:red"><span class="glyphicon glyphicon-remove"></span> A fórmula falhou. A animar o contra-exemplo...</span>';
+
+                window.lastCounterexample = resObj.path;
+                if (typeof playCounterexample === 'function') {
+                    // Animamos ligeiramente mais lento para ser fácil de acompanhar o erro
+                    playCounterexample(false, resObj.path, 800);
+                }
+            }
+        } catch (e) {
+            consoleDiv.innerHTML += "<span style='color:orange'>Erro interno ao processar a prova.</span>\n";
+        }
+    }, 50);
+}

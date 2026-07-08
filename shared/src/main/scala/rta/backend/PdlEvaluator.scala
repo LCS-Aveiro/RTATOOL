@@ -147,8 +147,6 @@ object PdlEvaluator {
         val configsAfterP = getFinalConfigs(config, p)
         configsAfterP.flatMap(intermediateConfig => getFinalConfigs(intermediateConfig, q))
 
-      case LtlNext(_) | LtlUntil(_, _) | LtlGlobally(_) | LtlEventually(_) =>
-        throw new Exception("Fórmulas LTL (X, U, G, F) devem ser verificadas sobre traços temporais (Trace Checking), e não como avaliação clássica de estado PDL.")
       case _ =>
         if (evaluateFormula(config, formula)) Set(config) else Set.empty
 

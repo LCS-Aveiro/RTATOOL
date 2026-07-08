@@ -8,9 +8,9 @@ import rta.backend.{RxSemantics, CytoscapeConverter, PdlEvaluator, MCRL2, Uppaal
 import rta.syntax.PdlParser
 import rta.syntax.RTATranslator
 import rta.syntax.Condition
-import rta.syntax.Formula
-import rta.syntax.Formula.*
-
+import rta.backend.{LtlEvaluator, TraceGenerator}
+import rta.syntax.{LtlParser, PdlParser}
+import rta.backend.AnalyseLTS.ZoneStateKey
 
 @JSExportTopLevel("RTA")
 object RTAAPI {
@@ -253,45 +253,7 @@ object RTAAPI {
     }
   }
 
-  @JSExport
-  def testLTLEquivalence(retaFormulaStr: String, regaFormulaStr: String,traceLength: Int): String = {
-    currentGraph match {
-      case Some(rx) =>
-        try {
-          val retaFormula = PdlParser.parsePdlFormula(retaFormulaStr)
-          val regaFormula = PdlParser.parsePdlFormula(regaFormulaStr)
 
-          val gltsSource = RTATranslator.translate_syntax(rx, currentSource)
-          
-          val gltsGraph = Parser2.parseProgram(gltsSource)
-
-          val (retaTrace, pathLabels) = AnalyseLTS.generateRandomTrace(rx, traceLength)
-
-          val regaTrace = AnalyseLTS.followPath(gltsGraph, pathLabels)
-
-          val resReta = AnalyseLTS.evalReTA(retaTrace, retaFormula)
-          val resRega = AnalyseLTS.evalReGA(regaTrace, regaFormula)
-
-          val traceStr = pathLabels.mkString(" ➔ ")
-          
-          s"""
-          | === TEOREMA 1: PROVA DE EQUIVALÊNCIA REAL ===
-          |
-          | Traço percorrido (σ) [${pathLabels.size} passos]: 
-          | Start ➔ $traceStr
-          |
-          | [ReTA Semantics] σ ⊨ φ : $resReta
-          | [ReGA (GLTS) Semantics] τ ⊨ ∆φ : $resRega
-          |
-          | Equivalência: ${if (resReta == resRega) "VERIFICADO ✓" else "FALHOU ✗"}
-          """.stripMargin
-
-        } catch {
-          case e: Throwable => s"Erro ao testar equivalência LTL:\n${e.getMessage}"
-        }
-      case None => "Erro: Carrega um modelo primeiro."
-    }
-  }
   
 
   @JSExport
@@ -342,23 +304,6 @@ object RTAAPI {
     }.getOrElse("Modelo vazio")
   }
 
-  def hasLTL(f: rta.syntax.Formula): Boolean = {
-    import rta.syntax.Formula.*
-    f match {
-      case LtlNext(_) | LtlUntil(_, _) | LtlGlobally(_) | LtlEventually(_) => true
-      case Not(p) => hasLTL(p)
-      case And(p, q) => hasLTL(p) || hasLTL(q)
-      case Or(p, q) => hasLTL(p) || hasLTL(q)
-      case Impl(p, q) => hasLTL(p) || hasLTL(q)
-      case Iff(p, q) => hasLTL(p) || hasLTL(q)
-      case PipeAnd(p, q) => hasLTL(p) || hasLTL(q)
-      case Box(p) => hasLTL(p)
-      case Diamond(p) => hasLTL(p)
-      case BoxP(_, p) => hasLTL(p)
-      case DiamondP(_, p) => hasLTL(p)
-      case _ => false
-    }
-  }
 
   @JSExport
   def runPdl(stateStr: String, formulaStr: String, traceLength: Int): String = {
@@ -370,34 +315,188 @@ object RTAAPI {
             case Left(err) => s"""{"error": "${escapeJson(s"Error parsing state '$stateStr': $err")}"}"""
             case Right(startState) =>
               if (!rx.states.contains(startState)) {
-                 s"""{"error": "${escapeJson(s"State '${startState.show}' not found in the current model.")}"}"""
+                s"""{"error": "${escapeJson(s"State '${startState.show}' not found in the current model.")}"}"""
+              } else if (LtlParser.looksLikeLtl(formulaStr)) {
+                val formula = LtlParser.parseLtlFormula(formulaStr)
+                val startGraph = rx.copy(inits = Set(startState))
+                val (trace, pathLabels, edgeIds) = TraceGenerator.randomTraceDetailed(startGraph, traceLength)
+                val result = LtlEvaluator.eval(trace, formula, LtlEvaluator.Hybrid)
+
+                val traceStr = if (pathLabels.isEmpty) "Nenhum traço gerado (deadlock ou vazio)" else pathLabels.mkString(" ➔ ")
+                val msg = s"Result: $result\n[LTL Trace: $traceLength steps]\nStart ➔ $traceStr"
+                val pathJson = js.JSON.stringify(js.Array(edgeIds: _*))
+                s"""{"result": $result, "text": "${escapeJson(msg)}", "path": $pathJson}"""
               } else {
-                 val formula = PdlParser.parsePdlFormula(formulaStr)
-                 
-                 if (hasLTL(formula)) {
-                    val startGraph = rx.copy(inits = Set(startState))
-                    val (trace, pathLabels, edgeIds) = AnalyseLTS.generateRandomTraceDetailed(startGraph, traceLength)
-                    val result = AnalyseLTS.evalLTLUser(trace, formula)
-                    
-                    val traceStr = if (pathLabels.isEmpty) "Nenhum traço gerado (deadlock ou vazio)" else pathLabels.mkString(" ➔ ")
-                    
-                    val msg = s"Result: $result\n[LTL Trace: $traceLength steps]\nStart ➔ $traceStr"
-                    val pathJson = js.JSON.stringify(js.Array(edgeIds: _*))
-                    
-                    s"""{"result": $result, "text": "${escapeJson(msg)}", "path": $pathJson}"""
-                 } else {
-                    val result = PdlEvaluator.evaluateFormula(startState, formula, rx)
-                    val msg = s"Result: $result\n(Standard PDL Evaluation / Trace Not Used)"
-                    s"""{"result": $result, "text": "${escapeJson(msg)}", "path": []}"""
-                 }
+                val formula = PdlParser.parsePdlFormula(formulaStr)
+                val result = PdlEvaluator.evaluateFormula(startState, formula, rx)
+                val msg = s"Result: $result\n(Standard PDL Evaluation / Trace Not Used)"
+                s"""{"result": $result, "text": "${escapeJson(msg)}", "path": []}"""
               }
           }
         } catch {
-          case e: Throwable => 
+          case e: Throwable =>
             val msg = if (e.getMessage != null) e.getMessage else e.toString
             s"""{"error": "${escapeJson(s"Evaluation Error: $msg")}"}"""
         }
       case None => """{"error": "Model not loaded."}"""
+    }
+  }
+
+
+  // ==============================================================================
+  // NOVOS MÉTODOS SIMBÓLICOS (DBM / ZONAS TEMPORAIS) - Para o Frontend
+  // ==============================================================================
+
+  @JSExport
+  def findBestPathZone(targetStr: String): String = {
+    currentGraph match {
+      case Some(rx) =>
+        val adaptedTarget = targetStr.replace('/', '.')
+        Parser2.pp[QName](Parser2.qname, adaptedTarget) match {
+          case Right(targetQName) =>
+            AnalyseLTS.findShortestPath(rx, targetQName, maxStates = 5000, useZones = true) match {
+              case Some(steps) => 
+                js.JSON.stringify(js.Array(steps: _*))
+              case None => 
+                """{"error": "Caminho não encontrado (Motor Simbólico / DBM)."}"""
+            }
+          case Left(err) => 
+            s"""{"error": "Estado inválido: $err"}"""
+        }
+      case None => 
+        """{"error": "Carregue o modelo primeiro."}"""
+    }
+  }
+
+  @JSExport
+  def runLTLExhaustive(formulaStr: String, maxStates: Int, maxDepth: Int): String = {
+    currentGraph match {
+      case Some(startGraph) =>
+        try {
+          val formula = LtlParser.parseLtlFormula(formulaStr)
+          val (success, ceLabels, ceIds, explored, limitReached) = AnalyseLTS.verifyLTLSymbolic(startGraph, formula, maxStates, maxDepth)
+
+          val ceStr = if (ceLabels.isEmpty) "Nenhum (Falha no 1º estado)" else ceLabels.mkString(" ➔ ")
+          val pathJson = js.JSON.stringify(js.Array(ceIds: _*))
+
+          s"""{"success": $success, "explored": $explored, "limitReached": $limitReached, "counterExample": "${escapeJson(ceStr)}", "path": $pathJson}"""
+        } catch {
+          case e: Throwable => s"""{"error": "${escapeJson(s"Erro na Prova DBM: ${e.getMessage}")}"}"""
+        }
+      case None => """{"error": "Modelo não carregado."}"""
+    }
+  }
+
+  @JSExport
+  def findPathToValueZone(condStr: String): js.Any = {
+    currentGraph match {
+      case Some(rx) =>
+        try {
+          val formatted = condStr
+            .replace("&&", "] &&[")
+            .replace("AND", "] && [")
+          
+          val formulaStr = s"[$formatted]"
+          val formula = PdlParser.parsePdlFormula(formulaStr)
+          
+          def formulaToCondition(f: rta.syntax.Formula): rta.syntax.Condition = f match {
+            case rta.syntax.Formula.CondProp(c) => c
+            case rta.syntax.Formula.And(f1, f2) => rta.syntax.Condition.And(formulaToCondition(f1), formulaToCondition(f2))
+            case _ => throw new Exception("Use apenas comparações simples unidas por && ou AND")
+          }
+
+          val finalCond = formulaToCondition(formula)
+
+          AnalyseLTS.findShortestPathToCondition(rx, finalCond, maxStates = 50000, useZones = true) match {
+            case Some(steps) => js.Array(steps: _*)
+            case None => js.Dynamic.literal(error = "Caminho não encontrado ou inatingível (Motor Simbólico / DBM).")
+          }
+        } catch {
+          case e: Throwable => js.Dynamic.literal(error = s"Erro: ${e.getMessage}")
+        }
+      case None => js.Dynamic.literal(error = "Modelo não carregado.")
+    }
+  }
+
+
+  @JSExport
+  def verifyLTLBatch(formulaStr: String, traceLength: Int, batchSize: Int): String = {
+    currentGraph match {
+      case Some(startGraph) =>
+        try {
+          val formula = LtlParser.parseLtlFormula(formulaStr)
+          var allTrue = true
+          var counterExampleTrace: List[String] = Nil
+          var counterExampleIds: List[String] = Nil
+          var passedCount = 0
+          var sampleTrace: List[String] = Nil
+          var sampleIds: List[String] = Nil // NOVO
+
+          for (_ <- 1 to batchSize if allTrue) {
+            val (trace, pathLabels, edgeIds) = TraceGenerator.randomTimedTraceDetailed(startGraph, traceLength)
+            
+            val res = LtlEvaluator.eval(trace, formula, LtlEvaluator.Hybrid) 
+            if (!res) {
+              allTrue = false
+              counterExampleTrace = pathLabels
+              counterExampleIds = edgeIds
+            } else {
+              passedCount += 1
+              sampleTrace = pathLabels 
+              sampleIds = edgeIds // NOVO
+            }
+          }
+
+          val sampleStr = if (sampleTrace.isEmpty) "Traço Vazio/Deadlock" else sampleTrace.mkString(" ➔ ")
+          val ceStr = if (counterExampleTrace.isEmpty) "Traço Vazio/Deadlock" else counterExampleTrace.mkString(" ➔ ")
+          val pathJson = js.JSON.stringify(js.Array(counterExampleIds: _*))
+          val samplePathJson = js.JSON.stringify(js.Array(sampleIds: _*)) // NOVO
+
+          if (allTrue) {
+            s"""{"success": true, "passedCount": $passedCount, "sample": "${escapeJson(sampleStr)}", "samplePath": $samplePathJson}"""
+          } else {
+            s"""{"success": false, "passedCount": $passedCount, "sample": "${escapeJson(sampleStr)}", "samplePath": $samplePathJson, "counterExample": "${escapeJson(ceStr)}", "path": $pathJson}"""
+          }
+        } catch {
+          case e: Throwable => s"""{"error": "${escapeJson(s"Erro LTL: ${e.getMessage}")}"}"""
+        }
+      case None => """{"error": "Modelo não carregado."}"""
+    }
+  }
+
+  @JSExport
+  def testLTLEquivalence(retaFormulaStr: String, regaFormulaStr: String, traceLength: Int): String = {
+    currentGraph match {
+      case Some(rx) =>
+        try {
+          val retaFormula = LtlParser.parseLtlFormula(retaFormulaStr)
+          val regaFormula = LtlParser.parseLtlFormula(regaFormulaStr)
+
+          val gltsSource = RTATranslator.translate_syntax(rx, currentSource)
+          val gltsGraph = Parser2.parseProgram(gltsSource)
+
+          val (retaTrace, pathLabels) = TraceGenerator.randomTrace(rx, traceLength)
+          val regaTrace = TraceGenerator.followPath(gltsGraph, pathLabels)
+
+          val resReta = LtlEvaluator.eval(retaTrace, retaFormula, LtlEvaluator.ReTA)
+          val resRega = LtlEvaluator.eval(regaTrace, regaFormula, LtlEvaluator.ReGA)
+
+          val traceStr = pathLabels.mkString(" ➔ ")
+          s"""
+          | === TEOREMA 1: PROVA DE EQUIVALÊNCIA REAL ===
+          |
+          | Traço percorrido (σ) [${pathLabels.size} passos]:
+          | Start ➔ $traceStr
+          |
+          | [ReTA Semantics] σ ⊨ φ : $resReta
+          | [ReGA (GLTS) Semantics] τ ⊨ ∆φ : $resRega
+          |
+          | Equivalência: ${if (resReta == resRega) "VERIFICADO ✓" else "FALHOU ✗"}
+          """.stripMargin
+        } catch {
+          case e: Throwable => s"Erro ao testar equivalência LTL:\n${e.getMessage}"
+        }
+      case None => "Erro: Carrega um modelo primeiro."
     }
   }
 
@@ -575,6 +674,140 @@ object RTAAPI {
   def getCurrentStateMermaidSimple(): String = currentGraph.map(g => RxGraph.toMermaidPlain(g)).getOrElse("")
 
 
+
+  // ==============================================================================
+  // GERAÇÃO VISUAL DO GRAFO DE ZONAS (DBM SYMBOLIC LTS) - Versão Ultra-Compatível
+  // ==============================================================================
+  @JSExport
+  def getSymbolicStepsMermaid(): String = {
+    import rta.backend.AnalyseLTS.ZoneStateKey
+
+    // Saneador de símbolos matemáticos para usar caracteres Unicode limpos (sem < ou > ou ;)
+    def sanitizeForMermaid(s: String): String = {
+      s.replace("<=", "≤")
+       .replace(">=", "≥")
+       .replace("<", "⋖")
+       .replace(">", "⋗")
+    }
+
+    currentGraph.map { root =>
+      var visited = Set[ZoneStateKey]()
+      var queue = List(root)
+      var transitionsStr = List[String]()
+      
+      var stateToId = Map[ZoneStateKey, Int]()
+      var idCounter = 0
+      
+      def getId(g: RxGraph): Int = {
+        val key = ZoneStateKey(g.inits, g.val_env, g.zone, g.pendingDelays)
+        stateToId.getOrElse(key, {
+          idCounter += 1
+          stateToId += (key -> idCounter)
+          idCounter
+        })
+      }
+      
+      val startKey = ZoneStateKey(root.inits, root.val_env, root.zone, root.pendingDelays)
+      stateToId += (startKey -> 0)
+
+      val maxStates = 80 
+
+      while(queue.nonEmpty && visited.size < maxStates) {
+        val current = queue.head
+        queue = queue.tail
+        
+        val currentKey = ZoneStateKey(current.inits, current.val_env, current.zone, current.pendingDelays)
+        if (!visited.contains(currentKey)) {
+          visited += currentKey
+          val sourceId = getId(current)
+          
+          val edgeNexts = RxSemantics.nextEdgeSymbolic(current)
+          for ((edge, nextState) <- edgeNexts) {
+            val (from, to, tId, label) = edge
+            val targetId = getId(nextState)
+            
+            val displayLabel = if (tId == label) label.show else s"${label.show}(${tId.show})"
+            transitionsStr = s"""$sourceId --->|"$displayLabel"| $targetId""" :: transitionsStr
+            
+            val nextKey = ZoneStateKey(nextState.inits, nextState.val_env, nextState.zone, nextState.pendingDelays)
+            if (!visited.contains(nextKey)) {
+              queue = queue :+ nextState
+            }
+          }
+        }
+      }
+       
+      val nodeDefinitions = stateToId.map { case (key, id) =>
+        val zoneStr = sanitizeForMermaid(showZoneCompact(key.zone))
+        val varsStr = sanitizeForMermaid(key.vars.filterNot(_._1.n.contains("__return")).map(kv => s"${kv._1.show}=${kv._2.value}").mkString(", "))
+        val pendingStr = sanitizeForMermaid(key.pending.map { case (edge, op, clock, target) =>
+          s"${edge._4.show}(${op})@${clock.show}=${target}"
+        }.mkString(", "))
+        
+        // CONSTRUÇÃO TOTALMENTE TEXTUAL (SEM NENHUMA TAG HTML)
+        val labelParts = List(
+          key.inits.mkString(", "),
+          if (zoneStr.nonEmpty) s"Zone: $zoneStr" else "Zone: t ≥ 0",
+          if (varsStr.nonEmpty) s"Vars: $varsStr" else "",
+          if (pendingStr.nonEmpty) s"Pending: $pendingStr" else ""
+        ).filter(_.nonEmpty)
+        
+        // Passamos um caractere de quebra de linha real (\n em Scala). 
+        // O Mermaid renderiza isto perfeitamente na vertical e não crasha.
+        val label = labelParts.mkString("\n")
+        val style = if (id == 0) {
+          s"\nstyle $id fill:#c7d2fe,stroke:#4f46e5,stroke-width:2px,font-size:32px,font-weight:bold"
+        } else {
+          s"\nstyle $id font-size:32px,font-weight:bold"
+        }
+        s"""$id["$label"]$style"""
+      }.mkString("\n")
+
+      s"""graph TD
+         |${transitionsStr.distinct.reverse.mkString("\n")}
+         |$nodeDefinitions
+         |""".stripMargin
+      
+    }.getOrElse("graph LR\n0(Nenhum modelo carregado)")
+  }
+
+  // Helper para formatar a matriz DBM em inequações matemáticas amigáveis (ex: 0.0 <= t <= 5.0)
+  private def showZoneCompact(z: rta.backend.DBM.Zone): String = {
+    import rta.backend.DBM._
+    val list = for {
+      x <- z.clocks if x != ZERO_CLOCK
+    } yield {
+      val upperOpt = z.matrix.get((x, ZERO_CLOCK))
+      val lowerOpt = z.matrix.get((ZERO_CLOCK, x))
+      
+      val uStr = upperOpt match {
+        case Some(Bound(v, strict)) if v != Double.PositiveInfinity =>
+          s"${if (strict) "<" else "<="} $v"
+        case _ => ""
+      }
+      val lStr = lowerOpt match {
+        case Some(Bound(v, strict)) if v != Double.PositiveInfinity =>
+          s"${if (strict) ">" else ">="} ${-v}"
+        case _ => ""
+      }
+      
+      if (lStr.nonEmpty && uStr.nonEmpty) {
+        val lVal = -lowerOpt.get.value
+        val uVal = upperOpt.get.value
+        val lOp = if (lowerOpt.get.strict) "<" else "<="
+        val uOp = if (upperOpt.get.strict) "<" else "<="
+        s"$lVal $lOp ${x.show} $uOp $uVal"
+      } else if (lStr.nonEmpty) {
+        s"${x.show} $lStr"
+      } else if (uStr.nonEmpty) {
+        s"${x.show} $uStr"
+      } else {
+        s"${x.show} >= 0"
+      }
+    }
+    list.filter(_.nonEmpty).mkString(", ")
+  }
+
   private def stringToQName(str: String): QName = if (str.isEmpty) QName(Nil) else QName(str.split('/').toList)
   
   private def generateSimulationJson(graph: RxGraph, traversedEdge: Option[Edge]): String = {
@@ -582,7 +815,6 @@ object RTAAPI {
      
      val eventTransitions = RxSemantics.nextEdge(graph).map(_._1)
      val eventTransitionsJson = eventTransitions.map { case (from, to, tId, label) =>
-       // displayName formatado como Label(transID) se forem diferentes
        val displayName = if (tId == label) label.show else s"${label.show}(${tId.show})"
        s"""{"from":"$from", "to":"$to", "tId":"$tId", "label":"$label", "displayName":"$displayName", "isDelay": false}"""
      }.mkString(",")
@@ -591,9 +823,13 @@ object RTAAPI {
      val allEnabledTransitions = Seq(eventTransitionsJson, delayTransitionJson).filter(_.nonEmpty).mkString(",")
 
      val clocksJson = graph.clock_env.map { case (n, v) => s""""${n.show}": $v""" }.mkString(",")
-     val valEnvJson = graph.val_env.map { case (n, v) => 
-       s""""${n.show}": ${runtimeValueToJson(v)}""" 
-     }.mkString(",")
+     val valEnvJson = graph.val_env.map { case (n, v) => s""""${n.show}": ${runtimeValueToJson(v)}""" }.mkString(",")
+
+     // NOVO: Adicionar os Delays Pendentes!
+     val pendingJson = graph.pendingDelays.map { case (edge, op, clk, target) =>
+       val lbl = edge._4.show
+       s"""{"label": "$lbl", "op": "$op", "clock": "${clk.show}", "target": $target}"""
+     }.mkString("[", ",", "]")
 
      val traversedJson = traversedEdge match {
        case Some((from, to, tId, label)) => s"""{"from":"$from", "to":"$to", "tId":"$tId", "label":"$label"}"""
@@ -607,6 +843,7 @@ object RTAAPI {
        |     "enabled": [$allEnabledTransitions], 
        |     "clocks": {$clocksJson}, 
        |     "variables": {$valEnvJson}, 
+       |     "pending": $pendingJson,
        |     "canUndo": ${history.size > 1} 
        |  },
        |  "lastTransition": $traversedJson

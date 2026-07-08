@@ -4,149 +4,76 @@ import rta.syntax.Program2.{Edges, RxGraph, QName, Edge, showEdges}
 import rta.syntax.Condition
 import rta.syntax.RuntimeValue
 import scala.util.boundary, boundary.break
-import rta.syntax.Formula
-import rta.syntax.Formula.*
 import scala.util.Random
+import rta.syntax.LtlFormula
+import rta.backend.LtlEvaluator
 
 object AnalyseLTS:
 
+  // Chaves de memoização: uma para simulação discreta, outra para análise DBM/Zonas
   case class FastStateKey(inits: Set[QName], vars: Map[QName, RuntimeValue], clocks: Map[QName, Double])
-
-  // =======================================================================
-  // LTL AST & EQUIVALENCE CHECKER (ReTA vs ReGA)
-  // =======================================================================
-
-  def evalReTA(trace: List[RxGraph], phi: Formula): Boolean = {
-    if (trace.isEmpty) return false
-    phi match {
-      case True => true
-      case False => false
-      case StateProp(e) => trace.head.act.exists(_._4 == e) // No ReTA as folhas são Arestas Ativas
-      case CondProp(_) => throw new Exception("ReTA usa semântica de aresta, não condições de variável.")
-      case Not(p) => !evalReTA(trace, p)
-      case And(p, q) => evalReTA(trace, p) && evalReTA(trace, q)
-      case Or(p, q) => evalReTA(trace, p) || evalReTA(trace, q)
-      case Impl(p, q) => !evalReTA(trace, p) || evalReTA(trace, q)
-      case Iff(p, q) => evalReTA(trace, p) == evalReTA(trace, q)
-      case LtlNext(p) => if (trace.tail.isEmpty) false else evalReTA(trace.tail, p)
-      case LtlUntil(p, q) =>
-        trace.indices.find(i => evalReTA(trace.drop(i), q)) match {
-          case Some(idx) => (0 until idx).forall(i => evalReTA(trace.drop(i), p))
-          case None => false
-        }
-      case LtlGlobally(p) => trace.indices.forall(i => evalReTA(trace.drop(i), p))
-      case LtlEventually(p) => trace.indices.exists(i => evalReTA(trace.drop(i), p))
-      case _ => throw new Exception(s"Operador PDL ($phi) não é suportado na avaliação linear LTL.")
-    }
-  }
-
-  def evalReGA(trace: List[RxGraph], phi: Formula): Boolean = {
-    if (trace.isEmpty) return false
-    phi match {
-      case True => true
-      case False => false
-      case CondProp(c) => RxSemantics.evalCondition(c, trace.head) // No ReGA as folhas são Avaliação de Variáveis
-      case StateProp(_) => throw new Exception("ReGA usa variáveis (ex: [x == 1]), não arestas diretas.")
-      case Not(p) => !evalReGA(trace, p)
-      case And(p, q) => evalReGA(trace, p) && evalReGA(trace, q)
-      case Or(p, q) => evalReGA(trace, p) || evalReGA(trace, q)
-      case Impl(p, q) => !evalReGA(trace, p) || evalReGA(trace, q)
-      case Iff(p, q) => evalReGA(trace, p) == evalReGA(trace, q)
-      case LtlNext(p) => if (trace.tail.isEmpty) false else evalReGA(trace.tail, p)
-      case LtlUntil(p, q) =>
-        trace.indices.find(i => evalReGA(trace.drop(i), q)) match {
-          case Some(idx) => (0 until idx).forall(i => evalReGA(trace.drop(i), p))
-          case None => false
-        }
-      case LtlGlobally(p) => trace.indices.forall(i => evalReGA(trace.drop(i), p))
-      case LtlEventually(p) => trace.indices.exists(i => evalReGA(trace.drop(i), p))
-      case _ => throw new Exception(s"Operador PDL ($phi) não é suportado na avaliação linear LTL.")
-    }
-  }
+  case class ZoneStateKey(inits: Set[QName], vars: Map[QName, RuntimeValue], zone: DBM.Zone, pending: Set[(Edge, String, QName, Double)] = Set.empty)
 
 
-  // Avaliador Híbrido para o Frontend (Aceita Arestas e Variáveis em simultâneo)
-  def evalLTLUser(trace: List[RxGraph], phi: Formula): Boolean = {
-    if (trace.isEmpty) return false
-    phi match {
-      case True => true
-      case False => false
-      case StateProp(e) => trace.head.act.exists(_._4 == e)        // Verifica Arestas
-      case CondProp(c) => RxSemantics.evalCondition(c, trace.head) // Verifica Variáveis
-      case Not(p) => !evalLTLUser(trace, p)
-      case And(p, q) => evalLTLUser(trace, p) && evalLTLUser(trace, q)
-      case Or(p, q) => evalLTLUser(trace, p) || evalLTLUser(trace, q)
-      case Impl(p, q) => !evalLTLUser(trace, p) || evalLTLUser(trace, q)
-      case Iff(p, q) => evalLTLUser(trace, p) == evalLTLUser(trace, q)
-      case LtlNext(p) => if (trace.tail.isEmpty) false else evalLTLUser(trace.tail, p)
-      case LtlUntil(p, q) =>
-        trace.indices.find(i => evalLTLUser(trace.drop(i), q)) match {
-          case Some(idx) => (0 until idx).forall(i => evalLTLUser(trace.drop(i), p))
-          case None => false
-        }
-      case LtlGlobally(p) => trace.indices.forall(i => evalLTLUser(trace.drop(i), p))
-      case LtlEventually(p) => trace.indices.exists(i => evalLTLUser(trace.drop(i), p))
-      case _ => throw new Exception(s"Operador ($phi) não suportado em LTL Dinâmico.")
-    }
-  }
+  // ====================================================================
+  // PROVA LTL EXAUSTIVA (BMC SOBRE ZONAS DBM)
+  // ====================================================================
+  def verifyLTLSymbolic(start: RxGraph, formula: LtlFormula, maxStates: Int = 50000, maxDepth: Int = 30): (Boolean, List[String], List[String], Int, Boolean) = {
+    var counterExample: Option[(List[String], List[String])] = None
+    var statesExplored = 0
+    var limitReached = false
 
-  def generateRandomTrace(start: RxGraph, length: Int): (List[RxGraph], List[String]) = {
-    var trace = List(start)
-    var labels = List[String]()
-    var current = start
-    val rand = new Random()
-    
-    for (_ <- 0 until length) {
-      val nexts = RxSemantics.nextEdge(current).toList
-      if (nexts.nonEmpty) {
-        val step = nexts(rand.nextInt(nexts.size)) 
-        current = step._2
-        trace = trace :+ current
-        labels = labels :+ step._1._4.show
+    def dfs(current: RxGraph, path: List[RxGraph], labels: List[String], edgeIds: List[String], depth: Int, visitedInPath: Set[ZoneStateKey]): Unit = {
+      if (counterExample.isDefined) return
+      if (statesExplored >= maxStates) {
+        limitReached = true
+        return
       }
-    }
-    (trace, labels)
-  }
+      statesExplored += 1
 
+      val key = ZoneStateKey(current.inits, current.val_env, current.zone, current.pendingDelays)
+      val isCycle = visitedInPath.contains(key)
+      val nexts = RxSemantics.nextEdgeSymbolic(current)
+      val isDeadlock = nexts.isEmpty
 
-  def generateRandomTraceDetailed(start: RxGraph, length: Int): (List[RxGraph], List[String], List[String]) = {
-    var trace = List(start)
-    var labels = List[String]()
-    var edgeIds = List[String]()
-    var current = start
-    val rand = new Random()
-    
-    for (_ <- 0 until length) {
-      val nexts = RxSemantics.nextEdge(current).toList
-      if (nexts.nonEmpty) {
-        val step = nexts(rand.nextInt(nexts.size)) 
-        current = step._2
-        trace = trace :+ current
-        val edge = step._1
-        labels = labels :+ edge._4.show
-        val edgeId = s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
-        edgeIds = edgeIds :+ edgeId
-      }
-    }
-    (trace, labels, edgeIds)
-  }
-
-  def followPath(start: RxGraph, labels: List[String]): List[RxGraph] = {
-    @scala.annotation.tailrec
-    def loop(current: RxGraph, remaining: List[String], acc: List[RxGraph]): List[RxGraph] = {
-      remaining match {
-        case Nil => acc
-        case lbl :: tail =>
-          val nexts = RxSemantics.nextEdge(current).toList
-          nexts.find(_._1._4.show == lbl) match {
-            case Some(step) =>
-              loop(step._2, tail, acc :+ step._2)
-            case None =>
-              acc
+      // Chegou ao fim de um ramo (Ciclo, Deadlock ou Limite de Profundidade)
+      if (isCycle || isDeadlock || depth >= maxDepth) {
+        val res = LtlEvaluator.eval(path, formula, LtlEvaluator.Hybrid)
+        if (!res) {
+          // Formata o contra-exemplo detalhado: {estado atual, act: [arestas]}
+          val ceFormatted = collection.mutable.ListBuffer[String]()
+          for (i <- path.indices) {
+            val g = path(i)
+            val inits = g.inits.map(_.show).mkString(",")
+            val acts = g.act.map(_._4.show).mkString(", ")
+            ceFormatted += s"{$inits, act: [$acts]}"
+            
+            // Adiciona a ação que ligou este estado ao próximo
+            if (i < labels.length) {
+              ceFormatted += labels(i)
+            }
           }
+          counterExample = Some((ceFormatted.toList, edgeIds))
+        }
+        return
+      }
+
+      // Expande todos os futuros possíveis (Matematicamente esmagados pelo DBM)
+      for ((edge, nextGraph) <- nexts) {
+        if (counterExample.isEmpty) {
+          val label = edge._4.show
+          val edgeId = s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
+          dfs(nextGraph, path :+ nextGraph, labels :+ label, edgeIds :+ edgeId, depth + 1, visitedInPath + key)
+        }
       }
     }
-    loop(start, labels, List(start))
+
+    dfs(start, List(start), Nil, Nil, 0, Set())
+
+    counterExample match {
+      case Some((lbls, ids)) => (false, lbls, ids, statesExplored, limitReached)
+      case None => (true, Nil, Nil, statesExplored, limitReached)
+    }
   }
 
   def randomWalk(rx:RxGraph, max:Int=5000): (Set[RxGraph],Int,Edges,List[String]) =
@@ -213,7 +140,108 @@ object AnalyseLTS:
     aux(Set(rx), Set(), 0, Set(), Nil, max)
 
 
-  def findShortestPath(start: RxGraph, targetName: QName, maxStates: Int = 3000): Option[List[String]] = {
+  // ====================================================================
+  // DISPATCHERS (Escolhem qual motor usar: Zonas ou Simulação Discreta)
+  // ====================================================================
+
+  def findShortestPath(start: RxGraph, targetName: QName, maxStates: Int = 3000, useZones: Boolean = false): Option[List[String]] = {
+    if (useZones) findShortestPathSymbolic(start, targetName, maxStates)
+    else findShortestPathDiscrete(start, targetName, maxStates)
+  }
+
+  def findShortestPathToCondition(start: RxGraph, targetCond: Condition, maxStates: Int = 50000, useZones: Boolean = false): Option[List[String]] = {
+    if (useZones) findShortestPathToConditionSymbolic(start, targetCond, maxStates)
+    else findShortestPathToConditionDiscrete(start, targetCond, maxStates)
+  }
+
+
+  // ====================================================================
+  // MOTOR SIMBÓLICO (DBM / ZONAS TEMPORAIS) - Extremamente Rápido
+  // ====================================================================
+
+  private def findShortestPathSymbolic(start: RxGraph, targetName: QName, maxStates: Int): Option[List[String]] = {
+    val queue = collection.mutable.Queue[(RxGraph, List[String])]()
+    queue.enqueue((start, Nil))
+    var visited = Set[ZoneStateKey]()
+    
+    while (queue.nonEmpty && visited.size < maxStates) {
+      val (current, path) = queue.dequeue()
+      
+      if (current.inits.contains(targetName)) {
+        return Some(path)
+      }
+      
+      val key = ZoneStateKey(current.inits, current.val_env, current.zone)
+      
+      if (!visited.contains(key)) {
+        visited += key
+        
+        // O nextEdgeSymbolic avalia exaustivamente intervalos de tempo infinitos
+        val transitions = RxSemantics.nextEdgeSymbolic(current)
+        for ((edge, nextGraph) <- transitions) {
+          val label = edge._4.show
+          queue.enqueue((nextGraph, path :+ label))
+        }
+      }
+    }
+    None
+  }
+
+  private def findShortestPathToConditionSymbolic(start: RxGraph, targetCond: Condition, maxStates: Int): Option[List[String]] = boundary:
+    if (RxSemantics.evalDataCondition(targetCond, start)) break(Some(Nil))
+
+    val queue = collection.mutable.Queue[RxGraph]()
+    val parentOf = collection.mutable.Map[ZoneStateKey, (RxGraph, String)]()
+    
+    val startKey = ZoneStateKey(start.inits, start.val_env, start.zone, start.pendingDelays)
+    queue.enqueue(start)
+    
+    var visitedCount = 0
+
+    while (queue.nonEmpty && visitedCount < maxStates) {
+      val current = queue.dequeue()
+      visitedCount += 1
+
+      val transitions = RxSemantics.nextEdgeSymbolic(current)
+      
+      for ((edge, nextGraph) <- transitions) {
+        val nextKey = ZoneStateKey(nextGraph.inits, nextGraph.val_env, nextGraph.zone, nextGraph.pendingDelays)
+        val label = edge._4.show
+        
+        if (!parentOf.contains(nextKey) && nextKey != startKey) {
+          parentOf(nextKey) = (current, label)
+
+          if (RxSemantics.evalDataCondition(targetCond, nextGraph)) {
+            break(Some(reconstructZonePath(nextKey, parentOf)))
+          }
+
+          queue.enqueue(nextGraph)
+        }
+      }
+    }
+    None
+
+  private def reconstructZonePath(
+    targetKey: ZoneStateKey, 
+    parentOf: collection.mutable.Map[ZoneStateKey, (RxGraph, String)]
+  ): List[String] = {
+    val path = collection.mutable.ListBuffer[String]()
+    var currKey = targetKey
+    
+    while (parentOf.contains(currKey)) {
+      val (parentGraph, label) = parentOf(currKey)
+      path.prepend(label)
+      currKey = ZoneStateKey(parentGraph.inits, parentGraph.val_env, parentGraph.zone, parentGraph.pendingDelays)
+    }
+    path.toList
+  }
+
+
+  // ====================================================================
+  // MOTOR DISCRETO (O que já tinhas, avança com saltos numéricos delay)
+  // ====================================================================
+
+  private def findShortestPathDiscrete(start: RxGraph, targetName: QName, maxStates: Int): Option[List[String]] = {
     val queue = collection.mutable.Queue[(RxGraph, List[String])]()
     queue.enqueue((start, Nil))
     var visited = Set[FastStateKey]()
@@ -242,7 +270,6 @@ object AnalyseLTS:
           
           val canTimePass = current.inits.forall(s => 
             nextTimeState.invariants.get(s) match {
-              
               case Some(inv) => RxSemantics.evalCondition(inv, nextTimeState)
               case None => true
             }
@@ -257,7 +284,9 @@ object AnalyseLTS:
     None
   }
 
-  def findShortestPathToCondition(start: RxGraph, targetCond: Condition, maxStates: Int = 50000): Option[List[String]] = boundary:
+
+
+  private def findShortestPathToConditionDiscrete(start: RxGraph, targetCond: Condition, maxStates: Int): Option[List[String]] = boundary:
 
     if (RxSemantics.evalCondition(targetCond, start)) break(Some(Nil))
 
@@ -281,7 +310,6 @@ object AnalyseLTS:
         
         val canTimePass = current.inits.forall(s => 
           nextTimeState.invariants.get(s) match {
-            
             case Some(inv) => RxSemantics.evalCondition(inv, nextTimeState)
             case None => true
           }

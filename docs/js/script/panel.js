@@ -1,5 +1,7 @@
 
 var currentEdgeStyle = 'straight';
+let autoPlayTimer = null;
+
 
 function renderGlobalPanel(data, targetId) {
     var containerId = targetId || 'sidePanel';
@@ -13,17 +15,35 @@ function renderGlobalPanel(data, targetId) {
     var t      = i18n[currentLang];
     var suffix = containerId === 'sidePanel' ? '' : ('-' + containerId);
 
-    var undoBtn       = document.createElement('button');
-    undoBtn.className = 'btn btn-warning btn-block btn-sm undo-btn';
-    undoBtn.innerHTML = '<span class="glyphicon glyphicon-step-backward"></span> ' + (t.btn_undo || 'Desfazer (Undo)');
+    // BOTOES DE TOPO (Undo e Auto-Play)
+    var topBtns = document.createElement('div');
+    topBtns.style.display = 'flex';
+    topBtns.style.gap = '5px';
+    topBtns.style.marginBottom = '10px';
+
+    var undoBtn = document.createElement('button');
+    undoBtn.className = 'btn btn-warning btn-sm';
+    undoBtn.style.flex = '1';
+    undoBtn.innerHTML = '<span class="glyphicon glyphicon-step-backward"></span> Undo';
     undoBtn.disabled  = !panelData.canUndo;
     undoBtn.onclick   = function () {
+        if (autoPlayTimer) toggleAutoPlay(); // Para auto-play se estiver a correr
         var json = RTA.undo();
         if (jsTextHistory.length > 1) jsTextHistory.pop();
         updateAllViews(json);
     };
-    panelDiv.appendChild(undoBtn);
 
+    var autoPlayBtn = document.createElement('button');
+    autoPlayBtn.className = autoPlayTimer ? 'btn btn-danger btn-sm' : 'btn btn-info btn-sm';
+    autoPlayBtn.style.flex = '1';
+    autoPlayBtn.innerHTML = autoPlayTimer ? '<span class="glyphicon glyphicon-stop"></span> Parar' : '<span class="glyphicon glyphicon-random"></span> Auto-Play';
+    autoPlayBtn.onclick = toggleAutoPlay;
+
+    topBtns.appendChild(undoBtn);
+    topBtns.appendChild(autoPlayBtn);
+    panelDiv.appendChild(topBtns);
+
+    // VARIÁVEIS E RELÓGIOS
     if (
         (panelData.clocks   && Object.keys(panelData.clocks).length   > 0) ||
         (panelData.variables && Object.keys(panelData.variables).length > 0)
@@ -39,7 +59,7 @@ function renderGlobalPanel(data, targetId) {
 
         for (let [k, v] of Object.entries(panelData.clocks || {})) {
             let li       = document.createElement('li');
-            li.innerHTML = `<span class="text-info">🕒 ${k}</span>: <b>${v.toFixed(5)}</b>`;
+            li.innerHTML = `<span class="text-info">🕒 ${k}</span>: <b>${v.toFixed(2)}s</b>`;
             infoList.appendChild(li);
         }
         for (let [k, v] of Object.entries(panelData.variables || {})) {
@@ -49,12 +69,34 @@ function renderGlobalPanel(data, targetId) {
             infoList.appendChild(li);
         }
         panelDiv.appendChild(infoList);
-        panelDiv.appendChild(document.createElement('hr'));
     }
 
+    // NOVO: PENDENTES / AGENDADOS
+    if (panelData.pending && panelData.pending.length > 0) {
+        var pendHeader = document.createElement('div');
+        pendHeader.className = 'sec-label';
+        pendHeader.style.marginTop = '10px';
+        pendHeader.innerText = '⏳ Hiper-Arestas Agendadas:';
+        panelDiv.appendChild(pendHeader);
+
+        var pendList = document.createElement('ul');
+        pendList.className = "list-unstyled";
+        pendList.style.cssText = "font-size:11px; background:#fff8e1; padding:8px; border:1px solid #ffe082; border-radius:2px;";
+        panelData.pending.forEach(p => {
+            let li = document.createElement('li');
+            let color = p.op === 'on' ? '#2563EB' : '#DC2626';
+            let opTxt = p.op === 'on' ? 'Ligar' : 'Desligar';
+            li.innerHTML = `<b style="color:${color}">${p.label} (${opTxt})</b> aos <b>${p.target.toFixed(2)}s</b> do relógio [${p.clock}]`;
+            pendList.appendChild(li);
+        });
+        panelDiv.appendChild(pendList);
+    }
+
+    // TRANSIÇÕES DISPONÍVEIS
+    panelDiv.appendChild(document.createElement('hr'));
     var transHeader       = document.createElement('div');
     transHeader.className = 'sec-label';
-    transHeader.innerText = t.enabled_trans || 'Transições:';
+    transHeader.innerText = t.enabled_trans || 'Transições Disponíveis:';
     panelDiv.appendChild(transHeader);
 
     var isDeadlock = panelData.enabled.length === 0 ||
@@ -66,17 +108,13 @@ function renderGlobalPanel(data, targetId) {
         dead.style.cssText = "padding:5px; font-size:12px; font-weight:bold;";
         dead.innerText = (t.deadlock || "DEADLOCK") + " (LOOP)";
         panelDiv.appendChild(dead);
+        if(autoPlayTimer) toggleAutoPlay(); // Para o auto-play se bater em deadlock
     }
 
     if (panelData.enabled.length > 0) {
         panelData.enabled.forEach(function (edge) {
-            if (edge.p !== undefined && edge.p < window.currentDeltaCut && !edge.isDelay && edge.label !== 'deadlock') return;
-
-            if (edge.isDelay) {
-                _renderDelayControl(panelDiv, edge, suffix, containerId);
-            } else {
-                _renderTransitionButton(panelDiv, edge);
-            }
+            if (edge.isDelay) _renderDelayControl(panelDiv, edge, suffix, containerId);
+            else _renderTransitionButton(panelDiv, edge);
         });
     }
 
@@ -85,6 +123,40 @@ function renderGlobalPanel(data, targetId) {
     }
 }
 
+// O MOTOR DO AUTO-PLAY
+function toggleAutoPlay() {
+    if (autoPlayTimer) {
+        clearInterval(autoPlayTimer);
+        autoPlayTimer = null;
+        updateAllViews(JSON.stringify(lastModelData)); // Atualiza UI para repor botões
+    } else {
+        autoPlayTimer = setInterval(() => {
+            if(!lastModelData || !lastModelData.panelData || !lastModelData.panelData.enabled) return;
+            let enabled = lastModelData.panelData.enabled;
+            if(enabled.length === 0 || (enabled.length === 1 && enabled[0].label === 'deadlock')) {
+                toggleAutoPlay(); return;
+            }
+            
+            // Escolhe uma ação aleatória da lista
+            let valid = enabled.filter(e => e.label !== 'deadlock');
+            if(valid.length === 0) return;
+            let choice = valid[Math.floor(Math.random() * valid.length)];
+            
+            if (choice.isDelay) {
+                // Se escolheu Delay, avança o tempo por um valor aleatório (ex: até 1.5s)
+                let rDelay = parseFloat((0.1 + Math.random() * 1.5).toFixed(2));
+                updateAllViews(RTA.advanceTime(rDelay));
+            } else {
+                // Se escolheu transição, clica nela
+                var json = RTA.takeStep(JSON.stringify(choice));
+                var newStateText = RTA.getCurrentStateText();
+                jsTextHistory.push({ label: choice.label + " ->", text: newStateText });
+                updateAllViews(json);
+            }
+        }, 1200); // 1.2 segundos por passo
+        updateAllViews(JSON.stringify(lastModelData)); 
+    }
+}
 
 function _renderDelayControl(panelDiv, edge, suffix, containerId) {
     var btnGroup       = document.createElement('div');

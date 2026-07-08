@@ -15,11 +15,12 @@ function updateBPField() {
 }
 
 function findPathByValue() {
-    const type        = document.getElementById('bpType').value;
+    const type         = document.getElementById('bpType').value;
+    const engine       = document.getElementById('bpEngine').value; // NOVO
     const targetValue  = document.getElementById('bpValue').value.trim();
     const summaryDiv   = document.getElementById('bpResultSummary');
-    const pathDiv       = document.getElementById('bpResultPath');
-    const resultBox     = document.getElementById('bpResultBox');
+    const pathDiv      = document.getElementById('bpResultPath');
+    const resultBox    = document.getElementById('bpResultBox');
 
     if (!targetValue) {
         alert("Please enter a target (state name or condition).");
@@ -32,10 +33,20 @@ function findPathByValue() {
     pathDiv.innerHTML = "";
 
     let response;
+    
+    // Faz o dispatch baseado no motor escolhido!
     if (type === 'state') {
-        response = RTA.findBestPath(targetValue);
+        if (engine === 'symbolic') {
+            response = RTA.findBestPathZone(targetValue);
+        } else {
+            response = RTA.findBestPath(targetValue);
+        }
     } else {
-        response = RTA.findPathToValue(targetValue);
+        if (engine === 'symbolic') {
+            response = RTA.findPathToValueZone(targetValue);
+        } else {
+            response = RTA.findPathToValue(targetValue);
+        }
     }
 
     try {

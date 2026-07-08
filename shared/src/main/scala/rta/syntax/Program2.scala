@@ -3,6 +3,7 @@ package rta.syntax
 import rta.backend.RxSemantics
 import rta.syntax.Program2.EdgeMap
 import rta.syntax.{Condition, UpdateExpr, Statement, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, RuntimeValue, PrintStmt, FunctionDef}
+import rta.backend.DBM
 import scala.annotation.tailrec
 import scala.language.implicitConversions
 
@@ -36,6 +37,7 @@ object Program2:
         inits = this /- rx.inits,
         act = this / rx.act,
         val_env = rx.val_env.map { case (k, v) => (this / k) -> v },
+        zone = rx.zone,
         functions = rx.functions.map { case (k, f) => 
           (this / k) -> FunctionDef(this / f.name, f.params, f.body.map(s => applyPrefixToStatement(this, s))) 
         },
@@ -110,6 +112,7 @@ object Program2:
                      inits: Set[QName],
                      act: Edges,
                      val_env: Map[QName, RuntimeValue],
+                     zone: DBM.Zone, 
                      functions: Map[QName, FunctionDef],
                      clocks: Set[QName], 
                      clock_env: Map[QName, Double],
@@ -132,7 +135,14 @@ object Program2:
     
     def states = for (src, dests) <- edg.toSet; (d, _, _) <- dests; st <- Set(src, d) yield st
 
-    def addClock(name: QName) = this.copy(clocks = clocks + name, clock_env = clock_env + (name -> 0.0))
+    def addClock(name: QName) = {
+      val newClocks = clocks + name
+      this.copy(
+        clocks = newClocks, 
+        clock_env = clock_env + (name -> 0.0), 
+        zone = DBM.initial(newClocks)
+      )
+    }
     def addInvariant(state: QName, cond: Condition) = this.copy(invariants = invariants + (state -> cond))
     def addDelay(rule: QName, clock: QName, value: Double) = this.copy(delays = delays + (rule -> (clock, value)))
 
@@ -157,23 +167,42 @@ object Program2:
 
     def ++(r:RxGraph) =
       RxGraph(
-        join(edg,r.edg),join(on,r.on),join(off,r.off),
-        join(lbls,r.lbls),inits++r.inits,act++r.act,
-        val_env ++ r.val_env, functions ++ r.functions,
-        clocks ++ r.clocks, clock_env ++ r.clock_env,
+        join(edg,r.edg),
+        join(on,r.on),
+        join(off,r.off),
+        join(lbls,r.lbls),
+        inits++r.inits,
+        act++r.act,
+        val_env ++ r.val_env,
+        zone, // Mantemos a zona base (idealmente a união dos clocks)
+        functions ++ r.functions,
+        clocks ++ r.clocks,
+        clock_env ++ r.clock_env,
         invariants ++ r.invariants,
-        edgeConditions ++ r.edgeConditions, edgeUpdates ++ r.edgeUpdates,
-        delays ++ r.delays, pendingDelays ++ r.pendingDelays
+        edgeConditions ++ r.edgeConditions,
+        edgeUpdates ++ r.edgeUpdates,
+        delays ++ r.delays,
+        pendingDelays ++ r.pendingDelays
       )
 
   object RxGraph: 
     def apply(): RxGraph = RxGraph(
-      edg = Map().withDefaultValue(Set()), on = Map().withDefaultValue(Set()), off = Map().withDefaultValue(Set()),
-      lbls = Map().withDefaultValue(Set()), inits = Set(), act = Set(),
-      val_env = Map(), functions = Map(),
-      clocks = Set(), clock_env = Map(), invariants = Map(),
-      edgeConditions = Map().withDefaultValue(None), edgeUpdates = Map().withDefaultValue(Nil),
-      delays = Map(), pendingDelays = Set()
+      edg = Map().withDefaultValue(Set()), 
+      on = Map().withDefaultValue(Set()), 
+      off = Map().withDefaultValue(Set()),
+      lbls = Map().withDefaultValue(Set()), 
+      inits = Set(), 
+      act = Set(),
+      val_env = Map(), 
+      zone = DBM.initial(Set()),
+      functions = Map(),
+      clocks = Set(), 
+      clock_env = Map(), 
+      invariants = Map(),
+      edgeConditions = Map().withDefaultValue(None), 
+      edgeUpdates = Map().withDefaultValue(Nil),
+      delays = Map(), 
+      pendingDelays = Set()
     )
 
     def toMermaid(rx: RxGraph): String =

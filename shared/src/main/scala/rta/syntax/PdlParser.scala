@@ -32,15 +32,6 @@ object PdlParser {
   }
 
 
-  private def parseUntil(reader: TokenReader): Formula = {
-    var left = parseOr(reader)
-    while (reader.current == "U") {
-      reader.consume()
-      val right = parseOr(reader)
-      left = LtlUntil(left, right)
-    }
-    left
-  }
 
 
   private def parseFormula(reader: TokenReader): Formula = parseIff(reader)
@@ -56,10 +47,10 @@ object PdlParser {
   }
 
   private def parseImpl(reader: TokenReader): Formula = {
-    var left = parseUntil(reader)
+    var left = parseOr(reader)   // era parseUntil(reader)
     if (reader.current == "->" || reader.current == "=>") {
       reader.consume()
-      val right = parseImpl(reader) 
+      val right = parseImpl(reader)
       left = Impl(left, right)
     }
     left
@@ -100,16 +91,7 @@ object PdlParser {
     if (t == "!" || t == "~" || t == "¬") {
       reader.consume()
       Not(parseUnary(reader))
-    } else if (t == "X") {
-      reader.consume()
-      LtlNext(parseUnary(reader))
-    } else if (t == "G") {
-      reader.consume()
-      LtlGlobally(parseUnary(reader))
-    } else if (t == "F") {
-      reader.consume()
-      LtlEventually(parseUnary(reader))
-    } else if (t == "[]") {
+    }else if (t == "[]") {
       reader.consume()
       Box(parseUnary(reader))
     } else if (t == "<>") {
