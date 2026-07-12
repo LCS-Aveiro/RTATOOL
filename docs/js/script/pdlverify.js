@@ -273,9 +273,9 @@ function startLTLSimulation() {
     }
 
     var finalCode = visualFormula
-        .replace(/¬/g, '!').replace(/∧/g, '&&').replace(/∨/g, '||')
-        .replace(/→/g, '->').replace(/↔/g, '<->').replace(/⊤/g, 'true')
-        .replace(/⊥/g, 'false').replace(/□/g, 'G').replace(/♢/g, 'F');
+        .replace(/¬/g, '! ').replace(/∧/g, ' && ').replace(/∨/g, ' || ')
+        .replace(/→/g, ' -> ').replace(/↔/g, ' <-> ').replace(/⊤/g, 'true')
+        .replace(/⊥/g, 'false').replace(/□/g, 'G ').replace(/♢/g, 'F ');
 
     var traceLength = parseInt(document.getElementById("ltlTraceLength").value) || 30;
     var batchSize = parseInt(document.getElementById("ltlBatchSize").value) || 10;
@@ -322,6 +322,11 @@ function startLTLSimulation() {
                     }
                 }
             }
+
+            if (resObj.visitLog && resObj.visitLog.length > 0) {
+                consoleDiv.innerHTML += `\n<span style="color:#94a3b8; font-size: 8px;">[DEBUG] Rota do Explorador DFS (${resObj.visitLog.length} saltos): ${resObj.visitLog.join(" ➔ ")}</span>\n`;
+            }
+
 
             // Se falhou num dos traços deste lote
             if (!resObj.success) {
@@ -383,8 +388,6 @@ function runLtlMultiple() {
 
 
 
-
-
 function runLTLExhaustive() {
     var visualFormula = document.getElementById("ltlFormula").value;
     if (!visualFormula || visualFormula.trim() === "") {
@@ -395,19 +398,31 @@ function runLTLExhaustive() {
     var finalCode = visualFormula
         .replace(/¬/g, '!').replace(/∧/g, '&&').replace(/∨/g, '||')
         .replace(/→/g, '->').replace(/↔/g, '<->').replace(/⊤/g, 'true')
-        .replace(/⊥/g, 'false').replace(/□/g, 'G').replace(/♢/g, 'F');
+        .replace(/⊥/g, 'false').replace(/□/g, 'G ').replace(/♢/g, 'F ');
 
-    // Usamos o campo do Trace Length para definir a profundidade máxima da prova
+
     var maxDepth = parseInt(document.getElementById("ltlTraceLength").value) || 30;
-    
     var consoleDiv = document.getElementById("ltlLiveConsole");
+    
     consoleDiv.innerHTML = "🧠 Iniciando Motor Simbólico (DBM)...\nExplorando todos os Universos Temporais...\n";
     document.getElementById("ltlSimStats").innerText = "A Iniciar Prova...";
     document.getElementById("ltlResult").innerHTML = "";
 
-    // Timeout ligeiro para deixar a UI renderizar a mensagem "A iniciar"
+    // -- ANIMAÇÃO LIGADA --
+    var cyWrapper = document.getElementById("cyWrapper");
+    var scanner = document.getElementById("cy-scanner-overlay");
+    if (cyWrapper) cyWrapper.classList.add("cy-processing");
+    if (scanner) scanner.style.display = "block";
+    if (typeof showCanvasTab === 'function') showCanvasTab('cyTab'); // Muda para o Grafo para ver o show!
+
+    // Atraso de 100ms para a UI atualizar e mostrar o scanner antes da conta pesada bloquear o browser
     setTimeout(() => {
         var resStr = RTA.runLTLExhaustive(finalCode, 50000, maxDepth);
+        
+        // -- ANIMAÇÃO DESLIGADA --
+        if (cyWrapper) cyWrapper.classList.remove("cy-processing");
+        if (scanner) scanner.style.display = "none";
+
         try {
             var resObj = JSON.parse(resStr);
             if (resObj.error) {
@@ -424,6 +439,12 @@ function runLTLExhaustive() {
                 
                 consoleDiv.innerHTML += `<span style="color:#10B981; font-weight:bold;">${msg}</span>\n`;
                 document.getElementById("ltlResult").innerHTML = '<span style="color:green"><span class="glyphicon glyphicon-ok"></span> Prova Exaustiva Concluída com Sucesso!</span>';
+                
+                // Piscar a verde!
+                if (cyWrapper) {
+                    cyWrapper.classList.add("cy-success-flash");
+                    setTimeout(() => cyWrapper.classList.remove("cy-success-flash"), 1000);
+                }
             } else {
                 consoleDiv.innerHTML += `\n<span style="color:#FF6B6B; font-weight:bold;">❌ CONTRA-EXEMPLO ENCONTRADO!</span>\n`;
                 consoleDiv.innerHTML += `<span style="color:#FF6B6B">Traço (DBM): Start ➔ ${resObj.counterExample}</span>\n`;
@@ -433,12 +454,150 @@ function runLTLExhaustive() {
 
                 window.lastCounterexample = resObj.path;
                 if (typeof playCounterexample === 'function') {
-                    // Animamos ligeiramente mais lento para ser fácil de acompanhar o erro
-                    playCounterexample(false, resObj.path, 800);
+                    playCounterexample(false, resObj.path, 800); // Anima o erro no grafo normal
                 }
             }
         } catch (e) {
             consoleDiv.innerHTML += "<span style='color:orange'>Erro interno ao processar a prova.</span>\n";
         }
-    }, 50);
+    }, 100);
+}
+
+
+let dbmCyInstance = null;
+
+function showDBMGraphModal() {
+    var jsonStr = RTA.getSymbolicStepsJSON();
+    var elements = JSON.parse(jsonStr);
+    
+    if (elements.length === 0) {
+        alert("Nenhum modelo carregado ou grafo vazio.");
+        return;
+    }
+    
+    // Abre a modal
+    $('#dbmGraphModal').modal('show');
+    
+    // Pequeno atraso para a Modal ganhar as dimensões certas antes de injetar o Cytoscape
+    setTimeout(() => {
+        if (dbmCyInstance) dbmCyInstance.destroy();
+        
+        dbmCyInstance = cytoscape({
+            container: document.getElementById('dbmCytoscapeContainer'),
+            elements: elements,
+            style: [
+                {
+                    selector: 'node',
+                    style: {
+                        'shape': 'round-rectangle',
+                        'background-color': '#ffffff',
+                        'border-width': 2,
+                        'border-color': '#4f46e5', // Azul índigo
+                        'label': 'data(label)',
+                        'text-wrap': 'wrap',
+                        'text-valign': 'center',
+                        'text-halign': 'center',
+                        'font-size': '12px',
+                        'font-family': 'monospace',
+                        'color': '#1e293b',
+                        'width': 'label',
+                        'height': 'label',
+                        'padding': '12px'
+                    }
+                },
+                {
+                    selector: 'node[isStart = true]',
+                    style: {
+                        'border-width': 4,
+                        'border-color': '#10b981', // Verde
+                        'background-color': '#ecfdf5'
+                    }
+                },
+                {
+                    selector: 'edge',
+                    style: {
+                        'width': 2,
+                        'line-color': '#94a3b8',
+                        'target-arrow-color': '#94a3b8',
+                        'target-arrow-shape': 'triangle',
+                        'curve-style': 'bezier',
+                        'label': 'data(label)',
+                        'font-size': '11px',
+                        'font-weight': 'bold',
+                        'color': '#0f172a',
+                        'text-background-color': '#e2e8f0',
+                        'text-background-opacity': 1,
+                        'text-background-padding': '3px'
+                    }
+                }
+            ],
+            layout: {
+                name: 'dagre',      // Organiza hierarquicamente como uma árvore de estados
+                rankDir: 'TB',      // De cima (Top) para baixo (Bottom)
+                spacingFactor: 1.2
+            },
+            wheelSensitivity: 0.2
+        });
+    document.getElementById('dbmNodeDetails').style.display = 'none';
+
+        // Evento ao clicar num Node
+        dbmCyInstance.on('tap', 'node', function(evt){
+            var node = evt.target;
+            var actEdges = node.data('actEdges');
+            var inactEdges = node.data('inactEdges');
+
+            document.getElementById('dbmActEdges').innerText = actEdges || "Nenhuma";
+            document.getElementById('dbmInactEdges').innerText = inactEdges || "Nenhuma";
+            
+            // Mostra o painel com animação rápida
+            var panel = document.getElementById('dbmNodeDetails');
+            panel.style.display = 'block';
+        });
+
+        // Evento para fechar o painel se clicar no fundo vazio do grafo
+        dbmCyInstance.on('tap', function(evt){
+            if(evt.target === dbmCyInstance){
+                document.getElementById('dbmNodeDetails').style.display = 'none';
+            }
+        });
+
+    }, 250);
+}
+
+
+window.animateDFS = function(visitLog) {
+    if (!currentCytoscapeInstance || !visitLog || visitLog.length === 0) return;
+    
+    var cy = currentCytoscapeInstance;
+    let step = 0;
+    
+    // Cálculo inteligente da velocidade:
+    // Se ele explorar 19 zonas, demora uns 300ms em cada uma (dá para ver bem).
+    // Se ele explorar 5000 zonas, acelera para 10ms para não demorar horas!
+    let speed = Math.max(10, Math.min(300, 5000 / visitLog.length));
+
+    function nextStep() {
+        cy.elements().removeClass('dfs-node'); // Limpa a cor do anterior
+        
+        if (step >= visitLog.length) {
+            return; // Fim do caminho
+        }
+
+        let stateName = visitLog[step];
+        
+        // Encontra o nó no Grafo Principal através do texto do nome do estado
+        let node = cy.nodes().filter(n => {
+            let lbl = n.data('label');
+            return lbl === stateName || lbl.startsWith(stateName + '\n');
+        });
+        
+        if (node.length > 0) {
+            node.addClass('dfs-node');
+        }
+
+        step++;
+        setTimeout(nextStep, speed);
+    }
+    
+    nextStep();
 }

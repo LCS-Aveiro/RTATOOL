@@ -4,13 +4,14 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 import rta.syntax.Parser2
 import rta.syntax.Program2.{RxGraph, Edge, QName}
-import rta.backend.{RxSemantics, CytoscapeConverter, PdlEvaluator, MCRL2, UppaalConverter3, AnalyseLTS}
+import rta.backend.{RxSemantics, CytoscapeConverter, PdlEvaluator, MCRL2, UppaalConverter3,UppaalConverter4, AnalyseLTS}
 import rta.syntax.PdlParser
 import rta.syntax.RTATranslator
 import rta.syntax.Condition
 import rta.backend.{LtlEvaluator, TraceGenerator}
 import rta.syntax.{LtlParser, PdlParser}
 import rta.backend.AnalyseLTS.ZoneStateKey
+import rta.backend.{UppaalLayout, EmptyLayout}
 
 @JSExportTopLevel("RTA")
 object RTAAPI {
@@ -18,6 +19,38 @@ object RTAAPI {
   private var currentGraph: Option[RxGraph] = None
   private var currentSource: String = ""
   private var history: List[RxGraph] = Nil
+
+
+
+  class JSLayout(layoutJson: String) extends UppaalLayout {
+    val data = try { js.JSON.parse(layoutJson) } catch { case _: Throwable => js.Dynamic.literal() }
+    val nodesPos = if (!js.isUndefined(data.selectDynamic("nodes")) && data.selectDynamic("nodes") != null) data.selectDynamic("nodes") else js.Dynamic.literal()
+    val edgesPos = if (!js.isUndefined(data.selectDynamic("edges")) && data.selectDynamic("edges") != null) data.selectDynamic("edges") else js.Dynamic.literal()
+
+    def getPos(id: String): (Double, Double) = {
+      val p = nodesPos.selectDynamic(id)
+      if (!js.isUndefined(p) && p != null) (p.selectDynamic("x").asInstanceOf[Double], p.selectDynamic("y").asInstanceOf[Double])
+      else (0.0, 0.0)
+    }
+
+    def getNails(sourceId: String, targetId: String, edgeId: String): List[(Double, Double)] = {
+      val e = edgesPos.selectDynamic(edgeId)
+      if (js.isUndefined(e) || e == null) return Nil
+      val dists = e.selectDynamic("distances").asInstanceOf[js.Array[Double]].toList
+      val weights = e.selectDynamic("weights").asInstanceOf[js.Array[Double]].toList
+      val s = getPos(sourceId)
+      val t = getPos(targetId)
+      val dx = t._1 - s._1
+      val dy = t._2 - s._2
+      val length = Math.sqrt(dx*dx + dy*dy)
+      if (length == 0) return Nil
+      val nx = -dy / length
+      val ny = dx / length
+      dists.zip(weights).map { case (d, w) =>
+        (s._1 + w * dx + d * nx, s._2 + w * dy + d * ny)
+      }
+    }
+  }
 
   private def escapeJson(str: String): String = {
     if (str == null) "" else str
@@ -110,10 +143,9 @@ object RTAAPI {
         
         val edgeNexts = RxSemantics.nextEdge(current)
         for ((edge, nextState) <- edgeNexts) {
-          val (from, to, tId, label) = edge // Desestruturação da quádrupla
+          val (from, to, tId, label) = edge
           val targetId = getId(nextState)
           
-          // Mostra Label(ID) se forem diferentes
           val displayLabel = if (tId == label) label.show else s"${label.show}(${tId.show})"
           
           transitionsStr = s"""$sourceId --->|"$displayLabel"| $targetId""" :: transitionsStr
@@ -164,7 +196,10 @@ object RTAAPI {
   def loadModel(sourceCode: String): String = {
     try {
       currentSource = sourceCode
-      val graph = Parser2.parseProgram(sourceCode)
+      val parsedGraph = Parser2.parseProgram(sourceCode)
+      val maxC = RxSemantics.MaxConstants.compute(parsedGraph)
+      val graph = parsedGraph.copy(maxConstants = maxC)
+      
       currentGraph = Some(graph)
       history = List(graph)
       generateSimulationJson(graph, None)
@@ -269,7 +304,11 @@ object RTAAPI {
 
   
   @JSExport
-  def getUppaalTGRG(layoutJson: String): String = currentGraph.map(g => UppaalConverter3.convert(g, currentSource, layoutJson)).getOrElse("")
+  def getUppaalTGRG(layoutJson: String): String = currentGraph.map(g => UppaalConverter3.convert(g, currentSource, new JSLayout(layoutJson))).getOrElse("")
+
+
+  @JSExport
+  def getUppaal(layoutJson: String): String = currentGraph.map(g => UppaalConverter4.convert(g, currentSource, layoutJson)).getOrElse("")
 
   @JSExport
   def checkProblems(): String = {
@@ -343,9 +382,7 @@ object RTAAPI {
   }
 
 
-  // ==============================================================================
-  // NOVOS MÉTODOS SIMBÓLICOS (DBM / ZONAS TEMPORAIS) - Para o Frontend
-  // ==============================================================================
+
 
   @JSExport
   def findBestPathZone(targetStr: String): String = {
@@ -374,17 +411,136 @@ object RTAAPI {
       case Some(startGraph) =>
         try {
           val formula = LtlParser.parseLtlFormula(formulaStr)
-          val (success, ceLabels, ceIds, explored, limitReached) = AnalyseLTS.verifyLTLSymbolic(startGraph, formula, maxStates, maxDepth)
+
+          val queryConstants = RxSemantics.MaxConstants.fromLTL(formula, startGraph.clocks)
+          val boostedStartGraph = startGraph.copy(
+            maxConstants = RxSemantics.MaxConstants.mergeMax(startGraph.maxConstants, queryConstants)
+          )
+
+          
+          val (success, ceLabels, ceIds, explored, limitReached, visitLog) = 
+              AnalyseLTS.verifyLTLSymbolic(boostedStartGraph, formula, maxStates, maxDepth)
 
           val ceStr = if (ceLabels.isEmpty) "Nenhum (Falha no 1º estado)" else ceLabels.mkString(" ➔ ")
           val pathJson = js.JSON.stringify(js.Array(ceIds: _*))
+          val visitLogJson = js.JSON.stringify(js.Array(visitLog: _*)) 
 
-          s"""{"success": $success, "explored": $explored, "limitReached": $limitReached, "counterExample": "${escapeJson(ceStr)}", "path": $pathJson}"""
+          s"""{"success": $success, "explored": $explored, "limitReached": $limitReached, "counterExample": "${escapeJson(ceStr)}", "path": $pathJson, "visitLog": $visitLogJson}"""
         } catch {
           case e: Throwable => s"""{"error": "${escapeJson(s"Erro na Prova DBM: ${e.getMessage}")}"}"""
         }
       case None => """{"error": "Modelo não carregado."}"""
     }
+  }
+
+  def getEdgeStatus(rx: RxGraph): (String, String) = {
+    val allEdges: Set[Edge] = 
+      rx.edg.flatMap { case (f, ts) => ts.map(t => (f, t._1, t._2, t._3)) }.toSet ++
+      rx.on.flatMap  { case (f, ts) => ts.map(t => (f, t._1, t._2, t._3)) }.toSet ++
+      rx.off.flatMap { case (f, ts) => ts.map(t => (f, t._1, t._2, t._3)) }.toSet
+      
+    val active = rx.act
+    val inactive = allEdges -- active
+    
+    val activeStr = active.map(_._4.show).toList.sorted.mkString(", ")
+    val inactiveStr = inactive.map(_._4.show).toList.sorted.mkString(", ")
+    
+    (activeStr, inactiveStr)
+  }
+
+
+  @JSExport
+  def getSymbolicStepsJSON(): String = {
+    import rta.backend.AnalyseLTS.ZoneStateKey
+
+    def sanitizeLabel(s: String): String = {
+      s.replace("<=", "≤").replace(">=", "≥").replace("<", "⋖").replace(">", "⋗")
+       .replace("\\", "\\\\").replace("\"", "\\\"")
+    }
+
+    currentGraph.map { root =>
+      var visited = Set[ZoneStateKey]()
+      var queue = List(root)
+      var elements = collection.mutable.ListBuffer[String]()
+      
+      var stateToId = Map[ZoneStateKey, String]()
+      var idCounter = 0
+      
+      def getId(g: RxGraph): String = {
+        val key = ZoneStateKey(g.inits, g.val_env, g.zone, g.pendingDelays,g.act)
+        stateToId.getOrElse(key, {
+          val newId = s"z$idCounter"
+          idCounter += 1
+          stateToId += (key -> newId)
+          newId
+        })
+      }
+      
+      val startKey = ZoneStateKey(root.inits, root.val_env, root.zone, root.pendingDelays,root.act)
+      val startId = getId(root)
+      visited += startKey
+
+      def buildNodeJson(g: RxGraph, id: String): String = {
+         val key = ZoneStateKey(g.inits, g.val_env, g.zone, g.pendingDelays, g.act)
+         
+
+         val displayZone = rta.backend.RxSemantics.advanceTimeZone(g).map(_.zone).getOrElse(key.zone)
+         
+         val zoneStr = sanitizeLabel(showZoneCompact(displayZone))
+         val varsStr = sanitizeLabel(key.vars.filterNot(_._1.n.contains("__return")).map(kv => s"${kv._1.show}=${kv._2.value}").mkString(", "))
+         val pendingStr = sanitizeLabel(key.pending.map { case (edge, op, clock, target) =>
+            s"${edge._4.show}(${op})@${clock.show}=${target}"
+         }.mkString(", "))
+         
+         val labelParts = List(
+            s"ESTADOS: ${key.inits.mkString(", ")}",
+            if (zoneStr.nonEmpty) s"ZONA: $zoneStr" else "ZONA: t ≥ 0",
+            if (varsStr.nonEmpty) s"VARS: $varsStr" else "",
+            if (pendingStr.nonEmpty) s"PENDENTE: $pendingStr" else ""
+         ).filter(_.nonEmpty)
+         
+         val label = labelParts.mkString("\\n")
+         val isStart = if (id == "z0") "true" else "false"
+
+         val (actStr, inactStr) = getEdgeStatus(g)
+         val safeAct = sanitizeLabel(actStr)
+         val safeInact = sanitizeLabel(inactStr)
+         
+         s"""{"data": {"id": "$id", "label": "$label", "isStart": $isStart, "actEdges": "$safeAct", "inactEdges": "$safeInact"}}"""
+      }
+      
+      elements += buildNodeJson(root, startId)
+
+      val maxStates = 300
+      var edgeCounter = 0
+
+      while(queue.nonEmpty && visited.size < maxStates) {
+        val current = queue.head
+        queue = queue.tail
+        
+        val currentKey = ZoneStateKey(current.inits, current.val_env, current.zone, current.pendingDelays,current.act)
+        val sourceId = stateToId(currentKey)
+        
+        val edgeNexts = RxSemantics.nextEdgeSymbolic(current)
+        for ((edge, nextState) <- edgeNexts) {
+          val (from, to, tId, label) = edge
+          val targetId = getId(nextState)
+          
+          val nextKey = ZoneStateKey(nextState.inits, nextState.val_env, nextState.zone, nextState.pendingDelays,nextState.act)
+          if (!visited.contains(nextKey)) {
+            visited += nextKey
+            queue = queue :+ nextState
+            elements += buildNodeJson(nextState, targetId)
+          }
+          
+          val displayLabel = if (tId == label) label.show else s"${label.show}(${tId.show})"
+          elements += s"""{"data": {"id": "e$edgeCounter", "source": "$sourceId", "target": "$targetId", "label": "${sanitizeLabel(displayLabel)}"}}"""
+          edgeCounter += 1
+        }
+      }
+       
+      s"[${elements.mkString(",")}]"
+    }.getOrElse("[]")
   }
 
   @JSExport
@@ -407,7 +563,12 @@ object RTAAPI {
 
           val finalCond = formulaToCondition(formula)
 
-          AnalyseLTS.findShortestPathToCondition(rx, finalCond, maxStates = 50000, useZones = true) match {
+          val queryConstants = RxSemantics.MaxConstants.fromCond(finalCond, rx.clocks)
+          val rxWithBoostedConstants = rx.copy(
+            maxConstants = RxSemantics.MaxConstants.mergeMax(rx.maxConstants, queryConstants)
+          )
+
+          AnalyseLTS.findShortestPathToCondition(rxWithBoostedConstants, finalCond, maxStates = 50000, useZones = true) match {
             case Some(steps) => js.Array(steps: _*)
             case None => js.Dynamic.literal(error = "Caminho não encontrado ou inatingível (Motor Simbólico / DBM).")
           }
@@ -415,6 +576,36 @@ object RTAAPI {
           case e: Throwable => js.Dynamic.literal(error = s"Erro: ${e.getMessage}")
         }
       case None => js.Dynamic.literal(error = "Modelo não carregado.")
+    }
+  }
+
+
+  @JSExport
+  def debugZoneGraphSize(hardCap: Int = 200000): String = {
+    currentGraph match {
+      case Some(root) =>
+        var visited = Set[ZoneStateKey]()
+        var queue = List(root)
+        var diagonalViolations = List[String]()
+
+        def diagonalOk(z: rta.backend.DBM.Zone): Boolean =
+          z.clocks.forall(c => z.matrix((c, c)).value == 0.0 && !z.matrix((c, c)).strict)
+
+        while (queue.nonEmpty && visited.size <= hardCap) {
+          val cur = queue.head; queue = queue.tail
+          val key = ZoneStateKey(cur.inits, cur.val_env, cur.zone, cur.pendingDelays, cur.act)
+          if (!visited.contains(key)) {
+            visited += key
+            if (!diagonalOk(cur.zone)) {
+              diagonalViolations = s"Zona ${cur.inits.mkString(",")} viola D(x,x)=0" :: diagonalViolations
+            }
+            queue = queue ++ RxSemantics.nextEdgeSymbolic(cur).map(_._2)
+          }
+        }
+
+        val exhaustive = visited.size <= hardCap
+        s"""{"zoneCount": ${visited.size}, "exhaustive": $exhaustive, "diagonalViolations": ${diagonalViolations.size}, "sampleViolations": ${js.JSON.stringify(js.Array(diagonalViolations.take(5): _*))}}"""
+      case None => """{"error": "Modelo não carregado."}"""
     }
   }
 
@@ -430,7 +621,7 @@ object RTAAPI {
           var counterExampleIds: List[String] = Nil
           var passedCount = 0
           var sampleTrace: List[String] = Nil
-          var sampleIds: List[String] = Nil // NOVO
+          var sampleIds: List[String] = Nil
 
           for (_ <- 1 to batchSize if allTrue) {
             val (trace, pathLabels, edgeIds) = TraceGenerator.randomTimedTraceDetailed(startGraph, traceLength)
@@ -443,14 +634,14 @@ object RTAAPI {
             } else {
               passedCount += 1
               sampleTrace = pathLabels 
-              sampleIds = edgeIds // NOVO
+              sampleIds = edgeIds
             }
           }
 
           val sampleStr = if (sampleTrace.isEmpty) "Traço Vazio/Deadlock" else sampleTrace.mkString(" ➔ ")
           val ceStr = if (counterExampleTrace.isEmpty) "Traço Vazio/Deadlock" else counterExampleTrace.mkString(" ➔ ")
           val pathJson = js.JSON.stringify(js.Array(counterExampleIds: _*))
-          val samplePathJson = js.JSON.stringify(js.Array(sampleIds: _*)) // NOVO
+          val samplePathJson = js.JSON.stringify(js.Array(sampleIds: _*))
 
           if (allTrue) {
             s"""{"success": true, "passedCount": $passedCount, "sample": "${escapeJson(sampleStr)}", "samplePath": $samplePathJson}"""
@@ -675,14 +866,11 @@ object RTAAPI {
 
 
 
-  // ==============================================================================
-  // GERAÇÃO VISUAL DO GRAFO DE ZONAS (DBM SYMBOLIC LTS) - Versão Ultra-Compatível
-  // ==============================================================================
+
   @JSExport
   def getSymbolicStepsMermaid(): String = {
     import rta.backend.AnalyseLTS.ZoneStateKey
 
-    // Saneador de símbolos matemáticos para usar caracteres Unicode limpos (sem < ou > ou ;)
     def sanitizeForMermaid(s: String): String = {
       s.replace("<=", "≤")
        .replace(">=", "≥")
@@ -699,7 +887,7 @@ object RTAAPI {
       var idCounter = 0
       
       def getId(g: RxGraph): Int = {
-        val key = ZoneStateKey(g.inits, g.val_env, g.zone, g.pendingDelays)
+        val key = ZoneStateKey(g.inits, g.val_env, g.zone, g.pendingDelays,g.act)
         stateToId.getOrElse(key, {
           idCounter += 1
           stateToId += (key -> idCounter)
@@ -707,7 +895,7 @@ object RTAAPI {
         })
       }
       
-      val startKey = ZoneStateKey(root.inits, root.val_env, root.zone, root.pendingDelays)
+      val startKey = ZoneStateKey(root.inits, root.val_env, root.zone, root.pendingDelays,root.act)
       stateToId += (startKey -> 0)
 
       val maxStates = 80 
@@ -716,7 +904,7 @@ object RTAAPI {
         val current = queue.head
         queue = queue.tail
         
-        val currentKey = ZoneStateKey(current.inits, current.val_env, current.zone, current.pendingDelays)
+        val currentKey = ZoneStateKey(current.inits, current.val_env, current.zone, current.pendingDelays,current.act)
         if (!visited.contains(currentKey)) {
           visited += currentKey
           val sourceId = getId(current)
@@ -729,7 +917,7 @@ object RTAAPI {
             val displayLabel = if (tId == label) label.show else s"${label.show}(${tId.show})"
             transitionsStr = s"""$sourceId --->|"$displayLabel"| $targetId""" :: transitionsStr
             
-            val nextKey = ZoneStateKey(nextState.inits, nextState.val_env, nextState.zone, nextState.pendingDelays)
+            val nextKey = ZoneStateKey(nextState.inits, nextState.val_env, nextState.zone, nextState.pendingDelays,nextState.act)
             if (!visited.contains(nextKey)) {
               queue = queue :+ nextState
             }
@@ -744,7 +932,6 @@ object RTAAPI {
           s"${edge._4.show}(${op})@${clock.show}=${target}"
         }.mkString(", "))
         
-        // CONSTRUÇÃO TOTALMENTE TEXTUAL (SEM NENHUMA TAG HTML)
         val labelParts = List(
           key.inits.mkString(", "),
           if (zoneStr.nonEmpty) s"Zone: $zoneStr" else "Zone: t ≥ 0",
@@ -752,8 +939,6 @@ object RTAAPI {
           if (pendingStr.nonEmpty) s"Pending: $pendingStr" else ""
         ).filter(_.nonEmpty)
         
-        // Passamos um caractere de quebra de linha real (\n em Scala). 
-        // O Mermaid renderiza isto perfeitamente na vertical e não crasha.
         val label = labelParts.mkString("\n")
         val style = if (id == 0) {
           s"\nstyle $id fill:#c7d2fe,stroke:#4f46e5,stroke-width:2px,font-size:32px,font-weight:bold"
@@ -771,7 +956,6 @@ object RTAAPI {
     }.getOrElse("graph LR\n0(Nenhum modelo carregado)")
   }
 
-  // Helper para formatar a matriz DBM em inequações matemáticas amigáveis (ex: 0.0 <= t <= 5.0)
   private def showZoneCompact(z: rta.backend.DBM.Zone): String = {
     import rta.backend.DBM._
     val list = for {
@@ -825,7 +1009,6 @@ object RTAAPI {
      val clocksJson = graph.clock_env.map { case (n, v) => s""""${n.show}": $v""" }.mkString(",")
      val valEnvJson = graph.val_env.map { case (n, v) => s""""${n.show}": ${runtimeValueToJson(v)}""" }.mkString(",")
 
-     // NOVO: Adicionar os Delays Pendentes!
      val pendingJson = graph.pendingDelays.map { case (edge, op, clk, target) =>
        val lbl = edge._4.show
        s"""{"label": "$lbl", "op": "$op", "clock": "${clk.show}", "target": $target}"""

@@ -5,10 +5,7 @@ import rta.syntax.Program2.QName
 
 object LtlParser {
 
-  // Tokens exclusivos de LTL: presença de X/U/G/F "soltos" indica que a
-  // string deve ser tratada como LTL e não como PDL. Mantém a mesma
-  // ambiguidade que já existia antes (um estado chamado "X" colide com o
-  // operador Next) — não é novo, só foi movido para aqui.
+
   def looksLikeLtl(str: String): Boolean =
     tokenize(str).exists(t => Set("X", "U", "G", "F").contains(t))
 
@@ -22,8 +19,7 @@ object LtlParser {
   }
 
   private def tokenize(input: String): List[String] = {
-    val pattern =
-      """(<->|->|=>|&&|\|\||[!~\[\]\(\)<>]|==|!=|<=|>=|X|U|G|F|[a-zA-Z_][\w\.]*(\/[a-zA-Z_][\w\.]*)*|-?\d+(\.\d+)?)""".r
+    val pattern = """(<->|->|=>|&&|\|\||==|!=|<=|>=|[!~\[\]\(\)<>]|[a-zA-Z_][\w\.]*(\/[a-zA-Z_][\w\.]*)*|-?\d+(\.\d+)?)""".r
     pattern.findAllIn(input).toList
   }
 
@@ -48,7 +44,7 @@ object LtlParser {
     val left = parseUntil(reader)
     if (reader.current == "->" || reader.current == "=>") {
       reader.consume()
-      Impl(left, parseImpl(reader)) // right-assoc
+      Impl(left, parseImpl(reader))
     } else left
   }
 

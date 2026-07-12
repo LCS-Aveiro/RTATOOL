@@ -17,6 +17,20 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="css/style.css">
+    <style>
+@keyframes dbm-scan { 0% { background-position: 0% -100%; } 100% { background-position: 0% 200%; } }
+.cy-processing canvas { filter: grayscale(80%) sepia(50%) hue-rotate(180deg) brightness(0.7); transition: filter 0.3s ease; }
+.cy-success-flash { animation: success-flash 1s ease-out; }
+@keyframes success-flash { 0% { box-shadow: inset 0 0 0px rgba(16, 185, 129, 0); } 50% { box-shadow: inset 0 0 100px rgba(16, 185, 129, 0.8); } 100% { box-shadow: inset 0 0 0px rgba(16, 185, 129, 0); } }
+
+.dfs-node {
+    background-color: #818CF8 !important; /* Azul escuro */
+    border-color: #4F46E5 !important;
+    border-width: 4px !important;
+    transition: all 0.1s ease;
+    box-shadow: 0 0 15px rgba(79, 70, 229, 0.8);
+}
+</style>
 </head>
 
 <body>
@@ -151,7 +165,11 @@
                     </div>
                     <div id="canvas-content">
                         <div class="canvas-pane active" id="cyTab">
-                            <div id="cytoscapeMainContainer" style="flex:1;"></div>
+                            <div id="cyWrapper" style="position: relative; width: 100%; height: 100%; flex: 1;">
+    <div id="cytoscapeMainContainer" style="width: 100%; height: 100%;"></div>
+    <div id="cy-scanner-overlay" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:100; background: linear-gradient(to bottom, rgba(99,102,241,0) 0%, rgba(99,102,241,0.4) 50%, rgba(99,102,241,0) 100%); background-size: 100% 200%; animation: dbm-scan 1.2s linear infinite;"></div>
+</div>
+
                         </div>
 
                         <div class="canvas-pane" id="editorTab" style="display: flex; flex-direction: column;">
@@ -387,16 +405,29 @@
                         </div>
 
                         <!-- Botões do Simulador -->
-                        <div style="display:flex; gap:5px; margin-bottom: 6px;">
-                            <button class="u-btn success block" style="flex:1; padding:4px;" onclick="runLtlMultiple()">
+
+                        
+                        
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom: 8px;">
+                            
+                            <!-- Linha 1: Simulação -->
+                            <button class="u-btn success block" style="padding:4px;" onclick="runLtlMultiple()">
                                 <span class="glyphicon glyphicon-ok"></span> Único
                             </button>
-                            <button id="btnLtlSim" class="u-btn primary block" style="flex:1.2; padding:4px;" onclick="toggleLTLSimulation()">
+                            
+                            <button id="btnLtlSim" class="u-btn primary block" style="padding:4px;" onclick="toggleLTLSimulation()">
                                 <span class="glyphicon glyphicon-play"></span> Estatístico
                             </button>
-                            <button id="btnLtlExhaustive" class="u-btn block" style="flex:1.5; background-color:#6366F1; color:white; border:none; padding:4px;" onclick="runLTLExhaustive()">
+                            
+                            <!-- Linha 2: Matemática Simbólica (DBM) -->
+                            <button id="btnLtlExhaustive" class="u-btn block" style="background-color:#6366F1; color:white; border:none; padding:4px;" onclick="runLTLExhaustive()">
                                 <span class="glyphicon glyphicon-certificate"></span> Prova Exaustiva
                             </button>
+                            
+                            <button class="u-btn block" style="background-color:#10b981; color:white; border:none; padding:4px;" onclick="showDBMGraphModal()">
+                                <span class="glyphicon glyphicon-eye-open"></span> Ver Zonas
+                            </button>
+                            
                         </div>
 
                         <!-- Consola estilo UPPAAL -->
@@ -443,7 +474,32 @@
         </div>
     </div>
 
-    <!-- Outros Modals (QuickModal, About) mantêm-se iguais -->
+    <div class="modal fade" id="dbmGraphModal" tabindex="-1" role="dialog" style="z-index: 999999;">
+    <div class="modal-dialog" style="width: 95vw; height: 90vh;">
+        <div class="modal-content" style="height: 100%; display: flex; flex-direction: column;">
+            <div class="modal-header" style="background:#f1f5f9;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" style="font-weight:bold; color:#334155;">Grafo de Zonas (DBM) - Cytoscape</h4>
+            </div>
+            <div class="modal-body" style="flex: 1; padding: 0; background: #e2e8f0; position: relative;">
+                 <div id="dbmCytoscapeContainer" style="width: 100%; height: 100%;"></div>
+                 
+                 <!-- NOVO: Painel Flutuante para os Detalhes da Zona -->
+                 <div id="dbmNodeDetails" style="display:none; position:absolute; bottom:20px; right:20px; width:350px; background:rgba(255,255,255,0.95); border:1px solid #cbd5e1; border-radius:8px; padding:15px; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); z-index: 1000; backdrop-filter: blur(4px);">
+                    <button type="button" class="close" onclick="document.getElementById('dbmNodeDetails').style.display='none'">&times;</button>
+                    <h5 style="margin-top:0; font-weight:bold; color:#334155; border-bottom:1px solid #e2e8f0; padding-bottom:8px; font-family: 'IBM Plex Sans', sans-serif;">Detalhes da Zona</h5>
+                    <div style="font-size:12px; max-height: 200px; overflow-y: auto; font-family: 'JetBrains Mono', monospace;">
+                        <b style="color:#10b981;">Arestas Ativas (act):</b>
+                        <div id="dbmActEdges" style="margin-bottom:10px; word-wrap:break-word; color:#334155;"></div>
+                        <b style="color:#ef4444;">Arestas Desativadas:</b>
+                        <div id="dbmInactEdges" style="word-wrap:break-word; color:#64748b;"></div>
+                    </div>
+                 </div>
+                 
+            </div>
+        </div>
+    </div>
+</div>
 
     <script src="js/static/jquery-1.10.2.min.js"></script>
     <script src="js/static/bootstrap.min.js"></script>

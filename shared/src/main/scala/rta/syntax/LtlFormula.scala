@@ -6,8 +6,8 @@ sealed trait LtlFormula
 object LtlFormula {
   case object True extends LtlFormula
   case object False extends LtlFormula
-  case class StateProp(name: QName) extends LtlFormula     // ReTA: aresta/hyperaresta ativa
-  case class CondProp(cond: Condition) extends LtlFormula  // ReGA: valor de variável
+  case class StateProp(name: QName) extends LtlFormula
+  case class CondProp(cond: Condition) extends LtlFormula
 
   case class Not(p: LtlFormula) extends LtlFormula
   case class And(p: LtlFormula, q: LtlFormula) extends LtlFormula

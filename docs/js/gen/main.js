@@ -4743,19 +4743,19 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathSymbolic__Lrta_syntax_Prog
   while (true) {
     var this$6 = $n(queue);
     if (((!this$6.isEmpty__Z()) && ($n(visited).size__I() < maxStates))) {
-      matchResult28: {
+      matchResult31: {
         var \u03b42$___1;
         var \u03b42$___2;
         var this$7 = $n(queue);
-        var x85 = $as_T2(this$7.removeHead__Z__O(false));
-        if ((x85 !== null)) {
-          var current = $as_Lrta_syntax_Program2$RxGraph($n(x85)._1__O());
-          var path = $as_sci_List($n(x85)._2__O());
+        var x135 = $as_T2(this$7.removeHead__Z__O(false));
+        if ((x135 !== null)) {
+          var current = $as_Lrta_syntax_Program2$RxGraph($n(x135)._1__O());
+          var path = $as_sci_List($n(x135)._2__O());
           var \u03b42$___1 = current;
           var \u03b42$___2 = path;
-          break matchResult28
+          break matchResult31
         };
-        throw new $c_s_MatchError(x85)
+        throw new $c_s_MatchError(x135)
       };
       var current$2 = $as_Lrta_syntax_Program2$RxGraph(\u03b42$___1);
       var path$2 = $as_sci_List(\u03b42$___2);
@@ -4765,34 +4765,34 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathSymbolic__Lrta_syntax_Prog
       var inits = $n(current$2).Lrta_syntax_Program2$RxGraph__f_inits;
       var vars = $n(current$2).Lrta_syntax_Program2$RxGraph__f_val_env;
       var zone = $n(current$2).Lrta_syntax_Program2$RxGraph__f_zone;
-      $n($m_s_Predef$().s_Predef$__f_Set);
-      var pending = $m_sci_Set$EmptySet$();
-      var key = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending);
+      var pending = $n(current$2).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      var act = $n(current$2).Lrta_syntax_Program2$RxGraph__f_act;
+      var key = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act);
       if ((!$n(visited).contains__O__Z(key))) {
-        var this$13 = $n(visited);
-        visited = $as_sci_Set(this$13.incl__O__sci_SetOps(key));
+        var this$11 = $n(visited);
+        visited = $as_sci_Set(this$11.incl__O__sci_SetOps(key));
         var transitions = $m_Lrta_backend_RxSemantics$().nextEdgeSymbolic__Lrta_syntax_Program2$RxGraph__sci_Set(current$2);
-        var this$15 = $n(transitions);
+        var this$13 = $n(transitions);
         var p = new $c_sjsr_AnonFunction1(((x$1) => {
           var x$1$1 = $as_T2(x$1);
           return ((x$1$1 !== null) && ($as_T4($n(x$1$1)._1__O()), $as_Lrta_syntax_Program2$RxGraph($n(x$1$1)._2__O()), true))
         }));
-        var this$19 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$15, p);
+        var this$17 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$13, p);
         var f = new $c_sjsr_AnonFunction1(((queue, path$2) => ((x$1$2) => {
           var x$1$3 = $as_T2(x$1$2);
           if ((x$1$3 !== null)) {
             var edge$1 = $as_T4($n(x$1$3)._1__O());
             var nextGraph$1 = $as_Lrta_syntax_Program2$RxGraph($n(x$1$3)._2__O());
             var label = $n($as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__4)).show__T();
-            var this$18 = $n(queue);
-            var this$16 = $n(path$2);
-            var _2$1 = $f_sc_StrictOptimizedSeqOps__appended__O__O(this$16, label);
+            var this$16 = $n(queue);
+            var this$14 = $n(path$2);
+            var _2$1 = $f_sc_StrictOptimizedSeqOps__appended__O__O(this$14, label);
             var elem$1 = new $c_T2(nextGraph$1, _2$1);
-            return $as_scm_Queue(this$18.addOne__O__scm_ArrayDeque(elem$1))
+            return $as_scm_Queue(this$16.addOne__O__scm_ArrayDeque(elem$1))
           };
           throw new $c_s_MatchError(x$1$3)
         }))(queue, path$2));
-        $n(this$19.filtered__sc_Iterable()).foreach__F1__V(f)
+        $n(this$17.filtered__sc_Iterable()).foreach__F1__V(f)
       }
     } else {
       break
@@ -4815,7 +4815,8 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathToConditionSymbolic__Lrta_
     var vars = $n(start).Lrta_syntax_Program2$RxGraph__f_val_env;
     var zone = $n(start).Lrta_syntax_Program2$RxGraph__f_zone;
     var pending = $n(start).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-    var startKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending);
+    var act = $n(start).Lrta_syntax_Program2$RxGraph__f_act;
+    var startKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act);
     var this$5 = $n(queue);
     $as_scm_Queue(this$5.addOne__O__scm_ArrayDeque(start));
     var visitedCount = 0;
@@ -4834,7 +4835,7 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathToConditionSymbolic__Lrta_
         var this$15 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$9, p);
         var f = new $c_sjsr_AnonFunction1(((targetCond, local, queue, parentOf, startKey, current) => ((x$1$2) => {
           var x$1$3 = $as_T2(x$1$2);
-          matchResult32: {
+          matchResult35: {
             if ((x$1$3 !== null)) {
               var edge$1 = $as_T4($n(x$1$3)._1__O());
               var nextGraph$1 = $as_Lrta_syntax_Program2$RxGraph($n(x$1$3)._2__O());
@@ -4842,7 +4843,8 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathToConditionSymbolic__Lrta_
               var vars$1 = $n(nextGraph$1).Lrta_syntax_Program2$RxGraph__f_val_env;
               var zone$1 = $n(nextGraph$1).Lrta_syntax_Program2$RxGraph__f_zone;
               var pending$1 = $n(nextGraph$1).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-              var nextKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits$1, vars$1, zone$1, pending$1);
+              var act$1 = $n(nextGraph$1).Lrta_syntax_Program2$RxGraph__f_act;
+              var nextKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits$1, vars$1, zone$1, pending$1, act$1);
               var label = $n($as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__4)).show__T();
               if (((!$n(parentOf).contains__O__Z(nextKey)) && (!nextKey.equals__O__Z(startKey)))) {
                 var this$12 = $n(parentOf);
@@ -4856,7 +4858,7 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathToConditionSymbolic__Lrta_
                 var this$14 = $n(queue);
                 $as_scm_Queue(this$14.addOne__O__scm_ArrayDeque(nextGraph$1))
               };
-              break matchResult32
+              break matchResult35
             };
             throw new $c_s_MatchError(x$1$3)
           }
@@ -4885,18 +4887,18 @@ function $p_Lrta_backend_AnalyseLTS$__reconstructZonePath__Lrta_backend_AnalyseL
   var path = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems);
   var currKey = targetKey;
   while ($n(parentOf).contains__O__Z(currKey)) {
-    matchResult33: {
+    matchResult36: {
       var \u03b43$___1;
       var \u03b43$___2;
-      var x100 = $as_T2($n(parentOf).apply__O__O(currKey));
-      if ((x100 !== null)) {
-        var parentGraph = $as_Lrta_syntax_Program2$RxGraph($n(x100)._1__O());
-        var label = $as_T($n(x100)._2__O());
+      var x150 = $as_T2($n(parentOf).apply__O__O(currKey));
+      if ((x150 !== null)) {
+        var parentGraph = $as_Lrta_syntax_Program2$RxGraph($n(x150)._1__O());
+        var label = $as_T($n(x150)._2__O());
         var \u03b43$___1 = parentGraph;
         var \u03b43$___2 = label;
-        break matchResult33
+        break matchResult36
       };
-      throw new $c_s_MatchError(x100)
+      throw new $c_s_MatchError(x150)
     };
     var parentGraph$2 = $as_Lrta_syntax_Program2$RxGraph(\u03b43$___1);
     var label$2 = $as_T(\u03b43$___2);
@@ -4905,7 +4907,8 @@ function $p_Lrta_backend_AnalyseLTS$__reconstructZonePath__Lrta_backend_AnalyseL
     var vars = $n(parentGraph$2).Lrta_syntax_Program2$RxGraph__f_val_env;
     var zone = $n(parentGraph$2).Lrta_syntax_Program2$RxGraph__f_zone;
     var pending = $n(parentGraph$2).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-    currKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending)
+    var act = $n(parentGraph$2).Lrta_syntax_Program2$RxGraph__f_act;
+    currKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act)
   };
   return $n(path).toList__sci_List()
 }
@@ -4923,19 +4926,19 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathDiscrete__Lrta_syntax_Prog
   while (true) {
     var this$6 = $n(queue);
     if (((!this$6.isEmpty__Z()) && ($n(visited).size__I() < maxStates))) {
-      matchResult34: {
+      matchResult37: {
         var \u03b44$___1;
         var \u03b44$___2;
         var this$7 = $n(queue);
-        var x103 = $as_T2(this$7.removeHead__Z__O(false));
-        if ((x103 !== null)) {
-          var current = $as_Lrta_syntax_Program2$RxGraph($n(x103)._1__O());
-          var path = $as_sci_List($n(x103)._2__O());
+        var x153 = $as_T2(this$7.removeHead__Z__O(false));
+        if ((x153 !== null)) {
+          var current = $as_Lrta_syntax_Program2$RxGraph($n(x153)._1__O());
+          var path = $as_sci_List($n(x153)._2__O());
           var \u03b44$___1 = current;
           var \u03b44$___2 = path;
-          break matchResult34
+          break matchResult37
         };
-        throw new $c_s_MatchError(x103)
+        throw new $c_s_MatchError(x153)
       };
       var current$2 = $as_Lrta_syntax_Program2$RxGraph(\u03b44$___1);
       var path$2 = $as_sci_List(\u03b44$___2);
@@ -4945,7 +4948,8 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathDiscrete__Lrta_syntax_Prog
       var inits = $n(current$2).Lrta_syntax_Program2$RxGraph__f_inits;
       var vars = $n(current$2).Lrta_syntax_Program2$RxGraph__f_val_env;
       var clocks = $n(current$2).Lrta_syntax_Program2$RxGraph__f_clock_env;
-      var key = new $c_Lrta_backend_AnalyseLTS$FastStateKey(inits, vars, clocks);
+      var act = $n(current$2).Lrta_syntax_Program2$RxGraph__f_act;
+      var key = new $c_Lrta_backend_AnalyseLTS$FastStateKey(inits, vars, clocks, act);
       if ((!$n(visited).contains__O__Z(key))) {
         var this$11 = $n(visited);
         visited = $as_sci_Set(this$11.incl__O__sci_SetOps(key));
@@ -4995,7 +4999,7 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathDiscrete__Lrta_syntax_Prog
           var this$24 = $n(current$2);
           var inits$1 = this$24.Lrta_syntax_Program2$RxGraph__f_inits;
           var this$25 = $n(current$2);
-          var act = this$25.Lrta_syntax_Program2$RxGraph__f_act;
+          var act$1 = this$25.Lrta_syntax_Program2$RxGraph__f_act;
           var this$26 = $n(current$2);
           var val_env = this$26.Lrta_syntax_Program2$RxGraph__f_val_env;
           var this$27 = $n(current$2);
@@ -5014,26 +5018,28 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathDiscrete__Lrta_syntax_Prog
           var delays = this$33.Lrta_syntax_Program2$RxGraph__f_delays;
           var this$34 = $n(current$2);
           var pendingDelays = this$34.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-          var nextTimeState = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits$1, act, val_env, zone, functions, clocks$1, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays);
+          var this$35 = $n(current$2);
+          var maxConstants = this$35.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+          var nextTimeState = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits$1, act$1, val_env, zone, functions, clocks$1, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants);
           var canTimePass = $n($n(current$2).Lrta_syntax_Program2$RxGraph__f_inits).forall__F1__Z(new $c_sjsr_AnonFunction1(((nextTimeState) => ((s) => {
             var s$1 = $as_Lrta_syntax_Program2$QName(s);
-            var x115 = $n(nextTimeState.Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
-            if ((x115 instanceof $c_s_Some)) {
-              var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x115)).s_Some__f_value);
+            var x165 = $n(nextTimeState.Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
+            if ((x165 instanceof $c_s_Some)) {
+              var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x165)).s_Some__f_value);
               return $m_Lrta_backend_RxSemantics$().evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(inv, nextTimeState)
             };
             var x = $m_s_None$();
-            if ((x === x115)) {
+            if ((x === x165)) {
               return true
             };
-            throw new $c_s_MatchError(x115)
+            throw new $c_s_MatchError(x165)
           }))(nextTimeState)));
           if (canTimePass) {
-            var this$38 = $n(queue);
-            var this$36 = $n(path$2);
-            var _2$3 = $f_sc_StrictOptimizedSeqOps__appended__O__O(this$36, "delay(1)");
+            var this$39 = $n(queue);
+            var this$37 = $n(path$2);
+            var _2$3 = $f_sc_StrictOptimizedSeqOps__appended__O__O(this$37, "delay(1)");
             var elem$2 = new $c_T2(nextTimeState, _2$3);
-            $as_scm_Queue(this$38.addOne__O__scm_ArrayDeque(elem$2))
+            $as_scm_Queue(this$39.addOne__O__scm_ArrayDeque(elem$2))
           }
         }
       }
@@ -5057,7 +5063,8 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathToConditionDiscrete__Lrta_
     var inits = $n(start).Lrta_syntax_Program2$RxGraph__f_inits;
     var vars = $n(start).Lrta_syntax_Program2$RxGraph__f_val_env;
     var clocks = $n(start).Lrta_syntax_Program2$RxGraph__f_clock_env;
-    var startKey = new $c_Lrta_backend_AnalyseLTS$FastStateKey(inits, vars, clocks);
+    var act = $n(start).Lrta_syntax_Program2$RxGraph__f_act;
+    var startKey = new $c_Lrta_backend_AnalyseLTS$FastStateKey(inits, vars, clocks, act);
     var this$5 = $n(queue);
     $as_scm_Queue(this$5.addOne__O__scm_ArrayDeque(start));
     var visitedCount = 0;
@@ -5101,7 +5108,7 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathToConditionDiscrete__Lrta_
           var this$16 = $n(current);
           var inits$1 = this$16.Lrta_syntax_Program2$RxGraph__f_inits;
           var this$17 = $n(current);
-          var act = this$17.Lrta_syntax_Program2$RxGraph__f_act;
+          var act$1 = this$17.Lrta_syntax_Program2$RxGraph__f_act;
           var this$18 = $n(current);
           var val_env = this$18.Lrta_syntax_Program2$RxGraph__f_val_env;
           var this$19 = $n(current);
@@ -5120,19 +5127,21 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathToConditionDiscrete__Lrta_
           var delays = this$25.Lrta_syntax_Program2$RxGraph__f_delays;
           var this$26 = $n(current);
           var pendingDelays = this$26.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-          var nextTimeState = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits$1, act, val_env, zone, functions, clocks$1, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays);
+          var this$27 = $n(current);
+          var maxConstants = this$27.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+          var nextTimeState = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits$1, act$1, val_env, zone, functions, clocks$1, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants);
           var canTimePass = $n($n(current).Lrta_syntax_Program2$RxGraph__f_inits).forall__F1__Z(new $c_sjsr_AnonFunction1(((nextTimeState) => ((s) => {
             var s$1 = $as_Lrta_syntax_Program2$QName(s);
-            var x124 = $n(nextTimeState.Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
-            if ((x124 instanceof $c_s_Some)) {
-              var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x124)).s_Some__f_value);
+            var x174 = $n(nextTimeState.Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
+            if ((x174 instanceof $c_s_Some)) {
+              var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x174)).s_Some__f_value);
               return $m_Lrta_backend_RxSemantics$().evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(inv, nextTimeState)
             };
             var x = $m_s_None$();
-            if ((x === x124)) {
+            if ((x === x174)) {
               return true
             };
-            throw new $c_s_MatchError(x124)
+            throw new $c_s_MatchError(x174)
           }))(nextTimeState)));
           if (canTimePass) {
             $n($m_s_package$().s_package$__f_List);
@@ -5144,41 +5153,42 @@ function $p_Lrta_backend_AnalyseLTS$__findShortestPathToConditionDiscrete__Lrta_
         } else {
           var timeTransitions = $m_s_package$().s_package$__f_Nil
         };
-        var this$30 = $n(edgeTransitions);
-        var this$31 = $n(this$30.concat__sc_IterableOnce__sc_SetOps(timeTransitions));
+        var this$31 = $n(edgeTransitions);
+        var this$32 = $n(this$31.concat__sc_IterableOnce__sc_SetOps(timeTransitions));
         var p = new $c_sjsr_AnonFunction1(((x$1$3$1) => {
           var x$1$4 = $as_T2(x$1$3$1);
           return ((x$1$4 !== null) && ($as_T($n(x$1$4)._1__O()), $as_Lrta_syntax_Program2$RxGraph($n(x$1$4)._2__O()), true))
         }));
-        var this$37 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$31, p);
+        var this$38 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$32, p);
         var f = new $c_sjsr_AnonFunction1(((targetCond, local, queue, parentOf, startKey, current) => ((x$1$4$1) => {
           var x$1$5 = $as_T2(x$1$4$1);
-          matchResult43: {
+          matchResult46: {
             if ((x$1$5 !== null)) {
               var label$1 = $as_T($n(x$1$5)._1__O());
               var nextGraph$1 = $as_Lrta_syntax_Program2$RxGraph($n(x$1$5)._2__O());
               var inits$2 = $n(nextGraph$1).Lrta_syntax_Program2$RxGraph__f_inits;
               var vars$1 = $n(nextGraph$1).Lrta_syntax_Program2$RxGraph__f_val_env;
               var clocks$2 = $n(nextGraph$1).Lrta_syntax_Program2$RxGraph__f_clock_env;
-              var nextKey = new $c_Lrta_backend_AnalyseLTS$FastStateKey(inits$2, vars$1, clocks$2);
+              var act$2 = $n(nextGraph$1).Lrta_syntax_Program2$RxGraph__f_act;
+              var nextKey = new $c_Lrta_backend_AnalyseLTS$FastStateKey(inits$2, vars$1, clocks$2, act$2);
               if (((!$n(parentOf).contains__O__Z(nextKey)) && (!nextKey.equals__O__Z(startKey)))) {
-                var this$34 = $n(parentOf);
+                var this$35 = $n(parentOf);
                 var value$1 = new $c_T2(current, label$1);
-                $p_scm_HashMap__put0__O__O__Z__s_Some(this$34, nextKey, value$1, false);
+                $p_scm_HashMap__put0__O__O__Z__s_Some(this$35, nextKey, value$1, false);
                 if ($m_Lrta_backend_RxSemantics$().evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(targetCond, nextGraph$1)) {
                   var $$x1 = $m_s_util_boundary$();
                   var value$2 = $p_Lrta_backend_AnalyseLTS$__reconstructFastPath__Lrta_backend_AnalyseLTS$FastStateKey__scm_Map__sci_List($thiz, nextKey, parentOf);
                   $n($$x1).break__O__s_util_boundary$Label__E(new $c_s_Some(value$2), local)
                 };
-                var this$36 = $n(queue);
-                $as_scm_Queue(this$36.addOne__O__scm_ArrayDeque(nextGraph$1))
+                var this$37 = $n(queue);
+                $as_scm_Queue(this$37.addOne__O__scm_ArrayDeque(nextGraph$1))
               };
-              break matchResult43
+              break matchResult46
             };
             throw new $c_s_MatchError(x$1$5)
           }
         }))(targetCond, local, queue, parentOf, startKey, current));
-        $n(this$37.filtered__sc_Iterable()).foreach__F1__V(f)
+        $n(this$38.filtered__sc_Iterable()).foreach__F1__V(f)
       } else {
         break
       }
@@ -5202,18 +5212,18 @@ function $p_Lrta_backend_AnalyseLTS$__reconstructFastPath__Lrta_backend_AnalyseL
   var path = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems);
   var currKey = targetKey;
   while ($n(parentOf).contains__O__Z(currKey)) {
-    matchResult44: {
+    matchResult47: {
       var \u03b45$___1;
       var \u03b45$___2;
-      var x133 = $as_T2($n(parentOf).apply__O__O(currKey));
-      if ((x133 !== null)) {
-        var parentGraph = $as_Lrta_syntax_Program2$RxGraph($n(x133)._1__O());
-        var label = $as_T($n(x133)._2__O());
+      var x183 = $as_T2($n(parentOf).apply__O__O(currKey));
+      if ((x183 !== null)) {
+        var parentGraph = $as_Lrta_syntax_Program2$RxGraph($n(x183)._1__O());
+        var label = $as_T($n(x183)._2__O());
         var \u03b45$___1 = parentGraph;
         var \u03b45$___2 = label;
-        break matchResult44
+        break matchResult47
       };
-      throw new $c_s_MatchError(x133)
+      throw new $c_s_MatchError(x183)
     };
     var parentGraph$2 = $as_Lrta_syntax_Program2$RxGraph(\u03b45$___1);
     var label$2 = $as_T(\u03b45$___2);
@@ -5221,110 +5231,723 @@ function $p_Lrta_backend_AnalyseLTS$__reconstructFastPath__Lrta_backend_AnalyseL
     var inits = $n(parentGraph$2).Lrta_syntax_Program2$RxGraph__f_inits;
     var vars = $n(parentGraph$2).Lrta_syntax_Program2$RxGraph__f_val_env;
     var clocks = $n(parentGraph$2).Lrta_syntax_Program2$RxGraph__f_clock_env;
-    currKey = new $c_Lrta_backend_AnalyseLTS$FastStateKey(inits, vars, clocks)
+    var act = $n(parentGraph$2).Lrta_syntax_Program2$RxGraph__f_act;
+    currKey = new $c_Lrta_backend_AnalyseLTS$FastStateKey(inits, vars, clocks, act)
   };
   return $n(path).toList__sci_List()
 }
-function $p_Lrta_backend_AnalyseLTS$__dfs$1__Lrta_syntax_LtlFormula__I__I__sr_ObjectRef__sr_IntRef__sr_BooleanRef__Lrta_syntax_Program2$RxGraph__sci_List__sci_List__sci_List__I__sci_Set__V($thiz, formula$1, maxStates$1, maxDepth$1, counterExample$1, statesExplored$1, limitReached$1, current, path, labels, edgeIds, depth, visitedInPath) {
+function $p_Lrta_backend_AnalyseLTS$__preComputeSpace$1__Lrta_syntax_Program2$RxGraph__I__s_Option($thiz, start$1, requestedMaxStates$1) {
+  var this$1 = $n($m_s_Predef$().s_Predef$__f_Set);
+  var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_backend_AnalyseLTS$ZoneStateKey.getArrayOf().constr)([]));
+  var visited = this$1.from__sc_IterableOnce__sci_Set(elems);
+  $n($m_s_package$().s_package$__f_List);
+  var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$RxGraph.getArrayOf().constr)([start$1]));
+  var queue = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$1);
+  while (true) {
+    var this$3 = $n(queue);
+    if (((!this$3.isEmpty__Z()) && ($n(visited).size__I() <= requestedMaxStates$1))) {
+      var cur = $as_Lrta_syntax_Program2$RxGraph($n(queue).head__O());
+      queue = $as_sci_List($n(queue).tail__O());
+      var inits = $n(cur).Lrta_syntax_Program2$RxGraph__f_inits;
+      var vars = $n(cur).Lrta_syntax_Program2$RxGraph__f_val_env;
+      var zone = $n(cur).Lrta_syntax_Program2$RxGraph__f_zone;
+      var pending = $n(cur).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      var act = $n(cur).Lrta_syntax_Program2$RxGraph__f_act;
+      var key = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act);
+      if ((!$n(visited).contains__O__Z(key))) {
+        var this$5 = $n(visited);
+        visited = $as_sci_Set(this$5.incl__O__sci_SetOps(key));
+        var this$7 = $n(queue);
+        var suffix = $as_sc_IterableOnce($n($m_Lrta_backend_RxSemantics$().nextEdgeSymbolic__Lrta_syntax_Program2$RxGraph__sci_Set(cur)).map__F1__O(new $c_sjsr_AnonFunction1(((_$1) => {
+          var _$1$1 = $as_T2(_$1);
+          return $as_Lrta_syntax_Program2$RxGraph($n(_$1$1)._2__O())
+        }))));
+        queue = this$7.appendedAll__sc_IterableOnce__sci_List(suffix)
+      }
+    } else {
+      break
+    }
+  };
+  if (($n(visited).size__I() > requestedMaxStates$1)) {
+    return $m_s_None$()
+  } else {
+    var value = $n(visited).size__I();
+    return new $c_s_Some(value)
+  }
+}
+function $p_Lrta_backend_AnalyseLTS$__succ$1__I__I__I__I($thiz, p$1, n$1, i) {
+  return ((i === (((-1) + n$1) | 0)) ? p$1 : ((1 + i) | 0))
+}
+function $p_Lrta_backend_AnalyseLTS$__leaf$1__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__Z($thiz, g, form) {
+  if ((form instanceof $c_Lrta_syntax_LtlFormula$StateProp)) {
+    var x$1 = $as_Lrta_syntax_LtlFormula$StateProp(form);
+    var this$2 = $n(x$1);
+    var x15 = this$2.Lrta_syntax_LtlFormula$StateProp__f_name;
+    return $n($n(g).Lrta_syntax_Program2$RxGraph__f_act).exists__F1__Z(new $c_sjsr_AnonFunction1(((_$2) => {
+      var _$2$1 = $as_T4(_$2);
+      var x = $n(_$2$1).T4__f__4;
+      return ((x === null) ? (x15 === null) : $dp_equals__O__Z($n(x), x15))
+    })))
+  } else if ((form instanceof $c_Lrta_syntax_LtlFormula$CondProp)) {
+    var x$1$1 = $as_Lrta_syntax_LtlFormula$CondProp(form);
+    var this$5 = $n(x$1$1);
+    var x12 = this$5.Lrta_syntax_LtlFormula$CondProp__f_cond;
+    return $m_Lrta_backend_RxSemantics$().evalConditionForLTL__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x12, g)
+  } else {
+    return false
+  }
+}
+function $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, formula) {
+  var x = $m_Lrta_syntax_LtlFormula$True$();
+  if ((x === formula)) {
+    $m_s_reflect_ManifestFactory$BooleanManifest$();
+    if ((n$2 <= 0)) {
+      return new $ac_Z(0)
+    } else {
+      var array = new $ac_Z(n$2);
+      var i = 0;
+      while ((i < n$2)) {
+        array.set(i, true);
+        i = ((1 + i) | 0)
+      };
+      return array
+    }
+  };
+  var x$3 = $m_Lrta_syntax_LtlFormula$False$();
+  if ((x$3 === formula)) {
+    $m_s_reflect_ManifestFactory$BooleanManifest$();
+    if ((n$2 <= 0)) {
+      return new $ac_Z(0)
+    } else {
+      var array$1 = new $ac_Z(n$2);
+      var i$1 = 0;
+      while ((i$1 < n$2)) {
+        array$1.set(i$1, false);
+        i$1 = ((1 + i$1) | 0)
+      };
+      return array$1
+    }
+  };
+  matchAlts1: {
+    matchAlts2: {
+      if ((formula instanceof $c_Lrta_syntax_LtlFormula$StateProp)) {
+        var x$1 = $as_Lrta_syntax_LtlFormula$StateProp(formula);
+        var this$10 = $n(x$1);
+        break matchAlts2
+      };
+      if ((formula instanceof $c_Lrta_syntax_LtlFormula$CondProp)) {
+        var x$1$1 = $as_Lrta_syntax_LtlFormula$CondProp(formula);
+        var this$12 = $n(x$1$1);
+        break matchAlts2
+      };
+      break matchAlts1
+    };
+    $m_s_reflect_ManifestFactory$BooleanManifest$();
+    if ((n$2 <= 0)) {
+      return new $ac_Z(0)
+    } else {
+      var array$2 = new $ac_Z(n$2);
+      var i$2 = 0;
+      while ((i$2 < n$2)) {
+        var $$x1 = i$2;
+        var arg1 = i$2;
+        array$2.set($$x1, $p_Lrta_backend_AnalyseLTS$__leaf$1__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__Z($thiz, $as_Lrta_syntax_Program2$RxGraph($n(states$1).apply__I__O(arg1)), formula));
+        i$2 = ((1 + i$2) | 0)
+      };
+      return array$2
+    }
+  };
+  if ((formula instanceof $c_Lrta_syntax_LtlFormula$Not)) {
+    var x$1$2 = $as_Lrta_syntax_LtlFormula$Not(formula);
+    var this$18 = $n(x$1$2);
+    var x48 = this$18.Lrta_syntax_LtlFormula$Not__f_p;
+    var xs = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x48);
+    $m_sc_ArrayOps$();
+    var f = ((_$3) => {
+      var _$3$1 = $uZ(_$3);
+      return (!_$3$1)
+    });
+    $m_s_reflect_ManifestFactory$BooleanManifest$();
+    var len = $n(xs).u.length;
+    var ys = new $ac_Z(len);
+    if ((len > 0)) {
+      var i$3 = 0;
+      if ((xs instanceof $ac_O)) {
+        var x2 = $asArrayOf_O(xs, 1);
+        while ((i$3 < len)) {
+          var $$x2 = i$3;
+          var arg1$1 = $n(x2).get(i$3);
+          ys.set($$x2, $uZ(f(arg1$1)));
+          i$3 = ((1 + i$3) | 0)
+        }
+      } else if ((xs instanceof $ac_I)) {
+        var x3 = $asArrayOf_I(xs, 1);
+        while ((i$3 < len)) {
+          var $$x3 = i$3;
+          var arg1$2 = $n(x3).get(i$3);
+          ys.set($$x3, $uZ(f(arg1$2)));
+          i$3 = ((1 + i$3) | 0)
+        }
+      } else if ((xs instanceof $ac_D)) {
+        var x4 = $asArrayOf_D(xs, 1);
+        while ((i$3 < len)) {
+          var $$x4 = i$3;
+          var arg1$3 = $n(x4).get(i$3);
+          ys.set($$x4, $uZ(f(arg1$3)));
+          i$3 = ((1 + i$3) | 0)
+        }
+      } else if ((xs instanceof $ac_J)) {
+        var x5 = $asArrayOf_J(xs, 1);
+        while ((i$3 < len)) {
+          var $$x5 = i$3;
+          var t = $n(x5).get(i$3);
+          var lo = t.RTLong__f_lo;
+          var hi = t.RTLong__f_hi;
+          ys.set($$x5, $uZ(f(new $c_RTLong(lo, hi))));
+          i$3 = ((1 + i$3) | 0)
+        }
+      } else if ((xs instanceof $ac_F)) {
+        var x6 = $asArrayOf_F(xs, 1);
+        while ((i$3 < len)) {
+          var $$x6 = i$3;
+          var arg1$4 = $n(x6).get(i$3);
+          ys.set($$x6, $uZ(f(arg1$4)));
+          i$3 = ((1 + i$3) | 0)
+        }
+      } else if ((xs instanceof $ac_C)) {
+        var x7 = $asArrayOf_C(xs, 1);
+        while ((i$3 < len)) {
+          var $$x7 = i$3;
+          var arg1$5 = $n(x7).get(i$3);
+          ys.set($$x7, $uZ(f($bC(arg1$5))));
+          i$3 = ((1 + i$3) | 0)
+        }
+      } else if ((xs instanceof $ac_B)) {
+        var x8 = $asArrayOf_B(xs, 1);
+        while ((i$3 < len)) {
+          var $$x8 = i$3;
+          var arg1$6 = $n(x8).get(i$3);
+          ys.set($$x8, $uZ(f(arg1$6)));
+          i$3 = ((1 + i$3) | 0)
+        }
+      } else if ((xs instanceof $ac_S)) {
+        var x9 = $asArrayOf_S(xs, 1);
+        while ((i$3 < len)) {
+          var $$x9 = i$3;
+          var arg1$7 = $n(x9).get(i$3);
+          ys.set($$x9, $uZ(f(arg1$7)));
+          i$3 = ((1 + i$3) | 0)
+        }
+      } else if ((xs !== null)) {
+        while ((i$3 < len)) {
+          var $$x10 = i$3;
+          var arg1$8 = $n(xs).get(i$3);
+          ys.set($$x10, $uZ(f(arg1$8)));
+          i$3 = ((1 + i$3) | 0)
+        }
+      } else {
+        throw new $c_s_MatchError(xs)
+      }
+    };
+    return ys
+  };
+  if ((formula instanceof $c_Lrta_syntax_LtlFormula$And)) {
+    var x$1$3 = $as_Lrta_syntax_LtlFormula$And(formula);
+    var this$25 = $n(x$1$3);
+    var x44 = this$25.Lrta_syntax_LtlFormula$And__f_p;
+    var this$26 = $n(x$1$3);
+    var x45 = this$26.Lrta_syntax_LtlFormula$And__f_q;
+    var _1 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x44);
+    var _2 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x45);
+    var _1$1 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_1);
+    var _2$1 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_2);
+    var this$30 = $m_sc_BuildFrom$();
+    new $c_sc_BuildFromLowPriority2$$anon$11(this$30);
+    var b = $n(($n(_1$1), $m_scm_ArraySeq$().scm_ArraySeq$__f_untagged)).newBuilder__scm_Builder();
+    var this$35 = $n(b);
+    $f_scm_Builder__sizeHint__sc_IterableOnce__I__V(this$35, _1$1, 0);
+    var this$37 = $n(_1$1);
+    var elems1 = new $c_sc_ArrayOps$ArrayIterator$mcZ$sp(this$37.scm_ArraySeq$ofBoolean__f_array);
+    var this$39 = $n(_2$1);
+    var elems2 = new $c_sc_ArrayOps$ArrayIterator$mcZ$sp(this$39.scm_ArraySeq$ofBoolean__f_array);
+    while ((elems1.hasNext__Z() && elems2.hasNext__Z())) {
+      var this$40 = $n(b);
+      var arg1$9 = elems1.next$mcZ$sp__Z();
+      var arg2 = elems2.next$mcZ$sp__Z();
+      var elem = (arg1$9 && arg2);
+      this$40.addOne__O__scm_Growable(elem)
+    };
+    return $asArrayOf_Z($n($as_sc_IterableOnceOps($n(b).result__O())).toArray__s_reflect_ClassTag__O($m_s_reflect_ManifestFactory$BooleanManifest$()), 1)
+  };
+  if ((formula instanceof $c_Lrta_syntax_LtlFormula$Or)) {
+    var x$1$4 = $as_Lrta_syntax_LtlFormula$Or(formula);
+    var this$45 = $n(x$1$4);
+    var x40 = this$45.Lrta_syntax_LtlFormula$Or__f_p;
+    var this$46 = $n(x$1$4);
+    var x41 = this$46.Lrta_syntax_LtlFormula$Or__f_q;
+    var _1$2 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x40);
+    var _2$2 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x41);
+    var _1$3 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_1$2);
+    var _2$3 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_2$2);
+    var this$50 = $m_sc_BuildFrom$();
+    new $c_sc_BuildFromLowPriority2$$anon$11(this$50);
+    var b$1 = $n(($n(_1$3), $m_scm_ArraySeq$().scm_ArraySeq$__f_untagged)).newBuilder__scm_Builder();
+    var this$55 = $n(b$1);
+    $f_scm_Builder__sizeHint__sc_IterableOnce__I__V(this$55, _1$3, 0);
+    var this$57 = $n(_1$3);
+    var elems1$1 = new $c_sc_ArrayOps$ArrayIterator$mcZ$sp(this$57.scm_ArraySeq$ofBoolean__f_array);
+    var this$59 = $n(_2$3);
+    var elems2$1 = new $c_sc_ArrayOps$ArrayIterator$mcZ$sp(this$59.scm_ArraySeq$ofBoolean__f_array);
+    while ((elems1$1.hasNext__Z() && elems2$1.hasNext__Z())) {
+      var this$60 = $n(b$1);
+      var arg1$10 = elems1$1.next$mcZ$sp__Z();
+      var arg2$1 = elems2$1.next$mcZ$sp__Z();
+      var elem$1 = (arg1$10 || arg2$1);
+      this$60.addOne__O__scm_Growable(elem$1)
+    };
+    return $asArrayOf_Z($n($as_sc_IterableOnceOps($n(b$1).result__O())).toArray__s_reflect_ClassTag__O($m_s_reflect_ManifestFactory$BooleanManifest$()), 1)
+  };
+  if ((formula instanceof $c_Lrta_syntax_LtlFormula$Impl)) {
+    var x$1$5 = $as_Lrta_syntax_LtlFormula$Impl(formula);
+    var this$65 = $n(x$1$5);
+    var x36 = this$65.Lrta_syntax_LtlFormula$Impl__f_p;
+    var this$66 = $n(x$1$5);
+    var x37 = this$66.Lrta_syntax_LtlFormula$Impl__f_q;
+    var _1$4 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x36);
+    var _2$4 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x37);
+    var _1$5 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_1$4);
+    var _2$5 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_2$4);
+    var this$70 = $m_sc_BuildFrom$();
+    new $c_sc_BuildFromLowPriority2$$anon$11(this$70);
+    var b$2 = $n(($n(_1$5), $m_scm_ArraySeq$().scm_ArraySeq$__f_untagged)).newBuilder__scm_Builder();
+    var this$75 = $n(b$2);
+    $f_scm_Builder__sizeHint__sc_IterableOnce__I__V(this$75, _1$5, 0);
+    var this$77 = $n(_1$5);
+    var elems1$2 = new $c_sc_ArrayOps$ArrayIterator$mcZ$sp(this$77.scm_ArraySeq$ofBoolean__f_array);
+    var this$79 = $n(_2$5);
+    var elems2$2 = new $c_sc_ArrayOps$ArrayIterator$mcZ$sp(this$79.scm_ArraySeq$ofBoolean__f_array);
+    while ((elems1$2.hasNext__Z() && elems2$2.hasNext__Z())) {
+      var this$80 = $n(b$2);
+      var arg1$11 = elems1$2.next$mcZ$sp__Z();
+      var arg2$2 = elems2$2.next$mcZ$sp__Z();
+      var elem$2 = ((!arg1$11) || arg2$2);
+      this$80.addOne__O__scm_Growable(elem$2)
+    };
+    return $asArrayOf_Z($n($as_sc_IterableOnceOps($n(b$2).result__O())).toArray__s_reflect_ClassTag__O($m_s_reflect_ManifestFactory$BooleanManifest$()), 1)
+  };
+  if ((formula instanceof $c_Lrta_syntax_LtlFormula$Iff)) {
+    var x$1$6 = $as_Lrta_syntax_LtlFormula$Iff(formula);
+    var this$85 = $n(x$1$6);
+    var x32 = this$85.Lrta_syntax_LtlFormula$Iff__f_p;
+    var this$86 = $n(x$1$6);
+    var x33 = this$86.Lrta_syntax_LtlFormula$Iff__f_q;
+    var _1$6 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x32);
+    var _2$6 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x33);
+    var _1$7 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_1$6);
+    var _2$7 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_2$6);
+    var this$90 = $m_sc_BuildFrom$();
+    new $c_sc_BuildFromLowPriority2$$anon$11(this$90);
+    var b$3 = $n(($n(_1$7), $m_scm_ArraySeq$().scm_ArraySeq$__f_untagged)).newBuilder__scm_Builder();
+    var this$95 = $n(b$3);
+    $f_scm_Builder__sizeHint__sc_IterableOnce__I__V(this$95, _1$7, 0);
+    var this$97 = $n(_1$7);
+    var elems1$3 = new $c_sc_ArrayOps$ArrayIterator$mcZ$sp(this$97.scm_ArraySeq$ofBoolean__f_array);
+    var this$99 = $n(_2$7);
+    var elems2$3 = new $c_sc_ArrayOps$ArrayIterator$mcZ$sp(this$99.scm_ArraySeq$ofBoolean__f_array);
+    while ((elems1$3.hasNext__Z() && elems2$3.hasNext__Z())) {
+      var this$100 = $n(b$3);
+      var arg1$12 = elems1$3.next$mcZ$sp__Z();
+      var arg2$3 = elems2$3.next$mcZ$sp__Z();
+      var elem$3 = (arg1$12 === arg2$3);
+      this$100.addOne__O__scm_Growable(elem$3)
+    };
+    return $asArrayOf_Z($n($as_sc_IterableOnceOps($n(b$3).result__O())).toArray__s_reflect_ClassTag__O($m_s_reflect_ManifestFactory$BooleanManifest$()), 1)
+  };
+  if ((formula instanceof $c_Lrta_syntax_LtlFormula$Next)) {
+    var x$1$7 = $as_Lrta_syntax_LtlFormula$Next(formula);
+    var this$105 = $n(x$1$7);
+    var x29 = this$105.Lrta_syntax_LtlFormula$Next__f_p;
+    var aOk = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x29);
+    $m_s_reflect_ManifestFactory$BooleanManifest$();
+    if ((n$2 <= 0)) {
+      return new $ac_Z(0)
+    } else {
+      var array$3 = new $ac_Z(n$2);
+      var i$4 = 0;
+      while ((i$4 < n$2)) {
+        var $$x11 = i$4;
+        var arg1$13 = i$4;
+        array$3.set($$x11, $n(aOk).get($p_Lrta_backend_AnalyseLTS$__succ$1__I__I__I__I($thiz, p$2, n$2, arg1$13)));
+        i$4 = ((1 + i$4) | 0)
+      };
+      return array$3
+    }
+  };
+  if ((formula instanceof $c_Lrta_syntax_LtlFormula$Globally)) {
+    var x$1$8 = $as_Lrta_syntax_LtlFormula$Globally(formula);
+    var this$111 = $n(x$1$8);
+    var x26 = this$111.Lrta_syntax_LtlFormula$Globally__f_p;
+    var aOk$3 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x26);
+    $m_s_reflect_ManifestFactory$BooleanManifest$();
+    if ((n$2 <= 0)) {
+      var elem$4 = new $ac_Z(0)
+    } else {
+      var array$4 = new $ac_Z(n$2);
+      var i$5 = 0;
+      while ((i$5 < n$2)) {
+        array$4.set(i$5, true);
+        i$5 = ((1 + i$5) | 0)
+      };
+      var elem$4 = array$4
+    };
+    var elem$5 = null;
+    elem$5 = elem$4;
+    var changed = true;
+    while (changed) {
+      $m_s_reflect_ManifestFactory$BooleanManifest$();
+      if ((n$2 <= 0)) {
+        var next = new $ac_Z(0)
+      } else {
+        var array$5 = new $ac_Z(n$2);
+        var i$6 = 0;
+        while ((i$6 < n$2)) {
+          var $$x12 = i$6;
+          var arg1$14 = i$6;
+          array$5.set($$x12, ($n(aOk$3).get(arg1$14) && $n($asArrayOf_Z(elem$5, 1)).get($p_Lrta_backend_AnalyseLTS$__succ$1__I__I__I__I($thiz, p$2, n$2, arg1$14))));
+          i$6 = ((1 + i$6) | 0)
+        };
+        var next = array$5
+      };
+      var this$121 = $n($m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(next));
+      var that = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean($asArrayOf_Z(elem$5, 1));
+      changed = (!$f_sc_SeqOps__sameElements__sc_IterableOnce__Z(this$121, that));
+      var ev$10 = next;
+      elem$5 = ev$10;
+      ev$10 = null
+    };
+    return $asArrayOf_Z(elem$5, 1)
+  };
+  if ((formula instanceof $c_Lrta_syntax_LtlFormula$Eventually)) {
+    var x$1$9 = $as_Lrta_syntax_LtlFormula$Eventually(formula);
+    var this$123 = $n(x$1$9);
+    var x23 = this$123.Lrta_syntax_LtlFormula$Eventually__f_p;
+    var aOk$5 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x23);
+    $m_s_reflect_ManifestFactory$BooleanManifest$();
+    if ((n$2 <= 0)) {
+      var elem$6 = new $ac_Z(0)
+    } else {
+      var array$6 = new $ac_Z(n$2);
+      var i$7 = 0;
+      while ((i$7 < n$2)) {
+        array$6.set(i$7, false);
+        i$7 = ((1 + i$7) | 0)
+      };
+      var elem$6 = array$6
+    };
+    var elem$7 = null;
+    elem$7 = elem$6;
+    var changed$2 = true;
+    while (changed$2) {
+      $m_s_reflect_ManifestFactory$BooleanManifest$();
+      if ((n$2 <= 0)) {
+        var next$2 = new $ac_Z(0)
+      } else {
+        var array$7 = new $ac_Z(n$2);
+        var i$8 = 0;
+        while ((i$8 < n$2)) {
+          var $$x13 = i$8;
+          var arg1$15 = i$8;
+          array$7.set($$x13, ($n(aOk$5).get(arg1$15) || $n($asArrayOf_Z(elem$7, 1)).get($p_Lrta_backend_AnalyseLTS$__succ$1__I__I__I__I($thiz, p$2, n$2, arg1$15))));
+          i$8 = ((1 + i$8) | 0)
+        };
+        var next$2 = array$7
+      };
+      var this$133 = $n($m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(next$2));
+      var that$1 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean($asArrayOf_Z(elem$7, 1));
+      changed$2 = (!$f_sc_SeqOps__sameElements__sc_IterableOnce__Z(this$133, that$1));
+      var ev$11 = next$2;
+      elem$7 = ev$11;
+      ev$11 = null
+    };
+    return $asArrayOf_Z(elem$7, 1)
+  };
+  if ((formula instanceof $c_Lrta_syntax_LtlFormula$Until)) {
+    var x$1$10 = $as_Lrta_syntax_LtlFormula$Until(formula);
+    var this$135 = $n(x$1$10);
+    var x19 = this$135.Lrta_syntax_LtlFormula$Until__f_p;
+    var this$136 = $n(x$1$10);
+    var x20 = this$136.Lrta_syntax_LtlFormula$Until__f_q;
+    var aOk$7 = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x19);
+    var bOk = $p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p$2, states$1, n$2, x20);
+    $m_s_reflect_ManifestFactory$BooleanManifest$();
+    if ((n$2 <= 0)) {
+      var elem$8 = new $ac_Z(0)
+    } else {
+      var array$8 = new $ac_Z(n$2);
+      var i$9 = 0;
+      while ((i$9 < n$2)) {
+        array$8.set(i$9, false);
+        i$9 = ((1 + i$9) | 0)
+      };
+      var elem$8 = array$8
+    };
+    var elem$9 = null;
+    elem$9 = elem$8;
+    var changed$3 = true;
+    while (changed$3) {
+      $m_s_reflect_ManifestFactory$BooleanManifest$();
+      if ((n$2 <= 0)) {
+        var next$3 = new $ac_Z(0)
+      } else {
+        var array$9 = new $ac_Z(n$2);
+        var i$10 = 0;
+        while ((i$10 < n$2)) {
+          var $$x14 = i$10;
+          var arg1$16 = i$10;
+          array$9.set($$x14, ($n(bOk).get(arg1$16) || ($n(aOk$7).get(arg1$16) && $n($asArrayOf_Z(elem$9, 1)).get($p_Lrta_backend_AnalyseLTS$__succ$1__I__I__I__I($thiz, p$2, n$2, arg1$16)))));
+          i$10 = ((1 + i$10) | 0)
+        };
+        var next$3 = array$9
+      };
+      var this$146 = $n($m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(next$3));
+      var that$2 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean($asArrayOf_Z(elem$9, 1));
+      changed$3 = (!$f_sc_SeqOps__sameElements__sc_IterableOnce__Z(this$146, that$2));
+      var ev$12 = next$3;
+      elem$9 = ev$12;
+      ev$12 = null
+    };
+    return $asArrayOf_Z(elem$9, 1)
+  };
+  throw new $c_s_MatchError(formula)
+}
+function $p_Lrta_backend_AnalyseLTS$__evalOnLassoGeneral$1__sci_List__sci_List__Lrta_syntax_LtlFormula__Z($thiz, prefix, cycle, f) {
+  var p = $n(prefix).length__I();
+  var this$1 = $n(prefix);
+  var this$2 = $n(this$1.appendedAll__sc_IterableOnce__sci_List(cycle));
+  var states = $m_sci_Vector$().from__sc_IterableOnce__sci_Vector(this$2);
+  var n = $n(states).length__I();
+  return $n($p_Lrta_backend_AnalyseLTS$__satAt$1__I__sci_Vector__I__Lrta_syntax_LtlFormula__AZ($thiz, p, states, n, f)).get(0)
+}
+function $p_Lrta_backend_AnalyseLTS$__isTimeDivergent$1__Lrta_syntax_Program2$RxGraph__sci_List__sci_List__Z($thiz, start$2, cycleStates, cycleEdgeIds) {
+  if ($n($n(start$2).Lrta_syntax_Program2$RxGraph__f_clocks).isEmpty__Z()) {
+    return true
+  };
+  if ($n(cycleEdgeIds).contains__O__Z("delay_node")) {
+    return true
+  };
+  var this$1 = $n(cycleStates);
+  var this$2 = $n($f_sc_IterableOps__sliding__I__I__sc_Iterator(this$1, 2, 1));
+  var res = false;
+  while (((!res) && this$2.hasNext__Z())) {
+    var arg1 = this$2.next__O();
+    var x$1 = $as_sci_List(arg1);
+    matchResult9: {
+      if ((x$1 !== null)) {
+        $n($m_s_package$().s_package$__f_List);
+        if (($n(x$1).lengthCompare__I__I(2) === 0)) {
+          var this$6 = $n(x$1);
+          var x57 = $as_Lrta_syntax_Program2$RxGraph($f_sc_LinearSeqOps__apply__I__O(this$6, 0));
+          var this$8 = $n(x$1);
+          $as_Lrta_syntax_Program2$RxGraph($f_sc_LinearSeqOps__apply__I__O(this$8, 1));
+          var this$9 = $n($n(x57).Lrta_syntax_Program2$RxGraph__f_clocks);
+          if ((!this$9.isEmpty__Z())) {
+            var x = $n($n(x57).Lrta_syntax_Program2$RxGraph__f_zone).delay__Lrta_backend_DBM$Zone();
+            var x$2 = $n(x57).Lrta_syntax_Program2$RxGraph__f_zone;
+            res = (!((x === null) ? (x$2 === null) : $n(x).equals__O__Z(x$2)));
+            break matchResult9
+          } else {
+            res = false;
+            break matchResult9
+          }
+        }
+      };
+      res = false
+    }
+  };
+  return res
+}
+function $p_Lrta_backend_AnalyseLTS$__dfs$1__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__Z__I__I__sr_ObjectRef__sr_IntRef__scm_ListBuffer__Lrta_syntax_Program2$RxGraph__sci_List__sci_List__sci_List__I__sci_Set__V($thiz, start$3, formula$2, isExhaustive$1, maxStates$1, maxDepth$1, counterExample$1, statesExplored$1, visitLog$1, current, path, labels, edgeIds, depth, visitedInPath) {
   var this$1 = $n($as_s_Option($n(counterExample$1).sr_ObjectRef__f_elem));
   if ((!this$1.isEmpty__Z())) {
     return (void 0)
   };
-  if (($n(statesExplored$1).sr_IntRef__f_elem >= maxStates$1)) {
-    var ev$1 = true;
-    $n(limitReached$1).sr_BooleanRef__f_elem = ev$1;
+  if ((($n(statesExplored$1).sr_IntRef__f_elem >= maxStates$1) && (!isExhaustive$1))) {
     return (void 0)
   };
-  var ev$2 = ((1 + $n(statesExplored$1).sr_IntRef__f_elem) | 0);
-  $n(statesExplored$1).sr_IntRef__f_elem = ev$2;
+  var ev$13 = ((1 + $n(statesExplored$1).sr_IntRef__f_elem) | 0);
+  $n(statesExplored$1).sr_IntRef__f_elem = ev$13;
+  var this$3 = $n(visitLog$1);
+  var this$2 = $n($n(current).Lrta_syntax_Program2$RxGraph__f_inits);
+  var elem = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$2, "", ",", "");
+  this$3.addOne__O__scm_ListBuffer(elem);
   var inits = $n(current).Lrta_syntax_Program2$RxGraph__f_inits;
   var vars = $n(current).Lrta_syntax_Program2$RxGraph__f_val_env;
   var zone = $n(current).Lrta_syntax_Program2$RxGraph__f_zone;
   var pending = $n(current).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  var key = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending);
+  var act = $n(current).Lrta_syntax_Program2$RxGraph__f_act;
+  var key = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act);
   var isCycle = $n(visitedInPath).contains__O__Z(key);
   var nexts = $m_Lrta_backend_RxSemantics$().nextEdgeSymbolic__Lrta_syntax_Program2$RxGraph__sci_Set(current);
   var isDeadlock = $n(nexts).isEmpty__Z();
   if (((isCycle || isDeadlock) || (depth >= maxDepth$1))) {
-    var res = $m_Lrta_backend_LtlEvaluator$().eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z(path, formula$1, $m_Lrta_backend_LtlEvaluator$Hybrid$());
+    if (isCycle) {
+      var this$5 = $n(path);
+      _return$1: {
+        var i = 0;
+        var these = $p_sc_StrictOptimizedLinearSeqOps__loop$2__I__sc_LinearSeq__sc_LinearSeq(this$5, 0, this$5);
+        while (true) {
+          var this$8 = $n(these);
+          if ((!this$8.isEmpty__Z())) {
+            var arg1 = $n(these).head__O();
+            var s = $as_Lrta_syntax_Program2$RxGraph(arg1);
+            var inits$1 = $n(s).Lrta_syntax_Program2$RxGraph__f_inits;
+            var vars$1 = $n(s).Lrta_syntax_Program2$RxGraph__f_val_env;
+            var zone$1 = $n(s).Lrta_syntax_Program2$RxGraph__f_zone;
+            var pending$1 = $n(s).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+            var act$1 = $n(s).Lrta_syntax_Program2$RxGraph__f_act;
+            var x = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits$1, vars$1, zone$1, pending$1, act$1);
+            if (x.equals__O__Z(key)) {
+              var cycleStartIdx = i;
+              break _return$1
+            };
+            i = ((1 + i) | 0);
+            these = $as_sc_LinearSeq($n(these).tail__O())
+          } else {
+            break
+          }
+        };
+        var cycleStartIdx = (-1)
+      };
+      var this$10 = $n(path);
+      var cycleStates = $as_sci_List($p_sc_StrictOptimizedLinearSeqOps__loop$2__I__sc_LinearSeq__sc_LinearSeq(this$10, cycleStartIdx, this$10));
+      var this$11 = $n(edgeIds);
+      var cycleEdges = $as_sci_List($p_sc_StrictOptimizedLinearSeqOps__loop$2__I__sc_LinearSeq__sc_LinearSeq(this$11, cycleStartIdx, this$11));
+      if ((!$p_Lrta_backend_AnalyseLTS$__isTimeDivergent$1__Lrta_syntax_Program2$RxGraph__sci_List__sci_List__Z($thiz, start$3, cycleStates, cycleEdges))) {
+        return (void 0)
+      }
+    };
+    if (isCycle) {
+      var this$12 = $n(path);
+      _return$2: {
+        var i$1 = 0;
+        var these$1 = $p_sc_StrictOptimizedLinearSeqOps__loop$2__I__sc_LinearSeq__sc_LinearSeq(this$12, 0, this$12);
+        while (true) {
+          var this$15 = $n(these$1);
+          if ((!this$15.isEmpty__Z())) {
+            var arg1$1 = $n(these$1).head__O();
+            var s$1 = $as_Lrta_syntax_Program2$RxGraph(arg1$1);
+            var inits$2 = $n(s$1).Lrta_syntax_Program2$RxGraph__f_inits;
+            var vars$2 = $n(s$1).Lrta_syntax_Program2$RxGraph__f_val_env;
+            var zone$2 = $n(s$1).Lrta_syntax_Program2$RxGraph__f_zone;
+            var pending$2 = $n(s$1).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+            var act$2 = $n(s$1).Lrta_syntax_Program2$RxGraph__f_act;
+            var x$1 = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits$2, vars$2, zone$2, pending$2, act$2);
+            if (x$1.equals__O__Z(key)) {
+              var cycleStartIdx$2 = i$1;
+              break _return$2
+            };
+            i$1 = ((1 + i$1) | 0);
+            these$1 = $as_sc_LinearSeq($n(these$1).tail__O())
+          } else {
+            break
+          }
+        };
+        var cycleStartIdx$2 = (-1)
+      };
+      var $$x1 = $n(path).take__I__sci_List(cycleStartIdx$2);
+      var this$17 = $n(path);
+      var res = $p_Lrta_backend_AnalyseLTS$__evalOnLassoGeneral$1__sci_List__sci_List__Lrta_syntax_LtlFormula__Z($thiz, $$x1, $as_sci_List($p_sc_StrictOptimizedLinearSeqOps__loop$2__I__sc_LinearSeq__sc_LinearSeq(this$17, cycleStartIdx$2, this$17)), formula$2)
+    } else {
+      var res = $m_Lrta_backend_LtlEvaluator$().eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__Z(path, formula$2, $m_Lrta_backend_LtlEvaluator$Hybrid$(), true)
+    };
     if ((!res)) {
       var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([]));
       var ceFormatted = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems);
-      var this$4 = $n(path);
-      var end = this$4.length__I();
+      var this$19 = $n(path);
+      var end = this$19.length__I();
       var isEmpty = (end <= 0);
       var scala$collection$immutable$Range$$lastElement = (((-1) + end) | 0);
       if ((!isEmpty)) {
-        var i = 0;
+        var i$2 = 0;
         while (true) {
-          var arg1 = i;
-          var this$8 = $n(path);
-          var g = $as_Lrta_syntax_Program2$RxGraph($f_sc_LinearSeqOps__apply__I__O(this$8, arg1));
-          var this$10 = $n($as_sc_IterableOnceOps($n($n(g).Lrta_syntax_Program2$RxGraph__f_inits).map__F1__O(new $c_sjsr_AnonFunction1(((_$1) => {
-            var _$1$1 = $as_Lrta_syntax_Program2$QName(_$1);
-            return $n(_$1$1).show__T()
+          var arg1$2 = i$2;
+          var this$23 = $n(path);
+          var g = $as_Lrta_syntax_Program2$RxGraph($f_sc_LinearSeqOps__apply__I__O(this$23, arg1$2));
+          var this$25 = $n($as_sc_IterableOnceOps($n($n(g).Lrta_syntax_Program2$RxGraph__f_inits).map__F1__O(new $c_sjsr_AnonFunction1(((_$10) => {
+            var _$10$1 = $as_Lrta_syntax_Program2$QName(_$10);
+            return $n(_$10$1).show__T()
           })))));
-          var inits$1 = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$10, "", ",", "");
-          var this$11 = $n($as_sc_IterableOnceOps($n($n(g).Lrta_syntax_Program2$RxGraph__f_act).map__F1__O(new $c_sjsr_AnonFunction1(((_$2) => {
-            var _$2$1 = $as_T4(_$2);
-            return $n($as_Lrta_syntax_Program2$QName($n(_$2$1).T4__f__4)).show__T()
+          var inits$3 = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$25, "", ",", "");
+          var this$26 = $n($as_sc_IterableOnceOps($n($n(g).Lrta_syntax_Program2$RxGraph__f_act).map__F1__O(new $c_sjsr_AnonFunction1(((_$11) => {
+            var _$11$1 = $as_T4(_$11);
+            return $n($as_Lrta_syntax_Program2$QName($n(_$11$1).T4__f__4)).show__T()
           })))));
-          var acts = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$11, "", ", ", "");
-          var this$12 = $n(ceFormatted);
-          var elem = (((("{" + inits$1) + ", act: [") + acts) + "]}");
-          this$12.addOne__O__scm_ListBuffer(elem);
-          if ((arg1 < $n(labels).length__I())) {
-            var this$14 = $n(ceFormatted);
-            var this$13 = $n(labels);
-            var elem$1 = $f_sc_LinearSeqOps__apply__I__O(this$13, arg1);
-            this$14.addOne__O__scm_ListBuffer(elem$1)
+          var acts = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$26, "", ", ", "");
+          var stateStr = (((("{" + inits$3) + ", act: [") + acts) + "]}");
+          if ((arg1$2 === (((-1) + $n(path).length__I()) | 0))) {
+            if (isDeadlock) {
+              stateStr = (stateStr + " [DEADLOCK - Sem\u00e2ntica de Tra\u00e7o Finito]")
+            } else if (isCycle) {
+              stateStr = (stateStr + " [CICLO/LASSO DETETADO]")
+            } else if ((depth >= maxDepth$1)) {
+              stateStr = (stateStr + " [LIMITE PROFUNDIDADE]")
+            }
           };
-          if ((i === scala$collection$immutable$Range$$lastElement)) {
+          var this$27 = $n(ceFormatted);
+          var elem$1 = stateStr;
+          this$27.addOne__O__scm_ListBuffer(elem$1);
+          if ((arg1$2 < $n(labels).length__I())) {
+            var this$29 = $n(ceFormatted);
+            var this$28 = $n(labels);
+            var elem$2 = $f_sc_LinearSeqOps__apply__I__O(this$28, arg1$2);
+            this$29.addOne__O__scm_ListBuffer(elem$2)
+          };
+          if ((i$2 === scala$collection$immutable$Range$$lastElement)) {
             break
           };
-          i = ((1 + i) | 0)
+          i$2 = ((1 + i$2) | 0)
         }
       };
       var _1 = $n(ceFormatted).toList__sci_List();
       var value = new $c_T2(_1, edgeIds);
-      var ev$3 = new $c_s_Some(value);
-      $n(counterExample$1).sr_ObjectRef__f_elem = ev$3;
-      ev$3 = null
+      var ev$14 = new $c_s_Some(value);
+      $n(counterExample$1).sr_ObjectRef__f_elem = ev$14;
+      ev$14 = null
     };
     return (void 0)
   };
-  var this$17 = $n(nexts);
-  var p = new $c_sjsr_AnonFunction1(((x$1) => {
-    var x$1$1 = $as_T2(x$1);
-    return ((x$1$1 !== null) && ($as_T4($n(x$1$1)._1__O()), $as_Lrta_syntax_Program2$RxGraph($n(x$1$1)._2__O()), true))
+  var this$32 = $n(nexts);
+  var p = new $c_sjsr_AnonFunction1(((x$1$1) => {
+    var x$1$2 = $as_T2(x$1$1);
+    return ((x$1$2 !== null) && ($as_T4($n(x$1$2)._1__O()), $as_Lrta_syntax_Program2$RxGraph($n(x$1$2)._2__O()), true))
   }));
-  var this$22 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$17, p);
-  var f = new $c_sjsr_AnonFunction1(((x$1$2) => {
-    var x$1$3 = $as_T2(x$1$2);
-    matchResult8: {
+  var this$37 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$32, p);
+  var f = new $c_sjsr_AnonFunction1(((x$1$2$1) => {
+    var x$1$3 = $as_T2(x$1$2$1);
+    matchResult11: {
       if ((x$1$3 !== null)) {
         var edge$1 = $as_T4($n(x$1$3)._1__O());
         var nextGraph$1 = $as_Lrta_syntax_Program2$RxGraph($n(x$1$3)._2__O());
         if ($n($as_s_Option($n(counterExample$1).sr_ObjectRef__f_elem)).isEmpty__Z()) {
           var label = $n($as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__4)).show__T();
-          var edgeId = ((((((("event_" + $n(edge$1).T4__f__1) + "_") + $n(edge$1).T4__f__2) + "_") + $n(edge$1).T4__f__3) + "_") + $n(edge$1).T4__f__4);
-          var this$18 = $n(path);
-          var $$x3 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$18, nextGraph$1));
-          var this$19 = $n(labels);
-          var $$x2 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$19, label));
-          var this$20 = $n(edgeIds);
-          var $$x1 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$20, edgeId));
-          var this$21 = $n(visitedInPath);
-          $p_Lrta_backend_AnalyseLTS$__dfs$1__Lrta_syntax_LtlFormula__I__I__sr_ObjectRef__sr_IntRef__sr_BooleanRef__Lrta_syntax_Program2$RxGraph__sci_List__sci_List__sci_List__I__sci_Set__V($thiz, formula$1, maxStates$1, maxDepth$1, counterExample$1, statesExplored$1, limitReached$1, nextGraph$1, $$x3, $$x2, $$x1, ((1 + depth) | 0), $as_sci_Set(this$21.incl__O__sci_SetOps(key)))
+          var edgeId = ((label === "timeout") ? "delay_node" : ((((((("event_" + $n(edge$1).T4__f__1) + "_") + $n(edge$1).T4__f__2) + "_") + $n(edge$1).T4__f__3) + "_") + $n(edge$1).T4__f__4));
+          var this$33 = $n(path);
+          var $$x4 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$33, nextGraph$1));
+          var this$34 = $n(labels);
+          var $$x3 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$34, label));
+          var this$35 = $n(edgeIds);
+          var $$x2 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$35, edgeId));
+          var this$36 = $n(visitedInPath);
+          $p_Lrta_backend_AnalyseLTS$__dfs$1__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__Z__I__I__sr_ObjectRef__sr_IntRef__scm_ListBuffer__Lrta_syntax_Program2$RxGraph__sci_List__sci_List__sci_List__I__sci_Set__V($thiz, start$3, formula$2, isExhaustive$1, maxStates$1, maxDepth$1, counterExample$1, statesExplored$1, visitLog$1, nextGraph$1, $$x4, $$x3, $$x2, ((1 + depth) | 0), $as_sci_Set(this$36.incl__O__sci_SetOps(key)))
         };
-        break matchResult8
+        break matchResult11
       };
       throw new $c_s_MatchError(x$1$3)
     }
   }));
-  $n(this$22.filtered__sc_Iterable()).foreach__F1__V(f)
+  $n(this$37.filtered__sc_Iterable()).foreach__F1__V(f)
 }
-function $p_Lrta_backend_AnalyseLTS$__aux$1__Lrta_syntax_Program2$RxGraph__I__sci_Set__sci_Set__sci_Set__I__sci_Set__sci_List__I__T4($thiz, rx$1, max$1, states$1, next, done, nEdges, fired, probs, limit) {
+function $p_Lrta_backend_AnalyseLTS$__aux$1__Lrta_syntax_Program2$RxGraph__I__sci_Set__sci_Set__sci_Set__I__sci_Set__sci_List__I__T4($thiz, rx$1, max$1, states$3, next, done, nEdges, fired, probs, limit) {
   var limit$tailLocal1 = limit;
   var probs$tailLocal1 = probs;
   var fired$tailLocal1 = fired;
@@ -5342,18 +5965,18 @@ function $p_Lrta_backend_AnalyseLTS$__aux$1__Lrta_syntax_Program2$RxGraph__I__sc
       return new $c_T4(_1, _2, _3, _4)
     };
     var this$3 = $n(next$tailLocal1);
-    var x80 = $f_sc_IterableOps__headOption__s_Option(this$3);
+    var x130 = $f_sc_IterableOps__headOption__s_Option(this$3);
     var x = $m_s_None$();
-    if ((x === x80)) {
+    if ((x === x130)) {
       var this$5 = $n($n(rx$1).Lrta_syntax_Program2$RxGraph__f_inits);
-      var that = $as_sc_IterableOnce($n(fired$tailLocal1).map__F1__O(new $c_sjsr_AnonFunction1(((_$3) => {
-        var _$3$1 = $as_T4(_$3);
-        return $as_Lrta_syntax_Program2$QName($n(_$3$1).T4__f__2)
+      var that = $as_sc_IterableOnce($n(fired$tailLocal1).map__F1__O(new $c_sjsr_AnonFunction1(((_$12) => {
+        var _$12$1 = $as_T4(_$12);
+        return $as_Lrta_syntax_Program2$QName($n(_$12$1).T4__f__2)
       }))));
-      var this$6 = $n($as_sci_SetOps($n(this$5.concat__sc_IterableOnce__sc_SetOps(that)).intersect__sc_Set__sc_SetOps(states$1)));
-      var that$1 = $as_sc_IterableOnce($n(done$tailLocal1).flatMap__F1__O(new $c_sjsr_AnonFunction1(((_$4) => {
-        var _$4$1 = $as_Lrta_syntax_Program2$RxGraph(_$4);
-        return $n(_$4$1).Lrta_syntax_Program2$RxGraph__f_inits
+      var this$6 = $n($as_sci_SetOps($n(this$5.concat__sc_IterableOnce__sc_SetOps(that)).intersect__sc_Set__sc_SetOps(states$3)));
+      var that$1 = $as_sc_IterableOnce($n(done$tailLocal1).flatMap__F1__O(new $c_sjsr_AnonFunction1(((_$13) => {
+        var _$13$1 = $as_Lrta_syntax_Program2$RxGraph(_$13);
+        return $n(_$13$1).Lrta_syntax_Program2$RxGraph__f_inits
       }))));
       var missingStates = $as_sci_Set(this$6.removedAll__sc_IterableOnce__sci_SetOps(that$1));
       var this$7 = $n($n(rx$1).Lrta_syntax_Program2$RxGraph__f_edg);
@@ -5480,18 +6103,18 @@ function $p_Lrta_backend_AnalyseLTS$__aux$1__Lrta_syntax_Program2$RxGraph__I__sc
         return new $c_T4(_1$2, _2$2, _3$2, _4$2)
       }
     };
-    if ((x80 instanceof $c_s_Some)) {
-      var x84 = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x80)).s_Some__f_value);
-      if ($n(done$tailLocal1).contains__O__Z(x84)) {
+    if ((x130 instanceof $c_s_Some)) {
+      var x134 = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x130)).s_Some__f_value);
+      if ($n(done$tailLocal1).contains__O__Z(x134)) {
         var this$29 = $n(next$tailLocal1);
-        next$tailLocal1 = $as_sci_Set(this$29.excl__O__sci_SetOps(x84));
+        next$tailLocal1 = $as_sci_Set(this$29.excl__O__sci_SetOps(x134));
         continue
       };
-      var more = $m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set(x84);
+      var more = $m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set(x134);
       var nEdges2 = $n(more).size__I();
-      var newEdges = $as_sci_Set($n(more).map__F1__O(new $c_sjsr_AnonFunction1(((_$5) => {
-        var _$5$1 = $as_T2(_$5);
-        return $as_T4($n(_$5$1)._1__O())
+      var newEdges = $as_sci_Set($n(more).map__F1__O(new $c_sjsr_AnonFunction1(((_$14) => {
+        var _$14$1 = $as_T2(_$14);
+        return $as_T4($n(_$14$1)._1__O())
       }))));
       var this$30 = $n($m_s_Predef$().s_Predef$__f_Set);
       var elems$2 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([]));
@@ -5501,28 +6124,28 @@ function $p_Lrta_backend_AnalyseLTS$__aux$1__Lrta_syntax_Program2$RxGraph__I__sc
       var elems$3 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T4.getArrayOf().constr)([]));
       var elem$2 = this$32.from__sc_IterableOnce__sci_Set(elems$3);
       var moreEdges = new $c_sr_ObjectRef(elem$2);
-      $n(newEdges).foreach__F1__V(new $c_sjsr_AnonFunction1(((x84, incons, moreEdges) => ((e) => {
+      $n(newEdges).foreach__F1__V(new $c_sjsr_AnonFunction1(((x134, incons, moreEdges) => ((e) => {
         var e$1 = $as_T4(e);
-        matchResult26: {
+        matchResult29: {
           var \u03b41$___1;
           var \u03b41$___2;
-          var x76 = $m_Lrta_backend_RxSemantics$().toOnOff__T4__Lrta_syntax_Program2$RxGraph__T3(e$1, x84);
-          if ((x76 !== null)) {
-            var toAct = $as_sci_Set($n(x76).T3__f__1);
-            var toDeact = $as_sci_Set($n(x76).T3__f__2);
+          var x126 = $m_Lrta_backend_RxSemantics$().toOnOff__T4__Lrta_syntax_Program2$RxGraph__T3(e$1, x134);
+          if ((x126 !== null)) {
+            var toAct = $as_sci_Set($n(x126).T3__f__1);
+            var toDeact = $as_sci_Set($n(x126).T3__f__2);
             var \u03b41$___1 = toAct;
             var \u03b41$___2 = toDeact;
-            break matchResult26
+            break matchResult29
           };
-          throw new $c_s_MatchError(x76)
+          throw new $c_s_MatchError(x126)
         };
         var toAct$2 = $as_sci_Set(\u03b41$___1);
         var toDeact$2 = $as_sci_Set(\u03b41$___2);
-        var fromE = $m_Lrta_backend_RxSemantics$().from__T4__Lrta_syntax_Program2$RxGraph__sci_Set(e$1, x84);
+        var fromE = $m_Lrta_backend_RxSemantics$().from__T4__Lrta_syntax_Program2$RxGraph__sci_Set(e$1, x134);
         var this$35 = $n($as_sci_Set(moreEdges.sr_ObjectRef__f_elem));
-        var ev$4 = $as_sci_Set(this$35.concat__sc_IterableOnce__sc_SetOps(fromE));
-        moreEdges.sr_ObjectRef__f_elem = ev$4;
-        ev$4 = null;
+        var ev$15 = $as_sci_Set(this$35.concat__sc_IterableOnce__sc_SetOps(fromE));
+        moreEdges.sr_ObjectRef__f_elem = ev$15;
+        ev$15 = null;
         var shared = $as_sci_Set($n(toAct$2).intersect__sc_Set__sc_SetOps(toDeact$2));
         var this$36 = $n(shared);
         if ((!this$36.isEmpty__Z())) {
@@ -5530,14 +6153,14 @@ function $p_Lrta_backend_AnalyseLTS$__aux$1__Lrta_syntax_Program2$RxGraph__I__sc
           var triggers = $as_sci_Set(this$37.removedAll__sc_IterableOnce__sci_SetOps(shared));
           var this$38 = $n($as_sci_Set(incons.sr_ObjectRef__f_elem));
           var elem$3 = (((("activating and deactivating `" + $m_Lrta_syntax_Program2$().showEdges__sci_Set__T(shared)) + "` by `") + $m_Lrta_syntax_Program2$().showEdges__sci_Set__T(triggers)) + "`");
-          var ev$5 = $as_sci_Set(this$38.incl__O__sci_SetOps(elem$3));
-          incons.sr_ObjectRef__f_elem = ev$5;
-          ev$5 = null
+          var ev$16 = $as_sci_Set(this$38.incl__O__sci_SetOps(elem$3));
+          incons.sr_ObjectRef__f_elem = ev$16;
+          ev$16 = null
         }
-      }))(x84, incons, moreEdges)));
+      }))(x134, incons, moreEdges)));
       var newProbs = probs$tailLocal1;
       if ($n(more).isEmpty__Z()) {
-        var this$39 = $n($n(x84).Lrta_syntax_Program2$RxGraph__f_inits);
+        var this$39 = $n($n(x134).Lrta_syntax_Program2$RxGraph__f_inits);
         var elem$2$1 = ("Deadlock found at: " + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$39, "", ",", ""));
         var this$40 = $n(newProbs);
         newProbs = new $c_sci_$colon$colon(elem$2$1, this$40)
@@ -5550,14 +6173,14 @@ function $p_Lrta_backend_AnalyseLTS$__aux$1__Lrta_syntax_Program2$RxGraph__I__sc
         newProbs = new $c_sci_$colon$colon(elem$3$1, this$43)
       };
       var this$44 = $n(next$tailLocal1);
-      var this$45 = $n(this$44.excl__O__sci_SetOps(x84));
-      var that$5 = $as_sc_IterableOnce($n(more).map__F1__O(new $c_sjsr_AnonFunction1(((_$6) => {
-        var _$6$1 = $as_T2(_$6);
-        return $as_Lrta_syntax_Program2$RxGraph($n(_$6$1)._2__O())
+      var this$45 = $n(this$44.excl__O__sci_SetOps(x134));
+      var that$5 = $as_sc_IterableOnce($n(more).map__F1__O(new $c_sjsr_AnonFunction1(((_$15) => {
+        var _$15$1 = $as_T2(_$15);
+        return $as_Lrta_syntax_Program2$RxGraph($n(_$15$1)._2__O())
       }))));
       var next$tailLocal1$tmp1 = $as_sci_Set(this$45.concat__sc_IterableOnce__sc_SetOps(that$5));
       var this$46 = $n(done$tailLocal1);
-      var done$tailLocal1$tmp1 = $as_sci_Set(this$46.incl__O__sci_SetOps(x84));
+      var done$tailLocal1$tmp1 = $as_sci_Set(this$46.incl__O__sci_SetOps(x134));
       var nEdges$tailLocal1$tmp1 = ((nEdges$tailLocal1 + nEdges2) | 0);
       var this$47 = $n(fired$tailLocal1);
       var this$48 = $n(this$47.concat__sc_IterableOnce__sc_SetOps(newEdges));
@@ -5573,7 +6196,7 @@ function $p_Lrta_backend_AnalyseLTS$__aux$1__Lrta_syntax_Program2$RxGraph__I__sc
       limit$tailLocal1 = limit$tailLocal1$tmp1;
       continue
     };
-    throw new $c_s_MatchError(x80)
+    throw new $c_s_MatchError(x130)
   }
 }
 /** @constructor */
@@ -5587,39 +6210,49 @@ function $h_Lrta_backend_AnalyseLTS$() {
   /*<skip>*/
 }
 $h_Lrta_backend_AnalyseLTS$.prototype = $c_Lrta_backend_AnalyseLTS$.prototype;
-$c_Lrta_backend_AnalyseLTS$.prototype.verifyLTLSymbolic__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__I__I__T5 = (function(start, formula, maxStates, maxDepth) {
+$c_Lrta_backend_AnalyseLTS$.prototype.verifyLTLSymbolic__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__I__I__T6 = (function(start, formula, requestedMaxStates, requestedMaxDepth) {
+  var exactSizeOpt = $p_Lrta_backend_AnalyseLTS$__preComputeSpace$1__Lrta_syntax_Program2$RxGraph__I__s_Option(this, start, requestedMaxStates);
+  var this$1 = $n(exactSizeOpt);
+  var isExhaustive = (!this$1.isEmpty__Z());
+  var this$2 = $n(exactSizeOpt);
+  var maxStates = $uI((this$2.isEmpty__Z() ? requestedMaxStates : this$2.get__O()));
+  var this$3 = $n(exactSizeOpt);
+  var maxDepth = $uI((this$3.isEmpty__Z() ? requestedMaxDepth : this$3.get__O()));
   var elem = $m_s_None$();
   var counterExample = new $c_sr_ObjectRef(elem);
   var statesExplored = new $c_sr_IntRef(0);
-  var limitReached = new $c_sr_BooleanRef(false);
+  var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([]));
+  var visitLog = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems);
   $n($m_s_package$().s_package$__f_List);
-  var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$RxGraph.getArrayOf().constr)([start]));
-  var $$x3 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems);
+  var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$RxGraph.getArrayOf().constr)([start]));
+  var $$x3 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$1);
   var $$x2 = $m_s_package$().s_package$__f_Nil;
   var $$x1 = $m_s_package$().s_package$__f_Nil;
-  var this$5 = $n($m_s_Predef$().s_Predef$__f_Set);
-  var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_backend_AnalyseLTS$ZoneStateKey.getArrayOf().constr)([]));
-  $p_Lrta_backend_AnalyseLTS$__dfs$1__Lrta_syntax_LtlFormula__I__I__sr_ObjectRef__sr_IntRef__sr_BooleanRef__Lrta_syntax_Program2$RxGraph__sci_List__sci_List__sci_List__I__sci_Set__V(this, formula, maxStates, maxDepth, counterExample, statesExplored, limitReached, start, $$x3, $$x2, $$x1, 0, this$5.from__sc_IterableOnce__sci_Set(elems$1));
-  var x15 = $as_s_Option(counterExample.sr_ObjectRef__f_elem);
-  if ((x15 instanceof $c_s_Some)) {
-    var x17 = $as_T2($n($as_s_Some(x15)).s_Some__f_value);
-    if ((x17 !== null)) {
-      var lbls = $as_sci_List($n(x17)._1__O());
-      var ids = $as_sci_List($n(x17)._2__O());
+  var this$8 = $n($m_s_Predef$().s_Predef$__f_Set);
+  var elems$2 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_backend_AnalyseLTS$ZoneStateKey.getArrayOf().constr)([]));
+  $p_Lrta_backend_AnalyseLTS$__dfs$1__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__Z__I__I__sr_ObjectRef__sr_IntRef__scm_ListBuffer__Lrta_syntax_Program2$RxGraph__sci_List__sci_List__sci_List__I__sci_Set__V(this, start, formula, isExhaustive, maxStates, maxDepth, counterExample, statesExplored, visitLog, start, $$x3, $$x2, $$x1, 0, this$8.from__sc_IterableOnce__sci_Set(elems$2));
+  var x65 = $as_s_Option(counterExample.sr_ObjectRef__f_elem);
+  if ((x65 instanceof $c_s_Some)) {
+    var x67 = $as_T2($n($as_s_Some(x65)).s_Some__f_value);
+    if ((x67 !== null)) {
+      var lbls = $as_sci_List($n(x67)._1__O());
+      var ids = $as_sci_List($n(x67)._2__O());
       var _4 = statesExplored.sr_IntRef__f_elem;
-      var _5 = limitReached.sr_BooleanRef__f_elem;
-      return new $c_T5(false, lbls, ids, _4, _5)
+      var _5 = (!isExhaustive);
+      var _6 = $n(visitLog).toList__sci_List();
+      return new $c_T6(false, lbls, ids, _4, _5, _6)
     }
   };
   var x = $m_s_None$();
-  if ((x === x15)) {
+  if ((x === x65)) {
     var _2 = $m_s_package$().s_package$__f_Nil;
     var _3 = $m_s_package$().s_package$__f_Nil;
     var _4$1 = statesExplored.sr_IntRef__f_elem;
-    var _5$1 = limitReached.sr_BooleanRef__f_elem;
-    return new $c_T5(true, _2, _3, _4$1, _5$1)
+    var _5$1 = (!isExhaustive);
+    var _6$1 = $n(visitLog).toList__sci_List();
+    return new $c_T6(true, _2, _3, _4$1, _5$1, _6$1)
   };
-  throw new $c_s_MatchError(x15)
+  throw new $c_s_MatchError(x65)
 });
 $c_Lrta_backend_AnalyseLTS$.prototype.randomWalk__Lrta_syntax_Program2$RxGraph__I__T4 = (function(rx, max) {
   var this$1 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_edg);
@@ -6287,7 +6920,7 @@ function $m_Lrta_backend_DBM$() {
   };
   return $n_Lrta_backend_DBM$
 }
-function $p_Lrta_backend_LtlEvaluator$__leaf__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z($thiz, g, f, mode) {
+function $p_Lrta_backend_LtlEvaluator$__leaf__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__Z($thiz, g, f, mode, isSymbolic) {
   if ((f instanceof $c_Lrta_syntax_LtlFormula$StateProp)) {
     var x$1 = $as_Lrta_syntax_LtlFormula$StateProp(f);
     var this$3 = $n(x$1);
@@ -6318,11 +6951,11 @@ function $p_Lrta_backend_LtlEvaluator$__leaf__Lrta_syntax_Program2$RxGraph__Lrta
     var x$1$3 = $as_Lrta_syntax_LtlFormula$CondProp(f);
     var this$10 = $n(x$1$3);
     var x12 = this$10.Lrta_syntax_LtlFormula$CondProp__f_cond;
-    return $m_Lrta_backend_RxSemantics$().evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x12, g)
+    return (isSymbolic ? $m_Lrta_backend_RxSemantics$().evalConditionForLTL__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x12, g) : $m_Lrta_backend_RxSemantics$().evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x12, g))
   };
   $m_s_sys_package$().error__T__E("leaf chamado com f\u00f3rmula n\u00e3o-at\u00f3mica")
 }
-function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, f, mode) {
+function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, f, mode, isSymbolic) {
   var this$1 = $n(tr);
   var n = this$1.length__I();
   var x = $m_Lrta_syntax_LtlFormula$True$();
@@ -6378,7 +7011,7 @@ function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormul
       while ((i$2 < n)) {
         var $$x1 = i$2;
         var arg1 = i$2;
-        array$2.set($$x1, $p_Lrta_backend_LtlEvaluator$__leaf__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z($thiz, $as_Lrta_syntax_Program2$RxGraph($n(tr).apply__I__O(arg1)), f, mode));
+        array$2.set($$x1, $p_Lrta_backend_LtlEvaluator$__leaf__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__Z($thiz, $as_Lrta_syntax_Program2$RxGraph($n(tr).apply__I__O(arg1)), f, mode, isSymbolic));
         i$2 = ((1 + i$2) | 0)
       };
       return array$2
@@ -6388,7 +7021,7 @@ function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormul
     var x$1$2 = $as_Lrta_syntax_LtlFormula$Not(f);
     var this$19 = $n(x$1$2);
     var x60 = this$19.Lrta_syntax_LtlFormula$Not__f_p;
-    var xs = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x60, mode);
+    var xs = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x60, mode, isSymbolic);
     $m_sc_ArrayOps$();
     var f$1 = ((_$2) => {
       var _$2$1 = $uZ(_$2);
@@ -6484,8 +7117,8 @@ function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormul
     var x56 = this$26.Lrta_syntax_LtlFormula$And__f_p;
     var this$27 = $n(x$1$3);
     var x57 = this$27.Lrta_syntax_LtlFormula$And__f_q;
-    var _1 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x56, mode);
-    var _2 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x57, mode);
+    var _1 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x56, mode, isSymbolic);
+    var _2 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x57, mode, isSymbolic);
     var _1$1 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_1);
     var _2$1 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_2);
     var this$31 = $m_sc_BuildFrom$();
@@ -6512,8 +7145,8 @@ function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormul
     var x52 = this$46.Lrta_syntax_LtlFormula$Or__f_p;
     var this$47 = $n(x$1$4);
     var x53 = this$47.Lrta_syntax_LtlFormula$Or__f_q;
-    var _1$2 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x52, mode);
-    var _2$2 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x53, mode);
+    var _1$2 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x52, mode, isSymbolic);
+    var _2$2 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x53, mode, isSymbolic);
     var _1$3 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_1$2);
     var _2$3 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_2$2);
     var this$51 = $m_sc_BuildFrom$();
@@ -6540,8 +7173,8 @@ function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormul
     var x48 = this$66.Lrta_syntax_LtlFormula$Impl__f_p;
     var this$67 = $n(x$1$5);
     var x49 = this$67.Lrta_syntax_LtlFormula$Impl__f_q;
-    var _1$4 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x48, mode);
-    var _2$4 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x49, mode);
+    var _1$4 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x48, mode, isSymbolic);
+    var _2$4 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x49, mode, isSymbolic);
     var _1$5 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_1$4);
     var _2$5 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_2$4);
     var this$71 = $m_sc_BuildFrom$();
@@ -6568,8 +7201,8 @@ function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormul
     var x44 = this$86.Lrta_syntax_LtlFormula$Iff__f_p;
     var this$87 = $n(x$1$6);
     var x45 = this$87.Lrta_syntax_LtlFormula$Iff__f_q;
-    var _1$6 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x44, mode);
-    var _2$6 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x45, mode);
+    var _1$6 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x44, mode, isSymbolic);
+    var _2$6 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x45, mode, isSymbolic);
     var _1$7 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_1$6);
     var _2$7 = $m_s_Predef$().wrapBooleanArray__AZ__scm_ArraySeq$ofBoolean(_2$6);
     var this$91 = $m_sc_BuildFrom$();
@@ -6594,7 +7227,7 @@ function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormul
     var x$1$7 = $as_Lrta_syntax_LtlFormula$Next(f);
     var this$106 = $n(x$1$7);
     var x41 = this$106.Lrta_syntax_LtlFormula$Next__f_p;
-    var pOk = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x41, mode);
+    var pOk = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x41, mode, isSymbolic);
     $m_s_reflect_ManifestFactory$BooleanManifest$();
     if ((n <= 0)) {
       return new $ac_Z(0)
@@ -6614,7 +7247,7 @@ function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormul
     var x$1$8 = $as_Lrta_syntax_LtlFormula$Globally(f);
     var this$112 = $n(x$1$8);
     var x38 = this$112.Lrta_syntax_LtlFormula$Globally__f_p;
-    var pOk$3 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x38, mode);
+    var pOk$3 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x38, mode, isSymbolic);
     var dimensions = new $ac_I(new Int32Array([n]));
     var res = $asArrayOf_Z($m_jl_reflect_Array$().newInstance__jl_Class__AI__O($d_Z.getClassOf(), dimensions), 1);
     var i$3$1 = (((-1) + n) | 0);
@@ -6628,7 +7261,7 @@ function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormul
     var x$1$9 = $as_Lrta_syntax_LtlFormula$Eventually(f);
     var this$115 = $n(x$1$9);
     var x35 = this$115.Lrta_syntax_LtlFormula$Eventually__f_p;
-    var pOk$4 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x35, mode);
+    var pOk$4 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x35, mode, isSymbolic);
     var dimensions$1 = new $ac_I(new Int32Array([n]));
     var res$2 = $asArrayOf_Z($m_jl_reflect_Array$().newInstance__jl_Class__AI__O($d_Z.getClassOf(), dimensions$1), 1);
     var i$4$1 = (((-1) + n) | 0);
@@ -6644,8 +7277,8 @@ function $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormul
     var x31 = this$118.Lrta_syntax_LtlFormula$Until__f_p;
     var this$119 = $n(x$1$10);
     var x32 = this$119.Lrta_syntax_LtlFormula$Until__f_q;
-    var pOk$5 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x31, mode);
-    var qOk = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ($thiz, tr, x32, mode);
+    var pOk$5 = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x31, mode, isSymbolic);
+    var qOk = $p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ($thiz, tr, x32, mode, isSymbolic);
     var dimensions$2 = new $ac_I(new Int32Array([n]));
     var res$3 = $asArrayOf_Z($m_jl_reflect_Array$().newInstance__jl_Class__AI__O($d_Z.getClassOf(), dimensions$2), 1);
     var i$5 = (((-1) + n) | 0);
@@ -6668,13 +7301,13 @@ function $h_Lrta_backend_LtlEvaluator$() {
   /*<skip>*/
 }
 $h_Lrta_backend_LtlEvaluator$.prototype = $c_Lrta_backend_LtlEvaluator$.prototype;
-$c_Lrta_backend_LtlEvaluator$.prototype.eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z = (function(trace, phi, mode) {
+$c_Lrta_backend_LtlEvaluator$.prototype.eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__Z = (function(trace, phi, mode, isSymbolic) {
   if ($n(trace).isEmpty__Z()) {
     return false
   };
   var this$1 = $n(trace);
   var tr = $m_sci_Vector$().from__sc_IterableOnce__sci_Vector(this$1);
-  return $n($p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__AZ(this, tr, phi, mode)).get(0)
+  return $n($p_Lrta_backend_LtlEvaluator$__satAt__sci_Vector__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__AZ(this, tr, phi, mode, isSymbolic)).get(0)
 });
 var $d_Lrta_backend_LtlEvaluator$ = new $TypeData().initClass({
   Lrta_backend_LtlEvaluator$: 0
@@ -6795,7 +7428,7 @@ $c_Lrta_backend_MCRL2$.prototype.apply__Lrta_syntax_Program2$RxGraph__T = (funct
   })))));
   var $$x3 = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$16, "", "\n", "");
   var this$17 = $n(allow);
-  var x = (((((((((((("act\r\n       |  " + $$x8) + ";\r\n       |proc\r\n       |") + $$x7) + "\r\n       |\r\n       |") + $$x6) + "\r\n       |init\r\n       |  % Experiments (proc names)\r\n       |  ") + $$x4) + "\r\n       |  % Experiments (sync groups)\r\n       |") + $$x3) + "\r\n       |  % Experiments (allow)\r\n       |  ") + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$17, "", ", ", "")) + "\r\n       |\r\n       |% Possible problems with empty names and repeated names\r\n       |");
+  var x = (((((((((((("act\n       |  " + $$x8) + ";\n       |proc\n       |") + $$x7) + "\n       |\n       |") + $$x6) + "\n       |init\n       |  % Experiments (proc names)\n       |  ") + $$x4) + "\n       |  % Experiments (sync groups)\n       |") + $$x3) + "\n       |  % Experiments (allow)\n       |  ") + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$17, "", ", ", "")) + "\n       |\n       |% Possible problems with empty names and repeated names\n       |");
   return $m_sc_StringOps$().stripMargin$extension__T__C__T(x, 124)
 });
 $c_Lrta_backend_MCRL2$.prototype.findModLbl__Lrta_syntax_Program2$RxGraph__sci_Set = (function(rx) {
@@ -7077,8 +7710,10 @@ function $p_Lrta_backend_PdlEvaluator$__evaluateProgram__sci_Set__Lrta_syntax_Pd
             var delays$1 = this$23.Lrta_syntax_Program2$RxGraph__f_delays;
             var this$24 = $n(config$1);
             var pendingDelays$1 = this$24.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+            var this$25 = $n(config$1);
+            var maxConstants$1 = this$25.Lrta_syntax_Program2$RxGraph__f_maxConstants;
             $n(config$1);
-            var singleStateConfig = new $c_Lrta_syntax_Program2$RxGraph(edg$1, on$1, off$1, lbls$1, inits$1, act$1, val_env$1, zone$1, functions$1, clocks$1, clock_env$1, invariants$1, edgeConditions$1, edgeUpdates$1, delays$1, pendingDelays$1);
+            var singleStateConfig = new $c_Lrta_syntax_Program2$RxGraph(edg$1, on$1, off$1, lbls$1, inits$1, act$1, val_env$1, zone$1, functions$1, clocks$1, clock_env$1, invariants$1, edgeConditions$1, edgeUpdates$1, delays$1, pendingDelays$1, maxConstants$1);
             var transitions = $m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set(singleStateConfig);
             return $as_sc_IterableOnce($n($as_sc_IterableOps($n(transitions).filter__F1__O(new $c_sjsr_AnonFunction1(((x$1$1) => {
               var x$1$2 = $as_T2(x$1$1);
@@ -7090,8 +7725,8 @@ function $p_Lrta_backend_PdlEvaluator$__evaluateProgram__sci_Set__Lrta_syntax_Pd
                   var transId = $as_Lrta_syntax_Program2$QName($n(x2).T4__f__3);
                   var label = $as_Lrta_syntax_Program2$QName($n(x2).T4__f__4);
                   var currentScope = $n(from).scope__Lrta_syntax_Program2$QName();
-                  var this$26 = $n(fullPath);
-                  if ((this$26.length__I() > 1)) {
+                  var this$27 = $n(fullPath);
+                  if ((this$27.length__I() > 1)) {
                     $n($m_s_package$().s_package$__f_List);
                     var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([$as_T($n(fullPath).head__O())]));
                     var n = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$1);
@@ -7123,43 +7758,45 @@ function $p_Lrta_backend_PdlEvaluator$__evaluateProgram__sci_Set__Lrta_syntax_Pd
               var x$1$3 = $as_T2(x$1$2$1);
               if ((x$1$3 !== null)) {
                 var nextRxFromSemantic = $as_Lrta_syntax_Program2$RxGraph($n(x$1$3)._2__O());
-                var this$31 = $n($n(config$1).Lrta_syntax_Program2$RxGraph__f_inits);
-                var otherInits = $as_sci_Set(this$31.excl__O__sci_SetOps(initState$1));
-                var this$32 = $n(otherInits);
+                var this$32 = $n($n(config$1).Lrta_syntax_Program2$RxGraph__f_inits);
+                var otherInits = $as_sci_Set(this$32.excl__O__sci_SetOps(initState$1));
+                var this$33 = $n(otherInits);
                 var that = $n(nextRxFromSemantic).Lrta_syntax_Program2$RxGraph__f_inits;
-                var correctGlobalInits = $as_sci_Set(this$32.concat__sc_IterableOnce__sc_SetOps(that));
+                var correctGlobalInits = $as_sci_Set(this$33.concat__sc_IterableOnce__sc_SetOps(that));
                 $n(nextRxFromSemantic);
-                var this$33 = $n(nextRxFromSemantic);
-                var edg = this$33.Lrta_syntax_Program2$RxGraph__f_edg;
                 var this$34 = $n(nextRxFromSemantic);
-                var on = this$34.Lrta_syntax_Program2$RxGraph__f_on;
+                var edg = this$34.Lrta_syntax_Program2$RxGraph__f_edg;
                 var this$35 = $n(nextRxFromSemantic);
-                var off = this$35.Lrta_syntax_Program2$RxGraph__f_off;
+                var on = this$35.Lrta_syntax_Program2$RxGraph__f_on;
                 var this$36 = $n(nextRxFromSemantic);
-                var lbls = this$36.Lrta_syntax_Program2$RxGraph__f_lbls;
+                var off = this$36.Lrta_syntax_Program2$RxGraph__f_off;
                 var this$37 = $n(nextRxFromSemantic);
-                var act = this$37.Lrta_syntax_Program2$RxGraph__f_act;
+                var lbls = this$37.Lrta_syntax_Program2$RxGraph__f_lbls;
                 var this$38 = $n(nextRxFromSemantic);
-                var val_env = this$38.Lrta_syntax_Program2$RxGraph__f_val_env;
+                var act = this$38.Lrta_syntax_Program2$RxGraph__f_act;
                 var this$39 = $n(nextRxFromSemantic);
-                var zone = this$39.Lrta_syntax_Program2$RxGraph__f_zone;
+                var val_env = this$39.Lrta_syntax_Program2$RxGraph__f_val_env;
                 var this$40 = $n(nextRxFromSemantic);
-                var functions = this$40.Lrta_syntax_Program2$RxGraph__f_functions;
+                var zone = this$40.Lrta_syntax_Program2$RxGraph__f_zone;
                 var this$41 = $n(nextRxFromSemantic);
-                var clocks = this$41.Lrta_syntax_Program2$RxGraph__f_clocks;
+                var functions = this$41.Lrta_syntax_Program2$RxGraph__f_functions;
                 var this$42 = $n(nextRxFromSemantic);
-                var clock_env = this$42.Lrta_syntax_Program2$RxGraph__f_clock_env;
+                var clocks = this$42.Lrta_syntax_Program2$RxGraph__f_clocks;
                 var this$43 = $n(nextRxFromSemantic);
-                var invariants = this$43.Lrta_syntax_Program2$RxGraph__f_invariants;
+                var clock_env = this$43.Lrta_syntax_Program2$RxGraph__f_clock_env;
                 var this$44 = $n(nextRxFromSemantic);
-                var edgeConditions = this$44.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+                var invariants = this$44.Lrta_syntax_Program2$RxGraph__f_invariants;
                 var this$45 = $n(nextRxFromSemantic);
-                var edgeUpdates = this$45.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+                var edgeConditions = this$45.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
                 var this$46 = $n(nextRxFromSemantic);
-                var delays = this$46.Lrta_syntax_Program2$RxGraph__f_delays;
+                var edgeUpdates = this$46.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
                 var this$47 = $n(nextRxFromSemantic);
-                var pendingDelays = this$47.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-                return new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, correctGlobalInits, act, val_env, zone, functions, clocks, clock_env, invariants, edgeConditions, edgeUpdates, delays, pendingDelays)
+                var delays = this$47.Lrta_syntax_Program2$RxGraph__f_delays;
+                var this$48 = $n(nextRxFromSemantic);
+                var pendingDelays = this$48.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+                var this$49 = $n(nextRxFromSemantic);
+                var maxConstants = this$49.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+                return new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, correctGlobalInits, act, val_env, zone, functions, clocks, clock_env, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants)
               };
               throw new $c_s_MatchError(x$1$3)
             }))))
@@ -7169,10 +7806,10 @@ function $p_Lrta_backend_PdlEvaluator$__evaluateProgram__sci_Set__Lrta_syntax_Pd
     };
     if ((x11 instanceof $c_Lrta_syntax_PdlProgram$Seq)) {
       var x$1$4 = $as_Lrta_syntax_PdlProgram$Seq(x11);
-      var this$50 = $n(x$1$4);
-      var x21 = this$50.Lrta_syntax_PdlProgram$Seq__f_p;
-      var this$51 = $n(x$1$4);
-      var x22 = this$51.Lrta_syntax_PdlProgram$Seq__f_q;
+      var this$52 = $n(x$1$4);
+      var x21 = this$52.Lrta_syntax_PdlProgram$Seq__f_p;
+      var this$53 = $n(x$1$4);
+      var x22 = this$53.Lrta_syntax_PdlProgram$Seq__f_q;
       var intermediateConfigs = $p_Lrta_backend_PdlEvaluator$__evaluateProgram__sci_Set__Lrta_syntax_PdlProgram__sci_Set($thiz, initialConfigs$tailLocal1, x21);
       initialConfigs$tailLocal1 = intermediateConfigs;
       program$tailLocal1 = x22;
@@ -7180,18 +7817,18 @@ function $p_Lrta_backend_PdlEvaluator$__evaluateProgram__sci_Set__Lrta_syntax_Pd
     };
     if ((x11 instanceof $c_Lrta_syntax_PdlProgram$Choice)) {
       var x$1$5 = $as_Lrta_syntax_PdlProgram$Choice(x11);
-      var this$53 = $n(x$1$5);
-      var x17 = this$53.Lrta_syntax_PdlProgram$Choice__f_p;
-      var this$54 = $n(x$1$5);
-      var x18 = this$54.Lrta_syntax_PdlProgram$Choice__f_q;
-      var this$55 = $n($p_Lrta_backend_PdlEvaluator$__evaluateProgram__sci_Set__Lrta_syntax_PdlProgram__sci_Set($thiz, initialConfigs$tailLocal1, x17));
+      var this$55 = $n(x$1$5);
+      var x17 = this$55.Lrta_syntax_PdlProgram$Choice__f_p;
+      var this$56 = $n(x$1$5);
+      var x18 = this$56.Lrta_syntax_PdlProgram$Choice__f_q;
+      var this$57 = $n($p_Lrta_backend_PdlEvaluator$__evaluateProgram__sci_Set__Lrta_syntax_PdlProgram__sci_Set($thiz, initialConfigs$tailLocal1, x17));
       var that$1 = $p_Lrta_backend_PdlEvaluator$__evaluateProgram__sci_Set__Lrta_syntax_PdlProgram__sci_Set($thiz, initialConfigs$tailLocal1, x18);
-      return $as_sci_Set(this$55.concat__sc_IterableOnce__sc_SetOps(that$1))
+      return $as_sci_Set(this$57.concat__sc_IterableOnce__sc_SetOps(that$1))
     };
     if ((x11 instanceof $c_Lrta_syntax_PdlProgram$Star)) {
       var x$1$6 = $as_Lrta_syntax_PdlProgram$Star(x11);
-      var this$57 = $n(x$1$6);
-      var x14 = this$57.Lrta_syntax_PdlProgram$Star__f_p;
+      var this$59 = $n(x$1$6);
+      var x14 = this$59.Lrta_syntax_PdlProgram$Star__f_p;
       return $p_Lrta_backend_PdlEvaluator$__fixedPoint$1__Lrta_syntax_PdlProgram__sci_Set__sci_Set__sci_Set($thiz, x14, initialConfigs$tailLocal1, initialConfigs$tailLocal1)
     };
     throw new $c_s_MatchError(x11)
@@ -7239,7 +7876,9 @@ function $p_Lrta_backend_PdlEvaluator$__advanceTimeExplicit__Lrta_syntax_Program
   var delays = this$16.Lrta_syntax_Program2$RxGraph__f_delays;
   var this$17 = $n(config);
   var pendingDelays = this$17.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  var nextRx = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays);
+  var this$18 = $n(config);
+  var maxConstants = this$18.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  var nextRx = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants);
   var canTimePass = $n($n(config).Lrta_syntax_Program2$RxGraph__f_inits).forall__F1__Z(new $c_sjsr_AnonFunction1(((s) => {
     var s$1 = $as_Lrta_syntax_Program2$QName(s);
     var x29 = $n($n(config).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
@@ -7254,9 +7893,9 @@ function $p_Lrta_backend_PdlEvaluator$__advanceTimeExplicit__Lrta_syntax_Program
     throw new $c_s_MatchError(x29)
   })));
   if (canTimePass) {
-    var this$19 = $n($m_s_Predef$().s_Predef$__f_Set);
+    var this$20 = $n($m_s_Predef$().s_Predef$__f_Set);
     var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$RxGraph.getArrayOf().constr)([nextRx]));
-    return this$19.from__sc_IterableOnce__sci_Set(elems)
+    return this$20.from__sc_IterableOnce__sci_Set(elems)
   } else {
     $n($m_s_Predef$().s_Predef$__f_Set);
     return $m_sci_Set$EmptySet$()
@@ -7587,10 +8226,10 @@ function $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Prog
       };
       if (conditionHolds) {
         var prefix$1 = $as_sci_List(updatesToApply.sr_ObjectRef__f_elem);
-        var ev$21 = $n($as_sci_List($n($n(rx).Lrta_syntax_Program2$RxGraph__f_edgeUpdates).getOrElse__O__F0__O(hyperEdge$1, new $c_sjsr_AnonFunction0((() => $m_s_package$().s_package$__f_Nil))))).$colon$colon$colon__sci_List__sci_List(prefix$1);
-        updatesToApply.sr_ObjectRef__f_elem = ev$21;
-        ev$21 = null;
-        matchResult14: {
+        var ev$30 = $n($as_sci_List($n($n(rx).Lrta_syntax_Program2$RxGraph__f_edgeUpdates).getOrElse__O__F0__O(hyperEdge$1, new $c_sjsr_AnonFunction0((() => $m_s_package$().s_package$__f_Nil))))).$colon$colon$colon__sci_List__sci_List(prefix$1);
+        updatesToApply.sr_ObjectRef__f_elem = ev$30;
+        ev$30 = null;
+        matchResult19: {
           var \u03b41$___1;
           var \u03b41$___2;
           var \u03b41$___3;
@@ -7604,7 +8243,7 @@ function $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Prog
             var \u03b41$___2 = targetLabel;
             var \u03b41$___3 = ruleId;
             var \u03b41$___4 = ruleLabel;
-            break matchResult14
+            break matchResult19
           };
           throw new $c_s_MatchError(hyperEdge$1)
         };
@@ -7621,37 +8260,34 @@ function $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Prog
           return $m_sci_Set$EmptySet$()
         }))))).contains__O__Z(new $c_T3(targetLabel$2, ruleId$2, ruleLabel$2));
         if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_delays).contains__O__Z(ruleLabel$2)) {
-          matchResult15: {
+          matchResult20: {
             var \u03b42$___1;
             var \u03b42$___2;
-            var x145 = $as_T2($n($n(rx).Lrta_syntax_Program2$RxGraph__f_delays).apply__O__O(ruleLabel$2));
-            if ((x145 !== null)) {
-              var clock = $as_Lrta_syntax_Program2$QName($n(x145)._1__O());
-              var delayVal = $uD($n(x145)._2__O());
+            var x246 = $as_T2($n($n(rx).Lrta_syntax_Program2$RxGraph__f_delays).apply__O__O(ruleLabel$2));
+            if ((x246 !== null)) {
+              var clock = $as_Lrta_syntax_Program2$QName($n(x246)._1__O());
+              var delayVal = $uD($n(x246)._2__O());
               var \u03b42$___1 = clock;
               var \u03b42$___2 = delayVal;
-              break matchResult15
+              break matchResult20
             };
-            throw new $c_s_MatchError(x145)
+            throw new $c_s_MatchError(x246)
           };
           var clock$2 = $as_Lrta_syntax_Program2$QName(\u03b42$___1);
           var delayVal$2 = $uD(\u03b42$___2);
-          var currentClock = $uD($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clock_env).getOrElse__O__F0__O(clock$2, new $c_sjsr_AnonFunction0((() => 0.0))));
           if (isOn) {
             var this$18 = $n($as_sci_Set(newPending.sr_ObjectRef__f_elem));
-            var _4 = (currentClock + delayVal$2);
-            var elem$4 = new $c_T4(hyperEdge$1, "on", clock$2, _4);
-            var ev$22 = $as_sci_Set(this$18.incl__O__sci_SetOps(elem$4));
-            newPending.sr_ObjectRef__f_elem = ev$22;
-            ev$22 = null
+            var elem$4 = new $c_T4(hyperEdge$1, "on", clock$2, delayVal$2);
+            var ev$31 = $as_sci_Set(this$18.incl__O__sci_SetOps(elem$4));
+            newPending.sr_ObjectRef__f_elem = ev$31;
+            ev$31 = null
           };
           if (isOff) {
             var this$20 = $n($as_sci_Set(newPending.sr_ObjectRef__f_elem));
-            var _4$1 = (currentClock + delayVal$2);
-            var elem$5 = new $c_T4(hyperEdge$1, "off", clock$2, _4$1);
-            var ev$23 = $as_sci_Set(this$20.incl__O__sci_SetOps(elem$5));
-            newPending.sr_ObjectRef__f_elem = ev$23;
-            ev$23 = null
+            var elem$5 = new $c_T4(hyperEdge$1, "off", clock$2, delayVal$2);
+            var ev$32 = $as_sci_Set(this$20.incl__O__sci_SetOps(elem$5));
+            newPending.sr_ObjectRef__f_elem = ev$32;
+            ev$32 = null
           }
         } else {
           if (isOn) {
@@ -7660,9 +8296,9 @@ function $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Prog
               $n($m_s_Predef$().s_Predef$__f_Set);
               return $m_sci_Set$EmptySet$()
             }))));
-            var ev$24 = $as_sci_Set(this$22.concat__sc_IterableOnce__sc_SetOps(that));
-            toActivate.sr_ObjectRef__f_elem = ev$24;
-            ev$24 = null
+            var ev$33 = $as_sci_Set(this$22.concat__sc_IterableOnce__sc_SetOps(that));
+            toActivate.sr_ObjectRef__f_elem = ev$33;
+            ev$33 = null
           };
           if (isOff) {
             var this$24 = $n($as_sci_Set(toDeactivate.sr_ObjectRef__f_elem));
@@ -7670,9 +8306,9 @@ function $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Prog
               $n($m_s_Predef$().s_Predef$__f_Set);
               return $m_sci_Set$EmptySet$()
             }))));
-            var ev$25 = $as_sci_Set(this$24.concat__sc_IterableOnce__sc_SetOps(that$1));
-            toDeactivate.sr_ObjectRef__f_elem = ev$25;
-            ev$25 = null
+            var ev$34 = $as_sci_Set(this$24.concat__sc_IterableOnce__sc_SetOps(that$1));
+            toDeactivate.sr_ObjectRef__f_elem = ev$34;
+            ev$34 = null
           }
         }
       }
@@ -7681,8 +8317,8 @@ function $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Prog
   var _1 = $as_sci_Set(toActivate.sr_ObjectRef__f_elem);
   var _2 = $as_sci_Set(toDeactivate.sr_ObjectRef__f_elem);
   var _3 = $as_sci_List(updatesToApply.sr_ObjectRef__f_elem);
-  var _4$2 = $as_sci_Set(newPending.sr_ObjectRef__f_elem);
-  return new $c_T4(_1, _2, _3, _4$2)
+  var _4 = $as_sci_Set(newPending.sr_ObjectRef__f_elem);
+  return new $c_T4(_1, _2, _3, _4)
 }
 function $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects$default$3__F2($thiz) {
   return new $c_sjsr_AnonFunction2(((cond, rx) => {
@@ -7692,47 +8328,47 @@ function $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects$default$3__F2($thiz) 
   }))
 }
 function $p_Lrta_backend_RxSemantics$__checkInvariant__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$RxGraph__Z($thiz, state, rx) {
-  var x186 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(state);
-  if ((x186 instanceof $c_s_Some)) {
-    var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x186)).s_Some__f_value);
+  var x287 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(state);
+  if ((x287 instanceof $c_s_Some)) {
+    var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x287)).s_Some__f_value);
     return $thiz.evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(inv, rx)
   };
   var x = $m_s_None$();
-  if ((x === x186)) {
+  if ((x === x287)) {
     return true
   };
-  throw new $c_s_MatchError(x186)
+  throw new $c_s_MatchError(x287)
 }
 function $p_Lrta_backend_RxSemantics$__assignWithBounds$1__sr_ObjectRef__Lrta_syntax_Program2$QName__Lrta_syntax_RuntimeValue__V($thiz, currentEnv$1, q, newVal) {
   var existing = $n($as_sci_Map($n(currentEnv$1).sr_ObjectRef__f_elem)).get__O__s_Option(q);
-  matchResult10: {
+  matchResult15: {
     if ((existing instanceof $c_s_Some)) {
-      var x93 = $as_Lrta_syntax_RuntimeValue($n($as_s_Some(existing)).s_Some__f_value);
-      if ((x93 instanceof $c_Lrta_syntax_RuntimeValue$VInt)) {
-        var x$1 = $as_Lrta_syntax_RuntimeValue$VInt(x93);
+      var x194 = $as_Lrta_syntax_RuntimeValue($n($as_s_Some(existing)).s_Some__f_value);
+      if ((x194 instanceof $c_Lrta_syntax_RuntimeValue$VInt)) {
+        var x$1 = $as_Lrta_syntax_RuntimeValue$VInt(x194);
         var this$2 = $n(x$1);
         var this$3 = $n(x$1);
-        var x97 = this$3.Lrta_syntax_RuntimeValue$VInt__f_min;
+        var x198 = this$3.Lrta_syntax_RuntimeValue$VInt__f_min;
         var this$4 = $n(x$1);
-        var x98 = this$4.Lrta_syntax_RuntimeValue$VInt__f_max;
+        var x199 = this$4.Lrta_syntax_RuntimeValue$VInt__f_max;
         if ((newVal instanceof $c_Lrta_syntax_RuntimeValue$VInt)) {
           var x$1$1 = $as_Lrta_syntax_RuntimeValue$VInt(newVal);
           var this$6 = $n(x$1$1);
-          var x70 = this$6.Lrta_syntax_RuntimeValue$VInt__f_value;
+          var x171 = this$6.Lrta_syntax_RuntimeValue$VInt__f_value;
           var this$7 = $n(x$1$1);
           var this$8 = $n(x$1$1);
-          var v = x70
+          var v = x171
         } else if ((newVal instanceof $c_Lrta_syntax_RuntimeValue$VFloat)) {
           var x$1$2 = $as_Lrta_syntax_RuntimeValue$VFloat(newVal);
           var this$10 = $n(x$1$2);
-          var x65 = this$10.Lrta_syntax_RuntimeValue$VFloat__f_value;
+          var x166 = this$10.Lrta_syntax_RuntimeValue$VFloat__f_value;
           var this$11 = $n(x$1$2);
           var this$12 = $n(x$1$2);
-          var v = $doubleToInt(x65)
+          var v = $doubleToInt(x166)
         } else {
           var v = 0
         };
-        var this$13 = $n(x97);
+        var this$13 = $n(x198);
         if (this$13.isEmpty__Z()) {
           var $$x1 = $m_s_None$()
         } else {
@@ -7742,7 +8378,7 @@ function $p_Lrta_backend_RxSemantics$__assignWithBounds$1__sr_ObjectRef__Lrta_sy
         };
         var this$15 = $n($$x1);
         var cappedMin = $uI((this$15.isEmpty__Z() ? v : this$15.get__O()));
-        var this$16 = $n(x98);
+        var this$16 = $n(x199);
         if (this$16.isEmpty__Z()) {
           var $$x2 = $m_s_None$()
         } else {
@@ -7753,37 +8389,37 @@ function $p_Lrta_backend_RxSemantics$__assignWithBounds$1__sr_ObjectRef__Lrta_sy
         var this$18 = $n($$x2);
         var finalVal = $uI((this$18.isEmpty__Z() ? cappedMin : this$18.get__O()));
         var this$22 = $n($as_sci_Map($n(currentEnv$1).sr_ObjectRef__f_elem));
-        var y = new $c_Lrta_syntax_RuntimeValue$VInt(finalVal, x97, x98);
-        var ev$12 = $as_sci_Map(this$22.updated__O__O__sci_MapOps(q, y));
-        $n(currentEnv$1).sr_ObjectRef__f_elem = ev$12;
-        ev$12 = null;
-        break matchResult10
+        var y = new $c_Lrta_syntax_RuntimeValue$VInt(finalVal, x198, x199);
+        var ev$21 = $as_sci_Map(this$22.updated__O__O__sci_MapOps(q, y));
+        $n(currentEnv$1).sr_ObjectRef__f_elem = ev$21;
+        ev$21 = null;
+        break matchResult15
       };
-      if ((x93 instanceof $c_Lrta_syntax_RuntimeValue$VFloat)) {
-        var x$1$3 = $as_Lrta_syntax_RuntimeValue$VFloat(x93);
+      if ((x194 instanceof $c_Lrta_syntax_RuntimeValue$VFloat)) {
+        var x$1$3 = $as_Lrta_syntax_RuntimeValue$VFloat(x194);
         var this$24 = $n(x$1$3);
         var this$25 = $n(x$1$3);
-        var x90 = this$25.Lrta_syntax_RuntimeValue$VFloat__f_min;
+        var x191 = this$25.Lrta_syntax_RuntimeValue$VFloat__f_min;
         var this$26 = $n(x$1$3);
-        var x91 = this$26.Lrta_syntax_RuntimeValue$VFloat__f_max;
+        var x192 = this$26.Lrta_syntax_RuntimeValue$VFloat__f_max;
         if ((newVal instanceof $c_Lrta_syntax_RuntimeValue$VFloat)) {
           var x$1$4 = $as_Lrta_syntax_RuntimeValue$VFloat(newVal);
           var this$28 = $n(x$1$4);
-          var x81 = this$28.Lrta_syntax_RuntimeValue$VFloat__f_value;
+          var x182 = this$28.Lrta_syntax_RuntimeValue$VFloat__f_value;
           var this$29 = $n(x$1$4);
           var this$30 = $n(x$1$4);
-          var v$4 = x81
+          var v$4 = x182
         } else if ((newVal instanceof $c_Lrta_syntax_RuntimeValue$VInt)) {
           var x$1$5 = $as_Lrta_syntax_RuntimeValue$VInt(newVal);
           var this$32 = $n(x$1$5);
-          var x76 = this$32.Lrta_syntax_RuntimeValue$VInt__f_value;
+          var x177 = this$32.Lrta_syntax_RuntimeValue$VInt__f_value;
           var this$33 = $n(x$1$5);
           var this$34 = $n(x$1$5);
-          var v$4 = x76
+          var v$4 = x177
         } else {
           var v$4 = 0.0
         };
-        var this$35 = $n(x90);
+        var this$35 = $n(x191);
         if (this$35.isEmpty__Z()) {
           var $$x3 = $m_s_None$()
         } else {
@@ -7793,7 +8429,7 @@ function $p_Lrta_backend_RxSemantics$__assignWithBounds$1__sr_ObjectRef__Lrta_sy
         };
         var this$37 = $n($$x3);
         var cappedMin$4 = $uD((this$37.isEmpty__Z() ? v$4 : this$37.get__O()));
-        var this$38 = $n(x91);
+        var this$38 = $n(x192);
         if (this$38.isEmpty__Z()) {
           var $$x4 = $m_s_None$()
         } else {
@@ -7804,363 +8440,375 @@ function $p_Lrta_backend_RxSemantics$__assignWithBounds$1__sr_ObjectRef__Lrta_sy
         var this$40 = $n($$x4);
         var finalVal$2 = $uD((this$40.isEmpty__Z() ? cappedMin$4 : this$40.get__O()));
         var this$44 = $n($as_sci_Map($n(currentEnv$1).sr_ObjectRef__f_elem));
-        var y$1 = new $c_Lrta_syntax_RuntimeValue$VFloat(finalVal$2, x90, x91);
-        var ev$13 = $as_sci_Map(this$44.updated__O__O__sci_MapOps(q, y$1));
-        $n(currentEnv$1).sr_ObjectRef__f_elem = ev$13;
-        ev$13 = null;
-        break matchResult10
+        var y$1 = new $c_Lrta_syntax_RuntimeValue$VFloat(finalVal$2, x191, x192);
+        var ev$22 = $as_sci_Map(this$44.updated__O__O__sci_MapOps(q, y$1));
+        $n(currentEnv$1).sr_ObjectRef__f_elem = ev$22;
+        ev$22 = null;
+        break matchResult15
       }
     };
     var this$47 = $n($as_sci_Map($n(currentEnv$1).sr_ObjectRef__f_elem));
-    var ev$14 = $as_sci_Map(this$47.updated__O__O__sci_MapOps(q, newVal));
-    $n(currentEnv$1).sr_ObjectRef__f_elem = ev$14;
-    ev$14 = null
+    var ev$23 = $as_sci_Map(this$47.updated__O__O__sci_MapOps(q, newVal));
+    $n(currentEnv$1).sr_ObjectRef__f_elem = ev$23;
+    ev$23 = null
   }
 }
-function $p_Lrta_backend_RxSemantics$__process$1__Lrta_syntax_Program2$RxGraph__sr_ObjectRef__sr_ObjectRef__Lrta_syntax_Program2$QName__sci_List__V($thiz, rx$4, currentEnv$2, currentClockEnv$1, returnKey$1, ss) {
+function $p_Lrta_backend_RxSemantics$__process$1__Lrta_syntax_Program2$RxGraph__sr_ObjectRef__sr_ObjectRef__Lrta_syntax_Program2$QName__sci_List__V($thiz, rx$5, currentEnv$2, currentClockEnv$1, returnKey$1, ss) {
   var it = $n(ss).iterator__sc_Iterator();
   while (($n(it).hasNext__Z() && (!$n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem)).contains__O__Z(returnKey$1)))) {
-    var x115 = $as_Lrta_syntax_Statement($n(it).next__O());
-    if ((x115 instanceof $c_Lrta_syntax_AssignStmt)) {
-      var x$1 = $as_Lrta_syntax_AssignStmt(x115);
+    var x216 = $as_Lrta_syntax_Statement($n(it).next__O());
+    if ((x216 instanceof $c_Lrta_syntax_AssignStmt)) {
+      var x$1 = $as_Lrta_syntax_AssignStmt(x216);
       var this$2 = $n(x$1);
-      var x138 = this$2.Lrta_syntax_AssignStmt__f_variable;
+      var x239 = this$2.Lrta_syntax_AssignStmt__f_variable;
       var this$3 = $n(x$1);
-      var x139 = this$3.Lrta_syntax_AssignStmt__f_expr;
+      var x240 = this$3.Lrta_syntax_AssignStmt__f_expr;
       var $$x1 = $as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem);
       var clock_env$2 = $as_sci_Map($n(currentClockEnv$1).sr_ObjectRef__f_elem);
-      var this$4 = $n(rx$4);
+      var this$4 = $n(rx$5);
       var edg$2 = this$4.Lrta_syntax_Program2$RxGraph__f_edg;
-      var this$5 = $n(rx$4);
+      var this$5 = $n(rx$5);
       var on$2 = this$5.Lrta_syntax_Program2$RxGraph__f_on;
-      var this$6 = $n(rx$4);
+      var this$6 = $n(rx$5);
       var off$2 = this$6.Lrta_syntax_Program2$RxGraph__f_off;
-      var this$7 = $n(rx$4);
+      var this$7 = $n(rx$5);
       var lbls$2 = this$7.Lrta_syntax_Program2$RxGraph__f_lbls;
-      var this$8 = $n(rx$4);
+      var this$8 = $n(rx$5);
       var inits$2 = this$8.Lrta_syntax_Program2$RxGraph__f_inits;
-      var this$9 = $n(rx$4);
+      var this$9 = $n(rx$5);
       var act$2 = this$9.Lrta_syntax_Program2$RxGraph__f_act;
-      var this$10 = $n(rx$4);
+      var this$10 = $n(rx$5);
       var val_env$2 = this$10.Lrta_syntax_Program2$RxGraph__f_val_env;
-      var this$11 = $n(rx$4);
+      var this$11 = $n(rx$5);
       var zone$2 = this$11.Lrta_syntax_Program2$RxGraph__f_zone;
-      var this$12 = $n(rx$4);
+      var this$12 = $n(rx$5);
       var functions$2 = this$12.Lrta_syntax_Program2$RxGraph__f_functions;
-      var this$13 = $n(rx$4);
+      var this$13 = $n(rx$5);
       var clocks$2 = this$13.Lrta_syntax_Program2$RxGraph__f_clocks;
-      var this$14 = $n(rx$4);
+      var this$14 = $n(rx$5);
       var invariants$2 = this$14.Lrta_syntax_Program2$RxGraph__f_invariants;
-      var this$15 = $n(rx$4);
+      var this$15 = $n(rx$5);
       var edgeConditions$2 = this$15.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
-      var this$16 = $n(rx$4);
+      var this$16 = $n(rx$5);
       var edgeUpdates$2 = this$16.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
-      var this$17 = $n(rx$4);
+      var this$17 = $n(rx$5);
       var delays$2 = this$17.Lrta_syntax_Program2$RxGraph__f_delays;
-      var this$18 = $n(rx$4);
+      var this$18 = $n(rx$5);
       var pendingDelays$2 = this$18.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-      $n(rx$4);
-      var evaluated = $thiz.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x139, $$x1, new $c_Lrta_syntax_Program2$RxGraph(edg$2, on$2, off$2, lbls$2, inits$2, act$2, val_env$2, zone$2, functions$2, clocks$2, clock_env$2, invariants$2, edgeConditions$2, edgeUpdates$2, delays$2, pendingDelays$2));
-      if ($n($n(rx$4).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x138)) {
-        var this$22 = $n($as_sci_Map($n(currentClockEnv$1).sr_ObjectRef__f_elem));
+      var this$19 = $n(rx$5);
+      var maxConstants$2 = this$19.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+      $n(rx$5);
+      var evaluated = $thiz.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x240, $$x1, new $c_Lrta_syntax_Program2$RxGraph(edg$2, on$2, off$2, lbls$2, inits$2, act$2, val_env$2, zone$2, functions$2, clocks$2, clock_env$2, invariants$2, edgeConditions$2, edgeUpdates$2, delays$2, pendingDelays$2, maxConstants$2));
+      if ($n($n(rx$5).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x239)) {
+        var this$23 = $n($as_sci_Map($n(currentClockEnv$1).sr_ObjectRef__f_elem));
         var y = $m_Lrta_syntax_Condition$().extractDouble__Lrta_syntax_RuntimeValue__D(evaluated);
-        var ev$15 = $as_sci_Map(this$22.updated__O__O__sci_MapOps(x138, y));
-        $n(currentClockEnv$1).sr_ObjectRef__f_elem = ev$15;
-        ev$15 = null
+        var ev$24 = $as_sci_Map(this$23.updated__O__O__sci_MapOps(x239, y));
+        $n(currentClockEnv$1).sr_ObjectRef__f_elem = ev$24;
+        ev$24 = null
       } else {
-        $p_Lrta_backend_RxSemantics$__assignWithBounds$1__sr_ObjectRef__Lrta_syntax_Program2$QName__Lrta_syntax_RuntimeValue__V($thiz, currentEnv$2, x138, evaluated)
+        $p_Lrta_backend_RxSemantics$__assignWithBounds$1__sr_ObjectRef__Lrta_syntax_Program2$QName__Lrta_syntax_RuntimeValue__V($thiz, currentEnv$2, x239, evaluated)
       };
       continue
     };
-    if ((x115 instanceof $c_Lrta_syntax_ArrayAssignStmt)) {
-      var x$1$1 = $as_Lrta_syntax_ArrayAssignStmt(x115);
-      var this$24 = $n(x$1$1);
-      var x133 = this$24.Lrta_syntax_ArrayAssignStmt__f_arrName;
+    if ((x216 instanceof $c_Lrta_syntax_ArrayAssignStmt)) {
+      var x$1$1 = $as_Lrta_syntax_ArrayAssignStmt(x216);
       var this$25 = $n(x$1$1);
-      var x134 = this$25.Lrta_syntax_ArrayAssignStmt__f_index;
+      var x234 = this$25.Lrta_syntax_ArrayAssignStmt__f_arrName;
       var this$26 = $n(x$1$1);
-      var x135 = this$26.Lrta_syntax_ArrayAssignStmt__f_expr;
+      var x235 = this$26.Lrta_syntax_ArrayAssignStmt__f_index;
+      var this$27 = $n(x$1$1);
+      var x236 = this$27.Lrta_syntax_ArrayAssignStmt__f_expr;
       var $$x3 = $m_Lrta_syntax_Condition$();
       var $$x2 = $as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem);
       var clock_env$3 = $as_sci_Map($n(currentClockEnv$1).sr_ObjectRef__f_elem);
-      var this$27 = $n(rx$4);
-      var edg$3 = this$27.Lrta_syntax_Program2$RxGraph__f_edg;
-      var this$28 = $n(rx$4);
-      var on$3 = this$28.Lrta_syntax_Program2$RxGraph__f_on;
-      var this$29 = $n(rx$4);
-      var off$3 = this$29.Lrta_syntax_Program2$RxGraph__f_off;
-      var this$30 = $n(rx$4);
-      var lbls$3 = this$30.Lrta_syntax_Program2$RxGraph__f_lbls;
-      var this$31 = $n(rx$4);
-      var inits$3 = this$31.Lrta_syntax_Program2$RxGraph__f_inits;
-      var this$32 = $n(rx$4);
-      var act$3 = this$32.Lrta_syntax_Program2$RxGraph__f_act;
-      var this$33 = $n(rx$4);
-      var val_env$3 = this$33.Lrta_syntax_Program2$RxGraph__f_val_env;
-      var this$34 = $n(rx$4);
-      var zone$3 = this$34.Lrta_syntax_Program2$RxGraph__f_zone;
-      var this$35 = $n(rx$4);
-      var functions$3 = this$35.Lrta_syntax_Program2$RxGraph__f_functions;
-      var this$36 = $n(rx$4);
-      var clocks$3 = this$36.Lrta_syntax_Program2$RxGraph__f_clocks;
-      var this$37 = $n(rx$4);
-      var invariants$3 = this$37.Lrta_syntax_Program2$RxGraph__f_invariants;
-      var this$38 = $n(rx$4);
-      var edgeConditions$3 = this$38.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
-      var this$39 = $n(rx$4);
-      var edgeUpdates$3 = this$39.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
-      var this$40 = $n(rx$4);
-      var delays$3 = this$40.Lrta_syntax_Program2$RxGraph__f_delays;
-      var this$41 = $n(rx$4);
-      var pendingDelays$3 = this$41.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-      $n(rx$4);
-      var idx = $doubleToInt($n($$x3).extractDouble__Lrta_syntax_RuntimeValue__D($thiz.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x134, $$x2, new $c_Lrta_syntax_Program2$RxGraph(edg$3, on$3, off$3, lbls$3, inits$3, act$3, val_env$3, zone$3, functions$3, clocks$3, clock_env$3, invariants$3, edgeConditions$3, edgeUpdates$3, delays$3, pendingDelays$3))));
+      var this$28 = $n(rx$5);
+      var edg$3 = this$28.Lrta_syntax_Program2$RxGraph__f_edg;
+      var this$29 = $n(rx$5);
+      var on$3 = this$29.Lrta_syntax_Program2$RxGraph__f_on;
+      var this$30 = $n(rx$5);
+      var off$3 = this$30.Lrta_syntax_Program2$RxGraph__f_off;
+      var this$31 = $n(rx$5);
+      var lbls$3 = this$31.Lrta_syntax_Program2$RxGraph__f_lbls;
+      var this$32 = $n(rx$5);
+      var inits$3 = this$32.Lrta_syntax_Program2$RxGraph__f_inits;
+      var this$33 = $n(rx$5);
+      var act$3 = this$33.Lrta_syntax_Program2$RxGraph__f_act;
+      var this$34 = $n(rx$5);
+      var val_env$3 = this$34.Lrta_syntax_Program2$RxGraph__f_val_env;
+      var this$35 = $n(rx$5);
+      var zone$3 = this$35.Lrta_syntax_Program2$RxGraph__f_zone;
+      var this$36 = $n(rx$5);
+      var functions$3 = this$36.Lrta_syntax_Program2$RxGraph__f_functions;
+      var this$37 = $n(rx$5);
+      var clocks$3 = this$37.Lrta_syntax_Program2$RxGraph__f_clocks;
+      var this$38 = $n(rx$5);
+      var invariants$3 = this$38.Lrta_syntax_Program2$RxGraph__f_invariants;
+      var this$39 = $n(rx$5);
+      var edgeConditions$3 = this$39.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+      var this$40 = $n(rx$5);
+      var edgeUpdates$3 = this$40.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+      var this$41 = $n(rx$5);
+      var delays$3 = this$41.Lrta_syntax_Program2$RxGraph__f_delays;
+      var this$42 = $n(rx$5);
+      var pendingDelays$3 = this$42.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      var this$43 = $n(rx$5);
+      var maxConstants$3 = this$43.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+      $n(rx$5);
+      var idx = $doubleToInt($n($$x3).extractDouble__Lrta_syntax_RuntimeValue__D($thiz.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x235, $$x2, new $c_Lrta_syntax_Program2$RxGraph(edg$3, on$3, off$3, lbls$3, inits$3, act$3, val_env$3, zone$3, functions$3, clocks$3, clock_env$3, invariants$3, edgeConditions$3, edgeUpdates$3, delays$3, pendingDelays$3, maxConstants$3))));
       var $$x4 = $as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem);
       var clock_env$4 = $as_sci_Map($n(currentClockEnv$1).sr_ObjectRef__f_elem);
-      var this$43 = $n(rx$4);
-      var edg$4 = this$43.Lrta_syntax_Program2$RxGraph__f_edg;
-      var this$44 = $n(rx$4);
-      var on$4 = this$44.Lrta_syntax_Program2$RxGraph__f_on;
-      var this$45 = $n(rx$4);
-      var off$4 = this$45.Lrta_syntax_Program2$RxGraph__f_off;
-      var this$46 = $n(rx$4);
-      var lbls$4 = this$46.Lrta_syntax_Program2$RxGraph__f_lbls;
-      var this$47 = $n(rx$4);
-      var inits$4 = this$47.Lrta_syntax_Program2$RxGraph__f_inits;
-      var this$48 = $n(rx$4);
-      var act$4 = this$48.Lrta_syntax_Program2$RxGraph__f_act;
-      var this$49 = $n(rx$4);
-      var val_env$4 = this$49.Lrta_syntax_Program2$RxGraph__f_val_env;
-      var this$50 = $n(rx$4);
-      var zone$4 = this$50.Lrta_syntax_Program2$RxGraph__f_zone;
-      var this$51 = $n(rx$4);
-      var functions$4 = this$51.Lrta_syntax_Program2$RxGraph__f_functions;
-      var this$52 = $n(rx$4);
-      var clocks$4 = this$52.Lrta_syntax_Program2$RxGraph__f_clocks;
-      var this$53 = $n(rx$4);
-      var invariants$4 = this$53.Lrta_syntax_Program2$RxGraph__f_invariants;
-      var this$54 = $n(rx$4);
-      var edgeConditions$4 = this$54.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
-      var this$55 = $n(rx$4);
-      var edgeUpdates$4 = this$55.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
-      var this$56 = $n(rx$4);
-      var delays$4 = this$56.Lrta_syntax_Program2$RxGraph__f_delays;
-      var this$57 = $n(rx$4);
-      var pendingDelays$4 = this$57.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-      $n(rx$4);
-      var value = $thiz.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x135, $$x4, new $c_Lrta_syntax_Program2$RxGraph(edg$4, on$4, off$4, lbls$4, inits$4, act$4, val_env$4, zone$4, functions$4, clocks$4, clock_env$4, invariants$4, edgeConditions$4, edgeUpdates$4, delays$4, pendingDelays$4));
-      matchResult11: {
-        var x99 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem)).get__O__s_Option(x133);
-        if ((x99 instanceof $c_s_Some)) {
-          var x101 = $as_Lrta_syntax_RuntimeValue($n($as_s_Some(x99)).s_Some__f_value);
-          if ((x101 instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
-            var x$1$2 = $as_Lrta_syntax_RuntimeValue$VArray(x101);
-            var this$60 = $n(x$1$2);
-            var x104 = this$60.Lrta_syntax_RuntimeValue$VArray__f_value;
-            var this$61 = $n(x$1$2);
-            var x105 = this$61.Lrta_syntax_RuntimeValue$VArray__f_isDynamic;
-            var this$62 = $n(x$1$2);
-            var x106 = this$62.Lrta_syntax_RuntimeValue$VArray__f_maxSize;
-            if (((idx >= 0) && (idx < $n(x104).length__I()))) {
-              var this$66 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem));
-              var value$1 = $n(x104).updated__I__O__sci_List(idx, value);
-              var y$1 = new $c_Lrta_syntax_RuntimeValue$VArray(value$1, x105, x106);
-              var ev$16 = $as_sci_Map(this$66.updated__O__O__sci_MapOps(x133, y$1));
-              $n(currentEnv$2).sr_ObjectRef__f_elem = ev$16;
-              ev$16 = null
-            } else if ((x105 && (idx === $n(x104).length__I()))) {
-              var this$67 = $n(x104);
-              var newElems = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$67, value));
-              var this$73 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem));
-              var this$69 = $n(x106);
-              if (this$69.isEmpty__Z()) {
+      var this$45 = $n(rx$5);
+      var edg$4 = this$45.Lrta_syntax_Program2$RxGraph__f_edg;
+      var this$46 = $n(rx$5);
+      var on$4 = this$46.Lrta_syntax_Program2$RxGraph__f_on;
+      var this$47 = $n(rx$5);
+      var off$4 = this$47.Lrta_syntax_Program2$RxGraph__f_off;
+      var this$48 = $n(rx$5);
+      var lbls$4 = this$48.Lrta_syntax_Program2$RxGraph__f_lbls;
+      var this$49 = $n(rx$5);
+      var inits$4 = this$49.Lrta_syntax_Program2$RxGraph__f_inits;
+      var this$50 = $n(rx$5);
+      var act$4 = this$50.Lrta_syntax_Program2$RxGraph__f_act;
+      var this$51 = $n(rx$5);
+      var val_env$4 = this$51.Lrta_syntax_Program2$RxGraph__f_val_env;
+      var this$52 = $n(rx$5);
+      var zone$4 = this$52.Lrta_syntax_Program2$RxGraph__f_zone;
+      var this$53 = $n(rx$5);
+      var functions$4 = this$53.Lrta_syntax_Program2$RxGraph__f_functions;
+      var this$54 = $n(rx$5);
+      var clocks$4 = this$54.Lrta_syntax_Program2$RxGraph__f_clocks;
+      var this$55 = $n(rx$5);
+      var invariants$4 = this$55.Lrta_syntax_Program2$RxGraph__f_invariants;
+      var this$56 = $n(rx$5);
+      var edgeConditions$4 = this$56.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+      var this$57 = $n(rx$5);
+      var edgeUpdates$4 = this$57.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+      var this$58 = $n(rx$5);
+      var delays$4 = this$58.Lrta_syntax_Program2$RxGraph__f_delays;
+      var this$59 = $n(rx$5);
+      var pendingDelays$4 = this$59.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      var this$60 = $n(rx$5);
+      var maxConstants$4 = this$60.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+      $n(rx$5);
+      var value = $thiz.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x236, $$x4, new $c_Lrta_syntax_Program2$RxGraph(edg$4, on$4, off$4, lbls$4, inits$4, act$4, val_env$4, zone$4, functions$4, clocks$4, clock_env$4, invariants$4, edgeConditions$4, edgeUpdates$4, delays$4, pendingDelays$4, maxConstants$4));
+      matchResult16: {
+        var x200 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem)).get__O__s_Option(x234);
+        if ((x200 instanceof $c_s_Some)) {
+          var x202 = $as_Lrta_syntax_RuntimeValue($n($as_s_Some(x200)).s_Some__f_value);
+          if ((x202 instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
+            var x$1$2 = $as_Lrta_syntax_RuntimeValue$VArray(x202);
+            var this$63 = $n(x$1$2);
+            var x205 = this$63.Lrta_syntax_RuntimeValue$VArray__f_value;
+            var this$64 = $n(x$1$2);
+            var x206 = this$64.Lrta_syntax_RuntimeValue$VArray__f_isDynamic;
+            var this$65 = $n(x$1$2);
+            var x207 = this$65.Lrta_syntax_RuntimeValue$VArray__f_maxSize;
+            if (((idx >= 0) && (idx < $n(x205).length__I()))) {
+              var this$69 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem));
+              var value$1 = $n(x205).updated__I__O__sci_List(idx, value);
+              var y$1 = new $c_Lrta_syntax_RuntimeValue$VArray(value$1, x206, x207);
+              var ev$25 = $as_sci_Map(this$69.updated__O__O__sci_MapOps(x234, y$1));
+              $n(currentEnv$2).sr_ObjectRef__f_elem = ev$25;
+              ev$25 = null
+            } else if ((x206 && (idx === $n(x205).length__I()))) {
+              var this$70 = $n(x205);
+              var newElems = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$70, value));
+              var this$76 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem));
+              var this$72 = $n(x207);
+              if (this$72.isEmpty__Z()) {
                 var $$x5 = $m_s_None$()
               } else {
-                var arg1 = this$69.get__O();
+                var arg1 = this$72.get__O();
                 var m = $uI(arg1);
                 var $$x5 = new $c_s_Some($n(newElems).takeRight__I__sci_List(m))
               };
-              var this$70 = $n($$x5);
-              var value$2 = $as_sci_List((this$70.isEmpty__Z() ? newElems : this$70.get__O()));
-              var y$2 = new $c_Lrta_syntax_RuntimeValue$VArray(value$2, x105, x106);
-              var ev$17 = $as_sci_Map(this$73.updated__O__O__sci_MapOps(x133, y$2));
-              $n(currentEnv$2).sr_ObjectRef__f_elem = ev$17;
-              ev$17 = null
+              var this$73 = $n($$x5);
+              var value$2 = $as_sci_List((this$73.isEmpty__Z() ? newElems : this$73.get__O()));
+              var y$2 = new $c_Lrta_syntax_RuntimeValue$VArray(value$2, x206, x207);
+              var ev$26 = $as_sci_Map(this$76.updated__O__O__sci_MapOps(x234, y$2));
+              $n(currentEnv$2).sr_ObjectRef__f_elem = ev$26;
+              ev$26 = null
             };
-            break matchResult11
+            break matchResult16
           }
         }
       };
       continue
     };
-    if ((x115 instanceof $c_Lrta_syntax_IfThenStmt)) {
-      var x$1$3 = $as_Lrta_syntax_IfThenStmt(x115);
-      var this$75 = $n(x$1$3);
-      var x129 = this$75.Lrta_syntax_IfThenStmt__f_condition;
-      var this$76 = $n(x$1$3);
-      var x130 = this$76.Lrta_syntax_IfThenStmt__f_thenStmts;
+    if ((x216 instanceof $c_Lrta_syntax_IfThenStmt)) {
+      var x$1$3 = $as_Lrta_syntax_IfThenStmt(x216);
+      var this$78 = $n(x$1$3);
+      var x230 = this$78.Lrta_syntax_IfThenStmt__f_condition;
+      var this$79 = $n(x$1$3);
+      var x231 = this$79.Lrta_syntax_IfThenStmt__f_thenStmts;
       var val_env$5 = $as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem);
       var clock_env$5 = $as_sci_Map($n(currentClockEnv$1).sr_ObjectRef__f_elem);
-      var this$77 = $n(rx$4);
-      var edg$5 = this$77.Lrta_syntax_Program2$RxGraph__f_edg;
-      var this$78 = $n(rx$4);
-      var on$5 = this$78.Lrta_syntax_Program2$RxGraph__f_on;
-      var this$79 = $n(rx$4);
-      var off$5 = this$79.Lrta_syntax_Program2$RxGraph__f_off;
-      var this$80 = $n(rx$4);
-      var lbls$5 = this$80.Lrta_syntax_Program2$RxGraph__f_lbls;
-      var this$81 = $n(rx$4);
-      var inits$5 = this$81.Lrta_syntax_Program2$RxGraph__f_inits;
-      var this$82 = $n(rx$4);
-      var act$5 = this$82.Lrta_syntax_Program2$RxGraph__f_act;
-      var this$83 = $n(rx$4);
-      var zone$5 = this$83.Lrta_syntax_Program2$RxGraph__f_zone;
-      var this$84 = $n(rx$4);
-      var functions$5 = this$84.Lrta_syntax_Program2$RxGraph__f_functions;
-      var this$85 = $n(rx$4);
-      var clocks$5 = this$85.Lrta_syntax_Program2$RxGraph__f_clocks;
-      var this$86 = $n(rx$4);
-      var invariants$5 = this$86.Lrta_syntax_Program2$RxGraph__f_invariants;
-      var this$87 = $n(rx$4);
-      var edgeConditions$5 = this$87.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
-      var this$88 = $n(rx$4);
-      var edgeUpdates$5 = this$88.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
-      var this$89 = $n(rx$4);
-      var delays$5 = this$89.Lrta_syntax_Program2$RxGraph__f_delays;
-      var this$90 = $n(rx$4);
-      var pendingDelays$5 = this$90.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-      $n(rx$4);
-      if ($thiz.evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x129, new $c_Lrta_syntax_Program2$RxGraph(edg$5, on$5, off$5, lbls$5, inits$5, act$5, val_env$5, zone$5, functions$5, clocks$5, clock_env$5, invariants$5, edgeConditions$5, edgeUpdates$5, delays$5, pendingDelays$5))) {
-        $p_Lrta_backend_RxSemantics$__process$1__Lrta_syntax_Program2$RxGraph__sr_ObjectRef__sr_ObjectRef__Lrta_syntax_Program2$QName__sci_List__V($thiz, rx$4, currentEnv$2, currentClockEnv$1, returnKey$1, x130)
+      var this$80 = $n(rx$5);
+      var edg$5 = this$80.Lrta_syntax_Program2$RxGraph__f_edg;
+      var this$81 = $n(rx$5);
+      var on$5 = this$81.Lrta_syntax_Program2$RxGraph__f_on;
+      var this$82 = $n(rx$5);
+      var off$5 = this$82.Lrta_syntax_Program2$RxGraph__f_off;
+      var this$83 = $n(rx$5);
+      var lbls$5 = this$83.Lrta_syntax_Program2$RxGraph__f_lbls;
+      var this$84 = $n(rx$5);
+      var inits$5 = this$84.Lrta_syntax_Program2$RxGraph__f_inits;
+      var this$85 = $n(rx$5);
+      var act$5 = this$85.Lrta_syntax_Program2$RxGraph__f_act;
+      var this$86 = $n(rx$5);
+      var zone$5 = this$86.Lrta_syntax_Program2$RxGraph__f_zone;
+      var this$87 = $n(rx$5);
+      var functions$5 = this$87.Lrta_syntax_Program2$RxGraph__f_functions;
+      var this$88 = $n(rx$5);
+      var clocks$5 = this$88.Lrta_syntax_Program2$RxGraph__f_clocks;
+      var this$89 = $n(rx$5);
+      var invariants$5 = this$89.Lrta_syntax_Program2$RxGraph__f_invariants;
+      var this$90 = $n(rx$5);
+      var edgeConditions$5 = this$90.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+      var this$91 = $n(rx$5);
+      var edgeUpdates$5 = this$91.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+      var this$92 = $n(rx$5);
+      var delays$5 = this$92.Lrta_syntax_Program2$RxGraph__f_delays;
+      var this$93 = $n(rx$5);
+      var pendingDelays$5 = this$93.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      var this$94 = $n(rx$5);
+      var maxConstants$5 = this$94.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+      $n(rx$5);
+      if ($thiz.evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x230, new $c_Lrta_syntax_Program2$RxGraph(edg$5, on$5, off$5, lbls$5, inits$5, act$5, val_env$5, zone$5, functions$5, clocks$5, clock_env$5, invariants$5, edgeConditions$5, edgeUpdates$5, delays$5, pendingDelays$5, maxConstants$5))) {
+        $p_Lrta_backend_RxSemantics$__process$1__Lrta_syntax_Program2$RxGraph__sr_ObjectRef__sr_ObjectRef__Lrta_syntax_Program2$QName__sci_List__V($thiz, rx$5, currentEnv$2, currentClockEnv$1, returnKey$1, x231)
       };
       continue
     };
-    if ((x115 instanceof $c_Lrta_syntax_ForeachStmt)) {
-      var x$1$4 = $as_Lrta_syntax_ForeachStmt(x115);
-      var this$93 = $n(x$1$4);
-      var x124 = this$93.Lrta_syntax_ForeachStmt__f_iteratorVar;
-      var this$94 = $n(x$1$4);
-      var x125 = this$94.Lrta_syntax_ForeachStmt__f_arrayName;
-      var this$95 = $n(x$1$4);
-      var x126 = this$95.Lrta_syntax_ForeachStmt__f_body;
-      matchResult12: {
-        var x107 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem)).get__O__s_Option(x125);
-        if ((x107 instanceof $c_s_Some)) {
-          var x109 = $as_Lrta_syntax_RuntimeValue($n($as_s_Some(x107)).s_Some__f_value);
-          if ((x109 instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
-            var x$1$5 = $as_Lrta_syntax_RuntimeValue$VArray(x109);
-            var this$97 = $n(x$1$5);
-            var x112 = this$97.Lrta_syntax_RuntimeValue$VArray__f_value;
-            var this$98 = $n(x$1$5);
-            var this$99 = $n(x$1$5);
-            var eIt = $n(x112).iterator__sc_Iterator();
+    if ((x216 instanceof $c_Lrta_syntax_ForeachStmt)) {
+      var x$1$4 = $as_Lrta_syntax_ForeachStmt(x216);
+      var this$97 = $n(x$1$4);
+      var x225 = this$97.Lrta_syntax_ForeachStmt__f_iteratorVar;
+      var this$98 = $n(x$1$4);
+      var x226 = this$98.Lrta_syntax_ForeachStmt__f_arrayName;
+      var this$99 = $n(x$1$4);
+      var x227 = this$99.Lrta_syntax_ForeachStmt__f_body;
+      matchResult17: {
+        var x208 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem)).get__O__s_Option(x226);
+        if ((x208 instanceof $c_s_Some)) {
+          var x210 = $as_Lrta_syntax_RuntimeValue($n($as_s_Some(x208)).s_Some__f_value);
+          if ((x210 instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
+            var x$1$5 = $as_Lrta_syntax_RuntimeValue$VArray(x210);
+            var this$101 = $n(x$1$5);
+            var x213 = this$101.Lrta_syntax_RuntimeValue$VArray__f_value;
+            var this$102 = $n(x$1$5);
+            var this$103 = $n(x$1$5);
+            var eIt = $n(x213).iterator__sc_Iterator();
             while (($n(eIt).hasNext__Z() && (!$n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem)).contains__O__Z(returnKey$1)))) {
-              var this$102 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem));
+              var this$106 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem));
               var y$3 = $n(eIt).next__O();
-              var ev$18 = $as_sci_Map(this$102.updated__O__O__sci_MapOps(x124, y$3));
-              $n(currentEnv$2).sr_ObjectRef__f_elem = ev$18;
-              ev$18 = null;
-              $p_Lrta_backend_RxSemantics$__process$1__Lrta_syntax_Program2$RxGraph__sr_ObjectRef__sr_ObjectRef__Lrta_syntax_Program2$QName__sci_List__V($thiz, rx$4, currentEnv$2, currentClockEnv$1, returnKey$1, x126)
+              var ev$27 = $as_sci_Map(this$106.updated__O__O__sci_MapOps(x225, y$3));
+              $n(currentEnv$2).sr_ObjectRef__f_elem = ev$27;
+              ev$27 = null;
+              $p_Lrta_backend_RxSemantics$__process$1__Lrta_syntax_Program2$RxGraph__sr_ObjectRef__sr_ObjectRef__Lrta_syntax_Program2$QName__sci_List__V($thiz, rx$5, currentEnv$2, currentClockEnv$1, returnKey$1, x227)
             };
-            var this$103 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem));
-            var ev$19 = $as_sci_Map(this$103.removed__O__sci_MapOps(x124));
-            $n(currentEnv$2).sr_ObjectRef__f_elem = ev$19;
-            ev$19 = null;
-            break matchResult12
+            var this$107 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem));
+            var ev$28 = $as_sci_Map(this$107.removed__O__sci_MapOps(x225));
+            $n(currentEnv$2).sr_ObjectRef__f_elem = ev$28;
+            ev$28 = null;
+            break matchResult17
           }
         }
       };
       continue
     };
-    if ((x115 instanceof $c_Lrta_syntax_ReturnStmt)) {
-      var x$1$6 = $as_Lrta_syntax_ReturnStmt(x115);
-      var this$105 = $n(x$1$6);
-      var x121 = this$105.Lrta_syntax_ReturnStmt__f_expr;
-      var this$124 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem));
+    if ((x216 instanceof $c_Lrta_syntax_ReturnStmt)) {
+      var x$1$6 = $as_Lrta_syntax_ReturnStmt(x216);
+      var this$109 = $n(x$1$6);
+      var x222 = this$109.Lrta_syntax_ReturnStmt__f_expr;
+      var this$129 = $n($as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem));
       var $$x6 = $as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem);
       var clock_env$7 = $as_sci_Map($n(currentClockEnv$1).sr_ObjectRef__f_elem);
-      var this$107 = $n(rx$4);
-      var edg$7 = this$107.Lrta_syntax_Program2$RxGraph__f_edg;
-      var this$108 = $n(rx$4);
-      var on$7 = this$108.Lrta_syntax_Program2$RxGraph__f_on;
-      var this$109 = $n(rx$4);
-      var off$7 = this$109.Lrta_syntax_Program2$RxGraph__f_off;
-      var this$110 = $n(rx$4);
-      var lbls$7 = this$110.Lrta_syntax_Program2$RxGraph__f_lbls;
-      var this$111 = $n(rx$4);
-      var inits$7 = this$111.Lrta_syntax_Program2$RxGraph__f_inits;
-      var this$112 = $n(rx$4);
-      var act$7 = this$112.Lrta_syntax_Program2$RxGraph__f_act;
-      var this$113 = $n(rx$4);
-      var val_env$7 = this$113.Lrta_syntax_Program2$RxGraph__f_val_env;
-      var this$114 = $n(rx$4);
-      var zone$7 = this$114.Lrta_syntax_Program2$RxGraph__f_zone;
-      var this$115 = $n(rx$4);
-      var functions$7 = this$115.Lrta_syntax_Program2$RxGraph__f_functions;
-      var this$116 = $n(rx$4);
-      var clocks$7 = this$116.Lrta_syntax_Program2$RxGraph__f_clocks;
-      var this$117 = $n(rx$4);
-      var invariants$7 = this$117.Lrta_syntax_Program2$RxGraph__f_invariants;
-      var this$118 = $n(rx$4);
-      var edgeConditions$7 = this$118.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
-      var this$119 = $n(rx$4);
-      var edgeUpdates$7 = this$119.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
-      var this$120 = $n(rx$4);
-      var delays$7 = this$120.Lrta_syntax_Program2$RxGraph__f_delays;
-      var this$121 = $n(rx$4);
-      var pendingDelays$7 = this$121.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-      $n(rx$4);
-      var y$4 = $thiz.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x121, $$x6, new $c_Lrta_syntax_Program2$RxGraph(edg$7, on$7, off$7, lbls$7, inits$7, act$7, val_env$7, zone$7, functions$7, clocks$7, clock_env$7, invariants$7, edgeConditions$7, edgeUpdates$7, delays$7, pendingDelays$7));
-      var ev$20 = $as_sci_Map(this$124.updated__O__O__sci_MapOps(returnKey$1, y$4));
-      $n(currentEnv$2).sr_ObjectRef__f_elem = ev$20;
-      ev$20 = null;
+      var this$111 = $n(rx$5);
+      var edg$7 = this$111.Lrta_syntax_Program2$RxGraph__f_edg;
+      var this$112 = $n(rx$5);
+      var on$7 = this$112.Lrta_syntax_Program2$RxGraph__f_on;
+      var this$113 = $n(rx$5);
+      var off$7 = this$113.Lrta_syntax_Program2$RxGraph__f_off;
+      var this$114 = $n(rx$5);
+      var lbls$7 = this$114.Lrta_syntax_Program2$RxGraph__f_lbls;
+      var this$115 = $n(rx$5);
+      var inits$7 = this$115.Lrta_syntax_Program2$RxGraph__f_inits;
+      var this$116 = $n(rx$5);
+      var act$7 = this$116.Lrta_syntax_Program2$RxGraph__f_act;
+      var this$117 = $n(rx$5);
+      var val_env$7 = this$117.Lrta_syntax_Program2$RxGraph__f_val_env;
+      var this$118 = $n(rx$5);
+      var zone$7 = this$118.Lrta_syntax_Program2$RxGraph__f_zone;
+      var this$119 = $n(rx$5);
+      var functions$7 = this$119.Lrta_syntax_Program2$RxGraph__f_functions;
+      var this$120 = $n(rx$5);
+      var clocks$7 = this$120.Lrta_syntax_Program2$RxGraph__f_clocks;
+      var this$121 = $n(rx$5);
+      var invariants$7 = this$121.Lrta_syntax_Program2$RxGraph__f_invariants;
+      var this$122 = $n(rx$5);
+      var edgeConditions$7 = this$122.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+      var this$123 = $n(rx$5);
+      var edgeUpdates$7 = this$123.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+      var this$124 = $n(rx$5);
+      var delays$7 = this$124.Lrta_syntax_Program2$RxGraph__f_delays;
+      var this$125 = $n(rx$5);
+      var pendingDelays$7 = this$125.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      var this$126 = $n(rx$5);
+      var maxConstants$7 = this$126.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+      $n(rx$5);
+      var y$4 = $thiz.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x222, $$x6, new $c_Lrta_syntax_Program2$RxGraph(edg$7, on$7, off$7, lbls$7, inits$7, act$7, val_env$7, zone$7, functions$7, clocks$7, clock_env$7, invariants$7, edgeConditions$7, edgeUpdates$7, delays$7, pendingDelays$7, maxConstants$7));
+      var ev$29 = $as_sci_Map(this$129.updated__O__O__sci_MapOps(returnKey$1, y$4));
+      $n(currentEnv$2).sr_ObjectRef__f_elem = ev$29;
+      ev$29 = null;
       continue
     };
-    if ((x115 instanceof $c_Lrta_syntax_PrintStmt)) {
-      var x$1$7 = $as_Lrta_syntax_PrintStmt(x115);
-      var this$126 = $n(x$1$7);
-      var x118 = this$126.Lrta_syntax_PrintStmt__f_expr;
+    if ((x216 instanceof $c_Lrta_syntax_PrintStmt)) {
+      var x$1$7 = $as_Lrta_syntax_PrintStmt(x216);
+      var this$131 = $n(x$1$7);
+      var x219 = this$131.Lrta_syntax_PrintStmt__f_expr;
       var $$x7 = $as_sci_Map($n(currentEnv$2).sr_ObjectRef__f_elem);
       var clock_env$8 = $as_sci_Map($n(currentClockEnv$1).sr_ObjectRef__f_elem);
-      var this$127 = $n(rx$4);
-      var edg$8 = this$127.Lrta_syntax_Program2$RxGraph__f_edg;
-      var this$128 = $n(rx$4);
-      var on$8 = this$128.Lrta_syntax_Program2$RxGraph__f_on;
-      var this$129 = $n(rx$4);
-      var off$8 = this$129.Lrta_syntax_Program2$RxGraph__f_off;
-      var this$130 = $n(rx$4);
-      var lbls$8 = this$130.Lrta_syntax_Program2$RxGraph__f_lbls;
-      var this$131 = $n(rx$4);
-      var inits$8 = this$131.Lrta_syntax_Program2$RxGraph__f_inits;
-      var this$132 = $n(rx$4);
-      var act$8 = this$132.Lrta_syntax_Program2$RxGraph__f_act;
-      var this$133 = $n(rx$4);
-      var val_env$8 = this$133.Lrta_syntax_Program2$RxGraph__f_val_env;
-      var this$134 = $n(rx$4);
-      var zone$8 = this$134.Lrta_syntax_Program2$RxGraph__f_zone;
-      var this$135 = $n(rx$4);
-      var functions$8 = this$135.Lrta_syntax_Program2$RxGraph__f_functions;
-      var this$136 = $n(rx$4);
-      var clocks$8 = this$136.Lrta_syntax_Program2$RxGraph__f_clocks;
-      var this$137 = $n(rx$4);
-      var invariants$8 = this$137.Lrta_syntax_Program2$RxGraph__f_invariants;
-      var this$138 = $n(rx$4);
-      var edgeConditions$8 = this$138.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
-      var this$139 = $n(rx$4);
-      var edgeUpdates$8 = this$139.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
-      var this$140 = $n(rx$4);
-      var delays$8 = this$140.Lrta_syntax_Program2$RxGraph__f_delays;
-      var this$141 = $n(rx$4);
-      var pendingDelays$8 = this$141.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-      $n(rx$4);
-      var evaluated$2 = $thiz.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x118, $$x7, new $c_Lrta_syntax_Program2$RxGraph(edg$8, on$8, off$8, lbls$8, inits$8, act$8, val_env$8, zone$8, functions$8, clocks$8, clock_env$8, invariants$8, edgeConditions$8, edgeUpdates$8, delays$8, pendingDelays$8));
-      var x = ((("\ud83d\udda8\ufe0f RTA Print | " + $m_Lrta_syntax_UpdateExpr$().show__Lrta_syntax_UpdateExpr__T(x118)) + " = ") + $n(evaluated$2).value__O());
-      var this$144 = $m_s_Console$();
-      var this$145 = $n(this$144.out__Ljava_io_PrintStream());
-      this$145.java$lang$JSConsoleBasedPrintStream$$printString__T__V((x + "\n"));
+      var this$132 = $n(rx$5);
+      var edg$8 = this$132.Lrta_syntax_Program2$RxGraph__f_edg;
+      var this$133 = $n(rx$5);
+      var on$8 = this$133.Lrta_syntax_Program2$RxGraph__f_on;
+      var this$134 = $n(rx$5);
+      var off$8 = this$134.Lrta_syntax_Program2$RxGraph__f_off;
+      var this$135 = $n(rx$5);
+      var lbls$8 = this$135.Lrta_syntax_Program2$RxGraph__f_lbls;
+      var this$136 = $n(rx$5);
+      var inits$8 = this$136.Lrta_syntax_Program2$RxGraph__f_inits;
+      var this$137 = $n(rx$5);
+      var act$8 = this$137.Lrta_syntax_Program2$RxGraph__f_act;
+      var this$138 = $n(rx$5);
+      var val_env$8 = this$138.Lrta_syntax_Program2$RxGraph__f_val_env;
+      var this$139 = $n(rx$5);
+      var zone$8 = this$139.Lrta_syntax_Program2$RxGraph__f_zone;
+      var this$140 = $n(rx$5);
+      var functions$8 = this$140.Lrta_syntax_Program2$RxGraph__f_functions;
+      var this$141 = $n(rx$5);
+      var clocks$8 = this$141.Lrta_syntax_Program2$RxGraph__f_clocks;
+      var this$142 = $n(rx$5);
+      var invariants$8 = this$142.Lrta_syntax_Program2$RxGraph__f_invariants;
+      var this$143 = $n(rx$5);
+      var edgeConditions$8 = this$143.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+      var this$144 = $n(rx$5);
+      var edgeUpdates$8 = this$144.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+      var this$145 = $n(rx$5);
+      var delays$8 = this$145.Lrta_syntax_Program2$RxGraph__f_delays;
+      var this$146 = $n(rx$5);
+      var pendingDelays$8 = this$146.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      var this$147 = $n(rx$5);
+      var maxConstants$8 = this$147.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+      $n(rx$5);
+      var evaluated$2 = $thiz.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x219, $$x7, new $c_Lrta_syntax_Program2$RxGraph(edg$8, on$8, off$8, lbls$8, inits$8, act$8, val_env$8, zone$8, functions$8, clocks$8, clock_env$8, invariants$8, edgeConditions$8, edgeUpdates$8, delays$8, pendingDelays$8, maxConstants$8));
+      var x = ((("\ud83d\udda8\ufe0f RTA Print | " + $m_Lrta_syntax_UpdateExpr$().show__Lrta_syntax_UpdateExpr__T(x219)) + " = ") + $n(evaluated$2).value__O());
+      var this$150 = $m_s_Console$();
+      var this$151 = $n(this$150.out__Ljava_io_PrintStream());
+      this$151.java$lang$JSConsoleBasedPrintStream$$printString__T__V((x + "\n"));
       continue
     };
-    throw new $c_s_MatchError(x115)
+    throw new $c_s_MatchError(x216)
   }
 }
 /** @constructor */
@@ -8179,30 +8827,30 @@ $c_Lrta_backend_RxSemantics$.prototype.evalExpr__Lrta_syntax_UpdateExpr__sci_Map
   if ((expr instanceof $c_Lrta_syntax_UpdateExpr$LitInt)) {
     var x$1 = $as_Lrta_syntax_UpdateExpr$LitInt(expr);
     var this$2 = $n(x$1);
-    var x47 = this$2.Lrta_syntax_UpdateExpr$LitInt__f_i;
+    var x118 = this$2.Lrta_syntax_UpdateExpr$LitInt__f_i;
     var min = $m_s_None$();
     var max = $m_s_None$();
-    return new $c_Lrta_syntax_RuntimeValue$VInt(x47, min, max)
+    return new $c_Lrta_syntax_RuntimeValue$VInt(x118, min, max)
   };
   if ((expr instanceof $c_Lrta_syntax_UpdateExpr$LitFloat)) {
     var x$1$1 = $as_Lrta_syntax_UpdateExpr$LitFloat(expr);
     var this$7 = $n(x$1$1);
-    var x44 = this$7.Lrta_syntax_UpdateExpr$LitFloat__f_f;
+    var x115 = this$7.Lrta_syntax_UpdateExpr$LitFloat__f_f;
     var min$1 = $m_s_None$();
     var max$1 = $m_s_None$();
-    return new $c_Lrta_syntax_RuntimeValue$VFloat(x44, min$1, max$1)
+    return new $c_Lrta_syntax_RuntimeValue$VFloat(x115, min$1, max$1)
   };
   if ((expr instanceof $c_Lrta_syntax_UpdateExpr$LitBool)) {
     var x$1$2 = $as_Lrta_syntax_UpdateExpr$LitBool(expr);
     var this$12 = $n(x$1$2);
-    var x41 = this$12.Lrta_syntax_UpdateExpr$LitBool__f_b;
-    return new $c_Lrta_syntax_RuntimeValue$VBool(x41)
+    var x112 = this$12.Lrta_syntax_UpdateExpr$LitBool__f_b;
+    return new $c_Lrta_syntax_RuntimeValue$VBool(x112)
   };
   if ((expr instanceof $c_Lrta_syntax_UpdateExpr$LitArray)) {
     var x$1$3 = $as_Lrta_syntax_UpdateExpr$LitArray(expr);
     var this$15 = $n(x$1$3);
-    var x38 = this$15.Lrta_syntax_UpdateExpr$LitArray__f_elements;
-    var this$17 = $n(x38);
+    var x109 = this$15.Lrta_syntax_UpdateExpr$LitArray__f_elements;
+    var this$17 = $n(x109);
     var f = ((e) => {
       var e$1 = $as_Lrta_syntax_UpdateExpr(e);
       return this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(e$1, env, rx)
@@ -8229,19 +8877,19 @@ $c_Lrta_backend_RxSemantics$.prototype.evalExpr__Lrta_syntax_UpdateExpr__sci_Map
   if ((expr instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
     var x$1$4 = $as_Lrta_syntax_UpdateExpr$Var(expr);
     var this$21 = $n(x$1$4);
-    var x35 = this$21.Lrta_syntax_UpdateExpr$Var__f_q;
-    if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clock_env).contains__O__Z(x35)) {
-      var value$1 = $uD($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clock_env).apply__O__O(x35));
+    var x106 = this$21.Lrta_syntax_UpdateExpr$Var__f_q;
+    if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clock_env).contains__O__Z(x106)) {
+      var value$1 = $uD($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clock_env).apply__O__O(x106));
       var min$2 = $m_s_None$();
       var max$2 = $m_s_None$();
       return new $c_Lrta_syntax_RuntimeValue$VFloat(value$1, min$2, max$2)
     } else {
-      var this$25 = $n($n(env).get__O__s_Option(x35));
+      var this$25 = $n($n(env).get__O__s_Option(x106));
       if (this$25.isEmpty__Z()) {
-        var this$26 = $n($n(x35).Lrta_syntax_Program2$QName__f_n);
+        var this$26 = $n($n(x106).Lrta_syntax_Program2$QName__f_n);
         if ((this$26.length__I() > 1)) {
           $n($m_s_package$().s_package$__f_List);
-          var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([$as_T($n($n(x35).Lrta_syntax_Program2$QName__f_n).last__O())]));
+          var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([$as_T($n($n(x106).Lrta_syntax_Program2$QName__f_n).last__O())]));
           var n = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems);
           var globalName = new $c_Lrta_syntax_Program2$QName(n);
           var this$29 = $n($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clock_env).get__O__s_Option(globalName));
@@ -8276,27 +8924,27 @@ $c_Lrta_backend_RxSemantics$.prototype.evalExpr__Lrta_syntax_UpdateExpr__sci_Map
   if ((expr instanceof $c_Lrta_syntax_UpdateExpr$ArrayAccess)) {
     var x$1$5 = $as_Lrta_syntax_UpdateExpr$ArrayAccess(expr);
     var this$39 = $n(x$1$5);
-    var x31 = this$39.Lrta_syntax_UpdateExpr$ArrayAccess__f_arr;
+    var x102 = this$39.Lrta_syntax_UpdateExpr$ArrayAccess__f_arr;
     var this$40 = $n(x$1$5);
-    var x32 = this$40.Lrta_syntax_UpdateExpr$ArrayAccess__f_index;
-    var idx = $doubleToInt($m_Lrta_syntax_Condition$().extractDouble__Lrta_syntax_RuntimeValue__D(this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x32, env, rx)));
-    var x1 = $n(env).get__O__s_Option(x31);
-    if ((x1 instanceof $c_s_Some)) {
-      var x3 = $as_Lrta_syntax_RuntimeValue($n($as_s_Some(x1)).s_Some__f_value);
-      if ((x3 instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
-        var x$1$6 = $as_Lrta_syntax_RuntimeValue$VArray(x3);
+    var x103 = this$40.Lrta_syntax_UpdateExpr$ArrayAccess__f_index;
+    var idx = $doubleToInt($m_Lrta_syntax_Condition$().extractDouble__Lrta_syntax_RuntimeValue__D(this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x103, env, rx)));
+    var x72 = $n(env).get__O__s_Option(x102);
+    if ((x72 instanceof $c_s_Some)) {
+      var x74 = $as_Lrta_syntax_RuntimeValue($n($as_s_Some(x72)).s_Some__f_value);
+      if ((x74 instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
+        var x$1$6 = $as_Lrta_syntax_RuntimeValue$VArray(x74);
         var this$42 = $n(x$1$6);
-        var x6 = this$42.Lrta_syntax_RuntimeValue$VArray__f_value;
+        var x77 = this$42.Lrta_syntax_RuntimeValue$VArray__f_value;
         var this$43 = $n(x$1$6);
         var this$44 = $n(x$1$6);
         if ((idx >= 0)) {
-          var this$45 = $n(x6);
+          var this$45 = $n(x77);
           var $$x4 = (idx < this$45.length__I())
         } else {
           var $$x4 = false
         };
         if ($$x4) {
-          var this$46 = $n(x6);
+          var this$46 = $n(x77);
           return $as_Lrta_syntax_RuntimeValue($f_sc_LinearSeqOps__apply__I__O(this$46, idx))
         }
       }
@@ -8308,18 +8956,18 @@ $c_Lrta_backend_RxSemantics$.prototype.evalExpr__Lrta_syntax_UpdateExpr__sci_Map
   if ((expr instanceof $c_Lrta_syntax_UpdateExpr$MathOp)) {
     var x$1$7 = $as_Lrta_syntax_UpdateExpr$MathOp(expr);
     var this$51 = $n(x$1$7);
-    var x26 = this$51.Lrta_syntax_UpdateExpr$MathOp__f_left;
+    var x97 = this$51.Lrta_syntax_UpdateExpr$MathOp__f_left;
     var this$52 = $n(x$1$7);
-    var x27 = this$52.Lrta_syntax_UpdateExpr$MathOp__f_op;
+    var x98 = this$52.Lrta_syntax_UpdateExpr$MathOp__f_op;
     var this$53 = $n(x$1$7);
-    var x28 = this$53.Lrta_syntax_UpdateExpr$MathOp__f_right;
-    var leftVal = this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x26, env, rx);
-    var rightVal = this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x28, env, rx);
+    var x99 = this$53.Lrta_syntax_UpdateExpr$MathOp__f_right;
+    var leftVal = this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x97, env, rx);
+    var rightVal = this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x99, env, rx);
     var isFloat = ((leftVal instanceof $c_Lrta_syntax_RuntimeValue$VFloat) || (rightVal instanceof $c_Lrta_syntax_RuntimeValue$VFloat));
     var lD = $m_Lrta_syntax_Condition$().extractDouble__Lrta_syntax_RuntimeValue__D(leftVal);
     var rD = $m_Lrta_syntax_Condition$().extractDouble__Lrta_syntax_RuntimeValue__D(rightVal);
     var $$x5;
-    switch (x27) {
+    switch (x98) {
       case "+": {
         if (isFloat) {
           var value$2 = (lD + rD);
@@ -8393,13 +9041,13 @@ $c_Lrta_backend_RxSemantics$.prototype.evalExpr__Lrta_syntax_UpdateExpr__sci_Map
   if ((expr instanceof $c_Lrta_syntax_UpdateExpr$FuncCall)) {
     var x$1$8 = $as_Lrta_syntax_UpdateExpr$FuncCall(expr);
     var this$85 = $n(x$1$8);
-    var x22 = this$85.Lrta_syntax_UpdateExpr$FuncCall__f_funcName;
+    var x93 = this$85.Lrta_syntax_UpdateExpr$FuncCall__f_funcName;
     var this$86 = $n(x$1$8);
-    var x23 = this$86.Lrta_syntax_UpdateExpr$FuncCall__f_args;
-    var x16 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_functions).get__O__s_Option(x22);
-    if ((x16 instanceof $c_s_Some)) {
-      var funcDef = $as_Lrta_syntax_FunctionDef($n($as_s_Some(x16)).s_Some__f_value);
-      var this$87 = $n(x23);
+    var x94 = this$86.Lrta_syntax_UpdateExpr$FuncCall__f_args;
+    var x87 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_functions).get__O__s_Option(x93);
+    if ((x87 instanceof $c_s_Some)) {
+      var funcDef = $as_Lrta_syntax_FunctionDef($n($as_s_Some(x87)).s_Some__f_value);
+      var this$87 = $n(x94);
       var f$1 = ((a) => {
         var a$1 = $as_Lrta_syntax_UpdateExpr(a);
         return this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(a$1, env, rx)
@@ -8428,21 +9076,21 @@ $c_Lrta_backend_RxSemantics$.prototype.evalExpr__Lrta_syntax_UpdateExpr__sci_Map
       while ((!$n(these).isEmpty__Z())) {
         var arg1$5 = $n(these).head__O();
         var x$1$9 = $as_T2(arg1$5);
-        matchResult3: {
+        matchResult7: {
           if ((x$1$9 !== null)) {
             var param = $as_Lrta_syntax_Program2$QName($n(x$1$9)._1__O());
             var v = $as_Lrta_syntax_RuntimeValue($n(x$1$9)._2__O());
             var this$93 = $n($as_sci_Map(elem));
-            var ev$11 = $as_sci_Map(this$93.updated__O__O__sci_MapOps(param, v));
-            elem = ev$11;
-            ev$11 = null;
-            break matchResult3
+            var ev$20 = $as_sci_Map(this$93.updated__O__O__sci_MapOps(param, v));
+            elem = ev$20;
+            ev$20 = null;
+            break matchResult7
           };
           throw new $c_s_MatchError(x$1$9)
         };
         these = $as_sci_List($n(these).tail__O())
       };
-      matchResult4: {
+      matchResult8: {
         var finalEnv$2;
         var $$x6 = $n(funcDef).Lrta_syntax_FunctionDef__f_body;
         var val_env$1 = $as_sci_Map(elem);
@@ -8476,14 +9124,16 @@ $c_Lrta_backend_RxSemantics$.prototype.evalExpr__Lrta_syntax_UpdateExpr__sci_Map
         var delays$1 = this$107.Lrta_syntax_Program2$RxGraph__f_delays;
         var this$108 = $n(rx);
         var pendingDelays$1 = this$108.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+        var this$109 = $n(rx);
+        var maxConstants$1 = this$109.Lrta_syntax_Program2$RxGraph__f_maxConstants;
         $n(rx);
-        var x13 = this.applyUpdates__sci_List__Lrta_syntax_Program2$RxGraph__T2($$x6, new $c_Lrta_syntax_Program2$RxGraph(edg$1, on$1, off$1, lbls$1, inits$1, act$1, val_env$1, zone$1, functions$1, clocks$1, clock_env$1, invariants$1, edgeConditions$1, edgeUpdates$1, delays$1, pendingDelays$1));
-        if ((x13 !== null)) {
-          var finalEnv = $as_sci_Map($n(x13)._1__O());
+        var x84 = this.applyUpdates__sci_List__Lrta_syntax_Program2$RxGraph__T2($$x6, new $c_Lrta_syntax_Program2$RxGraph(edg$1, on$1, off$1, lbls$1, inits$1, act$1, val_env$1, zone$1, functions$1, clocks$1, clock_env$1, invariants$1, edgeConditions$1, edgeUpdates$1, delays$1, pendingDelays$1, maxConstants$1));
+        if ((x84 !== null)) {
+          var finalEnv = $as_sci_Map($n(x84)._1__O());
           var finalEnv$2 = finalEnv;
-          break matchResult4
+          break matchResult8
         };
-        throw new $c_s_MatchError(x13)
+        throw new $c_s_MatchError(x84)
       };
       $n($m_s_package$().s_package$__f_List);
       var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)(["__return"]));
@@ -8495,56 +9145,115 @@ $c_Lrta_backend_RxSemantics$.prototype.evalExpr__Lrta_syntax_UpdateExpr__sci_Map
       }))))
     };
     var x = $m_s_None$();
-    if ((x === x16)) {
+    if ((x === x87)) {
       var min$17 = $m_s_None$();
       var max$17 = $m_s_None$();
       return new $c_Lrta_syntax_RuntimeValue$VInt(0, min$17, max$17)
     };
-    throw new $c_s_MatchError(x16)
+    throw new $c_s_MatchError(x87)
   };
   throw new $c_s_MatchError(expr)
 });
 $c_Lrta_backend_RxSemantics$.prototype.evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z = (function(cond, rx) {
   var cond$tailLocal1 = cond;
   while (true) {
-    var x48 = cond$tailLocal1;
-    if ((x48 instanceof $c_Lrta_syntax_Condition$AtomicCond)) {
-      var x$1 = $as_Lrta_syntax_Condition$AtomicCond(x48);
+    var x119 = cond$tailLocal1;
+    if ((x119 instanceof $c_Lrta_syntax_Condition$AtomicCond)) {
+      var x$1 = $as_Lrta_syntax_Condition$AtomicCond(x119);
       var this$2 = $n(x$1);
-      var x59 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
+      var x130 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
       var this$3 = $n(x$1);
-      var x60 = this$3.Lrta_syntax_Condition$AtomicCond__f_op;
+      var x131 = this$3.Lrta_syntax_Condition$AtomicCond__f_op;
       var this$4 = $n(x$1);
-      var x61 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
-      return $m_Lrta_syntax_Condition$().compareValues__Lrta_syntax_RuntimeValue__T__Lrta_syntax_RuntimeValue__Z(this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x59, $n(rx).Lrta_syntax_Program2$RxGraph__f_val_env, rx), x60, this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x61, $n(rx).Lrta_syntax_Program2$RxGraph__f_val_env, rx))
+      var x132 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
+      return $m_Lrta_syntax_Condition$().compareValues__Lrta_syntax_RuntimeValue__T__Lrta_syntax_RuntimeValue__Z(this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x130, $n(rx).Lrta_syntax_Program2$RxGraph__f_val_env, rx), x131, this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x132, $n(rx).Lrta_syntax_Program2$RxGraph__f_val_env, rx))
     };
-    if ((x48 instanceof $c_Lrta_syntax_Condition$And)) {
-      var x$1$1 = $as_Lrta_syntax_Condition$And(x48);
+    if ((x119 instanceof $c_Lrta_syntax_Condition$And)) {
+      var x$1$1 = $as_Lrta_syntax_Condition$And(x119);
       var this$6 = $n(x$1$1);
-      var x55 = this$6.Lrta_syntax_Condition$And__f_left;
+      var x126 = this$6.Lrta_syntax_Condition$And__f_left;
       var this$7 = $n(x$1$1);
-      var x56 = this$7.Lrta_syntax_Condition$And__f_right;
-      if (this.evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x55, rx)) {
-        cond$tailLocal1 = x56;
+      var x127 = this$7.Lrta_syntax_Condition$And__f_right;
+      if (this.evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x126, rx)) {
+        cond$tailLocal1 = x127;
         continue
       } else {
         return false
       }
     };
-    if ((x48 instanceof $c_Lrta_syntax_Condition$Or)) {
-      var x$1$2 = $as_Lrta_syntax_Condition$Or(x48);
+    if ((x119 instanceof $c_Lrta_syntax_Condition$Or)) {
+      var x$1$2 = $as_Lrta_syntax_Condition$Or(x119);
       var this$9 = $n(x$1$2);
-      var x51 = this$9.Lrta_syntax_Condition$Or__f_left;
+      var x122 = this$9.Lrta_syntax_Condition$Or__f_left;
       var this$10 = $n(x$1$2);
-      var x52 = this$10.Lrta_syntax_Condition$Or__f_right;
-      if (this.evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x51, rx)) {
+      var x123 = this$10.Lrta_syntax_Condition$Or__f_right;
+      if (this.evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x122, rx)) {
         return true
       } else {
-        cond$tailLocal1 = x52;
+        cond$tailLocal1 = x123;
         continue
       }
     };
-    throw new $c_s_MatchError(x48)
+    throw new $c_s_MatchError(x119)
+  }
+});
+$c_Lrta_backend_RxSemantics$.prototype.evalConditionForLTL__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z = (function(cond, rx) {
+  var cond$tailLocal2 = cond;
+  while (true) {
+    var x133 = cond$tailLocal2;
+    if ((x133 instanceof $c_Lrta_syntax_Condition$AtomicCond)) {
+      var x$1 = $as_Lrta_syntax_Condition$AtomicCond(x133);
+      var this$2 = $n(x$1);
+      var x157 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
+      var this$3 = $n(x$1);
+      var x158 = this$3.Lrta_syntax_Condition$AtomicCond__f_op;
+      var this$4 = $n(x$1);
+      var x159 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
+      if ((x157 instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
+        var x$1$1 = $as_Lrta_syntax_UpdateExpr$Var(x157);
+        var this$6 = $n(x$1$1);
+        var x162 = this$6.Lrta_syntax_UpdateExpr$Var__f_q;
+        if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x162)) {
+          throw $ct_jl_Exception__T__(new $c_jl_Exception(), "Avalia\u00e7\u00e3o LTL de rel\u00f3gios em Zonas DBM exige 'zone-splitting' (n\u00e3o suportado).")
+        }
+      };
+      if ((x159 instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
+        var x$1$2 = $as_Lrta_syntax_UpdateExpr$Var(x159);
+        var this$8 = $n(x$1$2);
+        var x154 = this$8.Lrta_syntax_UpdateExpr$Var__f_q;
+        if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x154)) {
+          throw $ct_jl_Exception__T__(new $c_jl_Exception(), "Avalia\u00e7\u00e3o LTL de rel\u00f3gios em Zonas DBM exige 'zone-splitting' (n\u00e3o suportado).")
+        }
+      };
+      return $m_Lrta_syntax_Condition$().compareValues__Lrta_syntax_RuntimeValue__T__Lrta_syntax_RuntimeValue__Z(this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x157, $n(rx).Lrta_syntax_Program2$RxGraph__f_val_env, rx), x158, this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x159, $n(rx).Lrta_syntax_Program2$RxGraph__f_val_env, rx))
+    };
+    if ((x133 instanceof $c_Lrta_syntax_Condition$And)) {
+      var x$1$3 = $as_Lrta_syntax_Condition$And(x133);
+      var this$10 = $n(x$1$3);
+      var x140 = this$10.Lrta_syntax_Condition$And__f_left;
+      var this$11 = $n(x$1$3);
+      var x141 = this$11.Lrta_syntax_Condition$And__f_right;
+      if (this.evalConditionForLTL__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x140, rx)) {
+        cond$tailLocal2 = x141;
+        continue
+      } else {
+        return false
+      }
+    };
+    if ((x133 instanceof $c_Lrta_syntax_Condition$Or)) {
+      var x$1$4 = $as_Lrta_syntax_Condition$Or(x133);
+      var this$13 = $n(x$1$4);
+      var x136 = this$13.Lrta_syntax_Condition$Or__f_left;
+      var this$14 = $n(x$1$4);
+      var x137 = this$14.Lrta_syntax_Condition$Or__f_right;
+      if (this.evalConditionForLTL__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x136, rx)) {
+        return true
+      } else {
+        cond$tailLocal2 = x137;
+        continue
+      }
+    };
+    throw new $c_s_MatchError(x133)
   }
 });
 $c_Lrta_backend_RxSemantics$.prototype.applyUpdates__sci_List__Lrta_syntax_Program2$RxGraph__T2 = (function(stmts, rx) {
@@ -8570,94 +9279,94 @@ $c_Lrta_backend_RxSemantics$.prototype.from__T4__Lrta_syntax_Program2$RxGraph__s
   return $p_Lrta_backend_RxSemantics$__cascade__sci_Set__sci_Set__Lrta_syntax_Program2$RxGraph__sci_Set(this, $$x1, this$2.from__sc_IterableOnce__sci_Set(elems$1), rx)
 });
 $c_Lrta_backend_RxSemantics$.prototype.evalDataCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z = (function(cond, rx) {
-  var cond$tailLocal2 = cond;
+  var cond$tailLocal3 = cond;
   while (true) {
-    var x148 = cond$tailLocal2;
-    if ((x148 instanceof $c_Lrta_syntax_Condition$AtomicCond)) {
-      var x$1 = $as_Lrta_syntax_Condition$AtomicCond(x148);
+    var x249 = cond$tailLocal3;
+    if ((x249 instanceof $c_Lrta_syntax_Condition$AtomicCond)) {
+      var x$1 = $as_Lrta_syntax_Condition$AtomicCond(x249);
       var this$2 = $n(x$1);
-      var x172 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
+      var x273 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
       var this$3 = $n(x$1);
-      var x173 = this$3.Lrta_syntax_Condition$AtomicCond__f_op;
+      var x274 = this$3.Lrta_syntax_Condition$AtomicCond__f_op;
       var this$4 = $n(x$1);
-      var x174 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
-      if ((x172 instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
-        var x$1$1 = $as_Lrta_syntax_UpdateExpr$Var(x172);
+      var x275 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
+      if ((x273 instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
+        var x$1$1 = $as_Lrta_syntax_UpdateExpr$Var(x273);
         var this$6 = $n(x$1$1);
-        var x177 = this$6.Lrta_syntax_UpdateExpr$Var__f_q;
-        if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x177)) {
+        var x278 = this$6.Lrta_syntax_UpdateExpr$Var__f_q;
+        if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x278)) {
           return true
         }
       };
-      if ((x174 instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
-        var x$1$2 = $as_Lrta_syntax_UpdateExpr$Var(x174);
+      if ((x275 instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
+        var x$1$2 = $as_Lrta_syntax_UpdateExpr$Var(x275);
         var this$8 = $n(x$1$2);
-        var x169 = this$8.Lrta_syntax_UpdateExpr$Var__f_q;
-        if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x169)) {
+        var x270 = this$8.Lrta_syntax_UpdateExpr$Var__f_q;
+        if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x270)) {
           return true
         }
       };
-      return $m_Lrta_syntax_Condition$().compareValues__Lrta_syntax_RuntimeValue__T__Lrta_syntax_RuntimeValue__Z(this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x172, $n(rx).Lrta_syntax_Program2$RxGraph__f_val_env, rx), x173, this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x174, $n(rx).Lrta_syntax_Program2$RxGraph__f_val_env, rx))
+      return $m_Lrta_syntax_Condition$().compareValues__Lrta_syntax_RuntimeValue__T__Lrta_syntax_RuntimeValue__Z(this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x273, $n(rx).Lrta_syntax_Program2$RxGraph__f_val_env, rx), x274, this.evalExpr__Lrta_syntax_UpdateExpr__sci_Map__Lrta_syntax_Program2$RxGraph__Lrta_syntax_RuntimeValue(x275, $n(rx).Lrta_syntax_Program2$RxGraph__f_val_env, rx))
     };
-    if ((x148 instanceof $c_Lrta_syntax_Condition$And)) {
-      var x$1$3 = $as_Lrta_syntax_Condition$And(x148);
+    if ((x249 instanceof $c_Lrta_syntax_Condition$And)) {
+      var x$1$3 = $as_Lrta_syntax_Condition$And(x249);
       var this$10 = $n(x$1$3);
-      var x155 = this$10.Lrta_syntax_Condition$And__f_left;
+      var x256 = this$10.Lrta_syntax_Condition$And__f_left;
       var this$11 = $n(x$1$3);
-      var x156 = this$11.Lrta_syntax_Condition$And__f_right;
-      if (this.evalDataCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x155, rx)) {
-        cond$tailLocal2 = x156;
+      var x257 = this$11.Lrta_syntax_Condition$And__f_right;
+      if (this.evalDataCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x256, rx)) {
+        cond$tailLocal3 = x257;
         continue
       } else {
         return false
       }
     };
-    if ((x148 instanceof $c_Lrta_syntax_Condition$Or)) {
-      var x$1$4 = $as_Lrta_syntax_Condition$Or(x148);
+    if ((x249 instanceof $c_Lrta_syntax_Condition$Or)) {
+      var x$1$4 = $as_Lrta_syntax_Condition$Or(x249);
       var this$13 = $n(x$1$4);
-      var x151 = this$13.Lrta_syntax_Condition$Or__f_left;
+      var x252 = this$13.Lrta_syntax_Condition$Or__f_left;
       var this$14 = $n(x$1$4);
-      var x152 = this$14.Lrta_syntax_Condition$Or__f_right;
-      if (this.evalDataCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x151, rx)) {
+      var x253 = this$14.Lrta_syntax_Condition$Or__f_right;
+      if (this.evalDataCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(x252, rx)) {
         return true
       } else {
-        cond$tailLocal2 = x152;
+        cond$tailLocal3 = x253;
         continue
       }
     };
-    throw new $c_s_MatchError(x148)
+    throw new $c_s_MatchError(x249)
   }
 });
 $c_Lrta_backend_RxSemantics$.prototype.toOnOff__T4__Lrta_syntax_Program2$RxGraph__T3 = (function(e, rx0) {
   var rx = this.applyTimeouts__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Program2$RxGraph(rx0);
-  matchResult17: {
+  matchResult22: {
     var \u03b43$___1;
     var \u03b43$___2;
     var \u03b43$___3;
-    var x178 = $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Program2$RxGraph__F2__T4(this, e, rx, $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects$default$3__F2(this));
-    if ((x178 !== null)) {
-      var toA = $as_sci_Set($n(x178).T4__f__1);
-      var toD = $as_sci_Set($n(x178).T4__f__2);
-      var stmts = $as_sci_List($n(x178).T4__f__3);
+    var x279 = $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Program2$RxGraph__F2__T4(this, e, rx, $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects$default$3__F2(this));
+    if ((x279 !== null)) {
+      var toA = $as_sci_Set($n(x279).T4__f__1);
+      var toD = $as_sci_Set($n(x279).T4__f__2);
+      var stmts = $as_sci_List($n(x279).T4__f__3);
       var \u03b43$___1 = toA;
       var \u03b43$___2 = toD;
       var \u03b43$___3 = stmts;
-      break matchResult17
+      break matchResult22
     };
-    throw new $c_s_MatchError(x178)
+    throw new $c_s_MatchError(x279)
   };
   var toA$2 = $as_sci_Set(\u03b43$___1);
   var toD$2 = $as_sci_Set(\u03b43$___2);
   var stmts$2 = $as_sci_List(\u03b43$___3);
-  matchResult18: {
+  matchResult23: {
     var nextEnv$2;
-    var x183 = this.applyUpdates__sci_List__Lrta_syntax_Program2$RxGraph__T2(stmts$2, rx);
-    if ((x183 !== null)) {
-      var nextEnv = $as_sci_Map($n(x183)._1__O());
+    var x284 = this.applyUpdates__sci_List__Lrta_syntax_Program2$RxGraph__T2(stmts$2, rx);
+    if ((x284 !== null)) {
+      var nextEnv = $as_sci_Map($n(x284)._1__O());
       var nextEnv$2 = nextEnv;
-      break matchResult18
+      break matchResult23
     };
-    throw new $c_s_MatchError(x183)
+    throw new $c_s_MatchError(x284)
   };
   return new $c_T3(toA$2, toD$2, nextEnv$2)
 });
@@ -8689,11 +9398,11 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdgeSymbolic__Lrta_syntax_Program2$Rx
     }))))).withFilter__F1__sc_WithFilter(new $c_sjsr_AnonFunction1(((x$1$3$1) => {
       var x$1$4 = $as_T2(x$1$3$1);
       if ((x$1$4 !== null)) {
-        var x198 = $as_T3($n(x$1$4)._1__O());
-        if ((x198 !== null)) {
-          $as_Lrta_syntax_Program2$QName($n(x198).T3__f__1);
-          $as_Lrta_syntax_Program2$QName($n(x198).T3__f__2);
-          $as_Lrta_syntax_Program2$QName($n(x198).T3__f__3);
+        var x299 = $as_T3($n(x$1$4)._1__O());
+        if ((x299 !== null)) {
+          $as_Lrta_syntax_Program2$QName($n(x299).T3__f__1);
+          $as_Lrta_syntax_Program2$QName($n(x299).T3__f__2);
+          $as_Lrta_syntax_Program2$QName($n(x299).T3__f__3);
           var edge$1 = $as_T4($n(x$1$4)._2__O());
           return $n($n(rx).Lrta_syntax_Program2$RxGraph__f_act).contains__O__Z(edge$1)
         }
@@ -8702,25 +9411,25 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdgeSymbolic__Lrta_syntax_Program2$Rx
     })))).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$4$1) => {
       var x$1$5 = $as_T2(x$1$4$1);
       if ((x$1$5 !== null)) {
-        var x225 = $as_T3($n(x$1$5)._1__O());
-        if ((x225 !== null)) {
-          var st2$3 = $as_Lrta_syntax_Program2$QName($n(x225).T3__f__1);
-          $as_Lrta_syntax_Program2$QName($n(x225).T3__f__2);
-          $as_Lrta_syntax_Program2$QName($n(x225).T3__f__3);
+        var x331 = $as_T3($n(x$1$5)._1__O());
+        if ((x331 !== null)) {
+          var st2$3 = $as_Lrta_syntax_Program2$QName($n(x331).T3__f__1);
+          $as_Lrta_syntax_Program2$QName($n(x331).T3__f__2);
+          $as_Lrta_syntax_Program2$QName($n(x331).T3__f__3);
           var edge$2 = $as_T4($n(x$1$5)._2__O());
           var condOpt = $as_s_Option($n($n(rx).Lrta_syntax_Program2$RxGraph__f_edgeConditions).getOrElse__O__F0__O(edge$2, new $c_sjsr_AnonFunction0((() => $m_s_None$()))));
-          matchResult23: {
+          matchResult28: {
             var zoneAfterGuard;
             if ((condOpt instanceof $c_s_Some)) {
               var cond = $as_Lrta_syntax_Condition($n($as_s_Some(condOpt)).s_Some__f_value);
               var zoneAfterGuard = this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(cond, $n(rx).Lrta_syntax_Program2$RxGraph__f_zone, rx);
-              break matchResult23
+              break matchResult28
             };
             var x = $m_s_None$();
             if ((x === condOpt)) {
               var value = $n(rx).Lrta_syntax_Program2$RxGraph__f_zone;
               var zoneAfterGuard = new $c_s_Some(value);
-              break matchResult23
+              break matchResult28
             };
             throw new $c_s_MatchError(condOpt)
           };
@@ -8738,28 +9447,28 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdgeSymbolic__Lrta_syntax_Program2$Rx
             var $$x1 = false
           };
           if ($$x1) {
-            matchResult24: {
+            matchResult29: {
               var \u03b45$___1;
               var \u03b45$___2;
               var \u03b45$___3;
               var \u03b45$___4;
-              var x206 = $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Program2$RxGraph__F2__T4(this, edge$2, rx, new $c_sjsr_AnonFunction2(((cond$2, rx$1) => {
+              var x307 = $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Program2$RxGraph__F2__T4(this, edge$2, rx, new $c_sjsr_AnonFunction2(((cond$2, rx$1) => {
                 var cond$1 = $as_Lrta_syntax_Condition(cond$2);
                 var rx$2 = $as_Lrta_syntax_Program2$RxGraph(rx$1);
                 return this.evalDataCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(cond$1, rx$2)
               })));
-              if ((x206 !== null)) {
-                var toAct = $as_sci_Set($n(x206).T4__f__1);
-                var toDeact = $as_sci_Set($n(x206).T4__f__2);
-                var hStmts = $as_sci_List($n(x206).T4__f__3);
-                var newPending = $as_sci_Set($n(x206).T4__f__4);
+              if ((x307 !== null)) {
+                var toAct = $as_sci_Set($n(x307).T4__f__1);
+                var toDeact = $as_sci_Set($n(x307).T4__f__2);
+                var hStmts = $as_sci_List($n(x307).T4__f__3);
+                var newPending = $as_sci_Set($n(x307).T4__f__4);
                 var \u03b45$___1 = toAct;
                 var \u03b45$___2 = toDeact;
                 var \u03b45$___3 = hStmts;
                 var \u03b45$___4 = newPending;
-                break matchResult24
+                break matchResult29
               };
-              throw new $c_s_MatchError(x206)
+              throw new $c_s_MatchError(x307)
             };
             var toAct$2 = $as_sci_Set(\u03b45$___1);
             var toDeact$2 = $as_sci_Set(\u03b45$___2);
@@ -8770,26 +9479,38 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdgeSymbolic__Lrta_syntax_Program2$Rx
             var currentAct = $as_sci_Set(this$11.removedAll__sc_IterableOnce__sci_SetOps(toDeact$2));
             var this$12 = $n($as_sc_IterableOps($n($n(rx).Lrta_syntax_Program2$RxGraph__f_edgeUpdates).getOrElse__O__F0__O(edge$2, new $c_sjsr_AnonFunction0((() => $m_s_package$().s_package$__f_Nil)))));
             var allStmts = $as_sci_List(this$12.concat__sc_IterableOnce__O(hStmts$2));
-            matchResult25: {
+            matchResult30: {
               var \u03b46$___1;
               var \u03b46$___2;
-              var x211 = this.applyUpdates__sci_List__Lrta_syntax_Program2$RxGraph__T2(allStmts, rx);
-              if ((x211 !== null)) {
-                var nextEnv = $as_sci_Map($n(x211)._1__O());
-                var nextClockEnv = $as_sci_Map($n(x211)._2__O());
+              var x312 = this.applyUpdates__sci_List__Lrta_syntax_Program2$RxGraph__T2(allStmts, rx);
+              if ((x312 !== null)) {
+                var nextEnv = $as_sci_Map($n(x312)._1__O());
+                var nextClockEnv = $as_sci_Map($n(x312)._2__O());
                 var \u03b46$___1 = nextEnv;
                 var \u03b46$___2 = nextClockEnv;
-                break matchResult25
+                break matchResult30
               };
-              throw new $c_s_MatchError(x211)
+              throw new $c_s_MatchError(x312)
             };
             var nextEnv$2 = $as_sci_Map(\u03b46$___1);
             var nextClockEnv$2 = $as_sci_Map(\u03b46$___2);
+            var absolutePending = $as_sci_Set($n(newPending$2).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$2$1) => {
+              var x$1$6 = $as_T4(x$1$2$1);
+              if ((x$1$6 !== null)) {
+                var he = $as_T4($n(x$1$6).T4__f__1);
+                var op = $as_T($n(x$1$6).T4__f__2);
+                var clk = $as_Lrta_syntax_Program2$QName($n(x$1$6).T4__f__3);
+                var dVal = $uD($n(x$1$6).T4__f__4);
+                var _4 = ($uD($n(nextClockEnv$2).getOrElse__O__F0__O(clk, new $c_sjsr_AnonFunction0((() => 0.0)))) + dVal);
+                return new $c_T4(he, op, clk, _4)
+              };
+              throw new $c_s_MatchError(x$1$6)
+            }))));
             var clockResets = $n(allStmts).collect__s_PartialFunction__sci_List(new $c_Lrta_backend_RxSemantics$$anon$1(rx));
-            var this$14 = $n(clockResets);
+            var this$15 = $n(clockResets);
             var z = $n(zoneAfterGuard).get__O();
             var acc = z;
-            var these = this$14;
+            var these = this$15;
             while ((!$n(these).isEmpty__Z())) {
               var arg1$1 = acc;
               var arg2 = $n(these).head__O();
@@ -8798,34 +9519,37 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdgeSymbolic__Lrta_syntax_Program2$Rx
               acc = $n(_$4).reset__Lrta_syntax_Program2$QName__Lrta_backend_DBM$Zone(_$5);
               these = $as_sc_LinearSeq($n(these).tail__O())
             };
-            var zoneAfterUpdates = $as_Lrta_backend_DBM$Zone(acc);
-            var this$15 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_inits);
-            var this$16 = $n(this$15.excl__O__sci_SetOps(st$1));
-            var inits$9 = $as_sci_Set(this$16.incl__O__sci_SetOps(st2$3));
-            var this$17 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_pendingDelays);
-            var pendingDelays$9 = $as_sci_Set(this$17.concat__sc_IterableOnce__sc_SetOps(newPending$2));
-            var this$18 = $n(rx);
-            var edg$9 = this$18.Lrta_syntax_Program2$RxGraph__f_edg;
+            var zoneAfterResets = $as_Lrta_backend_DBM$Zone(acc);
+            var zoneAfterUpdates = $n(zoneAfterResets).extrapolate__sci_Map__Lrta_backend_DBM$Zone($n(rx).Lrta_syntax_Program2$RxGraph__f_maxConstants);
+            var this$16 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_inits);
+            var this$17 = $n(this$16.excl__O__sci_SetOps(st$1));
+            var inits$9 = $as_sci_Set(this$17.incl__O__sci_SetOps(st2$3));
+            var this$18 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_pendingDelays);
+            var pendingDelays$9 = $as_sci_Set(this$18.concat__sc_IterableOnce__sc_SetOps(absolutePending));
             var this$19 = $n(rx);
-            var on$9 = this$19.Lrta_syntax_Program2$RxGraph__f_on;
+            var edg$9 = this$19.Lrta_syntax_Program2$RxGraph__f_edg;
             var this$20 = $n(rx);
-            var off$9 = this$20.Lrta_syntax_Program2$RxGraph__f_off;
+            var on$9 = this$20.Lrta_syntax_Program2$RxGraph__f_on;
             var this$21 = $n(rx);
-            var lbls$9 = this$21.Lrta_syntax_Program2$RxGraph__f_lbls;
+            var off$9 = this$21.Lrta_syntax_Program2$RxGraph__f_off;
             var this$22 = $n(rx);
-            var functions$9 = this$22.Lrta_syntax_Program2$RxGraph__f_functions;
+            var lbls$9 = this$22.Lrta_syntax_Program2$RxGraph__f_lbls;
             var this$23 = $n(rx);
-            var clocks$9 = this$23.Lrta_syntax_Program2$RxGraph__f_clocks;
+            var functions$9 = this$23.Lrta_syntax_Program2$RxGraph__f_functions;
             var this$24 = $n(rx);
-            var invariants$9 = this$24.Lrta_syntax_Program2$RxGraph__f_invariants;
+            var clocks$9 = this$24.Lrta_syntax_Program2$RxGraph__f_clocks;
             var this$25 = $n(rx);
-            var edgeConditions$9 = this$25.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+            var invariants$9 = this$25.Lrta_syntax_Program2$RxGraph__f_invariants;
             var this$26 = $n(rx);
-            var edgeUpdates$9 = this$26.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+            var edgeConditions$9 = this$26.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
             var this$27 = $n(rx);
-            var delays$9 = this$27.Lrta_syntax_Program2$RxGraph__f_delays;
+            var edgeUpdates$9 = this$27.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+            var this$28 = $n(rx);
+            var delays$9 = this$28.Lrta_syntax_Program2$RxGraph__f_delays;
+            var this$29 = $n(rx);
+            var maxConstants$9 = this$29.Lrta_syntax_Program2$RxGraph__f_maxConstants;
             $n(rx);
-            var _2 = new $c_Lrta_syntax_Program2$RxGraph(edg$9, on$9, off$9, lbls$9, inits$9, currentAct, nextEnv$2, zoneAfterUpdates, functions$9, clocks$9, nextClockEnv$2, invariants$9, edgeConditions$9, edgeUpdates$9, delays$9, pendingDelays$9);
+            var _2 = new $c_Lrta_syntax_Program2$RxGraph(edg$9, on$9, off$9, lbls$9, inits$9, currentAct, nextEnv$2, zoneAfterUpdates, functions$9, clocks$9, nextClockEnv$2, invariants$9, edgeConditions$9, edgeUpdates$9, delays$9, pendingDelays$9, maxConstants$9);
             var value$1 = new $c_T2(edge$2, _2);
             return new $c_s_Some(value$1)
           } else {
@@ -8836,32 +9560,32 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdgeSymbolic__Lrta_syntax_Program2$Rx
       throw new $c_s_MatchError(x$1$5)
     }))))
   }))));
-  var this$32 = $m_s_$less$colon$less$();
-  var this$34 = $n($as_sc_IterableOnceOps($n($as_sc_IterableOps($n(transitions).flatten__F1__O(this$32.s_$less$colon$less$__f_singleton))).filter__F1__O(new $c_sjsr_AnonFunction1(((x$1$6) => {
-    var x$1$7 = $as_T2(x$1$6);
-    if ((x$1$7 !== null)) {
-      var nextRx = $as_Lrta_syntax_Program2$RxGraph($n(x$1$7)._2__O());
+  var this$34 = $m_s_$less$colon$less$();
+  var this$36 = $n($as_sc_IterableOnceOps($n($as_sc_IterableOps($n(transitions).flatten__F1__O(this$34.s_$less$colon$less$__f_singleton))).filter__F1__O(new $c_sjsr_AnonFunction1(((x$1$7) => {
+    var x$1$8 = $as_T2(x$1$7);
+    if ((x$1$8 !== null)) {
+      var nextRx = $as_Lrta_syntax_Program2$RxGraph($n(x$1$8)._2__O());
       return $n($n(nextRx).Lrta_syntax_Program2$RxGraph__f_inits).forall__F1__Z(new $c_sjsr_AnonFunction1(((s) => {
         var s$1 = $as_Lrta_syntax_Program2$QName(s);
-        var x230 = $n($n(nextRx).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
-        if ((x230 instanceof $c_s_Some)) {
-          var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x230)).s_Some__f_value);
-          var this$33 = $n(this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(inv, $n(nextRx).Lrta_syntax_Program2$RxGraph__f_zone, nextRx));
-          return (!this$33.isEmpty__Z())
+        var x336 = $n($n(nextRx).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
+        if ((x336 instanceof $c_s_Some)) {
+          var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x336)).s_Some__f_value);
+          var this$35 = $n(this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(inv, $n(nextRx).Lrta_syntax_Program2$RxGraph__f_zone, nextRx));
+          return (!this$35.isEmpty__Z())
         };
         var x$2 = $m_s_None$();
-        if ((x$2 === x230)) {
+        if ((x$2 === x336)) {
           return true
         };
-        throw new $c_s_MatchError(x230)
+        throw new $c_s_MatchError(x336)
       })))
     };
-    throw new $c_s_MatchError(x$1$7)
+    throw new $c_s_MatchError(x$1$8)
   })))));
-  var standardTransitions = $m_sci_Set$().from__sc_IterableOnce__sci_Set($as_sc_IterableOnce(this$34));
+  var standardTransitions = $m_sci_Set$().from__sc_IterableOnce__sci_Set($as_sc_IterableOnce(this$36));
   var timeoutTransitions = $as_sci_Set($n($n($as_sc_IterableOps($n($n(rx).Lrta_syntax_Program2$RxGraph__f_pendingDelays).map__F1__O(new $c_sjsr_AnonFunction1(((pending) => {
     var pending$1 = $as_T4(pending);
-    matchResult31: {
+    matchResult37: {
       var \u03b48$___1;
       var \u03b48$___2;
       var \u03b48$___3;
@@ -8877,7 +9601,7 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdgeSymbolic__Lrta_syntax_Program2$Rx
         var \u03b48$___3 = opType;
         var \u03b48$___4 = clock;
         var \u03b48$___5 = targetVal;
-        break matchResult31
+        break matchResult37
       };
       throw new $c_s_MatchError(pending$1)
     };
@@ -8888,92 +9612,94 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdgeSymbolic__Lrta_syntax_Program2$Rx
     var targetVal$2 = $uD(\u03b48$___5);
     var maturedZoneOpt = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option($m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, clock$2, (-targetVal$2), false);
     return new $c_T3(pending$1, \u03b47$$2, maturedZoneOpt)
-  }))))).withFilter__F1__sc_WithFilter(new $c_sjsr_AnonFunction1(((x$1$2$1) => {
-    var x$1$8 = $as_T3(x$1$2$1);
-    if ((x$1$8 !== null)) {
-      var x243 = $as_T4($n(x$1$8).T3__f__2);
-      $as_T4($n(x$1$8).T3__f__1);
-      if ((x243 !== null)) {
-        $as_T4($n(x243).T4__f__1);
-        $as_T($n(x243).T4__f__2);
-        $as_Lrta_syntax_Program2$QName($n(x243).T4__f__3);
-        $uD($n(x243).T4__f__4);
-        var maturedZoneOpt$1 = $as_s_Option($n(x$1$8).T3__f__3);
-        var this$37 = $n(maturedZoneOpt$1);
-        return (!this$37.isEmpty__Z())
+  }))))).withFilter__F1__sc_WithFilter(new $c_sjsr_AnonFunction1(((x$1$2$2) => {
+    var x$1$9 = $as_T3(x$1$2$2);
+    if ((x$1$9 !== null)) {
+      var x349 = $as_T4($n(x$1$9).T3__f__2);
+      $as_T4($n(x$1$9).T3__f__1);
+      if ((x349 !== null)) {
+        $as_T4($n(x349).T4__f__1);
+        $as_T($n(x349).T4__f__2);
+        $as_Lrta_syntax_Program2$QName($n(x349).T4__f__3);
+        $uD($n(x349).T4__f__4);
+        var maturedZoneOpt$1 = $as_s_Option($n(x$1$9).T3__f__3);
+        var this$39 = $n(maturedZoneOpt$1);
+        return (!this$39.isEmpty__Z())
       }
     };
-    throw new $c_s_MatchError(x$1$8)
+    throw new $c_s_MatchError(x$1$9)
   })))).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$3$2) => {
-    var x$1$9 = $as_T3(x$1$3$2);
-    if ((x$1$9 !== null)) {
-      var x251 = $as_T4($n(x$1$9).T3__f__2);
-      var pending$3 = $as_T4($n(x$1$9).T3__f__1);
-      if ((x251 !== null)) {
-        var hyperEdge$3 = $as_T4($n(x251).T4__f__1);
-        var opType$3 = $as_T($n(x251).T4__f__2);
-        $as_Lrta_syntax_Program2$QName($n(x251).T4__f__3);
-        $uD($n(x251).T4__f__4);
-        var maturedZoneOpt$2 = $as_s_Option($n(x$1$9).T3__f__3);
-        var maturedZone = $as_Lrta_backend_DBM$Zone($n(maturedZoneOpt$2).get__O());
+    var x$1$10 = $as_T3(x$1$3$2);
+    if ((x$1$10 !== null)) {
+      var x357 = $as_T4($n(x$1$10).T3__f__2);
+      var pending$3 = $as_T4($n(x$1$10).T3__f__1);
+      if ((x357 !== null)) {
+        var hyperEdge$3 = $as_T4($n(x357).T4__f__1);
+        var opType$3 = $as_T($n(x357).T4__f__2);
+        $as_Lrta_syntax_Program2$QName($n(x357).T4__f__3);
+        $uD($n(x357).T4__f__4);
+        var maturedZoneOpt$2 = $as_s_Option($n(x$1$10).T3__f__3);
+        var maturedZone = $n($as_Lrta_backend_DBM$Zone($n(maturedZoneOpt$2).get__O())).extrapolate__sci_Map__Lrta_backend_DBM$Zone($n(rx).Lrta_syntax_Program2$RxGraph__f_maxConstants);
         var targetLabel = $as_Lrta_syntax_Program2$QName($n(hyperEdge$3).T4__f__2);
         var affectedEdges = $as_sci_Set($n($n(rx).Lrta_syntax_Program2$RxGraph__f_lbls).getOrElse__O__F0__O(targetLabel, new $c_sjsr_AnonFunction0((() => {
           $n($m_s_Predef$().s_Predef$__f_Set);
           return $m_sci_Set$EmptySet$()
         }))));
         if ((opType$3 === "on")) {
-          var this$39 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_act);
-          var newAct = $as_sci_Set(this$39.concat__sc_IterableOnce__sc_SetOps(affectedEdges))
+          var this$41 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_act);
+          var newAct = $as_sci_Set(this$41.concat__sc_IterableOnce__sc_SetOps(affectedEdges))
         } else {
-          var this$40 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_act);
-          var newAct = $as_sci_Set(this$40.removedAll__sc_IterableOnce__sci_SetOps(affectedEdges))
+          var this$42 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_act);
+          var newAct = $as_sci_Set(this$42.removedAll__sc_IterableOnce__sci_SetOps(affectedEdges))
         };
-        var this$41 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_pendingDelays);
-        var pendingDelays$10 = $as_sci_Set(this$41.excl__O__sci_SetOps(pending$3));
-        var this$42 = $n(rx);
-        var edg$10 = this$42.Lrta_syntax_Program2$RxGraph__f_edg;
-        var this$43 = $n(rx);
-        var on$10 = this$43.Lrta_syntax_Program2$RxGraph__f_on;
+        var this$43 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_pendingDelays);
+        var pendingDelays$10 = $as_sci_Set(this$43.excl__O__sci_SetOps(pending$3));
         var this$44 = $n(rx);
-        var off$10 = this$44.Lrta_syntax_Program2$RxGraph__f_off;
+        var edg$10 = this$44.Lrta_syntax_Program2$RxGraph__f_edg;
         var this$45 = $n(rx);
-        var lbls$10 = this$45.Lrta_syntax_Program2$RxGraph__f_lbls;
+        var on$10 = this$45.Lrta_syntax_Program2$RxGraph__f_on;
         var this$46 = $n(rx);
-        var inits$10 = this$46.Lrta_syntax_Program2$RxGraph__f_inits;
+        var off$10 = this$46.Lrta_syntax_Program2$RxGraph__f_off;
         var this$47 = $n(rx);
-        var val_env$9 = this$47.Lrta_syntax_Program2$RxGraph__f_val_env;
+        var lbls$10 = this$47.Lrta_syntax_Program2$RxGraph__f_lbls;
         var this$48 = $n(rx);
-        var functions$10 = this$48.Lrta_syntax_Program2$RxGraph__f_functions;
+        var inits$10 = this$48.Lrta_syntax_Program2$RxGraph__f_inits;
         var this$49 = $n(rx);
-        var clocks$10 = this$49.Lrta_syntax_Program2$RxGraph__f_clocks;
+        var val_env$9 = this$49.Lrta_syntax_Program2$RxGraph__f_val_env;
         var this$50 = $n(rx);
-        var clock_env$9 = this$50.Lrta_syntax_Program2$RxGraph__f_clock_env;
+        var functions$10 = this$50.Lrta_syntax_Program2$RxGraph__f_functions;
         var this$51 = $n(rx);
-        var invariants$10 = this$51.Lrta_syntax_Program2$RxGraph__f_invariants;
+        var clocks$10 = this$51.Lrta_syntax_Program2$RxGraph__f_clocks;
         var this$52 = $n(rx);
-        var edgeConditions$10 = this$52.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+        var clock_env$9 = this$52.Lrta_syntax_Program2$RxGraph__f_clock_env;
         var this$53 = $n(rx);
-        var edgeUpdates$10 = this$53.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+        var invariants$10 = this$53.Lrta_syntax_Program2$RxGraph__f_invariants;
         var this$54 = $n(rx);
-        var delays$10 = this$54.Lrta_syntax_Program2$RxGraph__f_delays;
+        var edgeConditions$10 = this$54.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+        var this$55 = $n(rx);
+        var edgeUpdates$10 = this$55.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+        var this$56 = $n(rx);
+        var delays$10 = this$56.Lrta_syntax_Program2$RxGraph__f_delays;
+        var this$57 = $n(rx);
+        var maxConstants$10 = this$57.Lrta_syntax_Program2$RxGraph__f_maxConstants;
         $n(rx);
-        var nextRx$1 = new $c_Lrta_syntax_Program2$RxGraph(edg$10, on$10, off$10, lbls$10, inits$10, newAct, val_env$9, maturedZone, functions$10, clocks$10, clock_env$9, invariants$10, edgeConditions$10, edgeUpdates$10, delays$10, pendingDelays$10);
+        var nextRx$1 = new $c_Lrta_syntax_Program2$RxGraph(edg$10, on$10, off$10, lbls$10, inits$10, newAct, val_env$9, maturedZone, functions$10, clocks$10, clock_env$9, invariants$10, edgeConditions$10, edgeUpdates$10, delays$10, pendingDelays$10, maxConstants$10);
         var ruleLabel = $as_Lrta_syntax_Program2$QName($n(hyperEdge$3).T4__f__4);
-        var this$56 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_inits);
-        var this$57 = $n($f_sc_IterableOps__headOption__s_Option(this$56));
-        if (this$57.isEmpty__Z()) {
-          var n = $m_s_package$().s_package$__f_Nil;
-          var _1 = new $c_Lrta_syntax_Program2$QName(n)
-        } else {
-          var _1 = this$57.get__O()
-        };
         var this$59 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_inits);
         var this$60 = $n($f_sc_IterableOps__headOption__s_Option(this$59));
         if (this$60.isEmpty__Z()) {
+          var n = $m_s_package$().s_package$__f_Nil;
+          var _1 = new $c_Lrta_syntax_Program2$QName(n)
+        } else {
+          var _1 = this$60.get__O()
+        };
+        var this$62 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_inits);
+        var this$63 = $n($f_sc_IterableOps__headOption__s_Option(this$62));
+        if (this$63.isEmpty__Z()) {
           var n$1 = $m_s_package$().s_package$__f_Nil;
           var _2$1 = new $c_Lrta_syntax_Program2$QName(n$1)
         } else {
-          var _2$1 = this$60.get__O()
+          var _2$1 = this$63.get__O()
         };
         $n($m_s_package$().s_package$__f_List);
         var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)(["timeout"]));
@@ -8983,10 +9709,10 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdgeSymbolic__Lrta_syntax_Program2$Rx
         return new $c_T2(pseudoEdge, nextRx$1)
       }
     };
-    throw new $c_s_MatchError(x$1$9)
+    throw new $c_s_MatchError(x$1$10)
   }))));
-  var this$66 = $n(standardTransitions);
-  return $as_sci_Set(this$66.concat__sc_IterableOnce__sc_SetOps(timeoutTransitions))
+  var this$69 = $n(standardTransitions);
+  return $as_sci_Set(this$69.concat__sc_IterableOnce__sc_SetOps(timeoutTransitions))
 });
 $c_Lrta_backend_RxSemantics$.prototype.nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set = (function(rx0) {
   var rxTimeOpt = this.advanceTimeZone__Lrta_syntax_Program2$RxGraph__s_Option(rx0);
@@ -9016,11 +9742,11 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdge__Lrta_syntax_Program2$RxGraph__s
     }))))).withFilter__F1__sc_WithFilter(new $c_sjsr_AnonFunction1(((x$1$3$1) => {
       var x$1$4 = $as_T2(x$1$3$1);
       if ((x$1$4 !== null)) {
-        var x266 = $as_T3($n(x$1$4)._1__O());
-        if ((x266 !== null)) {
-          $as_Lrta_syntax_Program2$QName($n(x266).T3__f__1);
-          $as_Lrta_syntax_Program2$QName($n(x266).T3__f__2);
-          $as_Lrta_syntax_Program2$QName($n(x266).T3__f__3);
+        var x372 = $as_T3($n(x$1$4)._1__O());
+        if ((x372 !== null)) {
+          $as_Lrta_syntax_Program2$QName($n(x372).T3__f__1);
+          $as_Lrta_syntax_Program2$QName($n(x372).T3__f__2);
+          $as_Lrta_syntax_Program2$QName($n(x372).T3__f__3);
           var edge$1 = $as_T4($n(x$1$4)._2__O());
           return $n($n(rx).Lrta_syntax_Program2$RxGraph__f_act).contains__O__Z(edge$1)
         }
@@ -9029,25 +9755,25 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdge__Lrta_syntax_Program2$RxGraph__s
     })))).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$4$1) => {
       var x$1$5 = $as_T2(x$1$4$1);
       if ((x$1$5 !== null)) {
-        var x293 = $as_T3($n(x$1$5)._1__O());
-        if ((x293 !== null)) {
-          var st2$3 = $as_Lrta_syntax_Program2$QName($n(x293).T3__f__1);
-          $as_Lrta_syntax_Program2$QName($n(x293).T3__f__2);
-          $as_Lrta_syntax_Program2$QName($n(x293).T3__f__3);
+        var x404 = $as_T3($n(x$1$5)._1__O());
+        if ((x404 !== null)) {
+          var st2$3 = $as_Lrta_syntax_Program2$QName($n(x404).T3__f__1);
+          $as_Lrta_syntax_Program2$QName($n(x404).T3__f__2);
+          $as_Lrta_syntax_Program2$QName($n(x404).T3__f__3);
           var edge$2 = $as_T4($n(x$1$5)._2__O());
           var condOpt = $as_s_Option($n($n(rx).Lrta_syntax_Program2$RxGraph__f_edgeConditions).getOrElse__O__F0__O(edge$2, new $c_sjsr_AnonFunction0((() => $m_s_None$()))));
-          matchResult37: {
+          matchResult43: {
             var zoneAfterGuard;
             if ((condOpt instanceof $c_s_Some)) {
               var cond = $as_Lrta_syntax_Condition($n($as_s_Some(condOpt)).s_Some__f_value);
               var zoneAfterGuard = this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(cond, $n(rx).Lrta_syntax_Program2$RxGraph__f_zone, rx);
-              break matchResult37
+              break matchResult43
             };
             var x = $m_s_None$();
             if ((x === condOpt)) {
               var value = $n(rx).Lrta_syntax_Program2$RxGraph__f_zone;
               var zoneAfterGuard = new $c_s_Some(value);
-              break matchResult37
+              break matchResult43
             };
             throw new $c_s_MatchError(condOpt)
           };
@@ -9065,54 +9791,66 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdge__Lrta_syntax_Program2$RxGraph__s
             var $$x1 = false
           };
           if ($$x1) {
-            matchResult38: {
+            matchResult44: {
               var \u03b410$___1;
               var \u03b410$___2;
               var \u03b410$___3;
               var \u03b410$___4;
-              var x274 = $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Program2$RxGraph__F2__T4(this, edge$2, rx, $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects$default$3__F2(this));
-              if ((x274 !== null)) {
-                var toAct = $as_sci_Set($n(x274).T4__f__1);
-                var toDeact = $as_sci_Set($n(x274).T4__f__2);
-                var hStmts = $as_sci_List($n(x274).T4__f__3);
-                var newPending = $as_sci_Set($n(x274).T4__f__4);
+              var x380 = $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects__T4__Lrta_syntax_Program2$RxGraph__F2__T4(this, edge$2, rx, $p_Lrta_backend_RxSemantics$__getHyperEdgeEffects$default$3__F2(this));
+              if ((x380 !== null)) {
+                var toAct = $as_sci_Set($n(x380).T4__f__1);
+                var toDeact = $as_sci_Set($n(x380).T4__f__2);
+                var hStmts = $as_sci_List($n(x380).T4__f__3);
+                var relativePending = $as_sci_Set($n(x380).T4__f__4);
                 var \u03b410$___1 = toAct;
                 var \u03b410$___2 = toDeact;
                 var \u03b410$___3 = hStmts;
-                var \u03b410$___4 = newPending;
-                break matchResult38
+                var \u03b410$___4 = relativePending;
+                break matchResult44
               };
-              throw new $c_s_MatchError(x274)
+              throw new $c_s_MatchError(x380)
             };
             var toAct$2 = $as_sci_Set(\u03b410$___1);
             var toDeact$2 = $as_sci_Set(\u03b410$___2);
             var hStmts$2 = $as_sci_List(\u03b410$___3);
-            var newPending$2 = $as_sci_Set(\u03b410$___4);
+            var relativePending$2 = $as_sci_Set(\u03b410$___4);
             var this$10 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_act);
             var this$11 = $n($as_sci_SetOps(this$10.concat__sc_IterableOnce__sc_SetOps(toAct$2)));
             var currentAct = $as_sci_Set(this$11.removedAll__sc_IterableOnce__sci_SetOps(toDeact$2));
             var this$12 = $n($as_sc_IterableOps($n($n(rx).Lrta_syntax_Program2$RxGraph__f_edgeUpdates).getOrElse__O__F0__O(edge$2, new $c_sjsr_AnonFunction0((() => $m_s_package$().s_package$__f_Nil)))));
             var allStmts = $as_sci_List(this$12.concat__sc_IterableOnce__O(hStmts$2));
-            matchResult39: {
+            matchResult45: {
               var \u03b411$___1;
               var \u03b411$___2;
-              var x279 = this.applyUpdates__sci_List__Lrta_syntax_Program2$RxGraph__T2(allStmts, rx);
-              if ((x279 !== null)) {
-                var nextEnv = $as_sci_Map($n(x279)._1__O());
-                var nextClockEnv = $as_sci_Map($n(x279)._2__O());
+              var x385 = this.applyUpdates__sci_List__Lrta_syntax_Program2$RxGraph__T2(allStmts, rx);
+              if ((x385 !== null)) {
+                var nextEnv = $as_sci_Map($n(x385)._1__O());
+                var nextClockEnv = $as_sci_Map($n(x385)._2__O());
                 var \u03b411$___1 = nextEnv;
                 var \u03b411$___2 = nextClockEnv;
-                break matchResult39
+                break matchResult45
               };
-              throw new $c_s_MatchError(x279)
+              throw new $c_s_MatchError(x385)
             };
             var nextEnv$2 = $as_sci_Map(\u03b411$___1);
             var nextClockEnv$2 = $as_sci_Map(\u03b411$___2);
+            var absolutePending = $as_sci_Set($n(relativePending$2).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$2$1) => {
+              var x$1$6 = $as_T4(x$1$2$1);
+              if ((x$1$6 !== null)) {
+                var he = $as_T4($n(x$1$6).T4__f__1);
+                var op = $as_T($n(x$1$6).T4__f__2);
+                var clk = $as_Lrta_syntax_Program2$QName($n(x$1$6).T4__f__3);
+                var dVal = $uD($n(x$1$6).T4__f__4);
+                var _4 = ($uD($n(nextClockEnv$2).getOrElse__O__F0__O(clk, new $c_sjsr_AnonFunction0((() => 0.0)))) + dVal);
+                return new $c_T4(he, op, clk, _4)
+              };
+              throw new $c_s_MatchError(x$1$6)
+            }))));
             var clockResets = $n(allStmts).collect__s_PartialFunction__sci_List(new $c_Lrta_backend_RxSemantics$$anon$2(rx));
-            var this$14 = $n(clockResets);
+            var this$15 = $n(clockResets);
             var z = $n(zoneAfterGuard).get__O();
             var acc = z;
-            var these = this$14;
+            var these = this$15;
             while ((!$n(these).isEmpty__Z())) {
               var arg1$1 = acc;
               var arg2 = $n(these).head__O();
@@ -9122,33 +9860,35 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdge__Lrta_syntax_Program2$RxGraph__s
               these = $as_sc_LinearSeq($n(these).tail__O())
             };
             var zoneAfterUpdates = $as_Lrta_backend_DBM$Zone(acc);
-            var this$15 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_inits);
-            var this$16 = $n(this$15.excl__O__sci_SetOps(st$1));
-            var inits$11 = $as_sci_Set(this$16.incl__O__sci_SetOps(st2$3));
-            var this$17 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_pendingDelays);
-            var pendingDelays$11 = $as_sci_Set(this$17.concat__sc_IterableOnce__sc_SetOps(newPending$2));
-            var this$18 = $n(rx);
-            var edg$11 = this$18.Lrta_syntax_Program2$RxGraph__f_edg;
+            var this$16 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_inits);
+            var this$17 = $n(this$16.excl__O__sci_SetOps(st$1));
+            var inits$11 = $as_sci_Set(this$17.incl__O__sci_SetOps(st2$3));
+            var this$18 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_pendingDelays);
+            var pendingDelays$11 = $as_sci_Set(this$18.concat__sc_IterableOnce__sc_SetOps(absolutePending));
             var this$19 = $n(rx);
-            var on$11 = this$19.Lrta_syntax_Program2$RxGraph__f_on;
+            var edg$11 = this$19.Lrta_syntax_Program2$RxGraph__f_edg;
             var this$20 = $n(rx);
-            var off$11 = this$20.Lrta_syntax_Program2$RxGraph__f_off;
+            var on$11 = this$20.Lrta_syntax_Program2$RxGraph__f_on;
             var this$21 = $n(rx);
-            var lbls$11 = this$21.Lrta_syntax_Program2$RxGraph__f_lbls;
+            var off$11 = this$21.Lrta_syntax_Program2$RxGraph__f_off;
             var this$22 = $n(rx);
-            var functions$11 = this$22.Lrta_syntax_Program2$RxGraph__f_functions;
+            var lbls$11 = this$22.Lrta_syntax_Program2$RxGraph__f_lbls;
             var this$23 = $n(rx);
-            var clocks$11 = this$23.Lrta_syntax_Program2$RxGraph__f_clocks;
+            var functions$11 = this$23.Lrta_syntax_Program2$RxGraph__f_functions;
             var this$24 = $n(rx);
-            var invariants$11 = this$24.Lrta_syntax_Program2$RxGraph__f_invariants;
+            var clocks$11 = this$24.Lrta_syntax_Program2$RxGraph__f_clocks;
             var this$25 = $n(rx);
-            var edgeConditions$11 = this$25.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+            var invariants$11 = this$25.Lrta_syntax_Program2$RxGraph__f_invariants;
             var this$26 = $n(rx);
-            var edgeUpdates$11 = this$26.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+            var edgeConditions$11 = this$26.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
             var this$27 = $n(rx);
-            var delays$11 = this$27.Lrta_syntax_Program2$RxGraph__f_delays;
+            var edgeUpdates$11 = this$27.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+            var this$28 = $n(rx);
+            var delays$11 = this$28.Lrta_syntax_Program2$RxGraph__f_delays;
+            var this$29 = $n(rx);
+            var maxConstants$11 = this$29.Lrta_syntax_Program2$RxGraph__f_maxConstants;
             $n(rx);
-            var _2 = new $c_Lrta_syntax_Program2$RxGraph(edg$11, on$11, off$11, lbls$11, inits$11, currentAct, nextEnv$2, zoneAfterUpdates, functions$11, clocks$11, nextClockEnv$2, invariants$11, edgeConditions$11, edgeUpdates$11, delays$11, pendingDelays$11);
+            var _2 = new $c_Lrta_syntax_Program2$RxGraph(edg$11, on$11, off$11, lbls$11, inits$11, currentAct, nextEnv$2, zoneAfterUpdates, functions$11, clocks$11, nextClockEnv$2, invariants$11, edgeConditions$11, edgeUpdates$11, delays$11, pendingDelays$11, maxConstants$11);
             var value$1 = new $c_T2(edge$2, _2);
             return new $c_s_Some(value$1)
           } else {
@@ -9159,27 +9899,27 @@ $c_Lrta_backend_RxSemantics$.prototype.nextEdge__Lrta_syntax_Program2$RxGraph__s
       throw new $c_s_MatchError(x$1$5)
     }))))
   }))));
-  var this$32 = $m_s_$less$colon$less$();
-  return $as_sci_Set($n($as_sc_IterableOps($n(transitions).flatten__F1__O(this$32.s_$less$colon$less$__f_singleton))).filter__F1__O(new $c_sjsr_AnonFunction1(((x$1$6) => {
-    var x$1$7 = $as_T2(x$1$6);
-    if ((x$1$7 !== null)) {
-      var nextRx = $as_Lrta_syntax_Program2$RxGraph($n(x$1$7)._2__O());
+  var this$34 = $m_s_$less$colon$less$();
+  return $as_sci_Set($n($as_sc_IterableOps($n(transitions).flatten__F1__O(this$34.s_$less$colon$less$__f_singleton))).filter__F1__O(new $c_sjsr_AnonFunction1(((x$1$7) => {
+    var x$1$8 = $as_T2(x$1$7);
+    if ((x$1$8 !== null)) {
+      var nextRx = $as_Lrta_syntax_Program2$RxGraph($n(x$1$8)._2__O());
       return $n($n(nextRx).Lrta_syntax_Program2$RxGraph__f_inits).forall__F1__Z(new $c_sjsr_AnonFunction1(((s) => {
         var s$1 = $as_Lrta_syntax_Program2$QName(s);
-        var x298 = $n($n(nextRx).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
-        if ((x298 instanceof $c_s_Some)) {
-          var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x298)).s_Some__f_value);
-          var this$33 = $n(this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(inv, $n(nextRx).Lrta_syntax_Program2$RxGraph__f_zone, nextRx));
-          return (!this$33.isEmpty__Z())
+        var x409 = $n($n(nextRx).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
+        if ((x409 instanceof $c_s_Some)) {
+          var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x409)).s_Some__f_value);
+          var this$35 = $n(this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(inv, $n(nextRx).Lrta_syntax_Program2$RxGraph__f_zone, nextRx));
+          return (!this$35.isEmpty__Z())
         };
         var x$2 = $m_s_None$();
-        if ((x$2 === x298)) {
+        if ((x$2 === x409)) {
           return true
         };
-        throw new $c_s_MatchError(x298)
+        throw new $c_s_MatchError(x409)
       })))
     };
-    throw new $c_s_MatchError(x$1$7)
+    throw new $c_s_MatchError(x$1$8)
   }))))
 });
 $c_Lrta_backend_RxSemantics$.prototype.nextDelay__Lrta_syntax_Program2$RxGraph__sci_Set = (function(rx0) {
@@ -9242,19 +9982,21 @@ $c_Lrta_backend_RxSemantics$.prototype.nextDelay__Lrta_syntax_Program2$RxGraph__
   var delays = this$18.Lrta_syntax_Program2$RxGraph__f_delays;
   var this$19 = $n(rx);
   var pendingDelays = this$19.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  var potentialNextRx = this.applyTimeouts__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Program2$RxGraph(new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays));
+  var this$20 = $n(rx);
+  var maxConstants = this$20.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  var potentialNextRx = this.applyTimeouts__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Program2$RxGraph(new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants));
   if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_inits).forall__F1__Z(new $c_sjsr_AnonFunction1(((s) => {
     var s$1 = $as_Lrta_syntax_Program2$QName(s);
     return $p_Lrta_backend_RxSemantics$__checkInvariant__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$RxGraph__Z(this, s$1, potentialNextRx)
   })))) {
-    var this$24 = $n($m_s_Predef$().s_Predef$__f_Set);
+    var this$25 = $n($m_s_Predef$().s_Predef$__f_Set);
     var $$x1 = $m_sr_ScalaRunTime$();
     $n($m_s_package$().s_package$__f_List);
     var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)(["delay"]));
     var n = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems);
     var _1 = new $c_Lrta_syntax_Program2$QName(n);
     var elems$1 = $n($$x1).wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([new $c_T2(_1, potentialNextRx)]));
-    return this$24.from__sc_IterableOnce__sci_Set(elems$1)
+    return this$25.from__sc_IterableOnce__sci_Set(elems$1)
   } else {
     $n($m_s_Predef$().s_Predef$__f_Set);
     return $m_sci_Set$EmptySet$()
@@ -9286,7 +10028,7 @@ $c_Lrta_backend_RxSemantics$.prototype.applyTimeouts__Lrta_syntax_Program2$RxGra
       var rx$tailLocal1$3$1 = rx$tailLocal1;
       $n($$x2).foreach__F1__V(new $c_sjsr_AnonFunction1(((toAct, toDeact, rx$tailLocal1$3) => ((m) => {
         var m$1 = $as_T4(m);
-        matchResult48: {
+        matchResult55: {
           var \u03b412$___1;
           var \u03b412$___2;
           if ((m$1 !== null)) {
@@ -9294,7 +10036,7 @@ $c_Lrta_backend_RxSemantics$.prototype.applyTimeouts__Lrta_syntax_Program2$RxGra
             var opType = $as_T($n(m$1).T4__f__2);
             var \u03b412$___1 = hyperEdge;
             var \u03b412$___2 = opType;
-            break matchResult48
+            break matchResult55
           };
           throw new $c_s_MatchError(m$1)
         };
@@ -9307,9 +10049,9 @@ $c_Lrta_backend_RxSemantics$.prototype.applyTimeouts__Lrta_syntax_Program2$RxGra
             $n($m_s_Predef$().s_Predef$__f_Set);
             return $m_sci_Set$EmptySet$()
           }))));
-          var ev$26 = $as_sci_Set(this$9.concat__sc_IterableOnce__sc_SetOps(that));
-          toAct.sr_ObjectRef__f_elem = ev$26;
-          ev$26 = null
+          var ev$35 = $as_sci_Set(this$9.concat__sc_IterableOnce__sc_SetOps(that));
+          toAct.sr_ObjectRef__f_elem = ev$35;
+          ev$35 = null
         };
         if ((opType$2 === "off")) {
           var this$11 = $n($as_sci_Set(toDeact.sr_ObjectRef__f_elem));
@@ -9317,9 +10059,9 @@ $c_Lrta_backend_RxSemantics$.prototype.applyTimeouts__Lrta_syntax_Program2$RxGra
             $n($m_s_Predef$().s_Predef$__f_Set);
             return $m_sci_Set$EmptySet$()
           }))));
-          var ev$27 = $as_sci_Set(this$11.concat__sc_IterableOnce__sc_SetOps(that$1));
-          toDeact.sr_ObjectRef__f_elem = ev$27;
-          ev$27 = null
+          var ev$36 = $as_sci_Set(this$11.concat__sc_IterableOnce__sc_SetOps(that$1));
+          toDeact.sr_ObjectRef__f_elem = ev$36;
+          ev$36 = null
         }
       }))(toAct, toDeact, rx$tailLocal1$3$1)));
       var this$12 = $n($n(rx$tailLocal1).Lrta_syntax_Program2$RxGraph__f_act);
@@ -9357,8 +10099,10 @@ $c_Lrta_backend_RxSemantics$.prototype.applyTimeouts__Lrta_syntax_Program2$RxGra
       var edgeUpdates$12 = this$27.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
       var this$28 = $n(rx$tailLocal1);
       var delays$12 = this$28.Lrta_syntax_Program2$RxGraph__f_delays;
+      var this$29 = $n(rx$tailLocal1);
+      var maxConstants$12 = this$29.Lrta_syntax_Program2$RxGraph__f_maxConstants;
       $n(rx$tailLocal1);
-      var nextRx = new $c_Lrta_syntax_Program2$RxGraph(edg$12, on$12, off$12, lbls$12, inits$12, act$9, val_env$10, zone$9, functions$12, clocks$12, clock_env$10, invariants$12, edgeConditions$12, edgeUpdates$12, delays$12, pendingDelays$12);
+      var nextRx = new $c_Lrta_syntax_Program2$RxGraph(edg$12, on$12, off$12, lbls$12, inits$12, act$9, val_env$10, zone$9, functions$12, clocks$12, clock_env$10, invariants$12, edgeConditions$12, edgeUpdates$12, delays$12, pendingDelays$12, maxConstants$12);
       rx$tailLocal1 = nextRx
     } else {
       return rx$tailLocal1
@@ -9423,19 +10167,21 @@ $c_Lrta_backend_RxSemantics$.prototype.advanceTimeBy__Lrta_syntax_Program2$RxGra
   var delays = this$17.Lrta_syntax_Program2$RxGraph__f_delays;
   var this$18 = $n(rx);
   var pendingDelays = this$18.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  var potentialNextRx = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays);
+  var this$19 = $n(rx);
+  var maxConstants = this$19.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  var potentialNextRx = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants);
   var invariantsHold = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_inits).forall__F1__Z(new $c_sjsr_AnonFunction1(((s) => {
     var s$1 = $as_Lrta_syntax_Program2$QName(s);
-    var x330 = $n(potentialNextRx.Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
-    if ((x330 instanceof $c_s_Some)) {
-      var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x330)).s_Some__f_value);
+    var x441 = $n(potentialNextRx.Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
+    if ((x441 instanceof $c_s_Some)) {
+      var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x441)).s_Some__f_value);
       return this.evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(inv, potentialNextRx)
     };
     var x = $m_s_None$();
-    if ((x === x330)) {
+    if ((x === x441)) {
       return true
     };
-    throw new $c_s_MatchError(x330)
+    throw new $c_s_MatchError(x441)
   })));
   if (invariantsHold) {
     var value = this.applyTimeouts__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Program2$RxGraph(potentialNextRx);
@@ -9459,99 +10205,117 @@ $c_Lrta_backend_RxSemantics$.prototype.advanceTimeZone__Lrta_syntax_Program2$RxG
       var inv = $as_Lrta_syntax_Condition(arg1);
       var this$5 = $n($as_s_Option(currentZone.sr_ObjectRef__f_elem));
       if (this$5.isEmpty__Z()) {
-        var ev$28 = $m_s_None$()
+        var ev$37 = $m_s_None$()
       } else {
         var arg1$1 = this$5.get__O();
         var z = $as_Lrta_backend_DBM$Zone(arg1$1);
-        var ev$28 = this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(inv, z, rx0)
+        var ev$37 = this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(inv, z, rx0)
       };
-      currentZone.sr_ObjectRef__f_elem = ev$28;
-      ev$28 = null
+      currentZone.sr_ObjectRef__f_elem = ev$37;
+      ev$37 = null
     }
   })));
-  var this$6 = $n($as_s_Option(currentZone.sr_ObjectRef__f_elem));
-  if (this$6.isEmpty__Z()) {
+  $n($n(rx0).Lrta_syntax_Program2$RxGraph__f_pendingDelays).foreach__F1__V(new $c_sjsr_AnonFunction1(((pending) => {
+    var pending$1 = $as_T4(pending);
+    var clock = $as_Lrta_syntax_Program2$QName($n(pending$1).T4__f__3);
+    var targetVal = $uD($n(pending$1).T4__f__4);
+    var this$6 = $n($as_s_Option(currentZone.sr_ObjectRef__f_elem));
+    if (this$6.isEmpty__Z()) {
+      var ev$38 = $m_s_None$()
+    } else {
+      var arg1$2 = this$6.get__O();
+      var z$1 = $as_Lrta_backend_DBM$Zone(arg1$2);
+      var ev$38 = $n(z$1).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option(clock, $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, targetVal, false)
+    };
+    currentZone.sr_ObjectRef__f_elem = ev$38;
+    ev$38 = null
+  })));
+  var this$7 = $n($as_s_Option(currentZone.sr_ObjectRef__f_elem));
+  if (this$7.isEmpty__Z()) {
     return $m_s_None$()
   } else {
-    var arg1$2 = this$6.get__O();
-    var z$1 = $as_Lrta_backend_DBM$Zone(arg1$2);
-    $n(rx0);
-    var this$7 = $n(rx0);
-    var edg = this$7.Lrta_syntax_Program2$RxGraph__f_edg;
+    var arg1$3 = this$7.get__O();
+    var z$2 = $as_Lrta_backend_DBM$Zone(arg1$3);
+    var zone$10 = $n(z$2).extrapolate__sci_Map__Lrta_backend_DBM$Zone($n(rx0).Lrta_syntax_Program2$RxGraph__f_maxConstants);
     var this$8 = $n(rx0);
-    var on = this$8.Lrta_syntax_Program2$RxGraph__f_on;
+    var edg$13 = this$8.Lrta_syntax_Program2$RxGraph__f_edg;
     var this$9 = $n(rx0);
-    var off = this$9.Lrta_syntax_Program2$RxGraph__f_off;
+    var on$13 = this$9.Lrta_syntax_Program2$RxGraph__f_on;
     var this$10 = $n(rx0);
-    var lbls = this$10.Lrta_syntax_Program2$RxGraph__f_lbls;
+    var off$13 = this$10.Lrta_syntax_Program2$RxGraph__f_off;
     var this$11 = $n(rx0);
-    var inits = this$11.Lrta_syntax_Program2$RxGraph__f_inits;
+    var lbls$13 = this$11.Lrta_syntax_Program2$RxGraph__f_lbls;
     var this$12 = $n(rx0);
-    var act = this$12.Lrta_syntax_Program2$RxGraph__f_act;
+    var inits$13 = this$12.Lrta_syntax_Program2$RxGraph__f_inits;
     var this$13 = $n(rx0);
-    var val_env = this$13.Lrta_syntax_Program2$RxGraph__f_val_env;
+    var act$10 = this$13.Lrta_syntax_Program2$RxGraph__f_act;
     var this$14 = $n(rx0);
-    var functions = this$14.Lrta_syntax_Program2$RxGraph__f_functions;
+    var val_env$11 = this$14.Lrta_syntax_Program2$RxGraph__f_val_env;
     var this$15 = $n(rx0);
-    var clocks = this$15.Lrta_syntax_Program2$RxGraph__f_clocks;
+    var functions$13 = this$15.Lrta_syntax_Program2$RxGraph__f_functions;
     var this$16 = $n(rx0);
-    var clock_env = this$16.Lrta_syntax_Program2$RxGraph__f_clock_env;
+    var clocks$13 = this$16.Lrta_syntax_Program2$RxGraph__f_clocks;
     var this$17 = $n(rx0);
-    var invariants = this$17.Lrta_syntax_Program2$RxGraph__f_invariants;
+    var clock_env$11 = this$17.Lrta_syntax_Program2$RxGraph__f_clock_env;
     var this$18 = $n(rx0);
-    var edgeConditions = this$18.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+    var invariants$13 = this$18.Lrta_syntax_Program2$RxGraph__f_invariants;
     var this$19 = $n(rx0);
-    var edgeUpdates = this$19.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+    var edgeConditions$13 = this$19.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
     var this$20 = $n(rx0);
-    var delays = this$20.Lrta_syntax_Program2$RxGraph__f_delays;
+    var edgeUpdates$13 = this$20.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
     var this$21 = $n(rx0);
-    var pendingDelays = this$21.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-    return new $c_s_Some(new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, z$1, functions, clocks, clock_env, invariants, edgeConditions, edgeUpdates, delays, pendingDelays))
+    var delays$13 = this$21.Lrta_syntax_Program2$RxGraph__f_delays;
+    var this$22 = $n(rx0);
+    var pendingDelays$13 = this$22.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+    var this$23 = $n(rx0);
+    var maxConstants$13 = this$23.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+    $n(rx0);
+    return new $c_s_Some(new $c_Lrta_syntax_Program2$RxGraph(edg$13, on$13, off$13, lbls$13, inits$13, act$10, val_env$11, zone$10, functions$13, clocks$13, clock_env$11, invariants$13, edgeConditions$13, edgeUpdates$13, delays$13, pendingDelays$13, maxConstants$13))
   }
 });
 $c_Lrta_backend_RxSemantics$.prototype.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option = (function(cond, zone, rx) {
   if ((cond instanceof $c_Lrta_syntax_Condition$AtomicCond)) {
     var x$1 = $as_Lrta_syntax_Condition$AtomicCond(cond);
     var this$2 = $n(x$1);
-    var x341 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
+    var x452 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
     var this$3 = $n(x$1);
-    var x342 = this$3.Lrta_syntax_Condition$AtomicCond__f_op;
+    var x453 = this$3.Lrta_syntax_Condition$AtomicCond__f_op;
     var this$4 = $n(x$1);
-    var x343 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
-    if ((x341 instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
-      var x$1$1 = $as_Lrta_syntax_UpdateExpr$Var(x341);
+    var x454 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
+    if ((x452 instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
+      var x$1$1 = $as_Lrta_syntax_UpdateExpr$Var(x452);
       var this$6 = $n(x$1$1);
-      var x349 = this$6.Lrta_syntax_UpdateExpr$Var__f_q;
-      if ((x343 instanceof $c_Lrta_syntax_UpdateExpr$LitInt)) {
-        var x$1$2 = $as_Lrta_syntax_UpdateExpr$LitInt(x343);
+      var x460 = this$6.Lrta_syntax_UpdateExpr$Var__f_q;
+      if ((x454 instanceof $c_Lrta_syntax_UpdateExpr$LitInt)) {
+        var x$1$2 = $as_Lrta_syntax_UpdateExpr$LitInt(x454);
         var this$8 = $n(x$1$2);
-        var x346 = this$8.Lrta_syntax_UpdateExpr$LitInt__f_i;
-        if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x349)) {
-          switch (x342) {
+        var x457 = this$8.Lrta_syntax_UpdateExpr$LitInt__f_i;
+        if ($n($n(rx).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x460)) {
+          switch (x453) {
             case "<": {
-              return $n(zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option(x349, $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x346, true);
+              return $n(zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option(x460, $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x457, true);
               break
             }
             case "<=": {
-              return $n(zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option(x349, $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x346, false);
+              return $n(zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option(x460, $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x457, false);
               break
             }
             case ">": {
-              return $n(zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option($m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x349, (-x346), true);
+              return $n(zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option($m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x460, (-x457), true);
               break
             }
             case ">=": {
-              return $n(zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option($m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x349, (-x346), false);
+              return $n(zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option($m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x460, (-x457), false);
               break
             }
             case "==": {
-              var this$9 = $n($n(zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option(x349, $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x346, false));
+              var this$9 = $n($n(zone).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option(x460, $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x457, false));
               if (this$9.isEmpty__Z()) {
                 return $m_s_None$()
               } else {
                 var arg1 = this$9.get__O();
                 var _$8 = $as_Lrta_backend_DBM$Zone(arg1);
-                return $n(_$8).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option($m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x349, (-x346), false)
+                return $n(_$8).constrain__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Z__s_Option($m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK, x460, (-x457), false)
               };
               break
             }
@@ -9566,16 +10330,16 @@ $c_Lrta_backend_RxSemantics$.prototype.intersectConditionWithZone__Lrta_syntax_C
   if ((cond instanceof $c_Lrta_syntax_Condition$And)) {
     var x$1$3 = $as_Lrta_syntax_Condition$And(cond);
     var this$12 = $n(x$1$3);
-    var x337 = this$12.Lrta_syntax_Condition$And__f_left;
+    var x448 = this$12.Lrta_syntax_Condition$And__f_left;
     var this$13 = $n(x$1$3);
-    var x338 = this$13.Lrta_syntax_Condition$And__f_right;
-    var this$14 = $n(this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(x337, zone, rx));
+    var x449 = this$13.Lrta_syntax_Condition$And__f_right;
+    var this$14 = $n(this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(x448, zone, rx));
     if (this$14.isEmpty__Z()) {
       return $m_s_None$()
     } else {
       var arg1$1 = this$14.get__O();
       var z = $as_Lrta_backend_DBM$Zone(arg1$1);
-      return this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(x338, z, rx)
+      return this.intersectConditionWithZone__Lrta_syntax_Condition__Lrta_backend_DBM$Zone__Lrta_syntax_Program2$RxGraph__s_Option(x449, z, rx)
     }
   };
   return new $c_s_Some(zone)
@@ -9584,9 +10348,9 @@ $c_Lrta_backend_RxSemantics$.prototype.next__Lrta_syntax_Program2$RxGraph__sci_S
   var this$4 = $n($as_sc_SetOps($n(this.nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set(rx)).map__F1__O(new $c_sjsr_AnonFunction1(((e) => {
     var e$1 = $as_T2(e);
     var self = $n($as_T4($n(e$1)._1__O())).T4__f__4;
-    var ev$10 = $as_Lrta_syntax_Program2$QName(self);
+    var ev$15 = $as_Lrta_syntax_Program2$QName(self);
     var y = $n(e$1)._2__O();
-    return new $c_T2(ev$10, y)
+    return new $c_T2(ev$15, y)
   })))));
   var that = this.nextDelay__Lrta_syntax_Program2$RxGraph__sci_Set(rx);
   return $as_sci_Set(this$4.concat__sc_IterableOnce__sc_SetOps(that))
@@ -9604,6 +10368,267 @@ function $m_Lrta_backend_RxSemantics$() {
     $n_Lrta_backend_RxSemantics$ = new $c_Lrta_backend_RxSemantics$()
   };
   return $n_Lrta_backend_RxSemantics$
+}
+function $p_Lrta_backend_RxSemantics$MaxConstants$__fromExpr__Lrta_syntax_UpdateExpr__Lrta_syntax_Program2$QName__s_Option($thiz, e, clock) {
+  if ((e instanceof $c_Lrta_syntax_UpdateExpr$LitInt)) {
+    var x$1 = $as_Lrta_syntax_UpdateExpr$LitInt(e);
+    var this$2 = $n(x$1);
+    var x7 = this$2.Lrta_syntax_UpdateExpr$LitInt__f_i;
+    var value = x7;
+    return new $c_s_Some(value)
+  } else if ((e instanceof $c_Lrta_syntax_UpdateExpr$LitFloat)) {
+    var x$1$1 = $as_Lrta_syntax_UpdateExpr$LitFloat(e);
+    var this$5 = $n(x$1$1);
+    var x4 = this$5.Lrta_syntax_UpdateExpr$LitFloat__f_f;
+    return new $c_s_Some(x4)
+  } else {
+    return $m_s_None$()
+  }
+}
+/** @constructor */
+function $c_Lrta_backend_RxSemantics$MaxConstants$() {
+  /*<skip>*/
+}
+$c_Lrta_backend_RxSemantics$MaxConstants$.prototype = new $h_O();
+$c_Lrta_backend_RxSemantics$MaxConstants$.prototype.constructor = $c_Lrta_backend_RxSemantics$MaxConstants$;
+/** @constructor */
+function $h_Lrta_backend_RxSemantics$MaxConstants$() {
+  /*<skip>*/
+}
+$h_Lrta_backend_RxSemantics$MaxConstants$.prototype = $c_Lrta_backend_RxSemantics$MaxConstants$.prototype;
+$c_Lrta_backend_RxSemantics$MaxConstants$.prototype.fromCond__Lrta_syntax_Condition__sci_Set__sci_Map = (function(cond, clocks) {
+  if ((cond instanceof $c_Lrta_syntax_Condition$AtomicCond)) {
+    var x$1 = $as_Lrta_syntax_Condition$AtomicCond(cond);
+    var this$2 = $n(x$1);
+    var x27 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
+    var this$3 = $n(x$1);
+    var this$4 = $n(x$1);
+    var x29 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
+    if ((x27 instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
+      var x$1$1 = $as_Lrta_syntax_UpdateExpr$Var(x27);
+      var this$6 = $n(x$1$1);
+      var x32 = this$6.Lrta_syntax_UpdateExpr$Var__f_q;
+      if ($n(clocks).contains__O__Z(x32)) {
+        var this$7 = $n($p_Lrta_backend_RxSemantics$MaxConstants$__fromExpr__Lrta_syntax_UpdateExpr__Lrta_syntax_Program2$QName__s_Option(this, x29, x32));
+        if (this$7.isEmpty__Z()) {
+          var $$x1 = $m_s_None$()
+        } else {
+          var arg1 = this$7.get__O();
+          var v = $uD(arg1);
+          var this$10 = $n($m_s_Predef$().s_Predef$__f_Map);
+          var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([new $c_T2(x32, v)]));
+          var $$x1 = new $c_s_Some(this$10.from__sc_IterableOnce__sci_Map(elems))
+        };
+        var this$11 = $n($$x1);
+        return $as_sci_Map((this$11.isEmpty__Z() ? ($n($m_s_Predef$().s_Predef$__f_Map), $m_sci_Map$EmptyMap$()) : this$11.get__O()))
+      }
+    };
+    if ((x29 instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
+      var x$1$2 = $as_Lrta_syntax_UpdateExpr$Var(x29);
+      var this$14 = $n(x$1$2);
+      var x24 = this$14.Lrta_syntax_UpdateExpr$Var__f_q;
+      if ($n(clocks).contains__O__Z(x24)) {
+        var this$15 = $n($p_Lrta_backend_RxSemantics$MaxConstants$__fromExpr__Lrta_syntax_UpdateExpr__Lrta_syntax_Program2$QName__s_Option(this, x27, x24));
+        if (this$15.isEmpty__Z()) {
+          var $$x2 = $m_s_None$()
+        } else {
+          var arg1$1 = this$15.get__O();
+          var v$1 = $uD(arg1$1);
+          var this$18 = $n($m_s_Predef$().s_Predef$__f_Map);
+          var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([new $c_T2(x24, v$1)]));
+          var $$x2 = new $c_s_Some(this$18.from__sc_IterableOnce__sci_Map(elems$1))
+        };
+        var this$19 = $n($$x2);
+        return $as_sci_Map((this$19.isEmpty__Z() ? ($n($m_s_Predef$().s_Predef$__f_Map), $m_sci_Map$EmptyMap$()) : this$19.get__O()))
+      }
+    }
+  };
+  if ((cond instanceof $c_Lrta_syntax_Condition$And)) {
+    var x$1$3 = $as_Lrta_syntax_Condition$And(cond);
+    var this$22 = $n(x$1$3);
+    var x15 = this$22.Lrta_syntax_Condition$And__f_left;
+    var this$23 = $n(x$1$3);
+    var x16 = this$23.Lrta_syntax_Condition$And__f_right;
+    return this.mergeMax__sci_Map__sci_Map__sci_Map(this.fromCond__Lrta_syntax_Condition__sci_Set__sci_Map(x15, clocks), this.fromCond__Lrta_syntax_Condition__sci_Set__sci_Map(x16, clocks))
+  };
+  if ((cond instanceof $c_Lrta_syntax_Condition$Or)) {
+    var x$1$4 = $as_Lrta_syntax_Condition$Or(cond);
+    var this$25 = $n(x$1$4);
+    var x11 = this$25.Lrta_syntax_Condition$Or__f_left;
+    var this$26 = $n(x$1$4);
+    var x12 = this$26.Lrta_syntax_Condition$Or__f_right;
+    return this.mergeMax__sci_Map__sci_Map__sci_Map(this.fromCond__Lrta_syntax_Condition__sci_Set__sci_Map(x11, clocks), this.fromCond__Lrta_syntax_Condition__sci_Set__sci_Map(x12, clocks))
+  };
+  $n($m_s_Predef$().s_Predef$__f_Map);
+  return $m_sci_Map$EmptyMap$()
+});
+$c_Lrta_backend_RxSemantics$MaxConstants$.prototype.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map = (function(f, clocks) {
+  var f$tailLocal1 = f;
+  while (true) {
+    var x33 = f$tailLocal1;
+    if ((x33 instanceof $c_Lrta_syntax_LtlFormula$CondProp)) {
+      var x$1 = $as_Lrta_syntax_LtlFormula$CondProp(x33);
+      var this$2 = $n(x$1);
+      var x68 = this$2.Lrta_syntax_LtlFormula$CondProp__f_cond;
+      return this.fromCond__Lrta_syntax_Condition__sci_Set__sci_Map(x68, clocks)
+    };
+    if ((x33 instanceof $c_Lrta_syntax_LtlFormula$Not)) {
+      var x$1$1 = $as_Lrta_syntax_LtlFormula$Not(x33);
+      var this$4 = $n(x$1$1);
+      var x65 = this$4.Lrta_syntax_LtlFormula$Not__f_p;
+      f$tailLocal1 = x65;
+      continue
+    };
+    if ((x33 instanceof $c_Lrta_syntax_LtlFormula$And)) {
+      var x$1$2 = $as_Lrta_syntax_LtlFormula$And(x33);
+      var this$6 = $n(x$1$2);
+      var x61 = this$6.Lrta_syntax_LtlFormula$And__f_p;
+      var this$7 = $n(x$1$2);
+      var x62 = this$7.Lrta_syntax_LtlFormula$And__f_q;
+      return this.mergeMax__sci_Map__sci_Map__sci_Map(this.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(x61, clocks), this.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(x62, clocks))
+    };
+    if ((x33 instanceof $c_Lrta_syntax_LtlFormula$Or)) {
+      var x$1$3 = $as_Lrta_syntax_LtlFormula$Or(x33);
+      var this$9 = $n(x$1$3);
+      var x57 = this$9.Lrta_syntax_LtlFormula$Or__f_p;
+      var this$10 = $n(x$1$3);
+      var x58 = this$10.Lrta_syntax_LtlFormula$Or__f_q;
+      return this.mergeMax__sci_Map__sci_Map__sci_Map(this.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(x57, clocks), this.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(x58, clocks))
+    };
+    if ((x33 instanceof $c_Lrta_syntax_LtlFormula$Impl)) {
+      var x$1$4 = $as_Lrta_syntax_LtlFormula$Impl(x33);
+      var this$12 = $n(x$1$4);
+      var x53 = this$12.Lrta_syntax_LtlFormula$Impl__f_p;
+      var this$13 = $n(x$1$4);
+      var x54 = this$13.Lrta_syntax_LtlFormula$Impl__f_q;
+      return this.mergeMax__sci_Map__sci_Map__sci_Map(this.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(x53, clocks), this.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(x54, clocks))
+    };
+    if ((x33 instanceof $c_Lrta_syntax_LtlFormula$Iff)) {
+      var x$1$5 = $as_Lrta_syntax_LtlFormula$Iff(x33);
+      var this$15 = $n(x$1$5);
+      var x49 = this$15.Lrta_syntax_LtlFormula$Iff__f_p;
+      var this$16 = $n(x$1$5);
+      var x50 = this$16.Lrta_syntax_LtlFormula$Iff__f_q;
+      return this.mergeMax__sci_Map__sci_Map__sci_Map(this.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(x49, clocks), this.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(x50, clocks))
+    };
+    if ((x33 instanceof $c_Lrta_syntax_LtlFormula$Next)) {
+      var x$1$6 = $as_Lrta_syntax_LtlFormula$Next(x33);
+      var this$18 = $n(x$1$6);
+      var x46 = this$18.Lrta_syntax_LtlFormula$Next__f_p;
+      f$tailLocal1 = x46;
+      continue
+    };
+    if ((x33 instanceof $c_Lrta_syntax_LtlFormula$Globally)) {
+      var x$1$7 = $as_Lrta_syntax_LtlFormula$Globally(x33);
+      var this$20 = $n(x$1$7);
+      var x43 = this$20.Lrta_syntax_LtlFormula$Globally__f_p;
+      f$tailLocal1 = x43;
+      continue
+    };
+    if ((x33 instanceof $c_Lrta_syntax_LtlFormula$Eventually)) {
+      var x$1$8 = $as_Lrta_syntax_LtlFormula$Eventually(x33);
+      var this$22 = $n(x$1$8);
+      var x40 = this$22.Lrta_syntax_LtlFormula$Eventually__f_p;
+      f$tailLocal1 = x40;
+      continue
+    };
+    if ((x33 instanceof $c_Lrta_syntax_LtlFormula$Until)) {
+      var x$1$9 = $as_Lrta_syntax_LtlFormula$Until(x33);
+      var this$24 = $n(x$1$9);
+      var x36 = this$24.Lrta_syntax_LtlFormula$Until__f_p;
+      var this$25 = $n(x$1$9);
+      var x37 = this$25.Lrta_syntax_LtlFormula$Until__f_q;
+      return this.mergeMax__sci_Map__sci_Map__sci_Map(this.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(x36, clocks), this.fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(x37, clocks))
+    };
+    $n($m_s_Predef$().s_Predef$__f_Map);
+    return $m_sci_Map$EmptyMap$()
+  }
+});
+$c_Lrta_backend_RxSemantics$MaxConstants$.prototype.mergeMax__sci_Map__sci_Map__sci_Map = (function(a, b) {
+  var this$1 = $n($n(a).keySet__sci_Set());
+  var that = $n(b).keySet__sci_Set();
+  var $$x1 = $n($as_sc_IterableOnceOps($n(this$1.concat__sc_IterableOnce__sc_SetOps(that)).map__F1__O(new $c_sjsr_AnonFunction1(((k) => {
+    var k$1 = $as_Lrta_syntax_Program2$QName(k);
+    var a$1 = $uD($n(a).getOrElse__O__F0__O(k$1, new $c_sjsr_AnonFunction0((() => 0.0))));
+    var b$1 = $uD($n(b).getOrElse__O__F0__O(k$1, new $c_sjsr_AnonFunction0((() => 0.0))));
+    var y = $uD(Math.max(a$1, b$1));
+    return new $c_T2(k$1, y)
+  })))));
+  var this$6 = $m_s_$less$colon$less$();
+  return $n($$x1).toMap__s_$less$colon$less__sci_Map(this$6.s_$less$colon$less$__f_singleton)
+});
+$c_Lrta_backend_RxSemantics$MaxConstants$.prototype.compute__Lrta_syntax_Program2$RxGraph__sci_Map = (function(rx) {
+  var clocks = $n(rx).Lrta_syntax_Program2$RxGraph__f_clocks;
+  $n($m_s_Predef$().s_Predef$__f_Map);
+  var elem = $m_sci_Map$EmptyMap$();
+  var acc = new $c_sr_ObjectRef(elem);
+  var this$3 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_invariants);
+  var this$4 = new $c_sc_MapOps$$anon$1(this$3);
+  var it = this$4.iterator__sc_Iterator();
+  while ($n(it).hasNext__Z()) {
+    var arg1 = $n(it).next__O();
+    var c = $as_Lrta_syntax_Condition(arg1);
+    var ev$16 = this.mergeMax__sci_Map__sci_Map__sci_Map($as_sci_Map(acc.sr_ObjectRef__f_elem), this.fromCond__Lrta_syntax_Condition__sci_Set__sci_Map(c, clocks));
+    acc.sr_ObjectRef__f_elem = ev$16;
+    ev$16 = null
+  };
+  var this$5 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_edgeConditions);
+  var this$8 = new $c_sc_MapOps$$anon$1(this$5);
+  var this$7 = $m_s_$less$colon$less$();
+  var asIterable = this$7.s_$less$colon$less$__f_singleton;
+  $n($as_sc_IterableOnceOps($f_sc_IterableOps__flatMap__F1__O(this$8, asIterable))).foreach__F1__V(new $c_sjsr_AnonFunction1(((c$2) => {
+    var c$1 = $as_Lrta_syntax_Condition(c$2);
+    var ev$17 = this.mergeMax__sci_Map__sci_Map__sci_Map($as_sci_Map(acc.sr_ObjectRef__f_elem), this.fromCond__Lrta_syntax_Condition__sci_Set__sci_Map(c$1, clocks));
+    acc.sr_ObjectRef__f_elem = ev$17;
+    ev$17 = null
+  })));
+  var this$9 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_delays);
+  var this$10 = new $c_sc_MapOps$$anon$1(this$9);
+  var it$1 = this$10.iterator__sc_Iterator();
+  while ($n(it$1).hasNext__Z()) {
+    var arg1$1 = $n(it$1).next__O();
+    var x$1 = $as_T2(arg1$1);
+    matchResult4: {
+      if ((x$1 !== null)) {
+        var clock = $as_Lrta_syntax_Program2$QName($n(x$1)._1__O());
+        var v = $uD($n(x$1)._2__O());
+        if ($n(clocks).contains__O__Z(clock)) {
+          var $$x1 = $as_sci_Map(acc.sr_ObjectRef__f_elem);
+          var this$13 = $n($m_s_Predef$().s_Predef$__f_Map);
+          var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([new $c_T2(clock, v)]));
+          var ev$18 = this.mergeMax__sci_Map__sci_Map__sci_Map($$x1, this$13.from__sc_IterableOnce__sci_Map(elems));
+          acc.sr_ObjectRef__f_elem = ev$18;
+          ev$18 = null
+        };
+        break matchResult4
+      };
+      throw new $c_s_MatchError(x$1)
+    }
+  };
+  $n(clocks).foreach__F1__V(new $c_sjsr_AnonFunction1(((c$3) => {
+    var c$4 = $as_Lrta_syntax_Program2$QName(c$3);
+    if ((!$n($as_sci_Map(acc.sr_ObjectRef__f_elem)).contains__O__Z(c$4))) {
+      var this$16 = $n($as_sci_Map(acc.sr_ObjectRef__f_elem));
+      var ev$19 = $as_sci_Map(this$16.updated__O__O__sci_MapOps(c$4, 0.0));
+      acc.sr_ObjectRef__f_elem = ev$19;
+      ev$19 = null
+    }
+  })));
+  return $as_sci_Map(acc.sr_ObjectRef__f_elem)
+});
+var $d_Lrta_backend_RxSemantics$MaxConstants$ = new $TypeData().initClass({
+  Lrta_backend_RxSemantics$MaxConstants$: 0
+}, false, "rta.backend.RxSemantics$MaxConstants$", {
+  Lrta_backend_RxSemantics$MaxConstants$: 1,
+  O: 1
+});
+$c_Lrta_backend_RxSemantics$MaxConstants$.prototype.$classData = $d_Lrta_backend_RxSemantics$MaxConstants$;
+var $n_Lrta_backend_RxSemantics$MaxConstants$;
+function $m_Lrta_backend_RxSemantics$MaxConstants$() {
+  if ((!$n_Lrta_backend_RxSemantics$MaxConstants$)) {
+    $n_Lrta_backend_RxSemantics$MaxConstants$ = new $c_Lrta_backend_RxSemantics$MaxConstants$()
+  };
+  return $n_Lrta_backend_RxSemantics$MaxConstants$
 }
 function $p_Lrta_backend_TraceGenerator$__loop$1__Lrta_syntax_Program2$RxGraph__sci_List__sci_List__sci_List($thiz, current, remaining, acc) {
   var acc$tailLocal1 = acc;
@@ -9655,6 +10680,34 @@ function $p_Lrta_backend_TraceGenerator$__loop$1__Lrta_syntax_Program2$RxGraph__
     throw new $c_s_MatchError(x6)
   }
 }
+function $p_Lrta_backend_TraceGenerator$__findMaxDelay$1__Lrta_syntax_Program2$RxGraph__D__D($thiz, rx, limit) {
+  var this$1 = $n($m_Lrta_backend_RxSemantics$().advanceTimeBy__Lrta_syntax_Program2$RxGraph__D__s_Option(rx, limit));
+  if ((!this$1.isEmpty__Z())) {
+    return limit
+  };
+  var elem = 0.0;
+  elem = 0.0;
+  var elem$1 = 0.0;
+  elem$1 = limit;
+  var i = 1;
+  while (true) {
+    var mid = ((elem + elem$1) / 2.0);
+    var this$7 = $n($m_Lrta_backend_RxSemantics$().advanceTimeBy__Lrta_syntax_Program2$RxGraph__D__s_Option(rx, mid));
+    if ((!this$7.isEmpty__Z())) {
+      var ev$4 = mid;
+      elem = ev$4
+    } else {
+      var ev$5 = mid;
+      elem$1 = ev$5
+    };
+    if ((i === 50)) {
+      break
+    };
+    i = ((1 + i) | 0)
+  };
+  var y = (elem - 2.0E-6);
+  return $uD(Math.max(0.0, y))
+}
 /** @constructor */
 function $c_Lrta_backend_TraceGenerator$() {
   /*<skip>*/
@@ -9667,121 +10720,124 @@ function $h_Lrta_backend_TraceGenerator$() {
 }
 $h_Lrta_backend_TraceGenerator$.prototype = $c_Lrta_backend_TraceGenerator$.prototype;
 $c_Lrta_backend_TraceGenerator$.prototype.randomTrace__Lrta_syntax_Program2$RxGraph__I__T2 = (function(start, length) {
-  $n($m_s_package$().s_package$__f_List);
   var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$RxGraph.getArrayOf().constr)([start]));
-  var elem = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems);
-  var elem$1 = null;
-  elem$1 = elem;
-  $n($m_s_package$().s_package$__f_List);
+  var trace = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems);
   var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([]));
-  var elem$2 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$1);
-  var elem$3 = null;
-  elem$3 = elem$2;
-  var elem$4 = null;
-  elem$4 = start;
+  var labels = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems$1);
+  var elem = null;
+  elem = start;
   var rand = $ct_s_util_Random__(new $c_s_util_Random());
-  var isEmpty = (length <= 0);
-  var scala$collection$immutable$Range$$lastElement = (((-1) + length) | 0);
-  if ((!isEmpty)) {
-    var i = 0;
-    while (true) {
-      var this$11 = $n($m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set($as_Lrta_syntax_Program2$RxGraph(elem$4)));
-      $m_sci_List$();
-      var nexts = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$11);
-      var this$13 = $n(nexts);
-      if ((!this$13.isEmpty__Z())) {
-        var this$15 = $n(nexts);
-        var this$14 = $n(nexts);
-        var n = this$14.length__I();
-        var n$1 = $n(rand.s_util_Random__f_self).nextInt__I__I(n);
-        var step = $as_T2($f_sc_LinearSeqOps__apply__I__O(this$15, n$1));
-        var ev$1 = $as_Lrta_syntax_Program2$RxGraph($n(step)._2__O());
-        elem$4 = ev$1;
-        ev$1 = null;
-        var this$16 = $n($as_sci_List(elem$1));
-        var elem$5 = $as_Lrta_syntax_Program2$RxGraph(elem$4);
-        var ev$2 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$16, elem$5));
-        elem$1 = ev$2;
-        ev$2 = null;
-        var this$17 = $n($as_sci_List(elem$3));
-        var elem$6 = $n($as_Lrta_syntax_Program2$QName($n($as_T4($n(step)._1__O())).T4__f__4)).show__T();
-        var ev$3 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$17, elem$6));
-        elem$3 = ev$3;
-        ev$3 = null
-      };
-      if ((i === scala$collection$immutable$Range$$lastElement)) {
-        break
-      };
-      i = ((1 + i) | 0)
+  var local = new $c_s_util_boundary$Label();
+  try {
+    var isEmpty = (length <= 0);
+    var scala$collection$immutable$Range$$lastElement = (((-1) + length) | 0);
+    if ((!isEmpty)) {
+      var i = 0;
+      while (true) {
+        var this$9 = $n($m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set($as_Lrta_syntax_Program2$RxGraph(elem)));
+        $m_sci_List$();
+        var nexts = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$9);
+        var this$11 = $n(nexts);
+        if ((!this$11.isEmpty__Z())) {
+          var this$13 = $n(nexts);
+          var this$12 = $n(nexts);
+          var n = this$12.length__I();
+          var n$1 = $n(rand.s_util_Random__f_self).nextInt__I__I(n);
+          var step = $as_T2($f_sc_LinearSeqOps__apply__I__O(this$13, n$1));
+          var ev$1 = $as_Lrta_syntax_Program2$RxGraph($n(step)._2__O());
+          elem = ev$1;
+          ev$1 = null;
+          var this$14 = $n(trace);
+          var elem$1 = $as_Lrta_syntax_Program2$RxGraph(elem);
+          this$14.addOne__O__scm_ListBuffer(elem$1);
+          var this$15 = $n(labels);
+          var elem$2 = $n($as_Lrta_syntax_Program2$QName($n($as_T4($n(step)._1__O())).T4__f__4)).show__T();
+          this$15.addOne__O__scm_ListBuffer(elem$2)
+        } else {
+          $m_s_util_boundary$().break__s_util_boundary$Label__E(local)
+        };
+        if ((i === scala$collection$immutable$Range$$lastElement)) {
+          break
+        };
+        i = ((1 + i) | 0)
+      }
+    }
+  } catch (e) {
+    if ((e instanceof $c_s_util_boundary$Break)) {
+      var ex = $as_s_util_boundary$Break(e);
+      if (($n(ex).s_util_boundary$Break__f_label !== local)) {
+        throw $n(ex)
+      }
+    } else {
+      throw e
     }
   };
-  var _1 = $as_sci_List(elem$1);
-  var _2 = $as_sci_List(elem$3);
+  var _1 = $n(trace).toList__sci_List();
+  var _2 = $n(labels).toList__sci_List();
   return new $c_T2(_1, _2)
 });
 $c_Lrta_backend_TraceGenerator$.prototype.randomTraceDetailed__Lrta_syntax_Program2$RxGraph__I__T3 = (function(start, length) {
-  $n($m_s_package$().s_package$__f_List);
   var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$RxGraph.getArrayOf().constr)([start]));
-  var elem = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems);
-  var elem$1 = null;
-  elem$1 = elem;
-  $n($m_s_package$().s_package$__f_List);
+  var trace = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems);
   var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([]));
-  var elem$2 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$1);
-  var elem$3 = null;
-  elem$3 = elem$2;
-  $n($m_s_package$().s_package$__f_List);
+  var labels = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems$1);
   var elems$2 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([]));
-  var elem$4 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$2);
-  var elem$5 = null;
-  elem$5 = elem$4;
-  var elem$6 = null;
-  elem$6 = start;
+  var edgeIds = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems$2);
+  var elem = null;
+  elem = start;
   var rand = $ct_s_util_Random__(new $c_s_util_Random());
-  var isEmpty = (length <= 0);
-  var scala$collection$immutable$Range$$lastElement = (((-1) + length) | 0);
-  if ((!isEmpty)) {
-    var i = 0;
-    while (true) {
-      var this$13 = $n($m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set($as_Lrta_syntax_Program2$RxGraph(elem$6)));
-      $m_sci_List$();
-      var nexts = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$13);
-      var this$15 = $n(nexts);
-      if ((!this$15.isEmpty__Z())) {
-        var this$17 = $n(nexts);
-        var this$16 = $n(nexts);
-        var n = this$16.length__I();
-        var n$1 = $n(rand.s_util_Random__f_self).nextInt__I__I(n);
-        var step = $as_T2($f_sc_LinearSeqOps__apply__I__O(this$17, n$1));
-        var ev$4 = $as_Lrta_syntax_Program2$RxGraph($n(step)._2__O());
-        elem$6 = ev$4;
-        ev$4 = null;
-        var this$18 = $n($as_sci_List(elem$1));
-        var elem$7 = $as_Lrta_syntax_Program2$RxGraph(elem$6);
-        var ev$5 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$18, elem$7));
-        elem$1 = ev$5;
-        ev$5 = null;
-        var edge = $as_T4($n(step)._1__O());
-        var this$19 = $n($as_sci_List(elem$3));
-        var elem$8 = $n($as_Lrta_syntax_Program2$QName($n(edge).T4__f__4)).show__T();
-        var ev$6 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$19, elem$8));
-        elem$3 = ev$6;
-        ev$6 = null;
-        var this$20 = $n($as_sci_List(elem$5));
-        var elem$9 = ((((((("event_" + $n(edge).T4__f__1) + "_") + $n(edge).T4__f__2) + "_") + $n(edge).T4__f__3) + "_") + $n(edge).T4__f__4);
-        var ev$7 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$20, elem$9));
-        elem$5 = ev$7;
-        ev$7 = null
-      };
-      if ((i === scala$collection$immutable$Range$$lastElement)) {
-        break
-      };
-      i = ((1 + i) | 0)
+  var local = new $c_s_util_boundary$Label();
+  try {
+    var isEmpty = (length <= 0);
+    var scala$collection$immutable$Range$$lastElement = (((-1) + length) | 0);
+    if ((!isEmpty)) {
+      var i = 0;
+      while (true) {
+        var this$10 = $n($m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set($as_Lrta_syntax_Program2$RxGraph(elem)));
+        $m_sci_List$();
+        var nexts = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$10);
+        var this$12 = $n(nexts);
+        if ((!this$12.isEmpty__Z())) {
+          var this$14 = $n(nexts);
+          var this$13 = $n(nexts);
+          var n = this$13.length__I();
+          var n$1 = $n(rand.s_util_Random__f_self).nextInt__I__I(n);
+          var step = $as_T2($f_sc_LinearSeqOps__apply__I__O(this$14, n$1));
+          var ev$2 = $as_Lrta_syntax_Program2$RxGraph($n(step)._2__O());
+          elem = ev$2;
+          ev$2 = null;
+          var this$15 = $n(trace);
+          var elem$1 = $as_Lrta_syntax_Program2$RxGraph(elem);
+          this$15.addOne__O__scm_ListBuffer(elem$1);
+          var edge = $as_T4($n(step)._1__O());
+          var this$16 = $n(labels);
+          var elem$2 = $n($as_Lrta_syntax_Program2$QName($n(edge).T4__f__4)).show__T();
+          this$16.addOne__O__scm_ListBuffer(elem$2);
+          var this$17 = $n(edgeIds);
+          var elem$3 = ((((((("event_" + $n(edge).T4__f__1) + "_") + $n(edge).T4__f__2) + "_") + $n(edge).T4__f__3) + "_") + $n(edge).T4__f__4);
+          this$17.addOne__O__scm_ListBuffer(elem$3)
+        } else {
+          $m_s_util_boundary$().break__s_util_boundary$Label__E(local)
+        };
+        if ((i === scala$collection$immutable$Range$$lastElement)) {
+          break
+        };
+        i = ((1 + i) | 0)
+      }
+    }
+  } catch (e) {
+    if ((e instanceof $c_s_util_boundary$Break)) {
+      var ex = $as_s_util_boundary$Break(e);
+      if (($n(ex).s_util_boundary$Break__f_label !== local)) {
+        throw $n(ex)
+      }
+    } else {
+      throw e
     }
   };
-  var _1 = $as_sci_List(elem$1);
-  var _2 = $as_sci_List(elem$3);
-  var _3 = $as_sci_List(elem$5);
+  var _1 = $n(trace).toList__sci_List();
+  var _2 = $n(labels).toList__sci_List();
+  var _3 = $n(edgeIds).toList__sci_List();
   return new $c_T3(_1, _2, _3)
 });
 $c_Lrta_backend_TraceGenerator$.prototype.followPath__Lrta_syntax_Program2$RxGraph__sci_List__sci_List = (function(start, labels) {
@@ -9790,149 +10846,180 @@ $c_Lrta_backend_TraceGenerator$.prototype.followPath__Lrta_syntax_Program2$RxGra
   return $p_Lrta_backend_TraceGenerator$__loop$1__Lrta_syntax_Program2$RxGraph__sci_List__sci_List__sci_List(this, start, labels, $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems))
 });
 $c_Lrta_backend_TraceGenerator$.prototype.randomTimedTraceDetailed__Lrta_syntax_Program2$RxGraph__I__T3 = (function(start, length) {
-  $n($m_s_package$().s_package$__f_List);
   var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$RxGraph.getArrayOf().constr)([start]));
-  var elem = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems);
-  var elem$1 = null;
-  elem$1 = elem;
-  $n($m_s_package$().s_package$__f_List);
+  var trace = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems);
   var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([]));
-  var elem$2 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$1);
-  var elem$3 = null;
-  elem$3 = elem$2;
-  $n($m_s_package$().s_package$__f_List);
+  var labels = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems$1);
   var elems$2 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([]));
-  var elem$4 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$2);
-  var elem$5 = null;
-  elem$5 = elem$4;
+  var edgeIds = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems$2);
   var current = new $c_sr_ObjectRef(start);
   var rand = $ct_s_util_Random__(new $c_s_util_Random());
-  var isEmpty = (length <= 0);
-  var scala$collection$immutable$Range$$lastElement = (((-1) + length) | 0);
-  if ((!isEmpty)) {
-    var i = 0;
-    while (true) {
-      var this$13 = $n($m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set($as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem)));
-      $m_sci_List$();
-      var nextEdges = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$13);
-      var this$15 = $n($n($as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem)).Lrta_syntax_Program2$RxGraph__f_clocks);
-      var canDelay = (!this$15.isEmpty__Z());
-      if ((!($n(nextEdges).isEmpty__Z() && (!canDelay)))) {
-        var doDelay = (canDelay && ($n(nextEdges).isEmpty__Z() || $n(rand.s_util_Random__f_self).nextBoolean__Z()));
-        if (doDelay) {
-          var pendingDiffs = $as_sci_Set($n($as_sc_IterableOps($n($n($as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem)).Lrta_syntax_Program2$RxGraph__f_pendingDelays).map__F1__O(new $c_sjsr_AnonFunction1(((current) => ((x$1$2) => {
-            var x$1 = $as_T4(x$1$2);
-            if ((x$1 !== null)) {
-              var clock = $as_Lrta_syntax_Program2$QName($n(x$1).T4__f__3);
-              var targetVal = $uD($n(x$1).T4__f__4);
-              return (targetVal - $uD($n($n($as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem)).Lrta_syntax_Program2$RxGraph__f_clock_env).getOrElse__O__F0__O(clock, new $c_sjsr_AnonFunction0((() => 0.0)))))
-            };
-            throw new $c_s_MatchError(x$1)
-          }))(current))))).filter__F1__O(new $c_sjsr_AnonFunction1(((_$2) => {
-            var _$2$1 = $uD(_$2);
-            return (_$2$1 > 1.0E-5)
-          }))));
-          var this$17 = $n(pendingDiffs);
-          if ((!this$17.isEmpty__Z())) {
-            var this$18 = $n(pendingDiffs);
-            var ord = $m_s_math_Ordering$DeprecatedDoubleOrdering$();
-            var delayVal = $uD($f_sc_IterableOnceOps__min__s_math_Ordering__O(this$18, ord))
-          } else {
-            var delayVal = (0.1 + (3.0 * $n(rand.s_util_Random__f_self).nextDouble__D()))
-          };
-          matchResult6: {
-            var x15 = $m_Lrta_backend_RxSemantics$().advanceTimeBy__Lrta_syntax_Program2$RxGraph__D__s_Option($as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem), delayVal);
-            if ((x15 instanceof $c_s_Some)) {
-              var nextState = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x15)).s_Some__f_value);
-              var ev$8 = nextState;
-              current.sr_ObjectRef__f_elem = ev$8;
-              ev$8 = null;
-              var this$19 = $n($as_sci_List(elem$1));
-              var elem$6 = $as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem);
-              var ev$9 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$19, elem$6));
-              elem$1 = ev$9;
-              ev$9 = null;
-              var this$20 = $n($as_sci_List(elem$3));
-              var elem$7 = $m_sc_StringOps$().format$extension__T__sci_Seq__T("Delay(%.2fs)", $m_sr_ScalaRunTime$().genericWrapArray__O__sci_ArraySeq(new $ac_O([delayVal])));
-              var ev$10 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$20, elem$7));
-              elem$3 = ev$10;
-              ev$10 = null;
-              var this$21 = $n($as_sci_List(elem$5));
-              var ev$11 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$21, "delay_node"));
-              elem$5 = ev$11;
-              ev$11 = null;
-              break matchResult6
-            };
-            var x = $m_s_None$();
-            if ((x === x15)) {
-              var this$22 = $n(nextEdges);
-              if ((!this$22.isEmpty__Z())) {
-                var this$24 = $n(nextEdges);
-                var this$23 = $n(nextEdges);
-                var n = this$23.length__I();
-                var n$1 = $n(rand.s_util_Random__f_self).nextInt__I__I(n);
-                var step = $as_T2($f_sc_LinearSeqOps__apply__I__O(this$24, n$1));
-                var ev$12 = $as_Lrta_syntax_Program2$RxGraph($n(step)._2__O());
-                current.sr_ObjectRef__f_elem = ev$12;
-                ev$12 = null;
-                var this$25 = $n($as_sci_List(elem$1));
-                var elem$8 = $as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem);
-                var ev$13 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$25, elem$8));
-                elem$1 = ev$13;
-                ev$13 = null;
-                var this$26 = $n($as_sci_List(elem$3));
-                var elem$9 = $n($as_Lrta_syntax_Program2$QName($n($as_T4($n(step)._1__O())).T4__f__4)).show__T();
-                var ev$14 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$26, elem$9));
-                elem$3 = ev$14;
-                ev$14 = null;
-                var this$27 = $n($as_sci_List(elem$5));
-                var elem$10 = ((((((("event_" + $n($as_T4($n(step)._1__O())).T4__f__1) + "_") + $n($as_T4($n(step)._1__O())).T4__f__2) + "_") + $n($as_T4($n(step)._1__O())).T4__f__3) + "_") + $n($as_T4($n(step)._1__O())).T4__f__4);
-                var ev$15 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$27, elem$10));
-                elem$5 = ev$15;
-                ev$15 = null
-              };
-              break matchResult6
-            };
-            throw new $c_s_MatchError(x15)
-          }
+  var local = new $c_s_util_boundary$Label();
+  try {
+    var isEmpty = (length <= 0);
+    var scala$collection$immutable$Range$$lastElement = (((-1) + length) | 0);
+    if ((!isEmpty)) {
+      var i = 0;
+      while (true) {
+        var this$10 = $n($m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set($as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem)));
+        $m_sci_List$();
+        var nextEdges = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$10);
+        var this$12 = $n($n($as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem)).Lrta_syntax_Program2$RxGraph__f_clocks);
+        var canDelay = (!this$12.isEmpty__Z());
+        if (($n(nextEdges).isEmpty__Z() && (!canDelay))) {
+          $m_s_util_boundary$().break__s_util_boundary$Label__E(local)
+        } else if ((!canDelay)) {
+          var this$14 = $n(nextEdges);
+          var this$13 = $n(nextEdges);
+          var n = this$13.length__I();
+          var n$1 = $n(rand.s_util_Random__f_self).nextInt__I__I(n);
+          var step = $as_T2($f_sc_LinearSeqOps__apply__I__O(this$14, n$1));
+          var ev$3 = $as_Lrta_syntax_Program2$RxGraph($n(step)._2__O());
+          current.sr_ObjectRef__f_elem = ev$3;
+          ev$3 = null;
+          var this$15 = $n(trace);
+          var elem = $as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem);
+          this$15.addOne__O__scm_ListBuffer(elem);
+          var this$16 = $n(labels);
+          var elem$1 = $n($as_Lrta_syntax_Program2$QName($n($as_T4($n(step)._1__O())).T4__f__4)).show__T();
+          this$16.addOne__O__scm_ListBuffer(elem$1);
+          var this$17 = $n(edgeIds);
+          var elem$2 = ((((((("event_" + $n($as_T4($n(step)._1__O())).T4__f__1) + "_") + $n($as_T4($n(step)._1__O())).T4__f__2) + "_") + $n($as_T4($n(step)._1__O())).T4__f__3) + "_") + $n($as_T4($n(step)._1__O())).T4__f__4);
+          this$17.addOne__O__scm_ListBuffer(elem$2)
         } else {
-          var this$28 = $n(nextEdges);
-          if ((!this$28.isEmpty__Z())) {
-            var this$30 = $n(nextEdges);
-            var this$29 = $n(nextEdges);
-            var n$2 = this$29.length__I();
-            var n$3 = $n(rand.s_util_Random__f_self).nextInt__I__I(n$2);
-            var step$2 = $as_T2($f_sc_LinearSeqOps__apply__I__O(this$30, n$3));
-            var ev$16 = $as_Lrta_syntax_Program2$RxGraph($n(step$2)._2__O());
-            current.sr_ObjectRef__f_elem = ev$16;
-            ev$16 = null;
-            var this$31 = $n($as_sci_List(elem$1));
-            var elem$11 = $as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem);
-            var ev$17 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$31, elem$11));
-            elem$1 = ev$17;
-            ev$17 = null;
-            var this$32 = $n($as_sci_List(elem$3));
-            var elem$12 = $n($as_Lrta_syntax_Program2$QName($n($as_T4($n(step$2)._1__O())).T4__f__4)).show__T();
-            var ev$18 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$32, elem$12));
-            elem$3 = ev$18;
-            ev$18 = null;
-            var this$33 = $n($as_sci_List(elem$5));
-            var elem$13 = ((((((("event_" + $n($as_T4($n(step$2)._1__O())).T4__f__1) + "_") + $n($as_T4($n(step$2)._1__O())).T4__f__2) + "_") + $n($as_T4($n(step$2)._1__O())).T4__f__3) + "_") + $n($as_T4($n(step$2)._1__O())).T4__f__4);
-            var ev$19 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$33, elem$13));
-            elem$5 = ev$19;
-            ev$19 = null
+          var maxDelay = $p_Lrta_backend_TraceGenerator$__findMaxDelay$1__Lrta_syntax_Program2$RxGraph__D__D(this, $as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem), 100.0);
+          if ((maxDelay < 0.001)) {
+            var this$18 = $n(nextEdges);
+            if ((!this$18.isEmpty__Z())) {
+              var this$20 = $n(nextEdges);
+              var this$19 = $n(nextEdges);
+              var n$2 = this$19.length__I();
+              var n$3 = $n(rand.s_util_Random__f_self).nextInt__I__I(n$2);
+              var step$2 = $as_T2($f_sc_LinearSeqOps__apply__I__O(this$20, n$3));
+              var ev$6 = $as_Lrta_syntax_Program2$RxGraph($n(step$2)._2__O());
+              current.sr_ObjectRef__f_elem = ev$6;
+              ev$6 = null;
+              var this$21 = $n(trace);
+              var elem$3 = $as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem);
+              this$21.addOne__O__scm_ListBuffer(elem$3);
+              var this$22 = $n(labels);
+              var elem$4 = $n($as_Lrta_syntax_Program2$QName($n($as_T4($n(step$2)._1__O())).T4__f__4)).show__T();
+              this$22.addOne__O__scm_ListBuffer(elem$4);
+              var this$23 = $n(edgeIds);
+              var elem$5 = ((((((("event_" + $n($as_T4($n(step$2)._1__O())).T4__f__1) + "_") + $n($as_T4($n(step$2)._1__O())).T4__f__2) + "_") + $n($as_T4($n(step$2)._1__O())).T4__f__3) + "_") + $n($as_T4($n(step$2)._1__O())).T4__f__4);
+              this$23.addOne__O__scm_ListBuffer(elem$5)
+            } else {
+              $m_s_util_boundary$().break__s_util_boundary$Label__E(local)
+            }
+          } else {
+            var doDelay = ($n(nextEdges).isEmpty__Z() || $n(rand.s_util_Random__f_self).nextBoolean__Z());
+            if (doDelay) {
+              var pendingDiffs = $as_sci_Set($n($as_sc_IterableOps($n($n($as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem)).Lrta_syntax_Program2$RxGraph__f_pendingDelays).map__F1__O(new $c_sjsr_AnonFunction1(((current) => ((x$1$2) => {
+                var x$1 = $as_T4(x$1$2);
+                if ((x$1 !== null)) {
+                  var clock = $as_Lrta_syntax_Program2$QName($n(x$1).T4__f__3);
+                  var targetVal = $uD($n(x$1).T4__f__4);
+                  return (targetVal - $uD($n($n($as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem)).Lrta_syntax_Program2$RxGraph__f_clock_env).getOrElse__O__F0__O(clock, new $c_sjsr_AnonFunction0((() => 0.0)))))
+                };
+                throw new $c_s_MatchError(x$1)
+              }))(current))))).filter__F1__O(new $c_sjsr_AnonFunction1(((_$2) => {
+                var _$2$1 = $uD(_$2);
+                return (_$2$1 > 1.0E-5)
+              }))));
+              var this$25 = $n(pendingDiffs);
+              if ((!this$25.isEmpty__Z())) {
+                var this$26 = $n(pendingDiffs);
+                var ord = $m_s_math_Ordering$DeprecatedDoubleOrdering$();
+                var baseDelay = $uD($f_sc_IterableOnceOps__min__s_math_Ordering__O(this$26, ord))
+              } else {
+                var baseDelay = (0.1 + (3.0 * $n(rand.s_util_Random__f_self).nextDouble__D()))
+              };
+              var delayVal = $uD(Math.min(baseDelay, maxDelay));
+              matchResult7: {
+                var x16 = $m_Lrta_backend_RxSemantics$().advanceTimeBy__Lrta_syntax_Program2$RxGraph__D__s_Option($as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem), delayVal);
+                if ((x16 instanceof $c_s_Some)) {
+                  var nextState = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x16)).s_Some__f_value);
+                  var ev$7 = nextState;
+                  current.sr_ObjectRef__f_elem = ev$7;
+                  ev$7 = null;
+                  var this$29 = $n(trace);
+                  var elem$6 = $as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem);
+                  this$29.addOne__O__scm_ListBuffer(elem$6);
+                  var this$30 = $n(labels);
+                  var elem$7 = $m_sc_StringOps$().format$extension__T__sci_Seq__T("Delay(%.2fs)", $m_sr_ScalaRunTime$().genericWrapArray__O__sci_ArraySeq(new $ac_O([delayVal])));
+                  this$30.addOne__O__scm_ListBuffer(elem$7);
+                  var this$31 = $n(edgeIds);
+                  this$31.addOne__O__scm_ListBuffer("delay_node");
+                  break matchResult7
+                };
+                var x = $m_s_None$();
+                if ((x === x16)) {
+                  var this$32 = $n(nextEdges);
+                  if ((!this$32.isEmpty__Z())) {
+                    var this$34 = $n(nextEdges);
+                    var this$33 = $n(nextEdges);
+                    var n$4 = this$33.length__I();
+                    var n$5 = $n(rand.s_util_Random__f_self).nextInt__I__I(n$4);
+                    var step$3 = $as_T2($f_sc_LinearSeqOps__apply__I__O(this$34, n$5));
+                    var ev$8 = $as_Lrta_syntax_Program2$RxGraph($n(step$3)._2__O());
+                    current.sr_ObjectRef__f_elem = ev$8;
+                    ev$8 = null;
+                    var this$35 = $n(trace);
+                    var elem$8 = $as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem);
+                    this$35.addOne__O__scm_ListBuffer(elem$8);
+                    var this$36 = $n(labels);
+                    var elem$9 = $n($as_Lrta_syntax_Program2$QName($n($as_T4($n(step$3)._1__O())).T4__f__4)).show__T();
+                    this$36.addOne__O__scm_ListBuffer(elem$9);
+                    var this$37 = $n(edgeIds);
+                    var elem$10 = ((((((("event_" + $n($as_T4($n(step$3)._1__O())).T4__f__1) + "_") + $n($as_T4($n(step$3)._1__O())).T4__f__2) + "_") + $n($as_T4($n(step$3)._1__O())).T4__f__3) + "_") + $n($as_T4($n(step$3)._1__O())).T4__f__4);
+                    this$37.addOne__O__scm_ListBuffer(elem$10);
+                    break matchResult7
+                  } else {
+                    $m_s_util_boundary$().break__s_util_boundary$Label__E(local)
+                  }
+                };
+                throw new $c_s_MatchError(x16)
+              }
+            } else {
+              var this$39 = $n(nextEdges);
+              var this$38 = $n(nextEdges);
+              var n$6 = this$38.length__I();
+              var n$7 = $n(rand.s_util_Random__f_self).nextInt__I__I(n$6);
+              var step$4 = $as_T2($f_sc_LinearSeqOps__apply__I__O(this$39, n$7));
+              var ev$9 = $as_Lrta_syntax_Program2$RxGraph($n(step$4)._2__O());
+              current.sr_ObjectRef__f_elem = ev$9;
+              ev$9 = null;
+              var this$40 = $n(trace);
+              var elem$11 = $as_Lrta_syntax_Program2$RxGraph(current.sr_ObjectRef__f_elem);
+              this$40.addOne__O__scm_ListBuffer(elem$11);
+              var this$41 = $n(labels);
+              var elem$12 = $n($as_Lrta_syntax_Program2$QName($n($as_T4($n(step$4)._1__O())).T4__f__4)).show__T();
+              this$41.addOne__O__scm_ListBuffer(elem$12);
+              var this$42 = $n(edgeIds);
+              var elem$13 = ((((((("event_" + $n($as_T4($n(step$4)._1__O())).T4__f__1) + "_") + $n($as_T4($n(step$4)._1__O())).T4__f__2) + "_") + $n($as_T4($n(step$4)._1__O())).T4__f__3) + "_") + $n($as_T4($n(step$4)._1__O())).T4__f__4);
+              this$42.addOne__O__scm_ListBuffer(elem$13)
+            }
           }
-        }
-      };
-      if ((i === scala$collection$immutable$Range$$lastElement)) {
-        break
-      };
-      i = ((1 + i) | 0)
+        };
+        if ((i === scala$collection$immutable$Range$$lastElement)) {
+          break
+        };
+        i = ((1 + i) | 0)
+      }
+    }
+  } catch (e) {
+    if ((e instanceof $c_s_util_boundary$Break)) {
+      var ex = $as_s_util_boundary$Break(e);
+      if (($n(ex).s_util_boundary$Break__f_label !== local)) {
+        throw $n(ex)
+      }
+    } else {
+      throw e
     }
   };
-  var _1 = $as_sci_List(elem$1);
-  var _2 = $as_sci_List(elem$3);
-  var _3 = $as_sci_List(elem$5);
+  var _1 = $n(trace).toList__sci_List();
+  var _2 = $n(labels).toList__sci_List();
+  var _3 = $n(edgeIds).toList__sci_List();
   return new $c_T3(_1, _2, _3)
 });
 var $d_Lrta_backend_TraceGenerator$ = new $TypeData().initClass({
@@ -10240,65 +11327,44 @@ function $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Progra
     return new $c_Lrta_syntax_Program2$QName(n$1)
   }
 }
-function $p_Lrta_backend_UppaalConverter3$__getPos$1__sjs_js_Dynamic__T__Lrta_backend_UppaalConverter3$Point($thiz, nodesPos$1, id) {
-  var p = nodesPos$1[id];
-  if (((p !== (void 0)) && (p !== null))) {
-    var x = $uD(p.x);
-    var y = $uD(p.y);
-    return new $c_Lrta_backend_UppaalConverter3$Point(x, y)
-  } else {
-    return new $c_Lrta_backend_UppaalConverter3$Point(0.0, 0.0)
-  }
-}
-function $p_Lrta_backend_UppaalConverter3$__calculateNails$1__sjs_js_Dynamic__sjs_js_Dynamic__T__T__T__sci_List($thiz, nodesPos$2, edgesPos$1, sourceId, targetId, edgeId) {
-  var e = edgesPos$1[edgeId];
-  if (((e === (void 0)) || (e === null))) {
-    return $m_s_package$().s_package$__f_Nil
-  };
-  var array = e.distances;
-  var this$3 = $ct_sjs_js_WrappedArray__sjs_js_Array__(new $c_sjs_js_WrappedArray(), array);
-  $m_sci_List$();
-  var dists = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$3);
-  var array$1 = e.weights;
-  var this$6 = $ct_sjs_js_WrappedArray__sjs_js_Array__(new $c_sjs_js_WrappedArray(), array$1);
-  $m_sci_List$();
-  var weights = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$6);
-  var s = $p_Lrta_backend_UppaalConverter3$__getPos$1__sjs_js_Dynamic__T__Lrta_backend_UppaalConverter3$Point($thiz, nodesPos$2, sourceId);
-  var t = $p_Lrta_backend_UppaalConverter3$__getPos$1__sjs_js_Dynamic__T__Lrta_backend_UppaalConverter3$Point($thiz, nodesPos$2, targetId);
-  var dx = ($n(t).Lrta_backend_UppaalConverter3$Point__f_x - $n(s).Lrta_backend_UppaalConverter3$Point__f_x);
-  var dy = ($n(t).Lrta_backend_UppaalConverter3$Point__f_y - $n(s).Lrta_backend_UppaalConverter3$Point__f_y);
-  var a = ((dx * dx) + (dy * dy));
-  var length = $uD(Math.sqrt(a));
-  if ((length === 0.0)) {
-    return $m_s_package$().s_package$__f_Nil
-  };
-  var nx = ((-dy) / length);
-  var ny = (dx / length);
-  var this$9 = $n(dists);
-  var this$12 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$9, weights)));
-  var f = ((x$1) => {
-    var x$1$1 = $as_T2(x$1);
-    if ((x$1$1 !== null)) {
-      var d = $uD($n(x$1$1)._1__O());
-      var w = $uD($n(x$1$1)._2__O());
-      var x = (($n(s).Lrta_backend_UppaalConverter3$Point__f_x + (w * dx)) + (d * nx));
-      var y = (($n(s).Lrta_backend_UppaalConverter3$Point__f_y + (w * dy)) + (d * ny));
-      return new $c_Lrta_backend_UppaalConverter3$Point(x, y)
+function $p_Lrta_backend_UppaalConverter3$__getPos$1__Lrta_backend_UppaalLayout__T__Lrta_backend_UppaalConverter3$Point($thiz, layout$1, id) {
+  matchResult10: {
+    var \u03b41$___1;
+    var \u03b41$___2;
+    var x77 = $n(layout$1).getPos__T__T2(id);
+    if ((x77 !== null)) {
+      var x = $uD($n(x77)._1__O());
+      var y = $uD($n(x77)._2__O());
+      var \u03b41$___1 = x;
+      var \u03b41$___2 = y;
+      break matchResult10
     };
-    throw new $c_s_MatchError(x$1$1)
+    throw new $c_s_MatchError(x77)
+  };
+  var x$2 = $uD(\u03b41$___1);
+  var y$2 = $uD(\u03b41$___2);
+  return new $c_Lrta_backend_UppaalConverter3$Point(x$2, y$2)
+}
+function $p_Lrta_backend_UppaalConverter3$__calculateNails$1__Lrta_backend_UppaalLayout__T__T__T__sci_List($thiz, layout$2, sourceId, targetId, edgeId) {
+  var this$3 = $n($n(layout$2).getNails__T__T__T__sci_List(sourceId, targetId, edgeId));
+  var f = ((p) => {
+    var p$1 = $as_T2(p);
+    var x = $uD($n(p$1)._1__O());
+    var y = $uD($n(p$1)._2__O());
+    return new $c_Lrta_backend_UppaalConverter3$Point(x, y)
   });
-  if ((this$12 === $m_sci_Nil$())) {
+  if ((this$3 === $m_sci_Nil$())) {
     return $m_sci_Nil$()
   } else {
-    var arg1 = this$12.head__O();
+    var arg1 = this$3.head__O();
     var h = new $c_sci_$colon$colon(f(arg1), $m_sci_Nil$());
-    var t$1 = h;
-    var rest = $as_sci_List(this$12.tail__O());
+    var t = h;
+    var rest = $as_sci_List(this$3.tail__O());
     while ((rest !== $m_sci_Nil$())) {
       var arg1$1 = $n(rest).head__O();
-      var nx$1 = new $c_sci_$colon$colon(f(arg1$1), $m_sci_Nil$());
-      $n(t$1).sci_$colon$colon__f_next = nx$1;
-      t$1 = nx$1;
+      var nx = new $c_sci_$colon$colon(f(arg1$1), $m_sci_Nil$());
+      $n(t).sci_$colon$colon__f_next = nx;
+      t = nx;
       rest = $as_sci_List($n(rest).tail__O())
     };
     return h
@@ -10430,7 +11496,1439 @@ function $h_Lrta_backend_UppaalConverter3$() {
   /*<skip>*/
 }
 $h_Lrta_backend_UppaalConverter3$.prototype = $c_Lrta_backend_UppaalConverter3$.prototype;
-$c_Lrta_backend_UppaalConverter3$.prototype.convert__Lrta_syntax_Program2$RxGraph__T__T__T = (function(rxGraph, currentCode, layoutJson) {
+$c_Lrta_backend_UppaalConverter3$.prototype.convert__Lrta_syntax_Program2$RxGraph__T__Lrta_backend_UppaalLayout__T = (function(rxGraph, currentCode, layout) {
+  var this$1 = $n($n(rxGraph).states__sci_Set());
+  $m_sci_List$();
+  var this$6 = $n($m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$1));
+  var f = new $c_sjsr_AnonFunction1(((_$3) => {
+    var _$3$1 = $as_Lrta_syntax_Program2$QName(_$3);
+    var this$4 = $n(_$3$1);
+    var this$5 = $n(this$4.Lrta_syntax_Program2$QName__f_n);
+    return $f_sc_IterableOnceOps__mkString__T__T__T__T(this$5, "", "/", "")
+  }));
+  var ord = $m_s_math_Ordering$String$();
+  var allStates = $as_sci_List($f_sc_SeqOps__sortBy__F1__s_math_Ordering__O(this$6, f, ord));
+  var this$7 = $n(allStates);
+  var this$10 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zipWithIndex__O(this$7)));
+  var f$1 = ((x$1) => {
+    var x$1$1 = $as_T2(x$1);
+    if ((x$1$1 !== null)) {
+      var qname = $as_Lrta_syntax_Program2$QName($n(x$1$1)._1__O());
+      var i = $uI($n(x$1$1)._2__O());
+      var y = ("id" + i);
+      return new $c_T2(qname, y)
+    };
+    throw new $c_s_MatchError(x$1$1)
+  });
+  if ((this$10 === $m_sci_Nil$())) {
+    var $$x1 = $m_sci_Nil$()
+  } else {
+    var arg1 = this$10.head__O();
+    var h = new $c_sci_$colon$colon(f$1(arg1), $m_sci_Nil$());
+    var t = h;
+    var rest = $as_sci_List(this$10.tail__O());
+    while ((rest !== $m_sci_Nil$())) {
+      var arg1$1 = $n(rest).head__O();
+      var nx = new $c_sci_$colon$colon(f$1(arg1$1), $m_sci_Nil$());
+      $n(t).sci_$colon$colon__f_next = nx;
+      t = nx;
+      rest = $as_sci_List($n(rest).tail__O())
+    };
+    var $$x1 = h
+  };
+  var this$12 = $n($$x1);
+  var this$11 = $m_s_$less$colon$less$();
+  var stateToId = $m_sci_Map$().from__sc_IterableOnce__sci_Map(this$12);
+  var this$13 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_edg);
+  var this$16 = new $c_sc_MapOps$$anon$1(this$13);
+  var this$15 = $m_s_$less$colon$less$();
+  var asIterable = this$15.s_$less$colon$less$__f_singleton;
+  var this$17 = $n($as_sc_IterableOnceOps($n($as_sc_IterableOps($f_sc_IterableOps__flatMap__F1__O(this$16, asIterable))).map__F1__O(new $c_sjsr_AnonFunction1(((_$4) => {
+    var _$4$1 = $as_T3(_$4);
+    return $as_Lrta_syntax_Program2$QName($n(_$4$1).T3__f__3)
+  })))));
+  var this$18 = $n($m_sci_Set$().from__sc_IterableOnce__sci_Set($as_sc_IterableOnce(this$17)));
+  $m_sci_List$();
+  var this$23 = $n($m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$18));
+  $n($m_s_package$().s_package$__f_Ordering);
+  var f$2 = new $c_sjsr_AnonFunction1(((_$5) => {
+    var _$5$1 = $as_Lrta_syntax_Program2$QName(_$5);
+    var this$20 = $n(_$5$1);
+    var this$21 = $n(this$20.Lrta_syntax_Program2$QName__f_n);
+    return $f_sc_IterableOnceOps__mkString__T__T__T__T(this$21, "", "/", "")
+  }));
+  var ord$1 = $m_s_math_Ordering$String$();
+  var ord$2 = new $c_s_math_Ordering$$anon$5(ord$1, f$2);
+  var actionLabels = $as_sci_List($f_sc_SeqOps__sorted__s_math_Ordering__O(this$23, ord$2));
+  var this$24 = $n(actionLabels);
+  var $$x2 = $n($as_sc_IterableOnceOps($f_sc_StrictOptimizedIterableOps__zipWithIndex__O(this$24)));
+  var this$25 = $m_s_$less$colon$less$();
+  var labelToId = $n($$x2).toMap__s_$less$colon$less__sci_Map(this$25.s_$less$colon$less$__f_singleton);
+  var this$27 = $n($n($as_sc_IterableOnceOps($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_edg).flatMap__F1__O(new $c_sjsr_AnonFunction1(((x$1$2) => {
+    var x$1$3 = $as_T2(x$1$2);
+    if ((x$1$3 !== null)) {
+      var from = $as_Lrta_syntax_Program2$QName($n(x$1$3)._1__O());
+      var tos = $as_sci_Set($n(x$1$3)._2__O());
+      return $as_sci_Set($n(tos).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$2$1) => {
+        var x$1$4 = $as_T3(x$1$2$1);
+        if ((x$1$4 !== null)) {
+          var to = $as_Lrta_syntax_Program2$QName($n(x$1$4).T3__f__1);
+          var transId = $as_Lrta_syntax_Program2$QName($n(x$1$4).T3__f__2);
+          var lbl = $as_Lrta_syntax_Program2$QName($n(x$1$4).T3__f__3);
+          return new $c_T4(from, to, transId, lbl)
+        };
+        throw new $c_s_MatchError(x$1$4)
+      }))))
+    };
+    throw new $c_s_MatchError(x$1$3)
+  }))))).toList__sci_List());
+  var this$34 = $n($as_sc_SeqOps($f_sc_SeqOps__distinct__O(this$27)));
+  var f$3 = new $c_sjsr_AnonFunction1(((edge) => {
+    var edge$1 = $as_T4(edge);
+    var _1 = $n(labelToId).getOrElse__O__F0__O($n(edge$1).T4__f__4, new $c_sjsr_AnonFunction0((() => (-1))));
+    var this$28 = $n($as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__1));
+    var this$29 = $n(this$28.Lrta_syntax_Program2$QName__f_n);
+    var _2 = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$29, "", "/", "");
+    var this$30 = $n($as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__2));
+    var this$31 = $n(this$30.Lrta_syntax_Program2$QName__f_n);
+    var _3 = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$31, "", "/", "");
+    return new $c_T3(_1, _2, _3)
+  }));
+  var ord1 = $m_s_math_Ordering$Int$();
+  var ord2 = $m_s_math_Ordering$String$();
+  var ord3 = $m_s_math_Ordering$String$();
+  var ord$3 = new $c_s_math_Ordering$Tuple3Ordering(ord1, ord2, ord3);
+  var simpleEdges = $as_sci_List($f_sc_SeqOps__sortBy__F1__s_math_Ordering__O(this$34, f$3, ord$3));
+  var this$35 = $n(simpleEdges);
+  var $$x3 = $n($as_sc_IterableOnceOps($f_sc_StrictOptimizedIterableOps__zipWithIndex__O(this$35)));
+  var this$36 = $m_s_$less$colon$less$();
+  var edgeToIndex = $n($$x3).toMap__s_$less$colon$less__sci_Map(this$36.s_$less$colon$less$__f_singleton);
+  $m_sc_StringOps$();
+  var ruleRegexFull = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "^\\s*([\\w./]+)\\s*(->>|--!)\\s*([\\w./]+)\\s*:\\s*([\\w./]+).*", $m_sci_Nil$());
+  $m_sc_StringOps$();
+  var ruleRegexShort = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "^\\s*([\\w./]+)\\s*(->>|--!)\\s*([\\w./]+).*", $m_sci_Nil$());
+  $m_sc_StringOps$();
+  $m_sc_StringOps$();
+  var this$44 = new $c_sc_StringOps$$anon$1(currentCode, true);
+  var lines = new $c_sc_Iterator$$anon$16(this$44);
+  var f$4 = new $c_sjsr_AnonFunction1(((x$1$3$1) => {
+    var x$1$5 = $as_T2(x$1$3$1);
+    if ((x$1$5 !== null)) {
+      var line = $as_T($n(x$1$5)._1__O());
+      var lineNumber = $uI($n(x$1$5)._2__O());
+      var x90 = $f_T__trim__T($n(line));
+      if ((x90 !== null)) {
+        var x96 = ruleRegexFull.unapplySeq__jl_CharSequence__s_Option(x90);
+        if ((!$n(x96).isEmpty__Z())) {
+          var x97 = $as_sci_List($n(x96).get__O());
+          if (($n(x97).lengthCompare__I__I(4) === 0)) {
+            var this$45 = $n(x97);
+            var x98 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$45, 0));
+            var this$46 = $n(x97);
+            var x99 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$46, 1));
+            var this$47 = $n(x97);
+            var x100 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$47, 2));
+            var this$48 = $n(x97);
+            var x101 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$48, 3));
+            var opType = ((x99 === "->>") ? "on" : "off");
+            var triggerQ = $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Program2$QName(this, x98);
+            var targetQ = $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Program2$QName(this, x100);
+            var nameQ = $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Program2$QName(this, x101);
+            var key = new $c_T5(opType, triggerQ, targetQ, nameQ, nameQ);
+            var value = new $c_T2(key, lineNumber);
+            return new $c_s_Some(value)
+          }
+        };
+        var x91 = ruleRegexShort.unapplySeq__jl_CharSequence__s_Option(x90);
+        if ((!$n(x91).isEmpty__Z())) {
+          var x92 = $as_sci_List($n(x91).get__O());
+          if (($n(x92).lengthCompare__I__I(3) === 0)) {
+            var this$53 = $n(x92);
+            var x93 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$53, 0));
+            var this$54 = $n(x92);
+            var x94 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$54, 1));
+            var this$55 = $n(x92);
+            var x95 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$55, 2));
+            var opType$2 = ((x94 === "->>") ? "on" : "off");
+            var triggerQ$2 = $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Program2$QName(this, x93);
+            var targetQ$2 = $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Program2$QName(this, x95);
+            var key$2 = new $c_T5(opType$2, triggerQ$2, targetQ$2, targetQ$2, targetQ$2);
+            var value$1 = new $c_T2(key$2, lineNumber);
+            return new $c_s_Some(value$1)
+          }
+        }
+      };
+      return $m_s_None$()
+    };
+    throw new $c_s_MatchError(x$1$5)
+  }));
+  var this$61 = new $c_sc_Iterator$$anon$10(lines, f$4);
+  var this$60 = $m_s_$less$colon$less$();
+  var ruleToLineNumber = $m_sci_Map$().from__sc_IterableOnce__sci_Map(this$61);
+  var this$64 = $n($as_sc_IterableOps($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_on).flatMap__F1__O(new $c_sjsr_AnonFunction1(((x$1$4$1) => {
+    var x$1$6 = $as_T2(x$1$4$1);
+    if ((x$1$6 !== null)) {
+      var trigger = $as_Lrta_syntax_Program2$QName($n(x$1$6)._1__O());
+      var targets = $as_sci_Set($n(x$1$6)._2__O());
+      return $as_sci_Set($n(targets).map__F1__O(new $c_sjsr_AnonFunction1(((t$1) => {
+        var t$2 = $as_T3(t$1);
+        var _3$1 = $n(t$2).T3__f__1;
+        var _4 = $n(t$2).T3__f__2;
+        var _5 = $n(t$2).T3__f__3;
+        return new $c_T5("on", trigger, _3$1, _4, _5)
+      }))))
+    };
+    throw new $c_s_MatchError(x$1$6)
+  })))));
+  var suffix = $as_sc_IterableOnce($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_off).flatMap__F1__O(new $c_sjsr_AnonFunction1(((x$1$5$1) => {
+    var x$1$7 = $as_T2(x$1$5$1);
+    if ((x$1$7 !== null)) {
+      var trigger$1 = $as_Lrta_syntax_Program2$QName($n(x$1$7)._1__O());
+      var targets$1 = $as_sci_Set($n(x$1$7)._2__O());
+      return $as_sci_Set($n(targets$1).map__F1__O(new $c_sjsr_AnonFunction1(((t$3) => {
+        var t$4 = $as_T3(t$3);
+        var _3$2 = $n(t$4).T3__f__1;
+        var _4$1 = $n(t$4).T3__f__2;
+        var _5$1 = $n(t$4).T3__f__3;
+        return new $c_T5("off", trigger$1, _3$2, _4$1, _5$1)
+      }))))
+    };
+    throw new $c_s_MatchError(x$1$7)
+  }))));
+  var this$65 = $n($n($as_sc_IterableOnceOps(this$64.concat__sc_IterableOnce__O(suffix))).toList__sci_List());
+  var this$66 = $n($as_sc_SeqOps($f_sc_SeqOps__distinct__O(this$65)));
+  var f$5 = new $c_sjsr_AnonFunction1(((h_identity) => {
+    var h_identity$1 = $as_T5(h_identity);
+    return $uI($n(ruleToLineNumber).getOrElse__O__F0__O(h_identity$1, new $c_sjsr_AnonFunction0((() => 2147483647))))
+  }));
+  var ord$4 = $m_s_math_Ordering$Int$();
+  var hyperEdges = $as_sci_List($f_sc_SeqOps__sortBy__F1__s_math_Ordering__O(this$66, f$5, ord$4));
+  var this$67 = $n(hyperEdges);
+  var $$x4 = $n($as_sc_IterableOnceOps($f_sc_StrictOptimizedIterableOps__zipWithIndex__O(this$67)));
+  var this$68 = $m_s_$less$colon$less$();
+  var hyperEdgeToIndex = $n($$x4).toMap__s_$less$colon$less__sci_Map(this$68.s_$less$colon$less$__f_singleton);
+  var memo = $as_scm_Map($m_scm_Map$().apply__sci_Seq__O($m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([]))));
+  var this$69 = $n(hyperEdges);
+  var rest$1 = this$69;
+  var h$1 = null;
+  var t$5 = null;
+  while ((rest$1 !== $m_sci_Nil$())) {
+    var arg1$2 = $n(rest$1).head__O();
+    var hEdge = $as_T5(arg1$2);
+    matchResult20: {
+      var \u03b42$___1;
+      var \u03b42$___2;
+      var \u03b42$___3;
+      var \u03b42$___4;
+      var \u03b42$___5;
+      if ((hEdge !== null)) {
+        var opType$1 = $as_T($n(hEdge).T5__f__1);
+        var triggerLbl = $as_Lrta_syntax_Program2$QName($n(hEdge).T5__f__2);
+        var targetLbl = $as_Lrta_syntax_Program2$QName($n(hEdge).T5__f__3);
+        var selfId = $as_Lrta_syntax_Program2$QName($n(hEdge).T5__f__4);
+        var selfLbl = $as_Lrta_syntax_Program2$QName($n(hEdge).T5__f__5);
+        var \u03b42$___1 = opType$1;
+        var \u03b42$___2 = triggerLbl;
+        var \u03b42$___3 = targetLbl;
+        var \u03b42$___4 = selfId;
+        var \u03b42$___5 = selfLbl;
+        break matchResult20
+      };
+      throw new $c_s_MatchError(hEdge)
+    };
+    var opType$2$1 = $as_T(\u03b42$___1);
+    var triggerLbl$2 = $as_Lrta_syntax_Program2$QName(\u03b42$___2);
+    var targetLbl$2 = $as_Lrta_syntax_Program2$QName(\u03b42$___3);
+    var selfId$2 = $as_Lrta_syntax_Program2$QName(\u03b42$___4);
+    var selfLbl$2 = $as_Lrta_syntax_Program2$QName(\u03b42$___5);
+    var rootTriggers = $p_Lrta_backend_UppaalConverter3$__findAllRootTriggers$1__sci_Map__sci_List__scm_Map__Lrta_syntax_Program2$QName__sci_Set(this, labelToId, hyperEdges, memo, triggerLbl$2);
+    var effectType = ((opType$2$1 === "on") ? "1" : "0");
+    var this$72 = $n(simpleEdges);
+    var f$6 = ((targetLbl$2) => ((_$6) => {
+      var _$6$1 = $as_T4(_$6);
+      var x = $n(_$6$1).T4__f__4;
+      return ((x === null) ? (targetLbl$2 === null) : $dp_equals__O__Z($n(x), targetLbl$2))
+    }))(targetLbl$2);
+    var l = this$72;
+    block: {
+      var result;
+      while (true) {
+        if ($n(l).isEmpty__Z()) {
+          var result = $m_sci_Nil$();
+          break
+        } else {
+          var h$2 = $n(l).head__O();
+          var t$6 = $as_sci_List($n(l).tail__O());
+          if (($uZ(f$6(h$2)) === false)) {
+            l = t$6;
+            continue
+          };
+          var start = l;
+          var remaining = t$6;
+          while (true) {
+            if ($n(remaining).isEmpty__Z()) {
+              var result = start;
+              break block
+            } else {
+              var x$2 = $n(remaining).head__O();
+              if (($uZ(f$6(x$2)) !== false)) {
+                remaining = $as_sci_List($n(remaining).tail__O());
+                continue
+              };
+              var firstMiss = remaining;
+              var newHead = new $c_sci_$colon$colon($n(start).head__O(), $m_sci_Nil$());
+              var toProcess = $as_sci_List($n(start).tail__O());
+              var currentLast = newHead;
+              while ((toProcess !== firstMiss)) {
+                var newElem = new $c_sci_$colon$colon($n(toProcess).head__O(), $m_sci_Nil$());
+                $n(currentLast).sci_$colon$colon__f_next = newElem;
+                currentLast = newElem;
+                toProcess = $as_sci_List($n(toProcess).tail__O())
+              };
+              var next = $as_sci_List($n(firstMiss).tail__O());
+              var nextToCopy = next;
+              while ((!$n(next).isEmpty__Z())) {
+                var head = $n(next).head__O();
+                if (($uZ(f$6(head)) !== false)) {
+                  next = $as_sci_List($n(next).tail__O())
+                } else {
+                  while ((nextToCopy !== next)) {
+                    var newElem$2 = new $c_sci_$colon$colon($n(nextToCopy).head__O(), $m_sci_Nil$());
+                    $n(currentLast).sci_$colon$colon__f_next = newElem$2;
+                    currentLast = newElem$2;
+                    nextToCopy = $as_sci_List($n(nextToCopy).tail__O())
+                  };
+                  nextToCopy = $as_sci_List($n(next).tail__O());
+                  next = $as_sci_List($n(next).tail__O())
+                }
+              };
+              if ((!$n(nextToCopy).isEmpty__Z())) {
+                $n(currentLast).sci_$colon$colon__f_next = nextToCopy
+              };
+              var result = newHead;
+              break block
+            }
+          }
+        }
+      }
+    };
+    var this$74 = $n(result);
+    var f$7 = ((edgeToIndex) => ((e) => {
+      var e$1 = $as_T4(e);
+      var _2$1 = $n(edgeToIndex).apply__O__O(e$1);
+      return new $c_T2(1, _2$1)
+    }))(edgeToIndex);
+    if ((this$74 === $m_sci_Nil$())) {
+      var simpleEdgeTargets = $m_sci_Nil$()
+    } else {
+      var arg1$3 = this$74.head__O();
+      var h$3 = new $c_sci_$colon$colon(f$7(arg1$3), $m_sci_Nil$());
+      var t$7 = h$3;
+      var rest$2 = $as_sci_List(this$74.tail__O());
+      while ((rest$2 !== $m_sci_Nil$())) {
+        var arg1$4 = $n(rest$2).head__O();
+        var nx$1 = new $c_sci_$colon$colon(f$7(arg1$4), $m_sci_Nil$());
+        $n(t$7).sci_$colon$colon__f_next = nx$1;
+        t$7 = nx$1;
+        rest$2 = $as_sci_List($n(rest$2).tail__O())
+      };
+      var simpleEdgeTargets = h$3
+    };
+    var this$75 = $n(simpleEdgeTargets);
+    if ((!this$75.isEmpty__Z())) {
+      var hyperEdgeTargets = $m_s_package$().s_package$__f_Nil
+    } else {
+      var this$76 = $n(hyperEdges);
+      var f$8 = ((targetLbl$2) => ((x$1$8) => {
+        var x$1$9 = $as_T5(x$1$8);
+        if ((x$1$9 !== null)) {
+          var ruleName = $as_Lrta_syntax_Program2$QName($n(x$1$9).T5__f__5);
+          return ((ruleName === null) ? (targetLbl$2 === null) : $n(ruleName).equals__O__Z(targetLbl$2))
+        };
+        throw new $c_s_MatchError(x$1$9)
+      }))(targetLbl$2);
+      var l$1 = this$76;
+      block$2: {
+        var result$1;
+        while (true) {
+          if ($n(l$1).isEmpty__Z()) {
+            var result$1 = $m_sci_Nil$();
+            break
+          } else {
+            var h$4 = $n(l$1).head__O();
+            var t$8 = $as_sci_List($n(l$1).tail__O());
+            if (($uZ(f$8(h$4)) === false)) {
+              l$1 = t$8;
+              continue
+            };
+            var start$1 = l$1;
+            var remaining$1 = t$8;
+            while (true) {
+              if ($n(remaining$1).isEmpty__Z()) {
+                var result$1 = start$1;
+                break block$2
+              } else {
+                var x$3 = $n(remaining$1).head__O();
+                if (($uZ(f$8(x$3)) !== false)) {
+                  remaining$1 = $as_sci_List($n(remaining$1).tail__O());
+                  continue
+                };
+                var firstMiss$1 = remaining$1;
+                var newHead$1 = new $c_sci_$colon$colon($n(start$1).head__O(), $m_sci_Nil$());
+                var toProcess$1 = $as_sci_List($n(start$1).tail__O());
+                var currentLast$1 = newHead$1;
+                while ((toProcess$1 !== firstMiss$1)) {
+                  var newElem$1 = new $c_sci_$colon$colon($n(toProcess$1).head__O(), $m_sci_Nil$());
+                  $n(currentLast$1).sci_$colon$colon__f_next = newElem$1;
+                  currentLast$1 = newElem$1;
+                  toProcess$1 = $as_sci_List($n(toProcess$1).tail__O())
+                };
+                var next$1 = $as_sci_List($n(firstMiss$1).tail__O());
+                var nextToCopy$1 = next$1;
+                while ((!$n(next$1).isEmpty__Z())) {
+                  var head$1 = $n(next$1).head__O();
+                  if (($uZ(f$8(head$1)) !== false)) {
+                    next$1 = $as_sci_List($n(next$1).tail__O())
+                  } else {
+                    while ((nextToCopy$1 !== next$1)) {
+                      var newElem$2$1 = new $c_sci_$colon$colon($n(nextToCopy$1).head__O(), $m_sci_Nil$());
+                      $n(currentLast$1).sci_$colon$colon__f_next = newElem$2$1;
+                      currentLast$1 = newElem$2$1;
+                      nextToCopy$1 = $as_sci_List($n(nextToCopy$1).tail__O())
+                    };
+                    nextToCopy$1 = $as_sci_List($n(next$1).tail__O());
+                    next$1 = $as_sci_List($n(next$1).tail__O())
+                  }
+                };
+                if ((!$n(nextToCopy$1).isEmpty__Z())) {
+                  $n(currentLast$1).sci_$colon$colon__f_next = nextToCopy$1
+                };
+                var result$1 = newHead$1;
+                break block$2
+              }
+            }
+          }
+        }
+      };
+      var this$77 = $n(result$1);
+      var rest$3 = this$77;
+      var h$5 = null;
+      var t$9 = null;
+      while ((rest$3 !== $m_sci_Nil$())) {
+        var arg1$5 = $n(rest$3).head__O();
+        var h_identity$2 = $as_T5(arg1$5);
+        var this$78 = $n($n(hyperEdgeToIndex).get__O__s_Option(h_identity$2));
+        if (this$78.isEmpty__Z()) {
+          var $$x5 = $m_s_None$()
+        } else {
+          var arg1$6 = this$78.get__O();
+          var index = $uI(arg1$6);
+          var $$x5 = new $c_s_Some(new $c_T2(0, index))
+        };
+        var it = $n($$x5).iterator__sc_Iterator();
+        while ($n(it).hasNext__Z()) {
+          var nx$2 = new $c_sci_$colon$colon($n(it).next__O(), $m_sci_Nil$());
+          if ((t$9 === null)) {
+            h$5 = nx$2
+          } else {
+            $n(t$9).sci_$colon$colon__f_next = nx$2
+          };
+          t$9 = nx$2
+        };
+        rest$3 = $as_sci_List($n(rest$3).tail__O())
+      };
+      var hyperEdgeTargets = ((h$5 === null) ? $m_sci_Nil$() : h$5)
+    };
+    var status = ($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_act).contains__O__Z(new $c_T4(triggerLbl$2, targetLbl$2, selfId$2, selfLbl$2)) ? "1" : "0");
+    var this$81 = $n(simpleEdgeTargets);
+    var allTargets = this$81.appendedAll__sc_IterableOnce__sci_List(hyperEdgeTargets);
+    var it$1 = $n($as_sc_IterableOnce($n($as_sc_IterableOps($n(rootTriggers).map__F1__O(new $c_sjsr_AnonFunction1(((labelToId) => ((root) => {
+      var root$1 = $as_Lrta_syntax_Program2$QName(root);
+      var rootId = $uI($n(labelToId).getOrElse__O__F0__O(root$1, new $c_sjsr_AnonFunction0((() => (-1)))));
+      return new $c_T2(root$1, rootId)
+    }))(labelToId))))).flatMap__F1__O(new $c_sjsr_AnonFunction1(((selfLbl$2, effectType, status, allTargets) => ((x$1$2$2) => {
+      var x$1$10 = $as_T2(x$1$2$2);
+      if ((x$1$10 !== null)) {
+        $as_Lrta_syntax_Program2$QName($n(x$1$10)._1__O());
+        var rootId$1 = $uI($n(x$1$10)._2__O());
+        var this$83 = $n(allTargets);
+        var p = new $c_sjsr_AnonFunction1(((x$1$2$3) => {
+          var x$1$11 = $as_T2(x$1$2$3);
+          return ((x$1$11 !== null) && ($uI($n(x$1$11)._1__O()), $uI($n(x$1$11)._2__O()), true))
+        }));
+        var this$84 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$83, p);
+        var q = new $c_sjsr_AnonFunction1(((x$1$3$2) => {
+          var x$1$12 = $as_T2(x$1$3$2);
+          if ((x$1$12 !== null)) {
+            $uI($n(x$1$12)._1__O());
+            $uI($n(x$1$12)._2__O());
+            return (rootId$1 !== (-1))
+          };
+          throw new $c_s_MatchError(x$1$12)
+        }));
+        return $as_sci_List($n(this$84.withFilter__F1__sc_IterableOps$WithFilter(q)).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$4$2) => {
+          var x$1$13 = $as_T2(x$1$4$2);
+          if ((x$1$13 !== null)) {
+            var isEdgeTarget$2 = $uI($n(x$1$13)._1__O());
+            var targetIndex$2 = $uI($n(x$1$13)._2__O());
+            return (((((((((((("    { " + rootId$1) + ", ") + effectType) + ", ") + status) + ", ") + isEdgeTarget$2) + ", ") + targetIndex$2) + " } /* Rule '") + $n(selfLbl$2).show__T()) + "' */")
+          };
+          throw new $c_s_MatchError(x$1$13)
+        }))))
+      };
+      throw new $c_s_MatchError(x$1$10)
+    }))(selfLbl$2, effectType, status, allTargets))))).iterator__sc_Iterator();
+    while ($n(it$1).hasNext__Z()) {
+      var nx$3 = new $c_sci_$colon$colon($n(it$1).next__O(), $m_sci_Nil$());
+      if ((t$5 === null)) {
+        h$1 = nx$3
+      } else {
+        $n(t$5).sci_$colon$colon__f_next = nx$3
+      };
+      t$5 = nx$3
+    };
+    rest$1 = $as_sci_List($n(rest$1).tail__O())
+  };
+  var arrayLInitializerEntries = ((h$1 === null) ? $m_sci_Nil$() : h$1);
+  var this$85 = $n(arrayLInitializerEntries);
+  var this$86 = $n($as_sc_SeqOps($f_sc_SeqOps__distinct__O(this$85)));
+  var s = this$86.length__I();
+  var finalNumHyperedges = ((s === 0) ? 1 : s);
+  var functionCounter = new $c_ju_concurrent_atomic_AtomicInteger(0);
+  var dataFunctions = $ct_scm_StringBuilder__(new $c_scm_StringBuilder());
+  var this$87 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_clocks);
+  if ((!this$87.isEmpty__Z())) {
+    var this$88 = $n($as_sc_IterableOnceOps($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_clocks).map__F1__O(new $c_sjsr_AnonFunction1(((qname$1) => {
+      var qname$2 = $as_Lrta_syntax_Program2$QName(qname$1);
+      var name = $n(qname$2).show__T();
+      return $f_T__replaceAll__T__T__T($n(name), "[^a-zA-Z0-9_]", "_")
+    })))));
+    var clockDecl = (("clock " + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$88, "", ", ", "")) + ";")
+  } else {
+    var clockDecl = ""
+  };
+  var this$100 = $n($as_sc_IterableOnceOps($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_val_env).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$6$1) => {
+    var x$1$14 = $as_T2(x$1$6$1);
+    if ((x$1$14 !== null)) {
+      var q$1 = $as_Lrta_syntax_Program2$QName($n(x$1$14)._1__O());
+      var v = $as_Lrta_syntax_RuntimeValue($n(x$1$14)._2__O());
+      var typeStr = ((v instanceof $c_Lrta_syntax_RuntimeValue$VBool) ? "bool" : ((v instanceof $c_Lrta_syntax_RuntimeValue$VFloat) ? "double" : "int"));
+      if ((v instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
+        var x$1$15 = $as_Lrta_syntax_RuntimeValue$VArray(v);
+        var this$90 = $n(x$1$15);
+        var x153 = this$90.Lrta_syntax_RuntimeValue$VArray__f_value;
+        var this$91 = $n(x$1$15);
+        var this$92 = $n(x$1$15);
+        var this$93 = $n(x153);
+        var f$9 = ((_$7) => {
+          var _$7$1 = $as_Lrta_syntax_RuntimeValue(_$7);
+          return $n(_$7$1).value__O()
+        });
+        if ((this$93 === $m_sci_Nil$())) {
+          var $$x6 = $m_sci_Nil$()
+        } else {
+          var arg1$7 = this$93.head__O();
+          var h$6 = new $c_sci_$colon$colon(f$9(arg1$7), $m_sci_Nil$());
+          var t$10 = h$6;
+          var rest$4 = $as_sci_List(this$93.tail__O());
+          while ((rest$4 !== $m_sci_Nil$())) {
+            var arg1$8 = $n(rest$4).head__O();
+            var nx$4 = new $c_sci_$colon$colon(f$9(arg1$8), $m_sci_Nil$());
+            $n(t$10).sci_$colon$colon__f_next = nx$4;
+            t$10 = nx$4;
+            rest$4 = $as_sci_List($n(rest$4).tail__O())
+          };
+          var $$x6 = h$6
+        };
+        var this$94 = $n($$x6);
+        var valStr = (("{" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$94, "", ", ", "")) + "}")
+      } else {
+        var valStr = $dp_toString__T($n($n(v).value__O()))
+      };
+      if ((v instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
+        var x$1$16 = $as_Lrta_syntax_RuntimeValue$VArray(v);
+        var this$96 = $n(x$1$16);
+        var this$97 = $n(x$1$16);
+        var this$98 = $n(x$1$16);
+        var x161 = this$98.Lrta_syntax_RuntimeValue$VArray__f_maxSize;
+        var this$99 = $n(x161);
+        var arrBrackets = (("[" + (this$99.isEmpty__Z() ? 100 : this$99.get__O())) + "]")
+      } else {
+        var arrBrackets = ""
+      };
+      var name$1 = $n(q$1).show__T();
+      return ((((((typeStr + " ") + $f_T__replaceAll__T__T__T($n(name$1), "[^a-zA-Z0-9_]", "_")) + arrBrackets) + " = ") + valStr) + ";")
+    };
+    throw new $c_s_MatchError(x$1$14)
+  })))));
+  var varDecl = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$100, "", "\n", "");
+  $m_sc_StringOps$();
+  var this$101 = $n(simpleEdges);
+  var $$x7 = this$101.length__I();
+  var this$102 = $n(actionLabels);
+  var x$4 = (((((((((("// -----------------------------------------------------------\n         |// 1. Vari\u00e1veis e Clocks Globais\n         |// -----------------------------------------------------------\n         |" + clockDecl) + "\n         |") + varDecl) + "\n         |\n         |// Constantes do Sistema\n         |const int NUM_EDGES = ") + $$x7) + ";\n         |const int NUM_HYPEREDGES = ") + finalNumHyperedges) + ";\n         |const int NUM_IDS = ") + this$102.length__I()) + ";\n         |");
+  var declarationBuilder = $ct_scm_StringBuilder__T__(new $c_scm_StringBuilder(), $m_sc_StringOps$().stripMargin$extension__T__C__T(x$4, 124));
+  declarationBuilder.append__T__scm_StringBuilder(($m_sc_StringOps$(), $m_sc_StringOps$().stripMargin$extension__T__C__T("\n        |// -----------------------------------------------------------\n        |// 2. Defini\u00e7\u00f5es de Estrutura Reativa\n        |// -----------------------------------------------------------\n        |typedef struct {\n        |    int id;    // ID da a\u00e7\u00e3o\n        |    bool stat; // Estado (1=ativo, 0=inativo)\n        |} Edge;\n        |\n        |typedef struct {\n        |    int id;    // ID da a\u00e7\u00e3o gatilho\n        |    bool type; // Tipo de efeito (1=ativa, 0=desativa)\n        |    bool stat; // Estado da regra\n        |    bool is_edge_target; // 1 se alvo \u00e9 Aresta, 0 se Regra\n        |    int trg_index;       // \u00cdndice no array alvo\n        |} Hyperedge;\n        |", 124)));
+  if ($n(simpleEdges).isEmpty__Z()) {
+    var arrayAInitializer = ""
+  } else {
+    var this$107 = $n(simpleEdges);
+    var f$10 = ((edge$2) => {
+      var edge$3 = $as_T4(edge$2);
+      var id = $uI($n(labelToId).getOrElse__O__F0__O($n(edge$3).T4__f__4, new $c_sjsr_AnonFunction0((() => (-1)))));
+      var status$1 = ($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_act).contains__O__Z(edge$3) ? "1" : "0");
+      return (((((((((((("    { " + id) + ", ") + status$1) + " } /* Idx ") + $n(edgeToIndex).apply__O__O(edge$3)) + ": ") + $n($as_Lrta_syntax_Program2$QName($n(edge$3).T4__f__1)).show__T()) + "->") + $n($as_Lrta_syntax_Program2$QName($n(edge$3).T4__f__2)).show__T()) + ":") + $n($as_Lrta_syntax_Program2$QName($n(edge$3).T4__f__4)).show__T()) + " */")
+    });
+    if ((this$107 === $m_sci_Nil$())) {
+      var $$x8 = $m_sci_Nil$()
+    } else {
+      var arg1$9 = this$107.head__O();
+      var h$7 = new $c_sci_$colon$colon(f$10(arg1$9), $m_sci_Nil$());
+      var t$11 = h$7;
+      var rest$5 = $as_sci_List(this$107.tail__O());
+      while ((rest$5 !== $m_sci_Nil$())) {
+        var arg1$10 = $n(rest$5).head__O();
+        var nx$5 = new $c_sci_$colon$colon(f$10(arg1$10), $m_sci_Nil$());
+        $n(t$11).sci_$colon$colon__f_next = nx$5;
+        t$11 = nx$5;
+        rest$5 = $as_sci_List($n(rest$5).tail__O())
+      };
+      var $$x8 = h$7
+    };
+    var this$108 = $n($$x8);
+    var arrayAInitializer = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$108, "", ",\n", "")
+  };
+  $m_sc_StringOps$();
+  var x$5 = (("\n         |// -----------------------------------------------------------\n         |// 3. Inicializa\u00e7\u00e3o dos Arrays\n         |// -----------------------------------------------------------\n         |Edge A[NUM_EDGES] = {\n         |" + arrayAInitializer) + "\n         |};\n         |");
+  declarationBuilder.append__T__scm_StringBuilder($m_sc_StringOps$().stripMargin$extension__T__C__T(x$5, 124));
+  var this$111 = $n(arrayLInitializerEntries);
+  if ($n($as_sci_List($f_sc_SeqOps__distinct__O(this$111))).isEmpty__Z()) {
+    declarationBuilder.append__T__scm_StringBuilder("Hyperedge L[NUM_HYPEREDGES];\n")
+  } else {
+    var this$112 = $n(arrayLInitializerEntries);
+    var this$113 = $n($as_sc_IterableOnceOps($f_sc_SeqOps__distinct__O(this$112)));
+    declarationBuilder.append__T__scm_StringBuilder((("Hyperedge L[NUM_HYPEREDGES] = {\n" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$113, "", ",\n", "")) + "\n};\n"))
+  };
+  declarationBuilder.append__T__scm_StringBuilder(($m_sc_StringOps$(), $m_sc_StringOps$().stripMargin$extension__T__C__T("\n        |// -----------------------------------------------------------\n        |// 4. L\u00f3gica de Atualiza\u00e7\u00e3o Reativa\n        |// -----------------------------------------------------------\n        |void update_hyperedges_by_id(int edge_id) {\n        |    int i;\n        |    for (i = 0; i < NUM_HYPEREDGES; i++) {\n        |        if (L[i].id == edge_id && L[i].stat) { \n        |            if (L[i].is_edge_target) {\n        |                A[L[i].trg_index].stat = L[i].type;\n        |            } else {\n        |                L[L[i].trg_index].stat = L[i].type;\n        |            }\n        |        }\n        |    }\n        |}\n        |", 124)));
+  var this$135 = $n(allStates);
+  var f$11 = ((stateName) => {
+    var stateName$1 = $as_Lrta_syntax_Program2$QName(stateName);
+    var stateId = $as_T($n(stateToId).apply__O__O(stateName$1));
+    var this$116 = $n(stateName$1);
+    var this$117 = $n(this$116.Lrta_syntax_Program2$QName__f_n);
+    var pos = $p_Lrta_backend_UppaalConverter3$__getPos$1__Lrta_backend_UppaalLayout__T__Lrta_backend_UppaalConverter3$Point(this, layout, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$117, "", "/", ""));
+    var this$118 = $n($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(stateName$1));
+    if (this$118.isEmpty__Z()) {
+      var $$x9 = $m_s_None$()
+    } else {
+      var arg1$11 = this$118.get__O();
+      var cond = $as_Lrta_syntax_Condition(arg1$11);
+      var \u03b4md = $m_s_xml_Null$();
+      var this$119 = ($n(pos).Lrta_backend_UppaalConverter3$Point__f_y + 15.0);
+      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$119), \u03b4md);
+      var this$121 = $n(pos).Lrta_backend_UppaalConverter3$Point__f_x;
+      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$121), \u03b4md);
+      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("invariant"), \u03b4md);
+      var $$x11 = \u03b4md;
+      var $$x10 = $m_s_xml_TopScope$();
+      var \u03b4buf = new $c_s_xml_NodeBuffer();
+      \u03b4buf.$amp$plus__O__s_xml_NodeBuffer($p_Lrta_backend_UppaalConverter3$__conditionToString__Lrta_syntax_Condition__T(this, cond));
+      $m_s_xml_NodeSeq$();
+      var $$x9 = new $c_s_Some(new $c_s_xml_Elem(null, "label", $$x11, $$x10, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf)))
+    };
+    var this$124 = $n($$x9);
+    var invariantNode = $as_s_xml_NodeSeq((this$124.isEmpty__Z() ? $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty : this$124.get__O()));
+    var \u03b4md$1 = $m_s_xml_Null$();
+    var this$125 = $n(pos).Lrta_backend_UppaalConverter3$Point__f_y;
+    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$125), \u03b4md$1);
+    var this$127 = $n(pos).Lrta_backend_UppaalConverter3$Point__f_x;
+    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$127), \u03b4md$1);
+    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "id", stateId, \u03b4md$1);
+    var $$x15 = \u03b4md$1;
+    var $$x14 = $m_s_xml_TopScope$();
+    var \u03b4buf$1 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var \u03b4md$2 = $m_s_xml_Null$();
+    var this$129 = ($n(pos).Lrta_backend_UppaalConverter3$Point__f_y - 30.0);
+    \u03b4md$2 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$129), \u03b4md$2);
+    var this$131 = ($n(pos).Lrta_backend_UppaalConverter3$Point__f_x - 20.0);
+    \u03b4md$2 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$131), \u03b4md$2);
+    var $$x13 = \u03b4md$2;
+    var $$x12 = $m_s_xml_TopScope$();
+    var \u03b4buf$2 = new $c_s_xml_NodeBuffer();
+    var name$2 = $n(stateName$1).show__T();
+    \u03b4buf$2.$amp$plus__O__s_xml_NodeBuffer($f_T__replaceAll__T__T__T($n(name$2), "[^a-zA-Z0-9_]", "_"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x13, $$x12, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2)));
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(invariantNode);
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n      "));
+    $m_s_xml_NodeSeq$();
+    return new $c_s_xml_Elem(null, "location", $$x15, $$x14, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$1))
+  });
+  if ((this$135 === $m_sci_Nil$())) {
+    var locationNodes = $m_sci_Nil$()
+  } else {
+    var arg1$12 = this$135.head__O();
+    var h$8 = new $c_sci_$colon$colon(f$11(arg1$12), $m_sci_Nil$());
+    var t$12 = h$8;
+    var rest$6 = $as_sci_List(this$135.tail__O());
+    while ((rest$6 !== $m_sci_Nil$())) {
+      var arg1$13 = $n(rest$6).head__O();
+      var nx$6 = new $c_sci_$colon$colon(f$11(arg1$13), $m_sci_Nil$());
+      $n(t$12).sci_$colon$colon__f_next = nx$6;
+      t$12 = nx$6;
+      rest$6 = $as_sci_List($n(rest$6).tail__O())
+    };
+    var locationNodes = h$8
+  };
+  var this$165 = $n(simpleEdges);
+  var f$14 = ((edge$3$1) => {
+    var edge$4 = $as_T4(edge$3$1);
+    matchResult30: {
+      var \u03b43$___1;
+      var \u03b43$___2;
+      var \u03b43$___3;
+      var \u03b43$___4;
+      if ((edge$4 !== null)) {
+        var source = $as_Lrta_syntax_Program2$QName($n(edge$4).T4__f__1);
+        var target = $as_Lrta_syntax_Program2$QName($n(edge$4).T4__f__2);
+        var transId$1 = $as_Lrta_syntax_Program2$QName($n(edge$4).T4__f__3);
+        var lbl$1 = $as_Lrta_syntax_Program2$QName($n(edge$4).T4__f__4);
+        var \u03b43$___1 = source;
+        var \u03b43$___2 = target;
+        var \u03b43$___3 = transId$1;
+        var \u03b43$___4 = lbl$1;
+        break matchResult30
+      };
+      throw new $c_s_MatchError(edge$4)
+    };
+    var source$2 = $as_Lrta_syntax_Program2$QName(\u03b43$___1);
+    var target$2 = $as_Lrta_syntax_Program2$QName(\u03b43$___2);
+    var transId$2 = $as_Lrta_syntax_Program2$QName(\u03b43$___3);
+    var lbl$2 = $as_Lrta_syntax_Program2$QName(\u03b43$___4);
+    var edgeIndex = $uI($n(edgeToIndex).apply__O__O(edge$4));
+    var actionId = $uI($n(labelToId).getOrElse__O__F0__O(lbl$2, new $c_sjsr_AnonFunction0((() => (-1)))));
+    var actionNodeId = ((((((("event_" + source$2) + "_") + target$2) + "_") + transId$2) + "_") + lbl$2);
+    var cyEdge1Id = ((("s_to_a_" + source$2) + "_") + actionNodeId);
+    var cyEdge2Id = ((("a_to_s_" + actionNodeId) + "_") + target$2);
+    var this$137 = $n(source$2);
+    var this$138 = $n(this$137.Lrta_syntax_Program2$QName__f_n);
+    var nails1 = $p_Lrta_backend_UppaalConverter3$__calculateNails$1__Lrta_backend_UppaalLayout__T__T__T__sci_List(this, layout, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$138, "", "/", ""), actionNodeId, cyEdge1Id);
+    var actionNodePos = $p_Lrta_backend_UppaalConverter3$__getPos$1__Lrta_backend_UppaalLayout__T__Lrta_backend_UppaalConverter3$Point(this, layout, actionNodeId);
+    var this$139 = $n(target$2);
+    var this$140 = $n(this$139.Lrta_syntax_Program2$QName__f_n);
+    var nails2 = $p_Lrta_backend_UppaalConverter3$__calculateNails$1__Lrta_backend_UppaalLayout__T__T__T__sci_List(this, layout, actionNodeId, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$140, "", "/", ""), cyEdge2Id);
+    var this$142 = $n(nails1);
+    $n($m_s_package$().s_package$__f_List);
+    var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_backend_UppaalConverter3$Point.getArrayOf().constr)([actionNodePos]));
+    var suffix$1 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems);
+    var this$143 = $n(this$142.appendedAll__sc_IterableOnce__sci_List(suffix$1));
+    var allNails = this$143.appendedAll__sc_IterableOnce__sci_List(nails2);
+    var labelX = $doubleToInt($n(actionNodePos).Lrta_backend_UppaalConverter3$Point__f_x);
+    var labelY = $doubleToInt($n(actionNodePos).Lrta_backend_UppaalConverter3$Point__f_y);
+    var reactiveGuard = (("A[" + edgeIndex) + "].stat == 1");
+    var $$x16 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_edgeConditions).get__O__s_Option(edge$4);
+    var this$144 = $m_s_$less$colon$less$();
+    var this$145 = $n($n($$x16).flatten__s_$less$colon$less__s_Option(this$144.s_$less$colon$less$__f_singleton));
+    if (this$145.isEmpty__Z()) {
+      var dataGuardOpt = $m_s_None$()
+    } else {
+      var arg1$14 = this$145.get__O();
+      var cond$1 = $as_Lrta_syntax_Condition(arg1$14);
+      var dataGuardOpt = new $c_s_Some($p_Lrta_backend_UppaalConverter3$__conditionToString__Lrta_syntax_Condition__T(this, cond$1))
+    };
+    matchResult31: {
+      var fullGuard;
+      if ((dataGuardOpt instanceof $c_s_Some)) {
+        var dg = $as_T($n($as_s_Some(dataGuardOpt)).s_Some__f_value);
+        var fullGuard = (((("(" + reactiveGuard) + ") && (") + dg) + ")");
+        break matchResult31
+      };
+      var x$6 = $m_s_None$();
+      if ((x$6 === dataGuardOpt)) {
+        var fullGuard = reactiveGuard;
+        break matchResult31
+      };
+      throw new $c_s_MatchError(dataGuardOpt)
+    };
+    var statements = $as_sci_List($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_edgeUpdates).getOrElse__O__F0__O(edge$4, new $c_sjsr_AnonFunction0((() => $m_s_package$().s_package$__f_Nil))));
+    var this$146 = $n(statements);
+    if ((!this$146.isEmpty__Z())) {
+      var old = functionCounter.ju_concurrent_atomic_AtomicInteger__f_java$util$concurrent$atomic$AtomicInteger$$value;
+      functionCounter.ju_concurrent_atomic_AtomicInteger__f_java$util$concurrent$atomic$AtomicInteger$$value = ((1 + old) | 0);
+      var funcName = ("update_data_" + old);
+      var this$147 = $n(statements);
+      var f$12 = ((stmt) => {
+        var stmt$1 = $as_Lrta_syntax_Statement(stmt);
+        return $p_Lrta_backend_UppaalConverter3$__statementToString__Lrta_syntax_Statement__T(this, stmt$1)
+      });
+      if ((this$147 === $m_sci_Nil$())) {
+        var $$x17 = $m_sci_Nil$()
+      } else {
+        var arg1$15 = this$147.head__O();
+        var h$9 = new $c_sci_$colon$colon(f$12(arg1$15), $m_sci_Nil$());
+        var t$13 = h$9;
+        var rest$7 = $as_sci_List(this$147.tail__O());
+        while ((rest$7 !== $m_sci_Nil$())) {
+          var arg1$16 = $n(rest$7).head__O();
+          var nx$7 = new $c_sci_$colon$colon(f$12(arg1$16), $m_sci_Nil$());
+          $n(t$13).sci_$colon$colon__f_next = nx$7;
+          t$13 = nx$7;
+          rest$7 = $as_sci_List($n(rest$7).tail__O())
+        };
+        var $$x17 = h$9
+      };
+      var this$148 = $n($$x17);
+      var funcBody = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$148, "", "\n\t", "");
+      dataFunctions.append__T__scm_StringBuilder((((("void " + funcName) + "() {\n\t") + funcBody) + "\n}\n"));
+      var dataUpdateCall = (funcName + "(), ")
+    } else {
+      var dataUpdateCall = ""
+    };
+    var fullAssignment = (((dataUpdateCall + "update_hyperedges_by_id(") + actionId) + ")");
+    var $$x24 = $m_s_xml_Null$();
+    var $$x23 = $m_s_xml_TopScope$();
+    var \u03b4buf$3 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$3 = $m_s_xml_Null$();
+    \u03b4md$3 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", $as_T($n(stateToId).apply__O__O(source$2)), \u03b4md$3);
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "source", \u03b4md$3, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$2$1 = $m_s_xml_Null$();
+    \u03b4md$2$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", $as_T($n(stateToId).apply__O__O(target$2)), \u03b4md$2$1);
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "target", \u03b4md$2$1, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$3$1 = $m_s_xml_Null$();
+    var this$149 = (((-35) + labelY) | 0);
+    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$149), \u03b4md$3$1);
+    var this$151 = (((-40) + labelX) | 0);
+    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$151), \u03b4md$3$1);
+    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("guard"), \u03b4md$3$1);
+    var $$x19 = \u03b4md$3$1;
+    var $$x18 = $m_s_xml_TopScope$();
+    var \u03b4buf$2$1 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(fullGuard);
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x19, $$x18, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2$1)));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$4 = $m_s_xml_Null$();
+    var this$154 = ((15 + labelY) | 0);
+    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$154), \u03b4md$4);
+    var this$156 = (((-40) + labelX) | 0);
+    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$156), \u03b4md$4);
+    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("assignment"), \u03b4md$4);
+    var $$x21 = \u03b4md$4;
+    var $$x20 = $m_s_xml_TopScope$();
+    var \u03b4buf$3$1 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$3$1.$amp$plus__O__s_xml_NodeBuffer(fullAssignment);
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x21, $$x20, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3$1)));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var this$163 = $n(allNails);
+    var f$13 = ((p$1) => {
+      var p$2 = $as_Lrta_backend_UppaalConverter3$Point(p$1);
+      var \u03b4md$5 = $m_s_xml_Null$();
+      var this$159 = $doubleToInt($n(p$2).Lrta_backend_UppaalConverter3$Point__f_y);
+      \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$159), \u03b4md$5);
+      var this$161 = $doubleToInt($n(p$2).Lrta_backend_UppaalConverter3$Point__f_x);
+      \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$161), \u03b4md$5);
+      return new $c_s_xml_Elem(null, "nail", \u03b4md$5, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([])))
+    });
+    if ((this$163 === $m_sci_Nil$())) {
+      var $$x22 = $m_sci_Nil$()
+    } else {
+      var arg1$17 = this$163.head__O();
+      var h$10 = new $c_sci_$colon$colon(f$13(arg1$17), $m_sci_Nil$());
+      var t$14 = h$10;
+      var rest$8 = $as_sci_List(this$163.tail__O());
+      while ((rest$8 !== $m_sci_Nil$())) {
+        var arg1$18 = $n(rest$8).head__O();
+        var nx$8 = new $c_sci_$colon$colon(f$13(arg1$18), $m_sci_Nil$());
+        $n(t$14).sci_$colon$colon__f_next = nx$8;
+        t$14 = nx$8;
+        rest$8 = $as_sci_List($n(rest$8).tail__O())
+      };
+      var $$x22 = h$10
+    };
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer($$x22);
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    $m_s_xml_NodeSeq$();
+    return new $c_s_xml_Elem(null, "transition", $$x24, $$x23, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3))
+  });
+  if ((this$165 === $m_sci_Nil$())) {
+    var transitionNodes = $m_sci_Nil$()
+  } else {
+    var arg1$19 = this$165.head__O();
+    var h$11 = new $c_sci_$colon$colon(f$14(arg1$19), $m_sci_Nil$());
+    var t$15 = h$11;
+    var rest$9 = $as_sci_List(this$165.tail__O());
+    while ((rest$9 !== $m_sci_Nil$())) {
+      var arg1$20 = $n(rest$9).head__O();
+      var nx$9 = new $c_sci_$colon$colon(f$14(arg1$20), $m_sci_Nil$());
+      $n(t$15).sci_$colon$colon__f_next = nx$9;
+      t$15 = nx$9;
+      rest$9 = $as_sci_List($n(rest$9).tail__O())
+    };
+    var transitionNodes = h$11
+  };
+  $m_sc_StringOps$();
+  var x$7 = (("\n         |// -----------------------------------------------------------\n         |// 5. Fun\u00e7\u00f5es de Dados (Geradas)\n         |// -----------------------------------------------------------\n         |" + $n(dataFunctions.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content) + "\n         |");
+  declarationBuilder.append__T__scm_StringBuilder($m_sc_StringOps$().stripMargin$extension__T__C__T(x$7, 124));
+  var this$168 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_inits);
+  var this$169 = $n($f_sc_IterableOps__headOption__s_Option(this$168));
+  if (this$169.isEmpty__Z()) {
+    var initRef = $m_s_None$()
+  } else {
+    var arg1$21 = this$169.get__O();
+    var key$1 = $as_Lrta_syntax_Program2$QName(arg1$21);
+    var initRef = $n(stateToId).get__O__s_Option(key$1)
+  };
+  var $$x35 = $m_s_xml_Null$();
+  var $$x34 = $m_s_xml_TopScope$();
+  var \u03b4buf$4 = new $c_s_xml_NodeBuffer();
+  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+  var $$x26 = $m_s_xml_Null$();
+  var $$x25 = $m_s_xml_TopScope$();
+  var \u03b4buf$2$2 = new $c_s_xml_NodeBuffer();
+  \u03b4buf$2$2.$amp$plus__O__s_xml_NodeBuffer($n(declarationBuilder.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content);
+  $m_s_xml_NodeSeq$();
+  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "declaration", $$x26, $$x25, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2$2)));
+  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+  var $$x31 = $m_s_xml_Null$();
+  var $$x30 = $m_s_xml_TopScope$();
+  var \u03b4buf$3$2 = new $c_s_xml_NodeBuffer();
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+  var \u03b4md$6 = $m_s_xml_Null$();
+  \u03b4md$6 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("5"), \u03b4md$6);
+  \u03b4md$6 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("5"), \u03b4md$6);
+  var $$x28 = \u03b4md$6;
+  var $$x27 = $m_s_xml_TopScope$();
+  var \u03b4buf$4$1 = new $c_s_xml_NodeBuffer();
+  \u03b4buf$4$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("Template"));
+  $m_s_xml_NodeSeq$();
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x28, $$x27, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$4$1)));
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(locationNodes);
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+  var this$172 = $n(initRef);
+  if (this$172.isEmpty__Z()) {
+    var $$x29 = $m_s_None$()
+  } else {
+    var arg1$22 = this$172.get__O();
+    var ref = $as_T(arg1$22);
+    var \u03b4md$7 = $m_s_xml_Null$();
+    \u03b4md$7 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", ref, \u03b4md$7);
+    var $$x29 = new $c_s_Some(new $c_s_xml_Elem(null, "init", \u03b4md$7, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))))
+  };
+  var this$173 = $n($$x29);
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer((this$173.isEmpty__Z() ? $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty : this$173.get__O()));
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(transitionNodes);
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+  $m_s_xml_NodeSeq$();
+  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "template", $$x31, $$x30, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3$2)));
+  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+  var $$x33 = $m_s_xml_Null$();
+  var $$x32 = $m_s_xml_TopScope$();
+  var \u03b4buf$5 = new $c_s_xml_NodeBuffer();
+  \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("Process = Template(); system Process;"));
+  $m_s_xml_NodeSeq$();
+  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "system", $$x33, $$x32, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$5)));
+  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n      "));
+  $m_s_xml_NodeSeq$();
+  var nta = new $c_s_xml_Elem(null, "nta", $$x35, $$x34, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$4));
+  var pp = $ct_s_xml_PrettyPrinter__I__I__(new $c_s_xml_PrettyPrinter(), 200, 2);
+  var this$177 = $n(pp.format__s_xml_Node__s_xml_NamespaceBinding__T(nta, $m_s_xml_TopScope$()));
+  var this$178 = $n($as_T(this$177.split("&amp;&amp;").join("&&")));
+  var formattedXml = $as_T(this$178.split("&&").join("&amp;&amp;"));
+  var xmlString = ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>\n" + formattedXml);
+  return $as_T(xmlString.split("  ").join("\t"))
+});
+var $d_Lrta_backend_UppaalConverter3$ = new $TypeData().initClass({
+  Lrta_backend_UppaalConverter3$: 0
+}, false, "rta.backend.UppaalConverter3$", {
+  Lrta_backend_UppaalConverter3$: 1,
+  O: 1
+});
+$c_Lrta_backend_UppaalConverter3$.prototype.$classData = $d_Lrta_backend_UppaalConverter3$;
+var $n_Lrta_backend_UppaalConverter3$;
+function $m_Lrta_backend_UppaalConverter3$() {
+  if ((!$n_Lrta_backend_UppaalConverter3$)) {
+    $n_Lrta_backend_UppaalConverter3$ = new $c_Lrta_backend_UppaalConverter3$()
+  };
+  return $n_Lrta_backend_UppaalConverter3$
+}
+function $p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, expr) {
+  if ((expr instanceof $c_Lrta_syntax_UpdateExpr$LitInt)) {
+    var x$1 = $as_Lrta_syntax_UpdateExpr$LitInt(expr);
+    var this$2 = $n(x$1);
+    var x33 = this$2.Lrta_syntax_UpdateExpr$LitInt__f_i;
+    return ("" + x33)
+  };
+  if ((expr instanceof $c_Lrta_syntax_UpdateExpr$LitFloat)) {
+    var x$1$1 = $as_Lrta_syntax_UpdateExpr$LitFloat(expr);
+    var this$5 = $n(x$1$1);
+    var x30 = this$5.Lrta_syntax_UpdateExpr$LitFloat__f_f;
+    return ("" + x30)
+  };
+  if ((expr instanceof $c_Lrta_syntax_UpdateExpr$LitBool)) {
+    var x$1$2 = $as_Lrta_syntax_UpdateExpr$LitBool(expr);
+    var this$8 = $n(x$1$2);
+    var x27 = this$8.Lrta_syntax_UpdateExpr$LitBool__f_b;
+    return (x27 ? "true" : "false")
+  };
+  if ((expr instanceof $c_Lrta_syntax_UpdateExpr$LitArray)) {
+    var x$1$3 = $as_Lrta_syntax_UpdateExpr$LitArray(expr);
+    var this$10 = $n(x$1$3);
+    var x24 = this$10.Lrta_syntax_UpdateExpr$LitArray__f_elements;
+    var this$12 = $n(x24);
+    var f = ((expr$2) => {
+      var expr$1 = $as_Lrta_syntax_UpdateExpr(expr$2);
+      return $p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, expr$1)
+    });
+    if ((this$12 === $m_sci_Nil$())) {
+      var $$x1 = $m_sci_Nil$()
+    } else {
+      var arg1 = this$12.head__O();
+      var h = new $c_sci_$colon$colon(f(arg1), $m_sci_Nil$());
+      var t = h;
+      var rest = $as_sci_List(this$12.tail__O());
+      while ((rest !== $m_sci_Nil$())) {
+        var arg1$1 = $n(rest).head__O();
+        var nx = new $c_sci_$colon$colon(f(arg1$1), $m_sci_Nil$());
+        $n(t).sci_$colon$colon__f_next = nx;
+        t = nx;
+        rest = $as_sci_List($n(rest).tail__O())
+      };
+      var $$x1 = h
+    };
+    var this$13 = $n($$x1);
+    return (("{" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$13, "", ", ", "")) + "}")
+  };
+  if ((expr instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
+    var x$1$4 = $as_Lrta_syntax_UpdateExpr$Var(expr);
+    var this$15 = $n(x$1$4);
+    var x21 = this$15.Lrta_syntax_UpdateExpr$Var__f_q;
+    var name = $n(x21).show__T();
+    return $f_T__replaceAll__T__T__T($n(name), "[^a-zA-Z0-9_]", "_")
+  };
+  if ((expr instanceof $c_Lrta_syntax_UpdateExpr$ArrayAccess)) {
+    var x$1$5 = $as_Lrta_syntax_UpdateExpr$ArrayAccess(expr);
+    var this$17 = $n(x$1$5);
+    var x17 = this$17.Lrta_syntax_UpdateExpr$ArrayAccess__f_arr;
+    var this$18 = $n(x$1$5);
+    var x18 = this$18.Lrta_syntax_UpdateExpr$ArrayAccess__f_index;
+    var name$1 = $n(x17).show__T();
+    return ((($f_T__replaceAll__T__T__T($n(name$1), "[^a-zA-Z0-9_]", "_") + "[") + $p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, x18)) + "]")
+  };
+  if ((expr instanceof $c_Lrta_syntax_UpdateExpr$MathOp)) {
+    var x$1$6 = $as_Lrta_syntax_UpdateExpr$MathOp(expr);
+    var this$20 = $n(x$1$6);
+    var x12 = this$20.Lrta_syntax_UpdateExpr$MathOp__f_left;
+    var this$21 = $n(x$1$6);
+    var x13 = this$21.Lrta_syntax_UpdateExpr$MathOp__f_op;
+    var this$22 = $n(x$1$6);
+    var x14 = this$22.Lrta_syntax_UpdateExpr$MathOp__f_right;
+    return (((($p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, x12) + " ") + x13) + " ") + $p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, x14))
+  };
+  if ((expr instanceof $c_Lrta_syntax_UpdateExpr$FuncCall)) {
+    var x$1$7 = $as_Lrta_syntax_UpdateExpr$FuncCall(expr);
+    var this$24 = $n(x$1$7);
+    var x8 = this$24.Lrta_syntax_UpdateExpr$FuncCall__f_funcName;
+    var this$25 = $n(x$1$7);
+    var x9 = this$25.Lrta_syntax_UpdateExpr$FuncCall__f_args;
+    var name$2 = $n(x8).show__T();
+    var $$x3 = $f_T__replaceAll__T__T__T($n(name$2), "[^a-zA-Z0-9_]", "_");
+    var this$26 = $n(x9);
+    var f$1 = ((expr$3) => {
+      var expr$4 = $as_Lrta_syntax_UpdateExpr(expr$3);
+      return $p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, expr$4)
+    });
+    if ((this$26 === $m_sci_Nil$())) {
+      var $$x2 = $m_sci_Nil$()
+    } else {
+      var arg1$2 = this$26.head__O();
+      var h$1 = new $c_sci_$colon$colon(f$1(arg1$2), $m_sci_Nil$());
+      var t$1 = h$1;
+      var rest$1 = $as_sci_List(this$26.tail__O());
+      while ((rest$1 !== $m_sci_Nil$())) {
+        var arg1$3 = $n(rest$1).head__O();
+        var nx$1 = new $c_sci_$colon$colon(f$1(arg1$3), $m_sci_Nil$());
+        $n(t$1).sci_$colon$colon__f_next = nx$1;
+        t$1 = nx$1;
+        rest$1 = $as_sci_List($n(rest$1).tail__O())
+      };
+      var $$x2 = h$1
+    };
+    var this$27 = $n($$x2);
+    return ((($$x3 + "(") + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$27, "", ", ", "")) + ")")
+  };
+  throw new $c_s_MatchError(expr)
+}
+function $p_Lrta_backend_UppaalConverter4$__conditionToString__Lrta_syntax_Condition__T($thiz, cond) {
+  if ((cond instanceof $c_Lrta_syntax_Condition$AtomicCond)) {
+    var x$1 = $as_Lrta_syntax_Condition$AtomicCond(cond);
+    var this$2 = $n(x$1);
+    var x45 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
+    var this$3 = $n(x$1);
+    var x46 = this$3.Lrta_syntax_Condition$AtomicCond__f_op;
+    var this$4 = $n(x$1);
+    var x47 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
+    return (((($p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, x45) + " ") + x46) + " ") + $p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, x47))
+  };
+  if ((cond instanceof $c_Lrta_syntax_Condition$And)) {
+    var x$1$1 = $as_Lrta_syntax_Condition$And(cond);
+    var this$6 = $n(x$1$1);
+    var x41 = this$6.Lrta_syntax_Condition$And__f_left;
+    var this$7 = $n(x$1$1);
+    var x42 = this$7.Lrta_syntax_Condition$And__f_right;
+    return (((("(" + $p_Lrta_backend_UppaalConverter4$__conditionToString__Lrta_syntax_Condition__T($thiz, x41)) + ") && (") + $p_Lrta_backend_UppaalConverter4$__conditionToString__Lrta_syntax_Condition__T($thiz, x42)) + ")")
+  };
+  if ((cond instanceof $c_Lrta_syntax_Condition$Or)) {
+    var x$1$2 = $as_Lrta_syntax_Condition$Or(cond);
+    var this$9 = $n(x$1$2);
+    var x37 = this$9.Lrta_syntax_Condition$Or__f_left;
+    var this$10 = $n(x$1$2);
+    var x38 = this$10.Lrta_syntax_Condition$Or__f_right;
+    return (((("(" + $p_Lrta_backend_UppaalConverter4$__conditionToString__Lrta_syntax_Condition__T($thiz, x37)) + ") || (") + $p_Lrta_backend_UppaalConverter4$__conditionToString__Lrta_syntax_Condition__T($thiz, x38)) + ")")
+  };
+  throw new $c_s_MatchError(cond)
+}
+function $p_Lrta_backend_UppaalConverter4$__statementToString__Lrta_syntax_Statement__T($thiz, stmt) {
+  if ((stmt instanceof $c_Lrta_syntax_AssignStmt)) {
+    var x$1 = $as_Lrta_syntax_AssignStmt(stmt);
+    var this$2 = $n(x$1);
+    var x71 = this$2.Lrta_syntax_AssignStmt__f_variable;
+    var this$3 = $n(x$1);
+    var x72 = this$3.Lrta_syntax_AssignStmt__f_expr;
+    var name = $n(x71).show__T();
+    return ((($f_T__replaceAll__T__T__T($n(name), "[^a-zA-Z0-9_]", "_") + " = ") + $p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, x72)) + ";")
+  };
+  if ((stmt instanceof $c_Lrta_syntax_ArrayAssignStmt)) {
+    var x$1$1 = $as_Lrta_syntax_ArrayAssignStmt(stmt);
+    var this$5 = $n(x$1$1);
+    var x66 = this$5.Lrta_syntax_ArrayAssignStmt__f_arrName;
+    var this$6 = $n(x$1$1);
+    var x67 = this$6.Lrta_syntax_ArrayAssignStmt__f_index;
+    var this$7 = $n(x$1$1);
+    var x68 = this$7.Lrta_syntax_ArrayAssignStmt__f_expr;
+    var name$1 = $n(x66).show__T();
+    return ((((($f_T__replaceAll__T__T__T($n(name$1), "[^a-zA-Z0-9_]", "_") + "[") + $p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, x67)) + "] = ") + $p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, x68)) + ";")
+  };
+  if ((stmt instanceof $c_Lrta_syntax_IfThenStmt)) {
+    var x$1$2 = $as_Lrta_syntax_IfThenStmt(stmt);
+    var this$9 = $n(x$1$2);
+    var x62 = this$9.Lrta_syntax_IfThenStmt__f_condition;
+    var this$10 = $n(x$1$2);
+    var x63 = this$10.Lrta_syntax_IfThenStmt__f_thenStmts;
+    var this$12 = $n(x63);
+    var f = ((stmt$2) => {
+      var stmt$1 = $as_Lrta_syntax_Statement(stmt$2);
+      return $p_Lrta_backend_UppaalConverter4$__statementToString__Lrta_syntax_Statement__T($thiz, stmt$1)
+    });
+    if ((this$12 === $m_sci_Nil$())) {
+      var $$x1 = $m_sci_Nil$()
+    } else {
+      var arg1 = this$12.head__O();
+      var h = new $c_sci_$colon$colon(f(arg1), $m_sci_Nil$());
+      var t = h;
+      var rest = $as_sci_List(this$12.tail__O());
+      while ((rest !== $m_sci_Nil$())) {
+        var arg1$1 = $n(rest).head__O();
+        var nx = new $c_sci_$colon$colon(f(arg1$1), $m_sci_Nil$());
+        $n(t).sci_$colon$colon__f_next = nx;
+        t = nx;
+        rest = $as_sci_List($n(rest).tail__O())
+      };
+      var $$x1 = h
+    };
+    var this$13 = $n($$x1);
+    var f$1 = ((_$1) => {
+      var _$1$1 = $as_T(_$1);
+      return ("\t" + _$1$1)
+    });
+    if ((this$13 === $m_sci_Nil$())) {
+      var $$x2 = $m_sci_Nil$()
+    } else {
+      var arg1$2 = this$13.head__O();
+      var h$1 = new $c_sci_$colon$colon(f$1(arg1$2), $m_sci_Nil$());
+      var t$1 = h$1;
+      var rest$1 = $as_sci_List(this$13.tail__O());
+      while ((rest$1 !== $m_sci_Nil$())) {
+        var arg1$3 = $n(rest$1).head__O();
+        var nx$1 = new $c_sci_$colon$colon(f$1(arg1$3), $m_sci_Nil$());
+        $n(t$1).sci_$colon$colon__f_next = nx$1;
+        t$1 = nx$1;
+        rest$1 = $as_sci_List($n(rest$1).tail__O())
+      };
+      var $$x2 = h$1
+    };
+    var this$14 = $n($$x2);
+    var thenBlock = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$14, "", "\n", "");
+    return (((("if (" + $p_Lrta_backend_UppaalConverter4$__conditionToString__Lrta_syntax_Condition__T($thiz, x62)) + ") {\n") + thenBlock) + "\n}")
+  };
+  if ((stmt instanceof $c_Lrta_syntax_ForeachStmt)) {
+    var x$1$3 = $as_Lrta_syntax_ForeachStmt(stmt);
+    var this$16 = $n(x$1$3);
+    var x57 = this$16.Lrta_syntax_ForeachStmt__f_iteratorVar;
+    var this$17 = $n(x$1$3);
+    var x58 = this$17.Lrta_syntax_ForeachStmt__f_arrayName;
+    var this$18 = $n(x$1$3);
+    var x59 = this$18.Lrta_syntax_ForeachStmt__f_body;
+    var this$19 = $n(x59);
+    var f$2 = ((stmt$3) => {
+      var stmt$4 = $as_Lrta_syntax_Statement(stmt$3);
+      return $p_Lrta_backend_UppaalConverter4$__statementToString__Lrta_syntax_Statement__T($thiz, stmt$4)
+    });
+    if ((this$19 === $m_sci_Nil$())) {
+      var $$x3 = $m_sci_Nil$()
+    } else {
+      var arg1$4 = this$19.head__O();
+      var h$2 = new $c_sci_$colon$colon(f$2(arg1$4), $m_sci_Nil$());
+      var t$2 = h$2;
+      var rest$2 = $as_sci_List(this$19.tail__O());
+      while ((rest$2 !== $m_sci_Nil$())) {
+        var arg1$5 = $n(rest$2).head__O();
+        var nx$2 = new $c_sci_$colon$colon(f$2(arg1$5), $m_sci_Nil$());
+        $n(t$2).sci_$colon$colon__f_next = nx$2;
+        t$2 = nx$2;
+        rest$2 = $as_sci_List($n(rest$2).tail__O())
+      };
+      var $$x3 = h$2
+    };
+    var this$20 = $n($$x3);
+    var f$3 = ((_$2) => {
+      var _$2$1 = $as_T(_$2);
+      return ("\t" + _$2$1)
+    });
+    if ((this$20 === $m_sci_Nil$())) {
+      var $$x4 = $m_sci_Nil$()
+    } else {
+      var arg1$6 = this$20.head__O();
+      var h$3 = new $c_sci_$colon$colon(f$3(arg1$6), $m_sci_Nil$());
+      var t$3 = h$3;
+      var rest$3 = $as_sci_List(this$20.tail__O());
+      while ((rest$3 !== $m_sci_Nil$())) {
+        var arg1$7 = $n(rest$3).head__O();
+        var nx$3 = new $c_sci_$colon$colon(f$3(arg1$7), $m_sci_Nil$());
+        $n(t$3).sci_$colon$colon__f_next = nx$3;
+        t$3 = nx$3;
+        rest$3 = $as_sci_List($n(rest$3).tail__O())
+      };
+      var $$x4 = h$3
+    };
+    var this$21 = $n($$x4);
+    var bodyBlock = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$21, "", "\n", "");
+    var name$2 = $n(x57).show__T();
+    var $$x5 = $f_T__replaceAll__T__T__T($n(name$2), "[^a-zA-Z0-9_]", "_");
+    var name$3 = $n(x58).show__T();
+    return (((((("for (" + $$x5) + " : ") + $f_T__replaceAll__T__T__T($n(name$3), "[^a-zA-Z0-9_]", "_")) + ") {\n") + bodyBlock) + "\n}")
+  };
+  if ((stmt instanceof $c_Lrta_syntax_ReturnStmt)) {
+    var x$1$4 = $as_Lrta_syntax_ReturnStmt(stmt);
+    var this$23 = $n(x$1$4);
+    var x54 = this$23.Lrta_syntax_ReturnStmt__f_expr;
+    return (("return " + $p_Lrta_backend_UppaalConverter4$__exprToString__Lrta_syntax_UpdateExpr__T($thiz, x54)) + ";")
+  };
+  if ((stmt instanceof $c_Lrta_syntax_PrintStmt)) {
+    var x$1$5 = $as_Lrta_syntax_PrintStmt(stmt);
+    var this$25 = $n(x$1$5);
+    return "// print not supported in UPPAAL"
+  };
+  throw new $c_s_MatchError(stmt)
+}
+function $p_Lrta_backend_UppaalConverter4$__getPos$1__sjs_js_Dynamic__T__Lrta_backend_UppaalConverter4$Point($thiz, nodesPos$1, id) {
+  var p = nodesPos$1[id];
+  if (((p !== (void 0)) && (p !== null))) {
+    var x = $uD(p.x);
+    var y = $uD(p.y);
+    return new $c_Lrta_backend_UppaalConverter4$Point(x, y)
+  } else {
+    return new $c_Lrta_backend_UppaalConverter4$Point(0.0, 0.0)
+  }
+}
+function $p_Lrta_backend_UppaalConverter4$__calculateNails$1__sjs_js_Dynamic__sjs_js_Dynamic__T__T__T__sci_List($thiz, nodesPos$2, edgesPos$1, sourceId, targetId, edgeId) {
+  var e = edgesPos$1[edgeId];
+  if (((e === (void 0)) || (e === null))) {
+    return $m_s_package$().s_package$__f_Nil
+  };
+  var array = e.distances;
+  var this$3 = $ct_sjs_js_WrappedArray__sjs_js_Array__(new $c_sjs_js_WrappedArray(), array);
+  $m_sci_List$();
+  var dists = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$3);
+  var array$1 = e.weights;
+  var this$6 = $ct_sjs_js_WrappedArray__sjs_js_Array__(new $c_sjs_js_WrappedArray(), array$1);
+  $m_sci_List$();
+  var weights = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$6);
+  var s = $p_Lrta_backend_UppaalConverter4$__getPos$1__sjs_js_Dynamic__T__Lrta_backend_UppaalConverter4$Point($thiz, nodesPos$2, sourceId);
+  var t = $p_Lrta_backend_UppaalConverter4$__getPos$1__sjs_js_Dynamic__T__Lrta_backend_UppaalConverter4$Point($thiz, nodesPos$2, targetId);
+  var dx = ($n(t).Lrta_backend_UppaalConverter4$Point__f_x - $n(s).Lrta_backend_UppaalConverter4$Point__f_x);
+  var dy = ($n(t).Lrta_backend_UppaalConverter4$Point__f_y - $n(s).Lrta_backend_UppaalConverter4$Point__f_y);
+  var a = ((dx * dx) + (dy * dy));
+  var length = $uD(Math.sqrt(a));
+  if ((length === 0.0)) {
+    return $m_s_package$().s_package$__f_Nil
+  };
+  var nx = ((-dy) / length);
+  var ny = (dx / length);
+  var this$9 = $n(dists);
+  var this$12 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$9, weights)));
+  var f = ((x$1) => {
+    var x$1$1 = $as_T2(x$1);
+    if ((x$1$1 !== null)) {
+      var d = $uD($n(x$1$1)._1__O());
+      var w = $uD($n(x$1$1)._2__O());
+      var x = (($n(s).Lrta_backend_UppaalConverter4$Point__f_x + (w * dx)) + (d * nx));
+      var y = (($n(s).Lrta_backend_UppaalConverter4$Point__f_y + (w * dy)) + (d * ny));
+      return new $c_Lrta_backend_UppaalConverter4$Point(x, y)
+    };
+    throw new $c_s_MatchError(x$1$1)
+  });
+  if ((this$12 === $m_sci_Nil$())) {
+    return $m_sci_Nil$()
+  } else {
+    var arg1 = this$12.head__O();
+    var h = new $c_sci_$colon$colon(f(arg1), $m_sci_Nil$());
+    var t$1 = h;
+    var rest = $as_sci_List(this$12.tail__O());
+    while ((rest !== $m_sci_Nil$())) {
+      var arg1$1 = $n(rest).head__O();
+      var nx$1 = new $c_sci_$colon$colon(f(arg1$1), $m_sci_Nil$());
+      $n(t$1).sci_$colon$colon__f_next = nx$1;
+      t$1 = nx$1;
+      rest = $as_sci_List($n(rest).tail__O())
+    };
+    return h
+  }
+}
+function $p_Lrta_backend_UppaalConverter4$__findAllRootTriggers$1__sci_Map__sci_List__scm_Map__Lrta_syntax_Program2$QName__sci_Set($thiz, labelToId$2, hyperEdges$1, memo$1, trigger) {
+  if ($n(memo$1).contains__O__Z(trigger)) {
+    return $as_sci_Set($n(memo$1).apply__O__O(trigger))
+  };
+  if ($n(labelToId$2).contains__O__Z(trigger)) {
+    var this$1 = $n($m_s_Predef$().s_Predef$__f_Set);
+    var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$QName.getArrayOf().constr)([trigger]));
+    return this$1.from__sc_IterableOnce__sci_Set(elems)
+  };
+  var this$3 = $n(hyperEdges$1);
+  var f = ((x$1) => {
+    var x$1$1 = $as_T5(x$1);
+    if ((x$1$1 !== null)) {
+      var ruleName = $as_Lrta_syntax_Program2$QName($n(x$1$1).T5__f__5);
+      return ((ruleName === null) ? (trigger === null) : $n(ruleName).equals__O__Z(trigger))
+    };
+    throw new $c_s_MatchError(x$1$1)
+  });
+  var l = this$3;
+  block: {
+    var result;
+    while (true) {
+      if ($n(l).isEmpty__Z()) {
+        var result = $m_sci_Nil$();
+        break
+      } else {
+        var h = $n(l).head__O();
+        var t = $as_sci_List($n(l).tail__O());
+        if (($uZ(f(h)) === false)) {
+          l = t;
+          continue
+        };
+        var start = l;
+        var remaining = t;
+        while (true) {
+          if ($n(remaining).isEmpty__Z()) {
+            var result = start;
+            break block
+          } else {
+            var x = $n(remaining).head__O();
+            if (($uZ(f(x)) !== false)) {
+              remaining = $as_sci_List($n(remaining).tail__O());
+              continue
+            };
+            var firstMiss = remaining;
+            var newHead = new $c_sci_$colon$colon($n(start).head__O(), $m_sci_Nil$());
+            var toProcess = $as_sci_List($n(start).tail__O());
+            var currentLast = newHead;
+            while ((toProcess !== firstMiss)) {
+              var newElem = new $c_sci_$colon$colon($n(toProcess).head__O(), $m_sci_Nil$());
+              $n(currentLast).sci_$colon$colon__f_next = newElem;
+              currentLast = newElem;
+              toProcess = $as_sci_List($n(toProcess).tail__O())
+            };
+            var next = $as_sci_List($n(firstMiss).tail__O());
+            var nextToCopy = next;
+            while ((!$n(next).isEmpty__Z())) {
+              var head = $n(next).head__O();
+              if (($uZ(f(head)) !== false)) {
+                next = $as_sci_List($n(next).tail__O())
+              } else {
+                while ((nextToCopy !== next)) {
+                  var newElem$2 = new $c_sci_$colon$colon($n(nextToCopy).head__O(), $m_sci_Nil$());
+                  $n(currentLast).sci_$colon$colon__f_next = newElem$2;
+                  currentLast = newElem$2;
+                  nextToCopy = $as_sci_List($n(nextToCopy).tail__O())
+                };
+                nextToCopy = $as_sci_List($n(next).tail__O());
+                next = $as_sci_List($n(next).tail__O())
+              }
+            };
+            if ((!$n(nextToCopy).isEmpty__Z())) {
+              $n(currentLast).sci_$colon$colon__f_next = nextToCopy
+            };
+            var result = newHead;
+            break block
+          }
+        }
+      }
+    }
+  };
+  var this$4 = $n(result);
+  var rest = this$4;
+  var h$1 = null;
+  var t$1 = null;
+  while ((rest !== $m_sci_Nil$())) {
+    var arg1 = $n(rest).head__O();
+    var x$1$2 = $as_T5(arg1);
+    matchResult14: {
+      var $$x1;
+      if ((x$1$2 !== null)) {
+        var parentTrigger = $as_Lrta_syntax_Program2$QName($n(x$1$2).T5__f__2);
+        var $$x1 = $p_Lrta_backend_UppaalConverter4$__findAllRootTriggers$1__sci_Map__sci_List__scm_Map__Lrta_syntax_Program2$QName__sci_Set($thiz, labelToId$2, hyperEdges$1, memo$1, parentTrigger);
+        break matchResult14
+      };
+      throw new $c_s_MatchError(x$1$2)
+    };
+    var it = $n($$x1).iterator__sc_Iterator();
+    while ($n(it).hasNext__Z()) {
+      var nx = new $c_sci_$colon$colon($n(it).next__O(), $m_sci_Nil$());
+      if ((t$1 === null)) {
+        h$1 = nx
+      } else {
+        $n(t$1).sci_$colon$colon__f_next = nx
+      };
+      t$1 = nx
+    };
+    rest = $as_sci_List($n(rest).tail__O())
+  };
+  var this$5 = $n(((h$1 === null) ? $m_sci_Nil$() : h$1));
+  var result$1 = $m_sci_Set$().from__sc_IterableOnce__sci_Set(this$5);
+  var this$6 = $n(memo$1);
+  $p_scm_HashMap__put0__O__O__Z__s_Some(this$6, trigger, result$1, false);
+  return result$1
+}
+/** @constructor */
+function $c_Lrta_backend_UppaalConverter4$() {
+  /*<skip>*/
+}
+$c_Lrta_backend_UppaalConverter4$.prototype = new $h_O();
+$c_Lrta_backend_UppaalConverter4$.prototype.constructor = $c_Lrta_backend_UppaalConverter4$;
+/** @constructor */
+function $h_Lrta_backend_UppaalConverter4$() {
+  /*<skip>*/
+}
+$h_Lrta_backend_UppaalConverter4$.prototype = $c_Lrta_backend_UppaalConverter4$.prototype;
+$c_Lrta_backend_UppaalConverter4$.prototype.convert__Lrta_syntax_Program2$RxGraph__T__T__T = (function(rxGraph, currentCode, layoutJson) {
   var layoutData = JSON.parse(layoutJson);
   var v = layoutData.nodes;
   if (((!(v === (void 0))) && (layoutData.nodes !== null))) {
@@ -10550,73 +13048,11 @@ $c_Lrta_backend_UppaalConverter3$.prototype.convert__Lrta_syntax_Program2$RxGrap
   var $$x3 = $n($as_sc_IterableOnceOps($f_sc_StrictOptimizedIterableOps__zipWithIndex__O(this$39)));
   var this$40 = $m_s_$less$colon$less$();
   var edgeToIndex = $n($$x3).toMap__s_$less$colon$less__sci_Map(this$40.s_$less$colon$less$__f_singleton);
-  $m_sc_StringOps$();
-  var ruleRegexFull = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "^\\s*([\\w./]+)\\s*(->>|--!)\\s*([\\w./]+)\\s*:\\s*([\\w./]+).*", $m_sci_Nil$());
-  $m_sc_StringOps$();
-  var ruleRegexShort = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "^\\s*([\\w./]+)\\s*(->>|--!)\\s*([\\w./]+).*", $m_sci_Nil$());
-  $m_sc_StringOps$();
-  $m_sc_StringOps$();
-  var this$48 = new $c_sc_StringOps$$anon$1(currentCode, true);
-  var lines = new $c_sc_Iterator$$anon$16(this$48);
-  var f$4 = new $c_sjsr_AnonFunction1(((x$1$3$1) => {
+  var this$43 = $n($as_sc_IterableOps($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_on).flatMap__F1__O(new $c_sjsr_AnonFunction1(((x$1$3$1) => {
     var x$1$5 = $as_T2(x$1$3$1);
     if ((x$1$5 !== null)) {
-      var line = $as_T($n(x$1$5)._1__O());
-      var lineNumber = $uI($n(x$1$5)._2__O());
-      var x90 = $f_T__trim__T($n(line));
-      if ((x90 !== null)) {
-        var x96 = ruleRegexFull.unapplySeq__jl_CharSequence__s_Option(x90);
-        if ((!$n(x96).isEmpty__Z())) {
-          var x97 = $as_sci_List($n(x96).get__O());
-          if (($n(x97).lengthCompare__I__I(4) === 0)) {
-            var this$49 = $n(x97);
-            var x98 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$49, 0));
-            var this$50 = $n(x97);
-            var x99 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$50, 1));
-            var this$51 = $n(x97);
-            var x100 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$51, 2));
-            var this$52 = $n(x97);
-            var x101 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$52, 3));
-            var opType = ((x99 === "->>") ? "on" : "off");
-            var triggerQ = $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Program2$QName(this, x98);
-            var targetQ = $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Program2$QName(this, x100);
-            var nameQ = $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Program2$QName(this, x101);
-            var key = new $c_T5(opType, triggerQ, targetQ, nameQ, nameQ);
-            var value = new $c_T2(key, lineNumber);
-            return new $c_s_Some(value)
-          }
-        };
-        var x91 = ruleRegexShort.unapplySeq__jl_CharSequence__s_Option(x90);
-        if ((!$n(x91).isEmpty__Z())) {
-          var x92 = $as_sci_List($n(x91).get__O());
-          if (($n(x92).lengthCompare__I__I(3) === 0)) {
-            var this$57 = $n(x92);
-            var x93 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$57, 0));
-            var this$58 = $n(x92);
-            var x94 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$58, 1));
-            var this$59 = $n(x92);
-            var x95 = $as_T($f_sc_LinearSeqOps__apply__I__O(this$59, 2));
-            var opType$2 = ((x94 === "->>") ? "on" : "off");
-            var triggerQ$2 = $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Program2$QName(this, x93);
-            var targetQ$2 = $p_Lrta_backend_UppaalConverter3$__stringToQName__T__Lrta_syntax_Program2$QName(this, x95);
-            var key$2 = new $c_T5(opType$2, triggerQ$2, targetQ$2, targetQ$2, targetQ$2);
-            var value$1 = new $c_T2(key$2, lineNumber);
-            return new $c_s_Some(value$1)
-          }
-        }
-      };
-      return $m_s_None$()
-    };
-    throw new $c_s_MatchError(x$1$5)
-  }));
-  var this$65 = new $c_sc_Iterator$$anon$10(lines, f$4);
-  var this$64 = $m_s_$less$colon$less$();
-  var ruleToLineNumber = $m_sci_Map$().from__sc_IterableOnce__sci_Map(this$65);
-  var this$68 = $n($as_sc_IterableOps($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_on).flatMap__F1__O(new $c_sjsr_AnonFunction1(((x$1$4$1) => {
-    var x$1$6 = $as_T2(x$1$4$1);
-    if ((x$1$6 !== null)) {
-      var trigger = $as_Lrta_syntax_Program2$QName($n(x$1$6)._1__O());
-      var targets = $as_sci_Set($n(x$1$6)._2__O());
+      var trigger = $as_Lrta_syntax_Program2$QName($n(x$1$5)._1__O());
+      var targets = $as_sci_Set($n(x$1$5)._2__O());
       return $as_sci_Set($n(targets).map__F1__O(new $c_sjsr_AnonFunction1(((t$1) => {
         var t$2 = $as_T3(t$1);
         var _3$1 = $n(t$2).T3__f__1;
@@ -10625,13 +13061,13 @@ $c_Lrta_backend_UppaalConverter3$.prototype.convert__Lrta_syntax_Program2$RxGrap
         return new $c_T5("on", trigger, _3$1, _4, _5)
       }))))
     };
-    throw new $c_s_MatchError(x$1$6)
+    throw new $c_s_MatchError(x$1$5)
   })))));
-  var suffix = $as_sc_IterableOnce($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_off).flatMap__F1__O(new $c_sjsr_AnonFunction1(((x$1$5$1) => {
-    var x$1$7 = $as_T2(x$1$5$1);
-    if ((x$1$7 !== null)) {
-      var trigger$1 = $as_Lrta_syntax_Program2$QName($n(x$1$7)._1__O());
-      var targets$1 = $as_sci_Set($n(x$1$7)._2__O());
+  var suffix = $as_sc_IterableOnce($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_off).flatMap__F1__O(new $c_sjsr_AnonFunction1(((x$1$4$1) => {
+    var x$1$6 = $as_T2(x$1$4$1);
+    if ((x$1$6 !== null)) {
+      var trigger$1 = $as_Lrta_syntax_Program2$QName($n(x$1$6)._1__O());
+      var targets$1 = $as_sci_Set($n(x$1$6)._2__O());
       return $as_sci_Set($n(targets$1).map__F1__O(new $c_sjsr_AnonFunction1(((t$3) => {
         var t$4 = $as_T3(t$3);
         var _3$2 = $n(t$4).T3__f__1;
@@ -10640,508 +13076,641 @@ $c_Lrta_backend_UppaalConverter3$.prototype.convert__Lrta_syntax_Program2$RxGrap
         return new $c_T5("off", trigger$1, _3$2, _4$1, _5$1)
       }))))
     };
-    throw new $c_s_MatchError(x$1$7)
+    throw new $c_s_MatchError(x$1$6)
   }))));
-  var this$69 = $n($n($as_sc_IterableOnceOps(this$68.concat__sc_IterableOnce__O(suffix))).toList__sci_List());
-  var this$70 = $n($as_sc_SeqOps($f_sc_SeqOps__distinct__O(this$69)));
-  var f$5 = new $c_sjsr_AnonFunction1(((h_identity) => {
-    var h_identity$1 = $as_T5(h_identity);
-    return $uI($n(ruleToLineNumber).getOrElse__O__F0__O(h_identity$1, new $c_sjsr_AnonFunction0((() => 2147483647))))
-  }));
-  var ord$4 = $m_s_math_Ordering$Int$();
-  var hyperEdges = $as_sci_List($f_sc_SeqOps__sortBy__F1__s_math_Ordering__O(this$70, f$5, ord$4));
-  var this$71 = $n(hyperEdges);
-  var $$x4 = $n($as_sc_IterableOnceOps($f_sc_StrictOptimizedIterableOps__zipWithIndex__O(this$71)));
-  var this$72 = $m_s_$less$colon$less$();
-  var hyperEdgeToIndex = $n($$x4).toMap__s_$less$colon$less__sci_Map(this$72.s_$less$colon$less$__f_singleton);
+  var this$44 = $n($n($as_sc_IterableOnceOps(this$43.concat__sc_IterableOnce__O(suffix))).toList__sci_List());
+  var hyperEdges = $as_sci_List($f_sc_SeqOps__distinct__O(this$44));
+  var this$45 = $n(hyperEdges);
+  var $$x4 = $n($as_sc_IterableOnceOps($f_sc_StrictOptimizedIterableOps__zipWithIndex__O(this$45)));
+  var this$46 = $m_s_$less$colon$less$();
+  var hyperEdgeToIndex = $n($$x4).toMap__s_$less$colon$less__sci_Map(this$46.s_$less$colon$less$__f_singleton);
   var memo = $as_scm_Map($m_scm_Map$().apply__sci_Seq__O($m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([]))));
-  var this$73 = $n(hyperEdges);
-  var rest$1 = this$73;
-  var h$1 = null;
-  var t$5 = null;
+  var this$47 = $n(hyperEdges);
+  var f$4 = ((h$1) => {
+    var h$2 = $as_T5(h$1);
+    return $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_delays).contains__O__Z($n(h$2).T5__f__5)
+  });
+  var l = this$47;
+  block: {
+    var result;
+    while (true) {
+      if ($n(l).isEmpty__Z()) {
+        var result = $m_sci_Nil$();
+        break
+      } else {
+        var h$3 = $n(l).head__O();
+        var t$5 = $as_sci_List($n(l).tail__O());
+        if (($uZ(f$4(h$3)) === true)) {
+          l = t$5;
+          continue
+        };
+        var start = l;
+        var remaining = t$5;
+        while (true) {
+          if ($n(remaining).isEmpty__Z()) {
+            var result = start;
+            break block
+          } else {
+            var x = $n(remaining).head__O();
+            if (($uZ(f$4(x)) !== true)) {
+              remaining = $as_sci_List($n(remaining).tail__O());
+              continue
+            };
+            var firstMiss = remaining;
+            var newHead = new $c_sci_$colon$colon($n(start).head__O(), $m_sci_Nil$());
+            var toProcess = $as_sci_List($n(start).tail__O());
+            var currentLast = newHead;
+            while ((toProcess !== firstMiss)) {
+              var newElem = new $c_sci_$colon$colon($n(toProcess).head__O(), $m_sci_Nil$());
+              $n(currentLast).sci_$colon$colon__f_next = newElem;
+              currentLast = newElem;
+              toProcess = $as_sci_List($n(toProcess).tail__O())
+            };
+            var next = $as_sci_List($n(firstMiss).tail__O());
+            var nextToCopy = next;
+            while ((!$n(next).isEmpty__Z())) {
+              var head = $n(next).head__O();
+              if (($uZ(f$4(head)) !== true)) {
+                next = $as_sci_List($n(next).tail__O())
+              } else {
+                while ((nextToCopy !== next)) {
+                  var newElem$2 = new $c_sci_$colon$colon($n(nextToCopy).head__O(), $m_sci_Nil$());
+                  $n(currentLast).sci_$colon$colon__f_next = newElem$2;
+                  currentLast = newElem$2;
+                  nextToCopy = $as_sci_List($n(nextToCopy).tail__O())
+                };
+                nextToCopy = $as_sci_List($n(next).tail__O());
+                next = $as_sci_List($n(next).tail__O())
+              }
+            };
+            if ((!$n(nextToCopy).isEmpty__Z())) {
+              $n(currentLast).sci_$colon$colon__f_next = nextToCopy
+            };
+            var result = newHead;
+            break block
+          }
+        }
+      }
+    }
+  };
+  var this$48 = $n(hyperEdges);
+  var f$5 = ((h$2$1) => {
+    var h$4 = $as_T5(h$2$1);
+    return $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_delays).contains__O__Z($n(h$4).T5__f__5)
+  });
+  var l$1 = this$48;
+  block$2: {
+    var result$1;
+    while (true) {
+      if ($n(l$1).isEmpty__Z()) {
+        var result$1 = $m_sci_Nil$();
+        break
+      } else {
+        var h$5 = $n(l$1).head__O();
+        var t$6 = $as_sci_List($n(l$1).tail__O());
+        if (($uZ(f$5(h$5)) === false)) {
+          l$1 = t$6;
+          continue
+        };
+        var start$1 = l$1;
+        var remaining$1 = t$6;
+        while (true) {
+          if ($n(remaining$1).isEmpty__Z()) {
+            var result$1 = start$1;
+            break block$2
+          } else {
+            var x$2 = $n(remaining$1).head__O();
+            if (($uZ(f$5(x$2)) !== false)) {
+              remaining$1 = $as_sci_List($n(remaining$1).tail__O());
+              continue
+            };
+            var firstMiss$1 = remaining$1;
+            var newHead$1 = new $c_sci_$colon$colon($n(start$1).head__O(), $m_sci_Nil$());
+            var toProcess$1 = $as_sci_List($n(start$1).tail__O());
+            var currentLast$1 = newHead$1;
+            while ((toProcess$1 !== firstMiss$1)) {
+              var newElem$1 = new $c_sci_$colon$colon($n(toProcess$1).head__O(), $m_sci_Nil$());
+              $n(currentLast$1).sci_$colon$colon__f_next = newElem$1;
+              currentLast$1 = newElem$1;
+              toProcess$1 = $as_sci_List($n(toProcess$1).tail__O())
+            };
+            var next$1 = $as_sci_List($n(firstMiss$1).tail__O());
+            var nextToCopy$1 = next$1;
+            while ((!$n(next$1).isEmpty__Z())) {
+              var head$1 = $n(next$1).head__O();
+              if (($uZ(f$5(head$1)) !== false)) {
+                next$1 = $as_sci_List($n(next$1).tail__O())
+              } else {
+                while ((nextToCopy$1 !== next$1)) {
+                  var newElem$2$1 = new $c_sci_$colon$colon($n(nextToCopy$1).head__O(), $m_sci_Nil$());
+                  $n(currentLast$1).sci_$colon$colon__f_next = newElem$2$1;
+                  currentLast$1 = newElem$2$1;
+                  nextToCopy$1 = $as_sci_List($n(nextToCopy$1).tail__O())
+                };
+                nextToCopy$1 = $as_sci_List($n(next$1).tail__O());
+                next$1 = $as_sci_List($n(next$1).tail__O())
+              }
+            };
+            if ((!$n(nextToCopy$1).isEmpty__Z())) {
+              $n(currentLast$1).sci_$colon$colon__f_next = nextToCopy$1
+            };
+            var result$1 = newHead$1;
+            break block$2
+          }
+        }
+      }
+    }
+  };
+  var this$49 = $n(result);
+  var rest$1 = this$49;
+  var h$6 = null;
+  var t$7 = null;
   while ((rest$1 !== $m_sci_Nil$())) {
     var arg1$2 = $n(rest$1).head__O();
     var hEdge = $as_T5(arg1$2);
-    matchResult20: {
+    matchResult15: {
       var \u03b41$___1;
       var \u03b41$___2;
       var \u03b41$___3;
       var \u03b41$___4;
       var \u03b41$___5;
       if ((hEdge !== null)) {
-        var opType$1 = $as_T($n(hEdge).T5__f__1);
+        var opType = $as_T($n(hEdge).T5__f__1);
         var triggerLbl = $as_Lrta_syntax_Program2$QName($n(hEdge).T5__f__2);
         var targetLbl = $as_Lrta_syntax_Program2$QName($n(hEdge).T5__f__3);
         var selfId = $as_Lrta_syntax_Program2$QName($n(hEdge).T5__f__4);
         var selfLbl = $as_Lrta_syntax_Program2$QName($n(hEdge).T5__f__5);
-        var \u03b41$___1 = opType$1;
+        var \u03b41$___1 = opType;
         var \u03b41$___2 = triggerLbl;
         var \u03b41$___3 = targetLbl;
         var \u03b41$___4 = selfId;
         var \u03b41$___5 = selfLbl;
-        break matchResult20
+        break matchResult15
       };
       throw new $c_s_MatchError(hEdge)
     };
-    var opType$2$1 = $as_T(\u03b41$___1);
+    var opType$2 = $as_T(\u03b41$___1);
     var triggerLbl$2 = $as_Lrta_syntax_Program2$QName(\u03b41$___2);
     var targetLbl$2 = $as_Lrta_syntax_Program2$QName(\u03b41$___3);
     var selfId$2 = $as_Lrta_syntax_Program2$QName(\u03b41$___4);
     var selfLbl$2 = $as_Lrta_syntax_Program2$QName(\u03b41$___5);
-    var rootTriggers = $p_Lrta_backend_UppaalConverter3$__findAllRootTriggers$1__sci_Map__sci_List__scm_Map__Lrta_syntax_Program2$QName__sci_Set(this, labelToId, hyperEdges, memo, triggerLbl$2);
-    var effectType = ((opType$2$1 === "on") ? "1" : "0");
-    var this$76 = $n(simpleEdges);
+    var rootTriggers = $p_Lrta_backend_UppaalConverter4$__findAllRootTriggers$1__sci_Map__sci_List__scm_Map__Lrta_syntax_Program2$QName__sci_Set(this, labelToId, hyperEdges, memo, triggerLbl$2);
+    var effectType = ((opType$2 === "on") ? "1" : "0");
+    var this$52 = $n(simpleEdges);
     var f$6 = ((targetLbl$2) => ((_$6) => {
       var _$6$1 = $as_T4(_$6);
-      var x = $n(_$6$1).T4__f__4;
-      return ((x === null) ? (targetLbl$2 === null) : $dp_equals__O__Z($n(x), targetLbl$2))
+      var x$3 = $n(_$6$1).T4__f__4;
+      return ((x$3 === null) ? (targetLbl$2 === null) : $dp_equals__O__Z($n(x$3), targetLbl$2))
     }))(targetLbl$2);
-    var l = this$76;
-    block: {
-      var result;
+    var l$2 = this$52;
+    block$4: {
+      var result$2;
       while (true) {
-        if ($n(l).isEmpty__Z()) {
-          var result = $m_sci_Nil$();
+        if ($n(l$2).isEmpty__Z()) {
+          var result$2 = $m_sci_Nil$();
           break
         } else {
-          var h$2 = $n(l).head__O();
-          var t$6 = $as_sci_List($n(l).tail__O());
-          if (($uZ(f$6(h$2)) === false)) {
-            l = t$6;
+          var h$7 = $n(l$2).head__O();
+          var t$8 = $as_sci_List($n(l$2).tail__O());
+          if (($uZ(f$6(h$7)) === false)) {
+            l$2 = t$8;
             continue
           };
-          var start = l;
-          var remaining = t$6;
+          var start$2 = l$2;
+          var remaining$2 = t$8;
           while (true) {
-            if ($n(remaining).isEmpty__Z()) {
-              var result = start;
-              break block
+            if ($n(remaining$2).isEmpty__Z()) {
+              var result$2 = start$2;
+              break block$4
             } else {
-              var x$2 = $n(remaining).head__O();
-              if (($uZ(f$6(x$2)) !== false)) {
-                remaining = $as_sci_List($n(remaining).tail__O());
+              var x$4 = $n(remaining$2).head__O();
+              if (($uZ(f$6(x$4)) !== false)) {
+                remaining$2 = $as_sci_List($n(remaining$2).tail__O());
                 continue
               };
-              var firstMiss = remaining;
-              var newHead = new $c_sci_$colon$colon($n(start).head__O(), $m_sci_Nil$());
-              var toProcess = $as_sci_List($n(start).tail__O());
-              var currentLast = newHead;
-              while ((toProcess !== firstMiss)) {
-                var newElem = new $c_sci_$colon$colon($n(toProcess).head__O(), $m_sci_Nil$());
-                $n(currentLast).sci_$colon$colon__f_next = newElem;
-                currentLast = newElem;
-                toProcess = $as_sci_List($n(toProcess).tail__O())
+              var firstMiss$2 = remaining$2;
+              var newHead$2 = new $c_sci_$colon$colon($n(start$2).head__O(), $m_sci_Nil$());
+              var toProcess$2 = $as_sci_List($n(start$2).tail__O());
+              var currentLast$2 = newHead$2;
+              while ((toProcess$2 !== firstMiss$2)) {
+                var newElem$3 = new $c_sci_$colon$colon($n(toProcess$2).head__O(), $m_sci_Nil$());
+                $n(currentLast$2).sci_$colon$colon__f_next = newElem$3;
+                currentLast$2 = newElem$3;
+                toProcess$2 = $as_sci_List($n(toProcess$2).tail__O())
               };
-              var next = $as_sci_List($n(firstMiss).tail__O());
-              var nextToCopy = next;
-              while ((!$n(next).isEmpty__Z())) {
-                var head = $n(next).head__O();
-                if (($uZ(f$6(head)) !== false)) {
-                  next = $as_sci_List($n(next).tail__O())
+              var next$2 = $as_sci_List($n(firstMiss$2).tail__O());
+              var nextToCopy$2 = next$2;
+              while ((!$n(next$2).isEmpty__Z())) {
+                var head$2 = $n(next$2).head__O();
+                if (($uZ(f$6(head$2)) !== false)) {
+                  next$2 = $as_sci_List($n(next$2).tail__O())
                 } else {
-                  while ((nextToCopy !== next)) {
-                    var newElem$2 = new $c_sci_$colon$colon($n(nextToCopy).head__O(), $m_sci_Nil$());
-                    $n(currentLast).sci_$colon$colon__f_next = newElem$2;
-                    currentLast = newElem$2;
-                    nextToCopy = $as_sci_List($n(nextToCopy).tail__O())
+                  while ((nextToCopy$2 !== next$2)) {
+                    var newElem$2$2 = new $c_sci_$colon$colon($n(nextToCopy$2).head__O(), $m_sci_Nil$());
+                    $n(currentLast$2).sci_$colon$colon__f_next = newElem$2$2;
+                    currentLast$2 = newElem$2$2;
+                    nextToCopy$2 = $as_sci_List($n(nextToCopy$2).tail__O())
                   };
-                  nextToCopy = $as_sci_List($n(next).tail__O());
-                  next = $as_sci_List($n(next).tail__O())
+                  nextToCopy$2 = $as_sci_List($n(next$2).tail__O());
+                  next$2 = $as_sci_List($n(next$2).tail__O())
                 }
               };
-              if ((!$n(nextToCopy).isEmpty__Z())) {
-                $n(currentLast).sci_$colon$colon__f_next = nextToCopy
+              if ((!$n(nextToCopy$2).isEmpty__Z())) {
+                $n(currentLast$2).sci_$colon$colon__f_next = nextToCopy$2
               };
-              var result = newHead;
-              break block
+              var result$2 = newHead$2;
+              break block$4
             }
           }
         }
       }
     };
-    var this$78 = $n(result);
+    var this$54 = $n(result$2);
     var f$7 = ((edgeToIndex) => ((e) => {
       var e$1 = $as_T4(e);
       var _2$1 = $n(edgeToIndex).apply__O__O(e$1);
       return new $c_T2(1, _2$1)
     }))(edgeToIndex);
-    if ((this$78 === $m_sci_Nil$())) {
+    if ((this$54 === $m_sci_Nil$())) {
       var simpleEdgeTargets = $m_sci_Nil$()
     } else {
-      var arg1$3 = this$78.head__O();
-      var h$3 = new $c_sci_$colon$colon(f$7(arg1$3), $m_sci_Nil$());
-      var t$7 = h$3;
-      var rest$2 = $as_sci_List(this$78.tail__O());
+      var arg1$3 = this$54.head__O();
+      var h$8 = new $c_sci_$colon$colon(f$7(arg1$3), $m_sci_Nil$());
+      var t$9 = h$8;
+      var rest$2 = $as_sci_List(this$54.tail__O());
       while ((rest$2 !== $m_sci_Nil$())) {
         var arg1$4 = $n(rest$2).head__O();
         var nx$1 = new $c_sci_$colon$colon(f$7(arg1$4), $m_sci_Nil$());
-        $n(t$7).sci_$colon$colon__f_next = nx$1;
-        t$7 = nx$1;
+        $n(t$9).sci_$colon$colon__f_next = nx$1;
+        t$9 = nx$1;
         rest$2 = $as_sci_List($n(rest$2).tail__O())
       };
-      var simpleEdgeTargets = h$3
+      var simpleEdgeTargets = h$8
     };
-    var this$79 = $n(simpleEdgeTargets);
-    if ((!this$79.isEmpty__Z())) {
+    var this$55 = $n(simpleEdgeTargets);
+    if ((!this$55.isEmpty__Z())) {
       var hyperEdgeTargets = $m_s_package$().s_package$__f_Nil
     } else {
-      var this$80 = $n(hyperEdges);
-      var f$8 = ((targetLbl$2) => ((x$1$8) => {
-        var x$1$9 = $as_T5(x$1$8);
-        if ((x$1$9 !== null)) {
-          var ruleName = $as_Lrta_syntax_Program2$QName($n(x$1$9).T5__f__5);
+      var this$56 = $n(result);
+      var f$8 = ((targetLbl$2) => ((x$1$7) => {
+        var x$1$8 = $as_T5(x$1$7);
+        if ((x$1$8 !== null)) {
+          var ruleName = $as_Lrta_syntax_Program2$QName($n(x$1$8).T5__f__5);
           return ((ruleName === null) ? (targetLbl$2 === null) : $n(ruleName).equals__O__Z(targetLbl$2))
         };
-        throw new $c_s_MatchError(x$1$9)
+        throw new $c_s_MatchError(x$1$8)
       }))(targetLbl$2);
-      var l$1 = this$80;
-      block$2: {
-        var result$1;
+      var l$3 = this$56;
+      block$6: {
+        var result$3;
         while (true) {
-          if ($n(l$1).isEmpty__Z()) {
-            var result$1 = $m_sci_Nil$();
+          if ($n(l$3).isEmpty__Z()) {
+            var result$3 = $m_sci_Nil$();
             break
           } else {
-            var h$4 = $n(l$1).head__O();
-            var t$8 = $as_sci_List($n(l$1).tail__O());
-            if (($uZ(f$8(h$4)) === false)) {
-              l$1 = t$8;
+            var h$9 = $n(l$3).head__O();
+            var t$10 = $as_sci_List($n(l$3).tail__O());
+            if (($uZ(f$8(h$9)) === false)) {
+              l$3 = t$10;
               continue
             };
-            var start$1 = l$1;
-            var remaining$1 = t$8;
+            var start$3 = l$3;
+            var remaining$3 = t$10;
             while (true) {
-              if ($n(remaining$1).isEmpty__Z()) {
-                var result$1 = start$1;
-                break block$2
+              if ($n(remaining$3).isEmpty__Z()) {
+                var result$3 = start$3;
+                break block$6
               } else {
-                var x$3 = $n(remaining$1).head__O();
-                if (($uZ(f$8(x$3)) !== false)) {
-                  remaining$1 = $as_sci_List($n(remaining$1).tail__O());
+                var x$5 = $n(remaining$3).head__O();
+                if (($uZ(f$8(x$5)) !== false)) {
+                  remaining$3 = $as_sci_List($n(remaining$3).tail__O());
                   continue
                 };
-                var firstMiss$1 = remaining$1;
-                var newHead$1 = new $c_sci_$colon$colon($n(start$1).head__O(), $m_sci_Nil$());
-                var toProcess$1 = $as_sci_List($n(start$1).tail__O());
-                var currentLast$1 = newHead$1;
-                while ((toProcess$1 !== firstMiss$1)) {
-                  var newElem$1 = new $c_sci_$colon$colon($n(toProcess$1).head__O(), $m_sci_Nil$());
-                  $n(currentLast$1).sci_$colon$colon__f_next = newElem$1;
-                  currentLast$1 = newElem$1;
-                  toProcess$1 = $as_sci_List($n(toProcess$1).tail__O())
+                var firstMiss$3 = remaining$3;
+                var newHead$3 = new $c_sci_$colon$colon($n(start$3).head__O(), $m_sci_Nil$());
+                var toProcess$3 = $as_sci_List($n(start$3).tail__O());
+                var currentLast$3 = newHead$3;
+                while ((toProcess$3 !== firstMiss$3)) {
+                  var newElem$4 = new $c_sci_$colon$colon($n(toProcess$3).head__O(), $m_sci_Nil$());
+                  $n(currentLast$3).sci_$colon$colon__f_next = newElem$4;
+                  currentLast$3 = newElem$4;
+                  toProcess$3 = $as_sci_List($n(toProcess$3).tail__O())
                 };
-                var next$1 = $as_sci_List($n(firstMiss$1).tail__O());
-                var nextToCopy$1 = next$1;
-                while ((!$n(next$1).isEmpty__Z())) {
-                  var head$1 = $n(next$1).head__O();
-                  if (($uZ(f$8(head$1)) !== false)) {
-                    next$1 = $as_sci_List($n(next$1).tail__O())
+                var next$3 = $as_sci_List($n(firstMiss$3).tail__O());
+                var nextToCopy$3 = next$3;
+                while ((!$n(next$3).isEmpty__Z())) {
+                  var head$3 = $n(next$3).head__O();
+                  if (($uZ(f$8(head$3)) !== false)) {
+                    next$3 = $as_sci_List($n(next$3).tail__O())
                   } else {
-                    while ((nextToCopy$1 !== next$1)) {
-                      var newElem$2$1 = new $c_sci_$colon$colon($n(nextToCopy$1).head__O(), $m_sci_Nil$());
-                      $n(currentLast$1).sci_$colon$colon__f_next = newElem$2$1;
-                      currentLast$1 = newElem$2$1;
-                      nextToCopy$1 = $as_sci_List($n(nextToCopy$1).tail__O())
+                    while ((nextToCopy$3 !== next$3)) {
+                      var newElem$2$3 = new $c_sci_$colon$colon($n(nextToCopy$3).head__O(), $m_sci_Nil$());
+                      $n(currentLast$3).sci_$colon$colon__f_next = newElem$2$3;
+                      currentLast$3 = newElem$2$3;
+                      nextToCopy$3 = $as_sci_List($n(nextToCopy$3).tail__O())
                     };
-                    nextToCopy$1 = $as_sci_List($n(next$1).tail__O());
-                    next$1 = $as_sci_List($n(next$1).tail__O())
+                    nextToCopy$3 = $as_sci_List($n(next$3).tail__O());
+                    next$3 = $as_sci_List($n(next$3).tail__O())
                   }
                 };
-                if ((!$n(nextToCopy$1).isEmpty__Z())) {
-                  $n(currentLast$1).sci_$colon$colon__f_next = nextToCopy$1
+                if ((!$n(nextToCopy$3).isEmpty__Z())) {
+                  $n(currentLast$3).sci_$colon$colon__f_next = nextToCopy$3
                 };
-                var result$1 = newHead$1;
-                break block$2
+                var result$3 = newHead$3;
+                break block$6
               }
             }
           }
         }
       };
-      var this$81 = $n(result$1);
-      var rest$3 = this$81;
-      var h$5 = null;
-      var t$9 = null;
+      var this$57 = $n(result$3);
+      var rest$3 = this$57;
+      var h$10 = null;
+      var t$11 = null;
       while ((rest$3 !== $m_sci_Nil$())) {
         var arg1$5 = $n(rest$3).head__O();
-        var h_identity$2 = $as_T5(arg1$5);
-        var this$82 = $n($n(hyperEdgeToIndex).get__O__s_Option(h_identity$2));
-        if (this$82.isEmpty__Z()) {
+        var h_identity = $as_T5(arg1$5);
+        var this$58 = $n($n(hyperEdgeToIndex).get__O__s_Option(h_identity));
+        if (this$58.isEmpty__Z()) {
           var $$x5 = $m_s_None$()
         } else {
-          var arg1$6 = this$82.get__O();
+          var arg1$6 = this$58.get__O();
           var index = $uI(arg1$6);
           var $$x5 = new $c_s_Some(new $c_T2(0, index))
         };
         var it = $n($$x5).iterator__sc_Iterator();
         while ($n(it).hasNext__Z()) {
           var nx$2 = new $c_sci_$colon$colon($n(it).next__O(), $m_sci_Nil$());
-          if ((t$9 === null)) {
-            h$5 = nx$2
+          if ((t$11 === null)) {
+            h$10 = nx$2
           } else {
-            $n(t$9).sci_$colon$colon__f_next = nx$2
+            $n(t$11).sci_$colon$colon__f_next = nx$2
           };
-          t$9 = nx$2
+          t$11 = nx$2
         };
         rest$3 = $as_sci_List($n(rest$3).tail__O())
       };
-      var hyperEdgeTargets = ((h$5 === null) ? $m_sci_Nil$() : h$5)
+      var hyperEdgeTargets = ((h$10 === null) ? $m_sci_Nil$() : h$10)
     };
     var status = ($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_act).contains__O__Z(new $c_T4(triggerLbl$2, targetLbl$2, selfId$2, selfLbl$2)) ? "1" : "0");
-    var this$85 = $n(simpleEdgeTargets);
-    var allTargets = this$85.appendedAll__sc_IterableOnce__sci_List(hyperEdgeTargets);
     var it$1 = $n($as_sc_IterableOnce($n($as_sc_IterableOps($n(rootTriggers).map__F1__O(new $c_sjsr_AnonFunction1(((labelToId) => ((root) => {
       var root$1 = $as_Lrta_syntax_Program2$QName(root);
       var rootId = $uI($n(labelToId).getOrElse__O__F0__O(root$1, new $c_sjsr_AnonFunction0((() => (-1)))));
       return new $c_T2(root$1, rootId)
-    }))(labelToId))))).flatMap__F1__O(new $c_sjsr_AnonFunction1(((selfLbl$2, effectType, status, allTargets) => ((x$1$2$2) => {
-      var x$1$10 = $as_T2(x$1$2$2);
-      if ((x$1$10 !== null)) {
-        $as_Lrta_syntax_Program2$QName($n(x$1$10)._1__O());
-        var rootId$1 = $uI($n(x$1$10)._2__O());
-        var this$87 = $n(allTargets);
+    }))(labelToId))))).flatMap__F1__O(new $c_sjsr_AnonFunction1(((selfLbl$2, effectType, simpleEdgeTargets, hyperEdgeTargets, status) => ((x$1$2$2) => {
+      var x$1$9 = $as_T2(x$1$2$2);
+      if ((x$1$9 !== null)) {
+        $as_Lrta_syntax_Program2$QName($n(x$1$9)._1__O());
+        var rootId$1 = $uI($n(x$1$9)._2__O());
+        var this$62 = $n(simpleEdgeTargets);
+        var this$63 = $n(this$62.appendedAll__sc_IterableOnce__sci_List(hyperEdgeTargets));
         var p = new $c_sjsr_AnonFunction1(((x$1$2$3) => {
-          var x$1$11 = $as_T2(x$1$2$3);
-          return ((x$1$11 !== null) && ($uI($n(x$1$11)._1__O()), $uI($n(x$1$11)._2__O()), true))
+          var x$1$10 = $as_T2(x$1$2$3);
+          return ((x$1$10 !== null) && ($uI($n(x$1$10)._1__O()), $uI($n(x$1$10)._2__O()), true))
         }));
-        var this$88 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$87, p);
+        var this$64 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$63, p);
         var q = new $c_sjsr_AnonFunction1(((x$1$3$2) => {
-          var x$1$12 = $as_T2(x$1$3$2);
-          if ((x$1$12 !== null)) {
-            $uI($n(x$1$12)._1__O());
-            $uI($n(x$1$12)._2__O());
+          var x$1$11 = $as_T2(x$1$3$2);
+          if ((x$1$11 !== null)) {
+            $uI($n(x$1$11)._1__O());
+            $uI($n(x$1$11)._2__O());
             return (rootId$1 !== (-1))
           };
-          throw new $c_s_MatchError(x$1$12)
+          throw new $c_s_MatchError(x$1$11)
         }));
-        return $as_sci_List($n(this$88.withFilter__F1__sc_IterableOps$WithFilter(q)).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$4$2) => {
-          var x$1$13 = $as_T2(x$1$4$2);
-          if ((x$1$13 !== null)) {
-            var isEdgeTarget$2 = $uI($n(x$1$13)._1__O());
-            var targetIndex$2 = $uI($n(x$1$13)._2__O());
+        return $as_sci_List($n(this$64.withFilter__F1__sc_IterableOps$WithFilter(q)).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$4$2) => {
+          var x$1$12 = $as_T2(x$1$4$2);
+          if ((x$1$12 !== null)) {
+            var isEdgeTarget$2 = $uI($n(x$1$12)._1__O());
+            var targetIndex$2 = $uI($n(x$1$12)._2__O());
             return (((((((((((("    { " + rootId$1) + ", ") + effectType) + ", ") + status) + ", ") + isEdgeTarget$2) + ", ") + targetIndex$2) + " } /* Rule '") + $n(selfLbl$2).show__T()) + "' */")
           };
-          throw new $c_s_MatchError(x$1$13)
+          throw new $c_s_MatchError(x$1$12)
         }))))
       };
-      throw new $c_s_MatchError(x$1$10)
-    }))(selfLbl$2, effectType, status, allTargets))))).iterator__sc_Iterator();
+      throw new $c_s_MatchError(x$1$9)
+    }))(selfLbl$2, effectType, simpleEdgeTargets, hyperEdgeTargets, status))))).iterator__sc_Iterator();
     while ($n(it$1).hasNext__Z()) {
       var nx$3 = new $c_sci_$colon$colon($n(it$1).next__O(), $m_sci_Nil$());
-      if ((t$5 === null)) {
-        h$1 = nx$3
+      if ((t$7 === null)) {
+        h$6 = nx$3
       } else {
-        $n(t$5).sci_$colon$colon__f_next = nx$3
+        $n(t$7).sci_$colon$colon__f_next = nx$3
       };
-      t$5 = nx$3
+      t$7 = nx$3
     };
     rest$1 = $as_sci_List($n(rest$1).tail__O())
   };
-  var arrayLInitializerEntries = ((h$1 === null) ? $m_sci_Nil$() : h$1);
-  var this$89 = $n(arrayLInitializerEntries);
-  var this$90 = $n($as_sc_SeqOps($f_sc_SeqOps__distinct__O(this$89)));
-  var s = this$90.length__I();
-  var finalNumHyperedges = ((s === 0) ? 1 : s);
+  var arrayLInitializerEntries = ((h$6 === null) ? $m_sci_Nil$() : h$6);
+  var this$65 = $n(arrayLInitializerEntries);
+  if ($n($as_sci_List($f_sc_SeqOps__distinct__O(this$65))).isEmpty__Z()) {
+    var finalNumHyperedges = 1
+  } else {
+    var this$66 = $n(arrayLInitializerEntries);
+    var this$67 = $n($as_sc_SeqOps($f_sc_SeqOps__distinct__O(this$66)));
+    var finalNumHyperedges = this$67.length__I()
+  };
   var functionCounter = new $c_ju_concurrent_atomic_AtomicInteger(0);
   var dataFunctions = $ct_scm_StringBuilder__(new $c_scm_StringBuilder());
-  var this$91 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_clocks);
-  if ((!this$91.isEmpty__Z())) {
-    var this$92 = $n($as_sc_IterableOnceOps($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_clocks).map__F1__O(new $c_sjsr_AnonFunction1(((qname$1) => {
+  var this$68 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_clocks);
+  if ((!this$68.isEmpty__Z())) {
+    var this$69 = $n($as_sc_IterableOnceOps($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_clocks).map__F1__O(new $c_sjsr_AnonFunction1(((qname$1) => {
       var qname$2 = $as_Lrta_syntax_Program2$QName(qname$1);
       var name = $n(qname$2).show__T();
       return $f_T__replaceAll__T__T__T($n(name), "[^a-zA-Z0-9_]", "_")
     })))));
-    var clockDecl = (("clock " + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$92, "", ", ", "")) + ";")
+    var clockDecl = (("clock " + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$69, "", ", ", "")) + ";")
   } else {
     var clockDecl = ""
   };
-  var this$104 = $n($as_sc_IterableOnceOps($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_val_env).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$6$1) => {
-    var x$1$14 = $as_T2(x$1$6$1);
-    if ((x$1$14 !== null)) {
-      var q$1 = $as_Lrta_syntax_Program2$QName($n(x$1$14)._1__O());
-      var v$2 = $as_Lrta_syntax_RuntimeValue($n(x$1$14)._2__O());
+  var this$81 = $n($as_sc_IterableOnceOps($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_val_env).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$5$1) => {
+    var x$1$13 = $as_T2(x$1$5$1);
+    if ((x$1$13 !== null)) {
+      var q$1 = $as_Lrta_syntax_Program2$QName($n(x$1$13)._1__O());
+      var v$2 = $as_Lrta_syntax_RuntimeValue($n(x$1$13)._2__O());
       var typeStr = ((v$2 instanceof $c_Lrta_syntax_RuntimeValue$VBool) ? "bool" : ((v$2 instanceof $c_Lrta_syntax_RuntimeValue$VFloat) ? "double" : "int"));
       if ((v$2 instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
-        var x$1$15 = $as_Lrta_syntax_RuntimeValue$VArray(v$2);
-        var this$94 = $n(x$1$15);
-        var x153 = this$94.Lrta_syntax_RuntimeValue$VArray__f_value;
-        var this$95 = $n(x$1$15);
-        var this$96 = $n(x$1$15);
-        var this$97 = $n(x153);
+        var x$1$14 = $as_Lrta_syntax_RuntimeValue$VArray(v$2);
+        var this$71 = $n(x$1$14);
+        var x134 = this$71.Lrta_syntax_RuntimeValue$VArray__f_value;
+        var this$72 = $n(x$1$14);
+        var this$73 = $n(x$1$14);
+        var this$74 = $n(x134);
         var f$9 = ((_$7) => {
           var _$7$1 = $as_Lrta_syntax_RuntimeValue(_$7);
           return $n(_$7$1).value__O()
         });
-        if ((this$97 === $m_sci_Nil$())) {
+        if ((this$74 === $m_sci_Nil$())) {
           var $$x6 = $m_sci_Nil$()
         } else {
-          var arg1$7 = this$97.head__O();
-          var h$6 = new $c_sci_$colon$colon(f$9(arg1$7), $m_sci_Nil$());
-          var t$10 = h$6;
-          var rest$4 = $as_sci_List(this$97.tail__O());
+          var arg1$7 = this$74.head__O();
+          var h$11 = new $c_sci_$colon$colon(f$9(arg1$7), $m_sci_Nil$());
+          var t$12 = h$11;
+          var rest$4 = $as_sci_List(this$74.tail__O());
           while ((rest$4 !== $m_sci_Nil$())) {
             var arg1$8 = $n(rest$4).head__O();
             var nx$4 = new $c_sci_$colon$colon(f$9(arg1$8), $m_sci_Nil$());
-            $n(t$10).sci_$colon$colon__f_next = nx$4;
-            t$10 = nx$4;
+            $n(t$12).sci_$colon$colon__f_next = nx$4;
+            t$12 = nx$4;
             rest$4 = $as_sci_List($n(rest$4).tail__O())
           };
-          var $$x6 = h$6
+          var $$x6 = h$11
         };
-        var this$98 = $n($$x6);
-        var valStr = (("{" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$98, "", ", ", "")) + "}")
+        var this$75 = $n($$x6);
+        var valStr = (("{" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$75, "", ", ", "")) + "}")
       } else {
         var valStr = $dp_toString__T($n($n(v$2).value__O()))
       };
       if ((v$2 instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
-        var x$1$16 = $as_Lrta_syntax_RuntimeValue$VArray(v$2);
-        var this$100 = $n(x$1$16);
-        var this$101 = $n(x$1$16);
-        var this$102 = $n(x$1$16);
-        var x161 = this$102.Lrta_syntax_RuntimeValue$VArray__f_maxSize;
-        var this$103 = $n(x161);
-        var arrBrackets = (("[" + (this$103.isEmpty__Z() ? 100 : this$103.get__O())) + "]")
+        var x$1$15 = $as_Lrta_syntax_RuntimeValue$VArray(v$2);
+        var this$77 = $n(x$1$15);
+        var this$78 = $n(x$1$15);
+        var this$79 = $n(x$1$15);
+        var x142 = this$79.Lrta_syntax_RuntimeValue$VArray__f_maxSize;
+        var this$80 = $n(x142);
+        var arrBrackets = (("[" + (this$80.isEmpty__Z() ? 100 : this$80.get__O())) + "]")
       } else {
         var arrBrackets = ""
       };
       var name$1 = $n(q$1).show__T();
       return ((((((typeStr + " ") + $f_T__replaceAll__T__T__T($n(name$1), "[^a-zA-Z0-9_]", "_")) + arrBrackets) + " = ") + valStr) + ";")
     };
-    throw new $c_s_MatchError(x$1$14)
+    throw new $c_s_MatchError(x$1$13)
   })))));
-  var varDecl = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$104, "", "\n", "");
+  var varDecl = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$81, "", "\n", "");
+  if ($n(simpleEdges).isEmpty__Z()) {
+    var finalNumEdges = 1
+  } else {
+    var this$82 = $n(simpleEdges);
+    var finalNumEdges = this$82.length__I()
+  };
+  if ($n(actionLabels).isEmpty__Z()) {
+    var finalNumIds = 1
+  } else {
+    var this$83 = $n(actionLabels);
+    var finalNumIds = this$83.length__I()
+  };
   $m_sc_StringOps$();
-  var this$105 = $n(simpleEdges);
-  var $$x7 = this$105.length__I();
-  var this$106 = $n(actionLabels);
-  var x$4 = (((((((((("// -----------------------------------------------------------\r\n         |// 1. Vari\u00e1veis e Clocks Globais\r\n         |// -----------------------------------------------------------\r\n         |" + clockDecl) + "\r\n         |") + varDecl) + "\r\n         |\r\n         |// Constantes do Sistema\r\n         |const int NUM_EDGES = ") + $$x7) + ";\r\n         |const int NUM_HYPEREDGES = ") + finalNumHyperedges) + ";\r\n         |const int NUM_IDS = ") + this$106.length__I()) + ";\r\n         |");
-  var declarationBuilder = $ct_scm_StringBuilder__T__(new $c_scm_StringBuilder(), $m_sc_StringOps$().stripMargin$extension__T__C__T(x$4, 124));
-  declarationBuilder.append__T__scm_StringBuilder(($m_sc_StringOps$(), $m_sc_StringOps$().stripMargin$extension__T__C__T("\r\n        |// -----------------------------------------------------------\r\n        |// 2. Defini\u00e7\u00f5es de Estrutura Reativa\r\n        |// -----------------------------------------------------------\r\n        |typedef struct {\r\n        |    int id;    // ID da a\u00e7\u00e3o\r\n        |    bool stat; // Estado (1=ativo, 0=inativo)\r\n        |} Edge;\r\n        |\r\n        |typedef struct {\r\n        |    int id;    // ID da a\u00e7\u00e3o gatilho\r\n        |    bool type; // Tipo de efeito (1=ativa, 0=desativa)\r\n        |    bool stat; // Estado da regra\r\n        |    bool is_edge_target; // 1 se alvo \u00e9 Aresta, 0 se Regra\r\n        |    int trg_index;       // \u00cdndice no array alvo\r\n        |} Hyperedge;\r\n        |", 124)));
+  var x$6 = (((((((((("// -----------------------------------------------------------\n        |// 1. Vari\u00e1veis, Clocks e Canais Globais\n        |// -----------------------------------------------------------\n        |" + clockDecl) + "\n        |") + varDecl) + "\n        |\n        |// Constantes do Sistema\n        |const int NUM_EDGES = ") + finalNumEdges) + ";\n        |const int NUM_HYPEREDGES = ") + finalNumHyperedges) + ";\n        |const int NUM_IDS = ") + finalNumIds) + ";\n        |\n        |// Canal de broadcast usado pelos Timers de Delay\n        |broadcast chan action_event[NUM_IDS];\n        |broadcast chan timeout_fired;\n        |chan priority default < timeout_fired;\n        |");
+  var declarationBuilder = $ct_scm_StringBuilder__T__(new $c_scm_StringBuilder(), $m_sc_StringOps$().stripMargin$extension__T__C__T(x$6, 124));
+  declarationBuilder.append__T__scm_StringBuilder(($m_sc_StringOps$(), $m_sc_StringOps$().stripMargin$extension__T__C__T("\n        |// -----------------------------------------------------------\n        |// 2. Defini\u00e7\u00f5es de Estrutura Reativa\n        |// -----------------------------------------------------------\n        |typedef struct { int id; bool stat; } Edge;\n        |typedef struct { int id; bool type; bool stat; bool is_edge_target; int trg_index; } Hyperedge;\n        |", 124)));
   if ($n(simpleEdges).isEmpty__Z()) {
     var arrayAInitializer = ""
   } else {
-    var this$111 = $n(simpleEdges);
+    var this$88 = $n(simpleEdges);
     var f$10 = ((edge$2) => {
       var edge$3 = $as_T4(edge$2);
       var id = $uI($n(labelToId).getOrElse__O__F0__O($n(edge$3).T4__f__4, new $c_sjsr_AnonFunction0((() => (-1)))));
       var status$1 = ($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_act).contains__O__Z(edge$3) ? "1" : "0");
       return (((((((((((("    { " + id) + ", ") + status$1) + " } /* Idx ") + $n(edgeToIndex).apply__O__O(edge$3)) + ": ") + $n($as_Lrta_syntax_Program2$QName($n(edge$3).T4__f__1)).show__T()) + "->") + $n($as_Lrta_syntax_Program2$QName($n(edge$3).T4__f__2)).show__T()) + ":") + $n($as_Lrta_syntax_Program2$QName($n(edge$3).T4__f__4)).show__T()) + " */")
     });
-    if ((this$111 === $m_sci_Nil$())) {
-      var $$x8 = $m_sci_Nil$()
+    if ((this$88 === $m_sci_Nil$())) {
+      var $$x7 = $m_sci_Nil$()
     } else {
-      var arg1$9 = this$111.head__O();
-      var h$7 = new $c_sci_$colon$colon(f$10(arg1$9), $m_sci_Nil$());
-      var t$11 = h$7;
-      var rest$5 = $as_sci_List(this$111.tail__O());
+      var arg1$9 = this$88.head__O();
+      var h$12 = new $c_sci_$colon$colon(f$10(arg1$9), $m_sci_Nil$());
+      var t$13 = h$12;
+      var rest$5 = $as_sci_List(this$88.tail__O());
       while ((rest$5 !== $m_sci_Nil$())) {
         var arg1$10 = $n(rest$5).head__O();
         var nx$5 = new $c_sci_$colon$colon(f$10(arg1$10), $m_sci_Nil$());
-        $n(t$11).sci_$colon$colon__f_next = nx$5;
-        t$11 = nx$5;
+        $n(t$13).sci_$colon$colon__f_next = nx$5;
+        t$13 = nx$5;
         rest$5 = $as_sci_List($n(rest$5).tail__O())
       };
-      var $$x8 = h$7
+      var $$x7 = h$12
     };
-    var this$112 = $n($$x8);
-    var arrayAInitializer = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$112, "", ",\n", "")
+    var this$89 = $n($$x7);
+    var arrayAInitializer = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$89, "", ",\n", "")
   };
   $m_sc_StringOps$();
-  var x$5 = (("\r\n         |// -----------------------------------------------------------\r\n         |// 3. Inicializa\u00e7\u00e3o dos Arrays\r\n         |// -----------------------------------------------------------\r\n         |Edge A[NUM_EDGES] = {\r\n         |" + arrayAInitializer) + "\r\n         |};\r\n         |");
-  declarationBuilder.append__T__scm_StringBuilder($m_sc_StringOps$().stripMargin$extension__T__C__T(x$5, 124));
-  var this$115 = $n(arrayLInitializerEntries);
-  if ($n($as_sci_List($f_sc_SeqOps__distinct__O(this$115))).isEmpty__Z()) {
+  var x$7 = (("\n         |// -----------------------------------------------------------\n         |// 3. Inicializa\u00e7\u00e3o dos Arrays\n         |// -----------------------------------------------------------\n         |Edge A[NUM_EDGES] = {\n" + arrayAInitializer) + "\n};\n         |");
+  declarationBuilder.append__T__scm_StringBuilder($m_sc_StringOps$().stripMargin$extension__T__C__T(x$7, 124));
+  var this$92 = $n(arrayLInitializerEntries);
+  if ($n($as_sci_List($f_sc_SeqOps__distinct__O(this$92))).isEmpty__Z()) {
     declarationBuilder.append__T__scm_StringBuilder("Hyperedge L[NUM_HYPEREDGES];\n")
   } else {
-    var this$116 = $n(arrayLInitializerEntries);
-    var this$117 = $n($as_sc_IterableOnceOps($f_sc_SeqOps__distinct__O(this$116)));
-    declarationBuilder.append__T__scm_StringBuilder((("Hyperedge L[NUM_HYPEREDGES] = {\n" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$117, "", ",\n", "")) + "\n};\n"))
+    var this$93 = $n(arrayLInitializerEntries);
+    var this$94 = $n($as_sc_IterableOnceOps($f_sc_SeqOps__distinct__O(this$93)));
+    declarationBuilder.append__T__scm_StringBuilder((("Hyperedge L[NUM_HYPEREDGES] = {\n" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$94, "", ",\n", "")) + "\n};\n"))
   };
-  declarationBuilder.append__T__scm_StringBuilder(($m_sc_StringOps$(), $m_sc_StringOps$().stripMargin$extension__T__C__T("\r\n        |// -----------------------------------------------------------\r\n        |// 4. L\u00f3gica de Atualiza\u00e7\u00e3o Reativa\r\n        |// -----------------------------------------------------------\r\n        |void update_hyperedges_by_id(int edge_id) {\r\n        |    int i;\r\n        |    for (i = 0; i < NUM_HYPEREDGES; i++) {\r\n        |        if (L[i].id == edge_id && L[i].stat) { \r\n        |            if (L[i].is_edge_target) {\r\n        |                A[L[i].trg_index].stat = L[i].type;\r\n        |            } else {\r\n        |                L[L[i].trg_index].stat = L[i].type;\r\n        |            }\r\n        |        }\r\n        |    }\r\n        |}\r\n        |", 124)));
-  var this$147 = $n(allStates);
+  declarationBuilder.append__T__scm_StringBuilder(($m_sc_StringOps$(), $m_sc_StringOps$().stripMargin$extension__T__C__T("\n        |// -----------------------------------------------------------\n        |// 4. L\u00f3gica de Atualiza\u00e7\u00e3o Reativa (Imediata e Atrasada)\n        |// -----------------------------------------------------------\n        |void update_hyperedges_by_id(int edge_id) {\n        |    int i;\n        |    for (i = 0; i < NUM_HYPEREDGES; i++) {\n        |        if (L[i].id == edge_id && L[i].stat) { \n        |            if (L[i].is_edge_target) { A[L[i].trg_index].stat = L[i].type; } \n        |            else { L[L[i].trg_index].stat = L[i].type; }\n        |        }\n        |    }\n        |}\n        |\n        |void update_delayed_rule(int is_edge, int idx, int effect) {\n        |    if (is_edge) { A[idx].stat = effect; }\n        |    else { L[idx].stat = effect; }\n        |}\n        |", 124)));
+  var this$116 = $n(allStates);
   var f$11 = ((stateName) => {
     var stateName$1 = $as_Lrta_syntax_Program2$QName(stateName);
     var stateId = $as_T($n(stateToId).apply__O__O(stateName$1));
-    var this$120 = $n(stateName$1);
-    var this$121 = $n(this$120.Lrta_syntax_Program2$QName__f_n);
-    var pos = $p_Lrta_backend_UppaalConverter3$__getPos$1__sjs_js_Dynamic__T__Lrta_backend_UppaalConverter3$Point(this, nodesPos, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$121, "", "/", ""));
-    var this$122 = $n(stateName$1);
-    var this$123 = $n(this$122.Lrta_syntax_Program2$QName__f_n);
-    var x$6 = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$123, "", "/", "");
-    var this$125 = $m_s_Console$();
-    var this$126 = $n(this$125.out__Ljava_io_PrintStream());
-    this$126.java$lang$JSConsoleBasedPrintStream$$printString__T__V((x$6 + "\n"));
-    var this$128 = $m_s_Console$();
-    var this$129 = $n(this$128.out__Ljava_io_PrintStream());
-    this$129.java$lang$JSConsoleBasedPrintStream$$printString__T__V((pos + "\n"));
-    var this$130 = $n($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(stateName$1));
-    if (this$130.isEmpty__Z()) {
-      var $$x9 = $m_s_None$()
+    var this$97 = $n(stateName$1);
+    var this$98 = $n(this$97.Lrta_syntax_Program2$QName__f_n);
+    var pos = $p_Lrta_backend_UppaalConverter4$__getPos$1__sjs_js_Dynamic__T__Lrta_backend_UppaalConverter4$Point(this, nodesPos, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$98, "", "/", ""));
+    var this$99 = $n($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(stateName$1));
+    if (this$99.isEmpty__Z()) {
+      var $$x8 = $m_s_None$()
     } else {
-      var arg1$11 = this$130.get__O();
+      var arg1$11 = this$99.get__O();
       var cond = $as_Lrta_syntax_Condition(arg1$11);
       var \u03b4md = $m_s_xml_Null$();
-      var this$131 = ($n(pos).Lrta_backend_UppaalConverter3$Point__f_y + 15.0);
-      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$131), \u03b4md);
-      var this$133 = $n(pos).Lrta_backend_UppaalConverter3$Point__f_x;
-      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$133), \u03b4md);
+      var this$100 = ($n(pos).Lrta_backend_UppaalConverter4$Point__f_y + 15.0);
+      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$100), \u03b4md);
+      var this$102 = $n(pos).Lrta_backend_UppaalConverter4$Point__f_x;
+      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$102), \u03b4md);
       \u03b4md = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("invariant"), \u03b4md);
-      var $$x11 = \u03b4md;
-      var $$x10 = $m_s_xml_TopScope$();
+      var $$x10 = \u03b4md;
+      var $$x9 = $m_s_xml_TopScope$();
       var \u03b4buf = new $c_s_xml_NodeBuffer();
-      \u03b4buf.$amp$plus__O__s_xml_NodeBuffer($p_Lrta_backend_UppaalConverter3$__conditionToString__Lrta_syntax_Condition__T(this, cond));
+      \u03b4buf.$amp$plus__O__s_xml_NodeBuffer($p_Lrta_backend_UppaalConverter4$__conditionToString__Lrta_syntax_Condition__T(this, cond));
       $m_s_xml_NodeSeq$();
-      var $$x9 = new $c_s_Some(new $c_s_xml_Elem(null, "label", $$x11, $$x10, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf)))
+      var $$x8 = new $c_s_Some(new $c_s_xml_Elem(null, "label", $$x10, $$x9, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf)))
     };
-    var this$136 = $n($$x9);
-    var invariantNode = $as_s_xml_NodeSeq((this$136.isEmpty__Z() ? $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty : this$136.get__O()));
+    var this$105 = $n($$x8);
+    var invariantNode = $as_s_xml_NodeSeq((this$105.isEmpty__Z() ? $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty : this$105.get__O()));
     var \u03b4md$1 = $m_s_xml_Null$();
-    var this$137 = $n(pos).Lrta_backend_UppaalConverter3$Point__f_y;
-    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$137), \u03b4md$1);
-    var this$139 = $n(pos).Lrta_backend_UppaalConverter3$Point__f_x;
-    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$139), \u03b4md$1);
+    var this$106 = $n(pos).Lrta_backend_UppaalConverter4$Point__f_y;
+    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$106), \u03b4md$1);
+    var this$108 = $n(pos).Lrta_backend_UppaalConverter4$Point__f_x;
+    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$108), \u03b4md$1);
     \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "id", stateId, \u03b4md$1);
-    var $$x15 = \u03b4md$1;
-    var $$x14 = $m_s_xml_TopScope$();
+    var $$x14 = \u03b4md$1;
+    var $$x13 = $m_s_xml_TopScope$();
     var \u03b4buf$1 = new $c_s_xml_NodeBuffer();
     \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
     var \u03b4md$2 = $m_s_xml_Null$();
-    var this$141 = ($n(pos).Lrta_backend_UppaalConverter3$Point__f_y - 30.0);
-    \u03b4md$2 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$141), \u03b4md$2);
-    var this$143 = ($n(pos).Lrta_backend_UppaalConverter3$Point__f_x - 20.0);
-    \u03b4md$2 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$143), \u03b4md$2);
-    var $$x13 = \u03b4md$2;
-    var $$x12 = $m_s_xml_TopScope$();
+    var this$110 = ($n(pos).Lrta_backend_UppaalConverter4$Point__f_y - 30.0);
+    \u03b4md$2 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$110), \u03b4md$2);
+    var this$112 = ($n(pos).Lrta_backend_UppaalConverter4$Point__f_x - 20.0);
+    \u03b4md$2 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$112), \u03b4md$2);
+    var $$x12 = \u03b4md$2;
+    var $$x11 = $m_s_xml_TopScope$();
     var \u03b4buf$2 = new $c_s_xml_NodeBuffer();
     var name$2 = $n(stateName$1).show__T();
     \u03b4buf$2.$amp$plus__O__s_xml_NodeBuffer($f_T__replaceAll__T__T__T($n(name$2), "[^a-zA-Z0-9_]", "_"));
     $m_s_xml_NodeSeq$();
-    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x13, $$x12, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2)));
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x12, $$x11, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2)));
     \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
     \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(invariantNode);
     \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n      "));
     $m_s_xml_NodeSeq$();
-    return new $c_s_xml_Elem(null, "location", $$x15, $$x14, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$1))
+    return new $c_s_xml_Elem(null, "location", $$x14, $$x13, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$1))
   });
-  if ((this$147 === $m_sci_Nil$())) {
+  if ((this$116 === $m_sci_Nil$())) {
     var locationNodes = $m_sci_Nil$()
   } else {
-    var arg1$12 = this$147.head__O();
-    var h$8 = new $c_sci_$colon$colon(f$11(arg1$12), $m_sci_Nil$());
-    var t$12 = h$8;
-    var rest$6 = $as_sci_List(this$147.tail__O());
+    var arg1$12 = this$116.head__O();
+    var h$13 = new $c_sci_$colon$colon(f$11(arg1$12), $m_sci_Nil$());
+    var t$14 = h$13;
+    var rest$6 = $as_sci_List(this$116.tail__O());
     while ((rest$6 !== $m_sci_Nil$())) {
       var arg1$13 = $n(rest$6).head__O();
       var nx$6 = new $c_sci_$colon$colon(f$11(arg1$13), $m_sci_Nil$());
-      $n(t$12).sci_$colon$colon__f_next = nx$6;
-      t$12 = nx$6;
+      $n(t$14).sci_$colon$colon__f_next = nx$6;
+      t$14 = nx$6;
       rest$6 = $as_sci_List($n(rest$6).tail__O())
     };
-    var locationNodes = h$8
+    var locationNodes = h$13
   };
-  var this$177 = $n(simpleEdges);
+  var this$151 = $n(simpleEdges);
   var f$14 = ((edge$3$1) => {
     var edge$4 = $as_T4(edge$3$1);
-    matchResult30: {
+    matchResult25: {
       var \u03b42$___1;
       var \u03b42$___2;
       var \u03b42$___3;
@@ -11155,7 +13724,7 @@ $c_Lrta_backend_UppaalConverter3$.prototype.convert__Lrta_syntax_Program2$RxGrap
         var \u03b42$___2 = target;
         var \u03b42$___3 = transId$1;
         var \u03b42$___4 = lbl$1;
-        break matchResult30
+        break matchResult25
       };
       throw new $c_s_MatchError(edge$4)
     };
@@ -11168,252 +13737,807 @@ $c_Lrta_backend_UppaalConverter3$.prototype.convert__Lrta_syntax_Program2$RxGrap
     var actionNodeId = ((((((("event_" + source$2) + "_") + target$2) + "_") + transId$2) + "_") + lbl$2);
     var cyEdge1Id = ((("s_to_a_" + source$2) + "_") + actionNodeId);
     var cyEdge2Id = ((("a_to_s_" + actionNodeId) + "_") + target$2);
-    var this$149 = $n(source$2);
-    var this$150 = $n(this$149.Lrta_syntax_Program2$QName__f_n);
-    var nails1 = $p_Lrta_backend_UppaalConverter3$__calculateNails$1__sjs_js_Dynamic__sjs_js_Dynamic__T__T__T__sci_List(this, nodesPos, edgesPos, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$150, "", "/", ""), actionNodeId, cyEdge1Id);
-    var actionNodePos = $p_Lrta_backend_UppaalConverter3$__getPos$1__sjs_js_Dynamic__T__Lrta_backend_UppaalConverter3$Point(this, nodesPos, actionNodeId);
-    var this$151 = $n(target$2);
-    var this$152 = $n(this$151.Lrta_syntax_Program2$QName__f_n);
-    var nails2 = $p_Lrta_backend_UppaalConverter3$__calculateNails$1__sjs_js_Dynamic__sjs_js_Dynamic__T__T__T__sci_List(this, nodesPos, edgesPos, actionNodeId, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$152, "", "/", ""), cyEdge2Id);
-    var this$154 = $n(nails1);
+    var this$118 = $n(source$2);
+    var this$119 = $n(this$118.Lrta_syntax_Program2$QName__f_n);
+    var nails1 = $p_Lrta_backend_UppaalConverter4$__calculateNails$1__sjs_js_Dynamic__sjs_js_Dynamic__T__T__T__sci_List(this, nodesPos, edgesPos, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$119, "", "/", ""), actionNodeId, cyEdge1Id);
+    var actionNodePos = $p_Lrta_backend_UppaalConverter4$__getPos$1__sjs_js_Dynamic__T__Lrta_backend_UppaalConverter4$Point(this, nodesPos, actionNodeId);
+    var this$120 = $n(target$2);
+    var this$121 = $n(this$120.Lrta_syntax_Program2$QName__f_n);
+    var nails2 = $p_Lrta_backend_UppaalConverter4$__calculateNails$1__sjs_js_Dynamic__sjs_js_Dynamic__T__T__T__sci_List(this, nodesPos, edgesPos, actionNodeId, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$121, "", "/", ""), cyEdge2Id);
+    var this$123 = $n(nails1);
     $n($m_s_package$().s_package$__f_List);
-    var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_backend_UppaalConverter3$Point.getArrayOf().constr)([actionNodePos]));
+    var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_backend_UppaalConverter4$Point.getArrayOf().constr)([actionNodePos]));
     var suffix$1 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems);
-    var this$155 = $n(this$154.appendedAll__sc_IterableOnce__sci_List(suffix$1));
-    var allNails = this$155.appendedAll__sc_IterableOnce__sci_List(nails2);
-    var labelX = $doubleToInt($n(actionNodePos).Lrta_backend_UppaalConverter3$Point__f_x);
-    var labelY = $doubleToInt($n(actionNodePos).Lrta_backend_UppaalConverter3$Point__f_y);
+    var this$124 = $n(this$123.appendedAll__sc_IterableOnce__sci_List(suffix$1));
+    var allNails = this$124.appendedAll__sc_IterableOnce__sci_List(nails2);
+    var labelX = $doubleToInt($n(actionNodePos).Lrta_backend_UppaalConverter4$Point__f_x);
+    var labelY = $doubleToInt($n(actionNodePos).Lrta_backend_UppaalConverter4$Point__f_y);
     var reactiveGuard = (("A[" + edgeIndex) + "].stat == 1");
-    var $$x16 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_edgeConditions).get__O__s_Option(edge$4);
-    var this$156 = $m_s_$less$colon$less$();
-    var this$157 = $n($n($$x16).flatten__s_$less$colon$less__s_Option(this$156.s_$less$colon$less$__f_singleton));
-    if (this$157.isEmpty__Z()) {
+    var $$x15 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_edgeConditions).get__O__s_Option(edge$4);
+    var this$125 = $m_s_$less$colon$less$();
+    var this$126 = $n($n($$x15).flatten__s_$less$colon$less__s_Option(this$125.s_$less$colon$less$__f_singleton));
+    if (this$126.isEmpty__Z()) {
       var dataGuardOpt = $m_s_None$()
     } else {
-      var arg1$14 = this$157.get__O();
+      var arg1$14 = this$126.get__O();
       var cond$1 = $as_Lrta_syntax_Condition(arg1$14);
-      var dataGuardOpt = new $c_s_Some($p_Lrta_backend_UppaalConverter3$__conditionToString__Lrta_syntax_Condition__T(this, cond$1))
+      var dataGuardOpt = new $c_s_Some($p_Lrta_backend_UppaalConverter4$__conditionToString__Lrta_syntax_Condition__T(this, cond$1))
     };
-    matchResult31: {
+    matchResult26: {
       var fullGuard;
       if ((dataGuardOpt instanceof $c_s_Some)) {
         var dg = $as_T($n($as_s_Some(dataGuardOpt)).s_Some__f_value);
         var fullGuard = (((("(" + reactiveGuard) + ") && (") + dg) + ")");
-        break matchResult31
+        break matchResult26
       };
-      var x$7 = $m_s_None$();
-      if ((x$7 === dataGuardOpt)) {
+      var x$8 = $m_s_None$();
+      if ((x$8 === dataGuardOpt)) {
         var fullGuard = reactiveGuard;
-        break matchResult31
+        break matchResult26
       };
       throw new $c_s_MatchError(dataGuardOpt)
     };
     var statements = $as_sci_List($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_edgeUpdates).getOrElse__O__F0__O(edge$4, new $c_sjsr_AnonFunction0((() => $m_s_package$().s_package$__f_Nil))));
-    var this$158 = $n(statements);
-    if ((!this$158.isEmpty__Z())) {
+    var this$127 = $n(statements);
+    if ((!this$127.isEmpty__Z())) {
       var old = functionCounter.ju_concurrent_atomic_AtomicInteger__f_java$util$concurrent$atomic$AtomicInteger$$value;
       functionCounter.ju_concurrent_atomic_AtomicInteger__f_java$util$concurrent$atomic$AtomicInteger$$value = ((1 + old) | 0);
       var funcName = ("update_data_" + old);
-      var this$159 = $n(statements);
+      var this$128 = $n(statements);
       var f$12 = ((stmt) => {
         var stmt$1 = $as_Lrta_syntax_Statement(stmt);
-        return $p_Lrta_backend_UppaalConverter3$__statementToString__Lrta_syntax_Statement__T(this, stmt$1)
+        return $p_Lrta_backend_UppaalConverter4$__statementToString__Lrta_syntax_Statement__T(this, stmt$1)
       });
-      if ((this$159 === $m_sci_Nil$())) {
-        var $$x17 = $m_sci_Nil$()
+      if ((this$128 === $m_sci_Nil$())) {
+        var $$x16 = $m_sci_Nil$()
       } else {
-        var arg1$15 = this$159.head__O();
-        var h$9 = new $c_sci_$colon$colon(f$12(arg1$15), $m_sci_Nil$());
-        var t$13 = h$9;
-        var rest$7 = $as_sci_List(this$159.tail__O());
+        var arg1$15 = this$128.head__O();
+        var h$14 = new $c_sci_$colon$colon(f$12(arg1$15), $m_sci_Nil$());
+        var t$15 = h$14;
+        var rest$7 = $as_sci_List(this$128.tail__O());
         while ((rest$7 !== $m_sci_Nil$())) {
           var arg1$16 = $n(rest$7).head__O();
           var nx$7 = new $c_sci_$colon$colon(f$12(arg1$16), $m_sci_Nil$());
-          $n(t$13).sci_$colon$colon__f_next = nx$7;
-          t$13 = nx$7;
+          $n(t$15).sci_$colon$colon__f_next = nx$7;
+          t$15 = nx$7;
           rest$7 = $as_sci_List($n(rest$7).tail__O())
         };
-        var $$x17 = h$9
+        var $$x16 = h$14
       };
-      var this$160 = $n($$x17);
-      var funcBody = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$160, "", "\n\t", "");
+      var this$129 = $n($$x16);
+      var funcBody = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$129, "", "\n\t", "");
       dataFunctions.append__T__scm_StringBuilder((((("void " + funcName) + "() {\n\t") + funcBody) + "\n}\n"));
       var dataUpdateCall = (funcName + "(), ")
     } else {
       var dataUpdateCall = ""
     };
     var fullAssignment = (((dataUpdateCall + "update_hyperedges_by_id(") + actionId) + ")");
-    var $$x24 = $m_s_xml_Null$();
-    var $$x23 = $m_s_xml_TopScope$();
-    var \u03b4buf$3 = new $c_s_xml_NodeBuffer();
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-    var \u03b4md$3 = $m_s_xml_Null$();
-    \u03b4md$3 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", $as_T($n(stateToId).apply__O__O(source$2)), \u03b4md$3);
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "source", \u03b4md$3, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-    var \u03b4md$2$1 = $m_s_xml_Null$();
-    \u03b4md$2$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", $as_T($n(stateToId).apply__O__O(target$2)), \u03b4md$2$1);
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "target", \u03b4md$2$1, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-    var \u03b4md$3$1 = $m_s_xml_Null$();
-    var this$161 = (((-35) + labelY) | 0);
-    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$161), \u03b4md$3$1);
-    var this$163 = (((-40) + labelX) | 0);
-    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$163), \u03b4md$3$1);
-    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("guard"), \u03b4md$3$1);
-    var $$x19 = \u03b4md$3$1;
-    var $$x18 = $m_s_xml_TopScope$();
-    var \u03b4buf$2$1 = new $c_s_xml_NodeBuffer();
-    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(fullGuard);
-    $m_s_xml_NodeSeq$();
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x19, $$x18, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2$1)));
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-    var \u03b4md$4 = $m_s_xml_Null$();
-    var this$166 = ((15 + labelY) | 0);
-    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$166), \u03b4md$4);
-    var this$168 = (((-40) + labelX) | 0);
-    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$168), \u03b4md$4);
-    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("assignment"), \u03b4md$4);
-    var $$x21 = \u03b4md$4;
-    var $$x20 = $m_s_xml_TopScope$();
-    var \u03b4buf$3$1 = new $c_s_xml_NodeBuffer();
-    \u03b4buf$3$1.$amp$plus__O__s_xml_NodeBuffer(fullAssignment);
-    $m_s_xml_NodeSeq$();
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x21, $$x20, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3$1)));
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-    var this$175 = $n(allNails);
-    var f$13 = ((p$1) => {
-      var p$2 = $as_Lrta_backend_UppaalConverter3$Point(p$1);
-      var \u03b4md$5 = $m_s_xml_Null$();
-      var this$171 = $doubleToInt($n(p$2).Lrta_backend_UppaalConverter3$Point__f_y);
-      \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$171), \u03b4md$5);
-      var this$173 = $doubleToInt($n(p$2).Lrta_backend_UppaalConverter3$Point__f_x);
-      \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$173), \u03b4md$5);
-      return new $c_s_xml_Elem(null, "nail", \u03b4md$5, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([])))
-    });
-    if ((this$175 === $m_sci_Nil$())) {
-      var $$x22 = $m_sci_Nil$()
+    if ((actionId >= 0)) {
+      var \u03b4md$3 = $m_s_xml_Null$();
+      var this$130 = (((-55) + labelY) | 0);
+      \u03b4md$3 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$130), \u03b4md$3);
+      var this$132 = (((-40) + labelX) | 0);
+      \u03b4md$3 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$132), \u03b4md$3);
+      \u03b4md$3 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("synchronisation"), \u03b4md$3);
+      var $$x18 = \u03b4md$3;
+      var $$x17 = $m_s_xml_TopScope$();
+      var \u03b4buf$3 = new $c_s_xml_NodeBuffer();
+      \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("action_event["));
+      \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(actionId);
+      \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("]!"));
+      $m_s_xml_NodeSeq$();
+      var syncLabel = new $c_s_xml_Elem(null, "label", $$x18, $$x17, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3))
     } else {
-      var arg1$17 = this$175.head__O();
-      var h$10 = new $c_sci_$colon$colon(f$13(arg1$17), $m_sci_Nil$());
-      var t$14 = h$10;
-      var rest$8 = $as_sci_List(this$175.tail__O());
+      var syncLabel = $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty
+    };
+    var $$x25 = $m_s_xml_Null$();
+    var $$x24 = $m_s_xml_TopScope$();
+    var \u03b4buf$2$1 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$2$1 = $m_s_xml_Null$();
+    \u03b4md$2$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", $as_T($n(stateToId).apply__O__O(source$2)), \u03b4md$2$1);
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "source", \u03b4md$2$1, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$3$1 = $m_s_xml_Null$();
+    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", $as_T($n(stateToId).apply__O__O(target$2)), \u03b4md$3$1);
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "target", \u03b4md$3$1, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$4 = $m_s_xml_Null$();
+    var this$135 = (((-35) + labelY) | 0);
+    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$135), \u03b4md$4);
+    var this$137 = (((-40) + labelX) | 0);
+    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$137), \u03b4md$4);
+    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("guard"), \u03b4md$4);
+    var $$x20 = \u03b4md$4;
+    var $$x19 = $m_s_xml_TopScope$();
+    var \u03b4buf$3$1 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$3$1.$amp$plus__O__s_xml_NodeBuffer(fullGuard);
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x20, $$x19, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3$1)));
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(syncLabel);
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$5 = $m_s_xml_Null$();
+    var this$140 = ((15 + labelY) | 0);
+    \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$140), \u03b4md$5);
+    var this$142 = (((-40) + labelX) | 0);
+    \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$142), \u03b4md$5);
+    \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("assignment"), \u03b4md$5);
+    var $$x22 = \u03b4md$5;
+    var $$x21 = $m_s_xml_TopScope$();
+    var \u03b4buf$4 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(fullAssignment);
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x22, $$x21, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$4)));
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var this$149 = $n(allNails);
+    var f$13 = ((p$1) => {
+      var p$2 = $as_Lrta_backend_UppaalConverter4$Point(p$1);
+      var \u03b4md$6 = $m_s_xml_Null$();
+      var this$145 = $doubleToInt($n(p$2).Lrta_backend_UppaalConverter4$Point__f_y);
+      \u03b4md$6 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$145), \u03b4md$6);
+      var this$147 = $doubleToInt($n(p$2).Lrta_backend_UppaalConverter4$Point__f_x);
+      \u03b4md$6 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$147), \u03b4md$6);
+      return new $c_s_xml_Elem(null, "nail", \u03b4md$6, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([])))
+    });
+    if ((this$149 === $m_sci_Nil$())) {
+      var $$x23 = $m_sci_Nil$()
+    } else {
+      var arg1$17 = this$149.head__O();
+      var h$15 = new $c_sci_$colon$colon(f$13(arg1$17), $m_sci_Nil$());
+      var t$16 = h$15;
+      var rest$8 = $as_sci_List(this$149.tail__O());
       while ((rest$8 !== $m_sci_Nil$())) {
         var arg1$18 = $n(rest$8).head__O();
         var nx$8 = new $c_sci_$colon$colon(f$13(arg1$18), $m_sci_Nil$());
-        $n(t$14).sci_$colon$colon__f_next = nx$8;
-        t$14 = nx$8;
+        $n(t$16).sci_$colon$colon__f_next = nx$8;
+        t$16 = nx$8;
         rest$8 = $as_sci_List($n(rest$8).tail__O())
       };
-      var $$x22 = h$10
+      var $$x23 = h$15
     };
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer($$x22);
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer($$x23);
+    \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
     $m_s_xml_NodeSeq$();
-    return new $c_s_xml_Elem(null, "transition", $$x24, $$x23, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3))
+    return new $c_s_xml_Elem(null, "transition", $$x25, $$x24, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2$1))
   });
-  if ((this$177 === $m_sci_Nil$())) {
+  if ((this$151 === $m_sci_Nil$())) {
     var transitionNodes = $m_sci_Nil$()
   } else {
-    var arg1$19 = this$177.head__O();
-    var h$11 = new $c_sci_$colon$colon(f$14(arg1$19), $m_sci_Nil$());
-    var t$15 = h$11;
-    var rest$9 = $as_sci_List(this$177.tail__O());
+    var arg1$19 = this$151.head__O();
+    var h$16 = new $c_sci_$colon$colon(f$14(arg1$19), $m_sci_Nil$());
+    var t$17 = h$16;
+    var rest$9 = $as_sci_List(this$151.tail__O());
     while ((rest$9 !== $m_sci_Nil$())) {
       var arg1$20 = $n(rest$9).head__O();
       var nx$9 = new $c_sci_$colon$colon(f$14(arg1$20), $m_sci_Nil$());
-      $n(t$15).sci_$colon$colon__f_next = nx$9;
-      t$15 = nx$9;
+      $n(t$17).sci_$colon$colon__f_next = nx$9;
+      t$17 = nx$9;
       rest$9 = $as_sci_List($n(rest$9).tail__O())
     };
-    var transitionNodes = h$11
+    var transitionNodes = h$16
   };
   $m_sc_StringOps$();
-  var x$8 = (("\r\n         |// -----------------------------------------------------------\r\n         |// 5. Fun\u00e7\u00f5es de Dados (Geradas)\r\n         |// -----------------------------------------------------------\r\n         |" + $n(dataFunctions.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content) + "\r\n         |");
-  declarationBuilder.append__T__scm_StringBuilder($m_sc_StringOps$().stripMargin$extension__T__C__T(x$8, 124));
-  var this$180 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_inits);
-  var this$181 = $n($f_sc_IterableOps__headOption__s_Option(this$180));
-  if (this$181.isEmpty__Z()) {
+  var x$9 = (("\n         |// -----------------------------------------------------------\n         |// 5. Fun\u00e7\u00f5es de Dados (Geradas)\n         |// -----------------------------------------------------------\n         |" + $n(dataFunctions.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content) + "\n         |");
+  declarationBuilder.append__T__scm_StringBuilder($m_sc_StringOps$().stripMargin$extension__T__C__T(x$9, 124));
+  var this$154 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_inits);
+  var this$155 = $n($f_sc_IterableOps__headOption__s_Option(this$154));
+  if (this$155.isEmpty__Z()) {
     var initRef = $m_s_None$()
   } else {
-    var arg1$21 = this$181.get__O();
-    var key$1 = $as_Lrta_syntax_Program2$QName(arg1$21);
-    var initRef = $n(stateToId).get__O__s_Option(key$1)
+    var arg1$21 = this$155.get__O();
+    var key = $as_Lrta_syntax_Program2$QName(arg1$21);
+    var initRef = $n(stateToId).get__O__s_Option(key)
   };
-  var $$x35 = $m_s_xml_Null$();
-  var $$x34 = $m_s_xml_TopScope$();
-  var \u03b4buf$4 = new $c_s_xml_NodeBuffer();
-  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
-  var $$x26 = $m_s_xml_Null$();
-  var $$x25 = $m_s_xml_TopScope$();
-  var \u03b4buf$2$2 = new $c_s_xml_NodeBuffer();
-  \u03b4buf$2$2.$amp$plus__O__s_xml_NodeBuffer($n(declarationBuilder.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content);
-  $m_s_xml_NodeSeq$();
-  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "declaration", $$x26, $$x25, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2$2)));
-  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
-  var $$x31 = $m_s_xml_Null$();
-  var $$x30 = $m_s_xml_TopScope$();
-  var \u03b4buf$3$2 = new $c_s_xml_NodeBuffer();
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-  var \u03b4md$6 = $m_s_xml_Null$();
-  \u03b4md$6 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("5"), \u03b4md$6);
-  \u03b4md$6 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("5"), \u03b4md$6);
-  var $$x28 = \u03b4md$6;
-  var $$x27 = $m_s_xml_TopScope$();
-  var \u03b4buf$4$1 = new $c_s_xml_NodeBuffer();
-  \u03b4buf$4$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("Template"));
-  $m_s_xml_NodeSeq$();
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x28, $$x27, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$4$1)));
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(locationNodes);
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-  var this$184 = $n(initRef);
-  if (this$184.isEmpty__Z()) {
-    var $$x29 = $m_s_None$()
+  if ($n(result$1).isEmpty__Z()) {
+    var delayedRuleTemplate = $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty
   } else {
-    var arg1$22 = this$184.get__O();
-    var ref = $as_T(arg1$22);
+    var $$x63 = $m_s_xml_Null$();
+    var $$x62 = $m_s_xml_TopScope$();
+    var \u03b4buf$5 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
     var \u03b4md$7 = $m_s_xml_Null$();
-    \u03b4md$7 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", ref, \u03b4md$7);
-    var $$x29 = new $c_s_Some(new $c_s_xml_Elem(null, "init", \u03b4md$7, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))))
+    \u03b4md$7 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("5"), \u03b4md$7);
+    \u03b4md$7 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("5"), \u03b4md$7);
+    var $$x27 = \u03b4md$7;
+    var $$x26 = $m_s_xml_TopScope$();
+    var \u03b4buf$2$2 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$2$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("DelayedRule"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x27, $$x26, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2$2)));
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var $$x29 = $m_s_xml_Null$();
+    var $$x28 = $m_s_xml_TopScope$();
+    var \u03b4buf$3$2 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("const int trigger_id, const int target_is_edge, const int target_idx, const int effect_type, const int delay_val"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "parameter", $$x29, $$x28, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3$2)));
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var $$x31 = $m_s_xml_Null$();
+    var $$x30 = $m_s_xml_TopScope$();
+    var \u03b4buf$4$1 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$4$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("clock t_del;"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "declaration", $$x31, $$x30, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$4$1)));
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var \u03b4md$2$2 = $m_s_xml_Null$();
+    \u03b4md$2$2 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("0"), \u03b4md$2$2);
+    \u03b4md$2$2 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("-150"), \u03b4md$2$2);
+    \u03b4md$2$2 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "id", new $c_s_xml_Text("id_idle"), \u03b4md$2$2);
+    var $$x35 = \u03b4md$2$2;
+    var $$x34 = $m_s_xml_TopScope$();
+    var \u03b4buf$5$1 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$5$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n           "));
+    var \u03b4md$3$2 = $m_s_xml_Null$();
+    \u03b4md$3$2 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("-35"), \u03b4md$3$2);
+    \u03b4md$3$2 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("-160"), \u03b4md$3$2);
+    var $$x33 = \u03b4md$3$2;
+    var $$x32 = $m_s_xml_TopScope$();
+    var \u03b4buf$6 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$6.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("Idle"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$5$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x33, $$x32, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$6)));
+    \u03b4buf$5$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "location", $$x35, $$x34, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$5$1)));
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var \u03b4md$4$1 = $m_s_xml_Null$();
+    \u03b4md$4$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("0"), \u03b4md$4$1);
+    \u03b4md$4$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("150"), \u03b4md$4$1);
+    \u03b4md$4$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "id", new $c_s_xml_Text("id_wait"), \u03b4md$4$1);
+    var $$x41 = \u03b4md$4$1;
+    var $$x40 = $m_s_xml_TopScope$();
+    var \u03b4buf$7 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$7.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n           "));
+    var \u03b4md$5$1 = $m_s_xml_Null$();
+    \u03b4md$5$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("-35"), \u03b4md$5$1);
+    \u03b4md$5$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("130"), \u03b4md$5$1);
+    var $$x37 = \u03b4md$5$1;
+    var $$x36 = $m_s_xml_TopScope$();
+    var \u03b4buf$8 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$8.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("Waiting"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$7.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x37, $$x36, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$8)));
+    \u03b4buf$7.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n           "));
+    var \u03b4md$6$1 = $m_s_xml_Null$();
+    \u03b4md$6$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("15"), \u03b4md$6$1);
+    \u03b4md$6$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("130"), \u03b4md$6$1);
+    \u03b4md$6$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("invariant"), \u03b4md$6$1);
+    var $$x39 = \u03b4md$6$1;
+    var $$x38 = $m_s_xml_TopScope$();
+    var \u03b4buf$9 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$9.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("t_del "));
+    \u03b4buf$9.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_EntityRef("lt"));
+    \u03b4buf$9.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("= delay_val"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$7.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x39, $$x38, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$9)));
+    \u03b4buf$7.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "location", $$x41, $$x40, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$7)));
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var \u03b4md$7$1 = $m_s_xml_Null$();
+    \u03b4md$7$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", new $c_s_xml_Text("id_idle"), \u03b4md$7$1);
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "init", \u03b4md$7$1, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var $$x47 = $m_s_xml_Null$();
+    var $$x46 = $m_s_xml_TopScope$();
+    var \u03b4buf$10 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$10.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$8 = $m_s_xml_Null$();
+    \u03b4md$8 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", new $c_s_xml_Text("id_idle"), \u03b4md$8);
+    \u03b4buf$10.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "source", \u03b4md$8, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$10.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$9 = $m_s_xml_Null$();
+    \u03b4md$9 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", new $c_s_xml_Text("id_wait"), \u03b4md$9);
+    \u03b4buf$10.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "target", \u03b4md$9, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$10.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$10 = $m_s_xml_Null$();
+    \u03b4md$10 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("-20"), \u03b4md$10);
+    \u03b4md$10 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("-60"), \u03b4md$10);
+    \u03b4md$10 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("synchronisation"), \u03b4md$10);
+    var $$x43 = \u03b4md$10;
+    var $$x42 = $m_s_xml_TopScope$();
+    var \u03b4buf$11 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$11.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("action_event[trigger_id]?"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$10.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x43, $$x42, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$11)));
+    \u03b4buf$10.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$11 = $m_s_xml_Null$();
+    \u03b4md$11 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("5"), \u03b4md$11);
+    \u03b4md$11 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("-60"), \u03b4md$11);
+    \u03b4md$11 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("assignment"), \u03b4md$11);
+    var $$x45 = \u03b4md$11;
+    var $$x44 = $m_s_xml_TopScope$();
+    var \u03b4buf$12 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$12.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("t_del = 0"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$10.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x45, $$x44, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$12)));
+    \u03b4buf$10.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "transition", $$x47, $$x46, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$10)));
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var $$x53 = $m_s_xml_Null$();
+    var $$x52 = $m_s_xml_TopScope$();
+    var \u03b4buf$13 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$12 = $m_s_xml_Null$();
+    \u03b4md$12 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", new $c_s_xml_Text("id_wait"), \u03b4md$12);
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "source", \u03b4md$12, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$13 = $m_s_xml_Null$();
+    \u03b4md$13 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", new $c_s_xml_Text("id_wait"), \u03b4md$13);
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "target", \u03b4md$13, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$14 = $m_s_xml_Null$();
+    \u03b4md$14 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("-20"), \u03b4md$14);
+    \u03b4md$14 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("170"), \u03b4md$14);
+    \u03b4md$14 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("synchronisation"), \u03b4md$14);
+    var $$x49 = \u03b4md$14;
+    var $$x48 = $m_s_xml_TopScope$();
+    var \u03b4buf$14 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$14.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("action_event[trigger_id]?"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x49, $$x48, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$14)));
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$15 = $m_s_xml_Null$();
+    \u03b4md$15 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("5"), \u03b4md$15);
+    \u03b4md$15 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("170"), \u03b4md$15);
+    \u03b4md$15 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("assignment"), \u03b4md$15);
+    var $$x51 = \u03b4md$15;
+    var $$x50 = $m_s_xml_TopScope$();
+    var \u03b4buf$15 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$15.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("t_del = 0"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x51, $$x50, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$15)));
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$16 = $m_s_xml_Null$();
+    \u03b4md$16 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("-40"), \u03b4md$16);
+    \u03b4md$16 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("210"), \u03b4md$16);
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "nail", \u03b4md$16, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    var \u03b4md$17 = $m_s_xml_Null$();
+    \u03b4md$17 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("40"), \u03b4md$17);
+    \u03b4md$17 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("210"), \u03b4md$17);
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "nail", \u03b4md$17, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$13.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "transition", $$x53, $$x52, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$13)));
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var $$x61 = $m_s_xml_Null$();
+    var $$x60 = $m_s_xml_TopScope$();
+    var \u03b4buf$16 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n       "));
+    var \u03b4md$18 = $m_s_xml_Null$();
+    \u03b4md$18 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", new $c_s_xml_Text("id_wait"), \u03b4md$18);
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "source", \u03b4md$18, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n       "));
+    var \u03b4md$19 = $m_s_xml_Null$();
+    \u03b4md$19 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", new $c_s_xml_Text("id_idle"), \u03b4md$19);
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "target", \u03b4md$19, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n       "));
+    var \u03b4md$20 = $m_s_xml_Null$();
+    \u03b4md$20 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("40"), \u03b4md$20);
+    \u03b4md$20 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("-60"), \u03b4md$20);
+    \u03b4md$20 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("guard"), \u03b4md$20);
+    var $$x55 = \u03b4md$20;
+    var $$x54 = $m_s_xml_TopScope$();
+    var \u03b4buf$17 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$17.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("t_del "));
+    \u03b4buf$17.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_EntityRef("gt"));
+    \u03b4buf$17.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("= delay_val"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x55, $$x54, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$17)));
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n       "));
+    var \u03b4md$21 = $m_s_xml_Null$();
+    \u03b4md$21 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("20"), \u03b4md$21);
+    \u03b4md$21 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("-60"), \u03b4md$21);
+    \u03b4md$21 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("synchronisation"), \u03b4md$21);
+    var $$x57 = \u03b4md$21;
+    var $$x56 = $m_s_xml_TopScope$();
+    var \u03b4buf$18 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$18.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("timeout_fired!"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x57, $$x56, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$18)));
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n       "));
+    var \u03b4md$22 = $m_s_xml_Null$();
+    \u03b4md$22 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("60"), \u03b4md$22);
+    \u03b4md$22 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("-100"), \u03b4md$22);
+    \u03b4md$22 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("assignment"), \u03b4md$22);
+    var $$x59 = \u03b4md$22;
+    var $$x58 = $m_s_xml_TopScope$();
+    var \u03b4buf$19 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$19.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("update_delayed_rule(target_is_edge, target_idx, effect_type)"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x59, $$x58, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$19)));
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n       "));
+    var \u03b4md$23 = $m_s_xml_Null$();
+    \u03b4md$23 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("40"), \u03b4md$23);
+    \u03b4md$23 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("0"), \u03b4md$23);
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "nail", \u03b4md$23, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
+    \u03b4buf$16.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n     "));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "transition", $$x61, $$x60, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$16)));
+    \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n      "));
+    $m_s_xml_NodeSeq$();
+    var delayedRuleTemplate = new $c_s_xml_Elem(null, "template", $$x63, $$x62, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$5))
   };
-  var this$185 = $n($$x29);
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer((this$185.isEmpty__Z() ? $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty : this$185.get__O()));
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(transitionNodes);
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+  var this$175 = $n(result$1);
+  var this$186 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zipWithIndex__O(this$175)));
+  var f$20 = ((x$1$6$1) => {
+    var x$1$16 = $as_T2(x$1$6$1);
+    if ((x$1$16 !== null)) {
+      var hEdge$1 = $as_T5($n(x$1$16)._1__O());
+      $uI($n(x$1$16)._2__O());
+      matchResult27: {
+        var \u03b43$___1;
+        var \u03b43$___2;
+        var \u03b43$___3;
+        var \u03b43$___4;
+        if ((hEdge$1 !== null)) {
+          var opType$1 = $as_T($n(hEdge$1).T5__f__1);
+          var triggerLbl$1 = $as_Lrta_syntax_Program2$QName($n(hEdge$1).T5__f__2);
+          var targetLbl$1 = $as_Lrta_syntax_Program2$QName($n(hEdge$1).T5__f__3);
+          var ruleLabel = $as_Lrta_syntax_Program2$QName($n(hEdge$1).T5__f__5);
+          var \u03b43$___1 = opType$1;
+          var \u03b43$___2 = triggerLbl$1;
+          var \u03b43$___3 = targetLbl$1;
+          var \u03b43$___4 = ruleLabel;
+          break matchResult27
+        };
+        throw new $c_s_MatchError(hEdge$1)
+      };
+      var opType$2$1 = $as_T(\u03b43$___1);
+      var triggerLbl$2$1 = $as_Lrta_syntax_Program2$QName(\u03b43$___2);
+      var targetLbl$2$1 = $as_Lrta_syntax_Program2$QName(\u03b43$___3);
+      var ruleLabel$2 = $as_Lrta_syntax_Program2$QName(\u03b43$___4);
+      var delayVal = $doubleToInt($uD($n($as_T2($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_delays).apply__O__O(ruleLabel$2)))._2__O()));
+      var triggerId = $uI($n(labelToId).getOrElse__O__F0__O(triggerLbl$2$1, new $c_sjsr_AnonFunction0((() => (-1)))));
+      var effectType$1 = ((opType$2$1 === "on") ? 1 : 0);
+      var this$177 = $n(simpleEdges);
+      var f$15 = ((_$8) => {
+        var _$8$1 = $as_T4(_$8);
+        var x$10 = $n(_$8$1).T4__f__4;
+        return ((x$10 === null) ? (targetLbl$2$1 === null) : $dp_equals__O__Z($n(x$10), targetLbl$2$1))
+      });
+      var l$4 = this$177;
+      block$8: {
+        var result$4;
+        while (true) {
+          if ($n(l$4).isEmpty__Z()) {
+            var result$4 = $m_sci_Nil$();
+            break
+          } else {
+            var h$17 = $n(l$4).head__O();
+            var t$18 = $as_sci_List($n(l$4).tail__O());
+            if (($uZ(f$15(h$17)) === false)) {
+              l$4 = t$18;
+              continue
+            };
+            var start$4 = l$4;
+            var remaining$4 = t$18;
+            while (true) {
+              if ($n(remaining$4).isEmpty__Z()) {
+                var result$4 = start$4;
+                break block$8
+              } else {
+                var x$11 = $n(remaining$4).head__O();
+                if (($uZ(f$15(x$11)) !== false)) {
+                  remaining$4 = $as_sci_List($n(remaining$4).tail__O());
+                  continue
+                };
+                var firstMiss$4 = remaining$4;
+                var newHead$4 = new $c_sci_$colon$colon($n(start$4).head__O(), $m_sci_Nil$());
+                var toProcess$4 = $as_sci_List($n(start$4).tail__O());
+                var currentLast$4 = newHead$4;
+                while ((toProcess$4 !== firstMiss$4)) {
+                  var newElem$5 = new $c_sci_$colon$colon($n(toProcess$4).head__O(), $m_sci_Nil$());
+                  $n(currentLast$4).sci_$colon$colon__f_next = newElem$5;
+                  currentLast$4 = newElem$5;
+                  toProcess$4 = $as_sci_List($n(toProcess$4).tail__O())
+                };
+                var next$4 = $as_sci_List($n(firstMiss$4).tail__O());
+                var nextToCopy$4 = next$4;
+                while ((!$n(next$4).isEmpty__Z())) {
+                  var head$4 = $n(next$4).head__O();
+                  if (($uZ(f$15(head$4)) !== false)) {
+                    next$4 = $as_sci_List($n(next$4).tail__O())
+                  } else {
+                    while ((nextToCopy$4 !== next$4)) {
+                      var newElem$2$4 = new $c_sci_$colon$colon($n(nextToCopy$4).head__O(), $m_sci_Nil$());
+                      $n(currentLast$4).sci_$colon$colon__f_next = newElem$2$4;
+                      currentLast$4 = newElem$2$4;
+                      nextToCopy$4 = $as_sci_List($n(nextToCopy$4).tail__O())
+                    };
+                    nextToCopy$4 = $as_sci_List($n(next$4).tail__O());
+                    next$4 = $as_sci_List($n(next$4).tail__O())
+                  }
+                };
+                if ((!$n(nextToCopy$4).isEmpty__Z())) {
+                  $n(currentLast$4).sci_$colon$colon__f_next = nextToCopy$4
+                };
+                var result$4 = newHead$4;
+                break block$8
+              }
+            }
+          }
+        }
+      };
+      var this$179 = $n(result$4);
+      var f$16 = ((e$2) => {
+        var e$3 = $as_T4(e$2);
+        var _2$2 = $n(edgeToIndex).apply__O__O(e$3);
+        return new $c_T2(1, _2$2)
+      });
+      if ((this$179 === $m_sci_Nil$())) {
+        var simpleEdgeTargets$1 = $m_sci_Nil$()
+      } else {
+        var arg1$22 = this$179.head__O();
+        var h$18 = new $c_sci_$colon$colon(f$16(arg1$22), $m_sci_Nil$());
+        var t$19 = h$18;
+        var rest$10 = $as_sci_List(this$179.tail__O());
+        while ((rest$10 !== $m_sci_Nil$())) {
+          var arg1$23 = $n(rest$10).head__O();
+          var nx$10 = new $c_sci_$colon$colon(f$16(arg1$23), $m_sci_Nil$());
+          $n(t$19).sci_$colon$colon__f_next = nx$10;
+          t$19 = nx$10;
+          rest$10 = $as_sci_List($n(rest$10).tail__O())
+        };
+        var simpleEdgeTargets$1 = h$18
+      };
+      var this$180 = $n(simpleEdgeTargets$1);
+      if ((!this$180.isEmpty__Z())) {
+        var allTargets = simpleEdgeTargets$1
+      } else {
+        var this$181 = $n(result);
+        var f$17 = ((_$9) => {
+          var _$9$1 = $as_T5(_$9);
+          var x$12 = $n(_$9$1).T5__f__5;
+          return ((x$12 === null) ? (targetLbl$2$1 === null) : $dp_equals__O__Z($n(x$12), targetLbl$2$1))
+        });
+        var l$5 = this$181;
+        block$10: {
+          var result$5;
+          while (true) {
+            if ($n(l$5).isEmpty__Z()) {
+              var result$5 = $m_sci_Nil$();
+              break
+            } else {
+              var h$19 = $n(l$5).head__O();
+              var t$20 = $as_sci_List($n(l$5).tail__O());
+              if (($uZ(f$17(h$19)) === false)) {
+                l$5 = t$20;
+                continue
+              };
+              var start$5 = l$5;
+              var remaining$5 = t$20;
+              while (true) {
+                if ($n(remaining$5).isEmpty__Z()) {
+                  var result$5 = start$5;
+                  break block$10
+                } else {
+                  var x$13 = $n(remaining$5).head__O();
+                  if (($uZ(f$17(x$13)) !== false)) {
+                    remaining$5 = $as_sci_List($n(remaining$5).tail__O());
+                    continue
+                  };
+                  var firstMiss$5 = remaining$5;
+                  var newHead$5 = new $c_sci_$colon$colon($n(start$5).head__O(), $m_sci_Nil$());
+                  var toProcess$5 = $as_sci_List($n(start$5).tail__O());
+                  var currentLast$5 = newHead$5;
+                  while ((toProcess$5 !== firstMiss$5)) {
+                    var newElem$6 = new $c_sci_$colon$colon($n(toProcess$5).head__O(), $m_sci_Nil$());
+                    $n(currentLast$5).sci_$colon$colon__f_next = newElem$6;
+                    currentLast$5 = newElem$6;
+                    toProcess$5 = $as_sci_List($n(toProcess$5).tail__O())
+                  };
+                  var next$5 = $as_sci_List($n(firstMiss$5).tail__O());
+                  var nextToCopy$5 = next$5;
+                  while ((!$n(next$5).isEmpty__Z())) {
+                    var head$5 = $n(next$5).head__O();
+                    if (($uZ(f$17(head$5)) !== false)) {
+                      next$5 = $as_sci_List($n(next$5).tail__O())
+                    } else {
+                      while ((nextToCopy$5 !== next$5)) {
+                        var newElem$2$5 = new $c_sci_$colon$colon($n(nextToCopy$5).head__O(), $m_sci_Nil$());
+                        $n(currentLast$5).sci_$colon$colon__f_next = newElem$2$5;
+                        currentLast$5 = newElem$2$5;
+                        nextToCopy$5 = $as_sci_List($n(nextToCopy$5).tail__O())
+                      };
+                      nextToCopy$5 = $as_sci_List($n(next$5).tail__O());
+                      next$5 = $as_sci_List($n(next$5).tail__O())
+                    }
+                  };
+                  if ((!$n(nextToCopy$5).isEmpty__Z())) {
+                    $n(currentLast$5).sci_$colon$colon__f_next = nextToCopy$5
+                  };
+                  var result$5 = newHead$5;
+                  break block$10
+                }
+              }
+            }
+          }
+        };
+        var this$183 = $n(result$5);
+        var f$18 = ((h$20) => {
+          var h$21 = $as_T5(h$20);
+          var _2$3 = $n(hyperEdgeToIndex).apply__O__O(h$21);
+          return new $c_T2(0, _2$3)
+        });
+        if ((this$183 === $m_sci_Nil$())) {
+          var allTargets = $m_sci_Nil$()
+        } else {
+          var arg1$24 = this$183.head__O();
+          var h$22 = new $c_sci_$colon$colon(f$18(arg1$24), $m_sci_Nil$());
+          var t$21 = h$22;
+          var rest$11 = $as_sci_List(this$183.tail__O());
+          while ((rest$11 !== $m_sci_Nil$())) {
+            var arg1$25 = $n(rest$11).head__O();
+            var nx$11 = new $c_sci_$colon$colon(f$18(arg1$25), $m_sci_Nil$());
+            $n(t$21).sci_$colon$colon__f_next = nx$11;
+            t$21 = nx$11;
+            rest$11 = $as_sci_List($n(rest$11).tail__O())
+          };
+          var allTargets = h$22
+        }
+      };
+      var this$184 = $n(allTargets);
+      var f$19 = ((x$1$2$4) => {
+        var x$1$17 = $as_T2(x$1$2$4);
+        if ((x$1$17 !== null)) {
+          var isEdge = $uI($n(x$1$17)._1__O());
+          var targetIdx = $uI($n(x$1$17)._2__O());
+          var name$3 = $n(ruleLabel$2).show__T();
+          return (((((((((((("Delay_" + $f_T__replaceAll__T__T__T($n(name$3), "[^a-zA-Z0-9_]", "_")) + " = DelayedRule(") + triggerId) + ", ") + isEdge) + ", ") + targetIdx) + ", ") + effectType$1) + ", ") + delayVal) + ");")
+        };
+        throw new $c_s_MatchError(x$1$17)
+      });
+      if ((this$184 === $m_sci_Nil$())) {
+        var $$x64 = $m_sci_Nil$()
+      } else {
+        var arg1$26 = this$184.head__O();
+        var h$23 = new $c_sci_$colon$colon(f$19(arg1$26), $m_sci_Nil$());
+        var t$22 = h$23;
+        var rest$12 = $as_sci_List(this$184.tail__O());
+        while ((rest$12 !== $m_sci_Nil$())) {
+          var arg1$27 = $n(rest$12).head__O();
+          var nx$12 = new $c_sci_$colon$colon(f$19(arg1$27), $m_sci_Nil$());
+          $n(t$22).sci_$colon$colon__f_next = nx$12;
+          t$22 = nx$12;
+          rest$12 = $as_sci_List($n(rest$12).tail__O())
+        };
+        var $$x64 = h$23
+      };
+      var this$185 = $n($$x64);
+      return $f_sc_IterableOnceOps__mkString__T__T__T__T(this$185, "", "\n", "")
+    };
+    throw new $c_s_MatchError(x$1$16)
+  });
+  if ((this$186 === $m_sci_Nil$())) {
+    var $$x65 = $m_sci_Nil$()
+  } else {
+    var arg1$28 = this$186.head__O();
+    var h$24 = new $c_sci_$colon$colon(f$20(arg1$28), $m_sci_Nil$());
+    var t$23 = h$24;
+    var rest$13 = $as_sci_List(this$186.tail__O());
+    while ((rest$13 !== $m_sci_Nil$())) {
+      var arg1$29 = $n(rest$13).head__O();
+      var nx$13 = new $c_sci_$colon$colon(f$20(arg1$29), $m_sci_Nil$());
+      $n(t$23).sci_$colon$colon__f_next = nx$13;
+      t$23 = nx$13;
+      rest$13 = $as_sci_List($n(rest$13).tail__O())
+    };
+    var $$x65 = h$24
+  };
+  var this$187 = $n($$x65);
+  var delayedInstantiations = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$187, "", "\n", "");
+  var this$188 = $n(result$1);
+  if ((!this$188.isEmpty__Z())) {
+    var this$189 = $n(result$1);
+    var f$21 = ((h$3$1) => {
+      var h$25 = $as_T5(h$3$1);
+      var qname$3 = $as_Lrta_syntax_Program2$QName($n(h$25).T5__f__5);
+      var name$4 = $n(qname$3).show__T();
+      return ("Delay_" + $f_T__replaceAll__T__T__T($n(name$4), "[^a-zA-Z0-9_]", "_"))
+    });
+    if ((this$189 === $m_sci_Nil$())) {
+      var $$x67 = $m_sci_Nil$()
+    } else {
+      var arg1$30 = this$189.head__O();
+      var h$26 = new $c_sci_$colon$colon(f$21(arg1$30), $m_sci_Nil$());
+      var t$24 = h$26;
+      var rest$14 = $as_sci_List(this$189.tail__O());
+      while ((rest$14 !== $m_sci_Nil$())) {
+        var arg1$31 = $n(rest$14).head__O();
+        var nx$14 = new $c_sci_$colon$colon(f$21(arg1$31), $m_sci_Nil$());
+        $n(t$24).sci_$colon$colon__f_next = nx$14;
+        t$24 = nx$14;
+        rest$14 = $as_sci_List($n(rest$14).tail__O())
+      };
+      var $$x67 = h$26
+    };
+    var this$190 = $n($$x67);
+    var $$x66 = (", " + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$190, "", ", ", ""))
+  } else {
+    var $$x66 = ""
+  };
+  var systemInstances = ("Process" + $$x66);
+  var systemStr = (((("Process = Template();\n" + delayedInstantiations) + "\nsystem ") + systemInstances) + ";");
+  var $$x78 = $m_s_xml_Null$();
+  var $$x77 = $m_s_xml_TopScope$();
+  var \u03b4buf$20 = new $c_s_xml_NodeBuffer();
+  \u03b4buf$20.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+  var $$x69 = $m_s_xml_Null$();
+  var $$x68 = $m_s_xml_TopScope$();
+  var \u03b4buf$21 = new $c_s_xml_NodeBuffer();
+  \u03b4buf$21.$amp$plus__O__s_xml_NodeBuffer($n(declarationBuilder.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content);
   $m_s_xml_NodeSeq$();
-  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "template", $$x31, $$x30, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3$2)));
-  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
-  var $$x33 = $m_s_xml_Null$();
-  var $$x32 = $m_s_xml_TopScope$();
-  var \u03b4buf$5 = new $c_s_xml_NodeBuffer();
-  \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("Process = Template(); system Process;"));
+  \u03b4buf$20.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "declaration", $$x69, $$x68, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$21)));
+  \u03b4buf$20.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+  var $$x74 = $m_s_xml_Null$();
+  var $$x73 = $m_s_xml_TopScope$();
+  var \u03b4buf$22 = new $c_s_xml_NodeBuffer();
+  \u03b4buf$22.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+  var \u03b4md$24 = $m_s_xml_Null$();
+  \u03b4md$24 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("5"), \u03b4md$24);
+  \u03b4md$24 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("5"), \u03b4md$24);
+  var $$x71 = \u03b4md$24;
+  var $$x70 = $m_s_xml_TopScope$();
+  var \u03b4buf$23 = new $c_s_xml_NodeBuffer();
+  \u03b4buf$23.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("Template"));
   $m_s_xml_NodeSeq$();
-  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "system", $$x33, $$x32, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$5)));
-  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n      "));
+  \u03b4buf$22.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x71, $$x70, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$23)));
+  \u03b4buf$22.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+  \u03b4buf$22.$amp$plus__O__s_xml_NodeBuffer(locationNodes);
+  \u03b4buf$22.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+  var this$193 = $n(initRef);
+  if (this$193.isEmpty__Z()) {
+    var $$x72 = $m_s_None$()
+  } else {
+    var arg1$32 = this$193.get__O();
+    var ref = $as_T(arg1$32);
+    var \u03b4md$25 = $m_s_xml_Null$();
+    \u03b4md$25 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", ref, \u03b4md$25);
+    var $$x72 = new $c_s_Some(new $c_s_xml_Elem(null, "init", \u03b4md$25, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))))
+  };
+  var this$194 = $n($$x72);
+  \u03b4buf$22.$amp$plus__O__s_xml_NodeBuffer((this$194.isEmpty__Z() ? $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty : this$194.get__O()));
+  \u03b4buf$22.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+  \u03b4buf$22.$amp$plus__O__s_xml_NodeBuffer(transitionNodes);
+  \u03b4buf$22.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
   $m_s_xml_NodeSeq$();
-  var nta = new $c_s_xml_Elem(null, "nta", $$x35, $$x34, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$4));
+  \u03b4buf$20.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "template", $$x74, $$x73, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$22)));
+  \u03b4buf$20.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+  \u03b4buf$20.$amp$plus__O__s_xml_NodeBuffer(delayedRuleTemplate);
+  \u03b4buf$20.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+  var $$x76 = $m_s_xml_Null$();
+  var $$x75 = $m_s_xml_TopScope$();
+  var \u03b4buf$24 = new $c_s_xml_NodeBuffer();
+  \u03b4buf$24.$amp$plus__O__s_xml_NodeBuffer(systemStr);
+  $m_s_xml_NodeSeq$();
+  \u03b4buf$20.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "system", $$x76, $$x75, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$24)));
+  \u03b4buf$20.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n      "));
+  $m_s_xml_NodeSeq$();
+  var nta = new $c_s_xml_Elem(null, "nta", $$x78, $$x77, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$20));
   var pp = $ct_s_xml_PrettyPrinter__I__I__(new $c_s_xml_PrettyPrinter(), 200, 2);
-  var this$189 = $n(pp.format__s_xml_Node__s_xml_NamespaceBinding__T(nta, $m_s_xml_TopScope$()));
-  var this$190 = $n($as_T(this$189.split("&amp;&amp;").join("&&")));
-  var formattedXml = $as_T(this$190.split("&&").join("&amp;&amp;"));
-  var xmlString = ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>\n" + formattedXml);
-  return $as_T(xmlString.split("  ").join("\t"))
+  var this$198 = $n(pp.format__s_xml_Node__s_xml_NamespaceBinding__T(nta, $m_s_xml_TopScope$()));
+  var this$199 = $n($as_T(this$198.split("&amp;&amp;").join("&&")));
+  var formattedXml = $as_T(this$199.split("&&").join("&amp;&amp;"));
+  var this$200 = $n(formattedXml);
+  return ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>\n" + $as_T(this$200.split("  ").join("\t")))
 });
-var $d_Lrta_backend_UppaalConverter3$ = new $TypeData().initClass({
-  Lrta_backend_UppaalConverter3$: 0
-}, false, "rta.backend.UppaalConverter3$", {
-  Lrta_backend_UppaalConverter3$: 1,
+var $d_Lrta_backend_UppaalConverter4$ = new $TypeData().initClass({
+  Lrta_backend_UppaalConverter4$: 0
+}, false, "rta.backend.UppaalConverter4$", {
+  Lrta_backend_UppaalConverter4$: 1,
   O: 1
 });
-$c_Lrta_backend_UppaalConverter3$.prototype.$classData = $d_Lrta_backend_UppaalConverter3$;
-var $n_Lrta_backend_UppaalConverter3$;
-function $m_Lrta_backend_UppaalConverter3$() {
-  if ((!$n_Lrta_backend_UppaalConverter3$)) {
-    $n_Lrta_backend_UppaalConverter3$ = new $c_Lrta_backend_UppaalConverter3$()
+$c_Lrta_backend_UppaalConverter4$.prototype.$classData = $d_Lrta_backend_UppaalConverter4$;
+var $n_Lrta_backend_UppaalConverter4$;
+function $m_Lrta_backend_UppaalConverter4$() {
+  if ((!$n_Lrta_backend_UppaalConverter4$)) {
+    $n_Lrta_backend_UppaalConverter4$ = new $c_Lrta_backend_UppaalConverter4$()
   };
-  return $n_Lrta_backend_UppaalConverter3$
+  return $n_Lrta_backend_UppaalConverter4$
 }
 function $p_Lrta_frontend_RTAAPI$__escapeJson__T__T($thiz, str) {
   if ((str === null)) {
@@ -11431,32 +14555,32 @@ function $p_Lrta_frontend_RTAAPI$__runtimeValueToJson__Lrta_syntax_RuntimeValue_
   if ((v instanceof $c_Lrta_syntax_RuntimeValue$VInt)) {
     var x$1 = $as_Lrta_syntax_RuntimeValue$VInt(v);
     var this$2 = $n(x$1);
-    var x70 = this$2.Lrta_syntax_RuntimeValue$VInt__f_value;
+    var x73 = this$2.Lrta_syntax_RuntimeValue$VInt__f_value;
     var this$3 = $n(x$1);
     var this$4 = $n(x$1);
-    return ("" + x70)
+    return ("" + x73)
   };
   if ((v instanceof $c_Lrta_syntax_RuntimeValue$VFloat)) {
     var x$1$1 = $as_Lrta_syntax_RuntimeValue$VFloat(v);
     var this$7 = $n(x$1$1);
-    var x65 = this$7.Lrta_syntax_RuntimeValue$VFloat__f_value;
+    var x68 = this$7.Lrta_syntax_RuntimeValue$VFloat__f_value;
     var this$8 = $n(x$1$1);
     var this$9 = $n(x$1$1);
-    return ("" + x65)
+    return ("" + x68)
   };
   if ((v instanceof $c_Lrta_syntax_RuntimeValue$VBool)) {
     var x$1$2 = $as_Lrta_syntax_RuntimeValue$VBool(v);
     var this$12 = $n(x$1$2);
-    var x62 = this$12.Lrta_syntax_RuntimeValue$VBool__f_value;
-    return ("" + x62)
+    var x65 = this$12.Lrta_syntax_RuntimeValue$VBool__f_value;
+    return ("" + x65)
   };
   if ((v instanceof $c_Lrta_syntax_RuntimeValue$VArray)) {
     var x$1$3 = $as_Lrta_syntax_RuntimeValue$VArray(v);
     var this$15 = $n(x$1$3);
-    var x57 = this$15.Lrta_syntax_RuntimeValue$VArray__f_value;
+    var x60 = this$15.Lrta_syntax_RuntimeValue$VArray__f_value;
     var this$16 = $n(x$1$3);
     var this$17 = $n(x$1$3);
-    var this$19 = $n(x57);
+    var this$19 = $n(x60);
     var f = ((v$2) => {
       var v$1 = $as_Lrta_syntax_RuntimeValue(v$2);
       return $p_Lrta_frontend_RTAAPI$__runtimeValueToJson__Lrta_syntax_RuntimeValue__T($thiz, v$1)
@@ -11497,35 +14621,35 @@ function $p_Lrta_frontend_RTAAPI$__showZoneCompact__Lrta_backend_DBM$Zone__T($th
     var $$x2 = $n($n(z).Lrta_backend_DBM$Zone__f_matrix);
     var _1 = $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK;
     var lowerOpt = $n($$x2).get__O__s_Option(new $c_T2(_1, x$4));
-    matchResult44: {
+    matchResult54: {
       var uStr;
       if ((upperOpt instanceof $c_s_Some)) {
-        var x171 = $as_Lrta_backend_DBM$Bound($n($as_s_Some(upperOpt)).s_Some__f_value);
-        if ((x171 !== null)) {
-          var this$6 = $n(x171);
-          var x173 = this$6.Lrta_backend_DBM$Bound__f_value;
-          var this$7 = $n(x171);
-          var x174 = this$7.Lrta_backend_DBM$Bound__f_strict;
-          if ((x173 !== Infinity)) {
-            var uStr = (((x174 ? "<" : "<=") + " ") + x173);
-            break matchResult44
+        var x206 = $as_Lrta_backend_DBM$Bound($n($as_s_Some(upperOpt)).s_Some__f_value);
+        if ((x206 !== null)) {
+          var this$6 = $n(x206);
+          var x208 = this$6.Lrta_backend_DBM$Bound__f_value;
+          var this$7 = $n(x206);
+          var x209 = this$7.Lrta_backend_DBM$Bound__f_strict;
+          if ((x208 !== Infinity)) {
+            var uStr = (((x209 ? "<" : "<=") + " ") + x208);
+            break matchResult54
           }
         }
       };
       var uStr = ""
     };
-    matchResult45: {
+    matchResult55: {
       var lStr;
       if ((lowerOpt instanceof $c_s_Some)) {
-        var x177 = $as_Lrta_backend_DBM$Bound($n($as_s_Some(lowerOpt)).s_Some__f_value);
-        if ((x177 !== null)) {
-          var this$9 = $n(x177);
-          var x179 = this$9.Lrta_backend_DBM$Bound__f_value;
-          var this$10 = $n(x177);
-          var x180 = this$10.Lrta_backend_DBM$Bound__f_strict;
-          if ((x179 !== Infinity)) {
-            var lStr = (((x180 ? ">" : ">=") + " ") + (-x179));
-            break matchResult45
+        var x212 = $as_Lrta_backend_DBM$Bound($n($as_s_Some(lowerOpt)).s_Some__f_value);
+        if ((x212 !== null)) {
+          var this$9 = $n(x212);
+          var x214 = this$9.Lrta_backend_DBM$Bound__f_value;
+          var this$10 = $n(x212);
+          var x215 = this$10.Lrta_backend_DBM$Bound__f_strict;
+          if ((x214 !== Infinity)) {
+            var lStr = (((x215 ? ">" : ">=") + " ") + (-x214));
+            break matchResult55
           }
         }
       };
@@ -11541,10 +14665,10 @@ function $p_Lrta_frontend_RTAAPI$__showZoneCompact__Lrta_backend_DBM$Zone__T($th
       return (($m_sc_StringOps$(), (lStr !== "")) ? (($n(x$4).show__T() + " ") + lStr) : (($m_sc_StringOps$(), (uStr !== "")) ? (($n(x$4).show__T() + " ") + uStr) : ($n(x$4).show__T() + " >= 0")))
     }
   }))));
-  var this$22 = $n($as_sc_IterableOnceOps($n(list).filter__F1__O(new $c_sjsr_AnonFunction1(((_$6) => {
-    var _$6$1 = $as_T(_$6);
+  var this$22 = $n($as_sc_IterableOnceOps($n(list).filter__F1__O(new $c_sjsr_AnonFunction1(((_$12) => {
+    var _$12$1 = $as_T(_$12);
     $m_sc_StringOps$();
-    var this$21 = $n(_$6$1);
+    var this$21 = $n(_$12$1);
     return (!(this$21 === ""))
   })))));
   return $f_sc_IterableOnceOps__mkString__T__T__T__T(this$22, "", ", ", "")
@@ -11563,9 +14687,9 @@ function $p_Lrta_frontend_RTAAPI$__stringToQName__T__Lrta_syntax_Program2$QName(
 }
 function $p_Lrta_frontend_RTAAPI$__generateSimulationJson__Lrta_syntax_Program2$RxGraph__s_Option__T($thiz, graph, traversedEdge) {
   var graphElementsJson = $m_Lrta_backend_CytoscapeConverter$().apply__Lrta_syntax_Program2$RxGraph__T(graph);
-  var eventTransitions = $as_sci_Set($n($m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set(graph)).map__F1__O(new $c_sjsr_AnonFunction1(((_$7) => {
-    var _$7$1 = $as_T2(_$7);
-    return $as_T4($n(_$7$1)._1__O())
+  var eventTransitions = $as_sci_Set($n($m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set(graph)).map__F1__O(new $c_sjsr_AnonFunction1(((_$13) => {
+    var _$13$1 = $as_T2(_$13);
+    return $as_T4($n(_$13$1)._1__O())
   }))));
   var this$3 = $n($as_sc_IterableOnceOps($n(eventTransitions).map__F1__O(new $c_sjsr_AnonFunction1(((x$1) => {
     var x$1$1 = $as_T4(x$1);
@@ -11586,10 +14710,10 @@ function $p_Lrta_frontend_RTAAPI$__generateSimulationJson__Lrta_syntax_Program2$
   } else {
     var delayTransitionJson = ""
   };
-  var this$8 = $n($as_sc_IterableOnceOps($n($n($m_s_package$().s_package$__f_Seq).apply__sci_Seq__sc_SeqOps($m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([eventTransitionsJson, delayTransitionJson])))).filter__F1__O(new $c_sjsr_AnonFunction1(((_$8) => {
-    var _$8$1 = $as_T(_$8);
+  var this$8 = $n($as_sc_IterableOnceOps($n($n($m_s_package$().s_package$__f_Seq).apply__sci_Seq__sc_SeqOps($m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([eventTransitionsJson, delayTransitionJson])))).filter__F1__O(new $c_sjsr_AnonFunction1(((_$14) => {
+    var _$14$1 = $as_T(_$14);
     $m_sc_StringOps$();
-    var this$7 = $n(_$8$1);
+    var this$7 = $n(_$14$1);
     return (!(this$7 === ""))
   })))));
   var allEnabledTransitions = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$8, "", ",", "");
@@ -11626,45 +14750,45 @@ function $p_Lrta_frontend_RTAAPI$__generateSimulationJson__Lrta_syntax_Program2$
     throw new $c_s_MatchError(x$1$5)
   })))));
   var pendingJson = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$11, "[", ",", "]");
-  matchResult50: {
+  matchResult60: {
     var traversedJson;
     if ((traversedEdge instanceof $c_s_Some)) {
-      var x199 = $as_T4($n($as_s_Some(traversedEdge)).s_Some__f_value);
-      if ((x199 !== null)) {
-        var from$1 = $as_Lrta_syntax_Program2$QName($n(x199).T4__f__1);
-        var to$1 = $as_Lrta_syntax_Program2$QName($n(x199).T4__f__2);
-        var tId$1 = $as_Lrta_syntax_Program2$QName($n(x199).T4__f__3);
-        var label$1 = $as_Lrta_syntax_Program2$QName($n(x199).T4__f__4);
+      var x234 = $as_T4($n($as_s_Some(traversedEdge)).s_Some__f_value);
+      if ((x234 !== null)) {
+        var from$1 = $as_Lrta_syntax_Program2$QName($n(x234).T4__f__1);
+        var to$1 = $as_Lrta_syntax_Program2$QName($n(x234).T4__f__2);
+        var tId$1 = $as_Lrta_syntax_Program2$QName($n(x234).T4__f__3);
+        var label$1 = $as_Lrta_syntax_Program2$QName($n(x234).T4__f__4);
         var traversedJson = (((((((("{\"from\":\"" + from$1) + "\", \"to\":\"") + to$1) + "\", \"tId\":\"") + tId$1) + "\", \"label\":\"") + label$1) + "\"}");
-        break matchResult50
+        break matchResult60
       }
     };
     var x = $m_s_None$();
     if ((x === traversedEdge)) {
       var traversedJson = "null";
-      break matchResult50
+      break matchResult60
     };
     throw new $c_s_MatchError(traversedEdge)
   };
   $m_sc_StringOps$();
   var this$12 = $n($thiz.Lrta_frontend_RTAAPI$__f_history);
-  var x$2 = (((((((((((((("\r\n       |{\r\n       |  \"graphElements\": " + graphElementsJson) + ",\r\n       |  \"panelData\": { \r\n       |     \"enabled\": [") + allEnabledTransitions) + "], \r\n       |     \"clocks\": {") + clocksJson) + "}, \r\n       |     \"variables\": {") + valEnvJson) + "}, \r\n       |     \"pending\": ") + pendingJson) + ",\r\n       |     \"canUndo\": ") + (this$12.length__I() > 1)) + " \r\n       |  },\r\n       |  \"lastTransition\": ") + traversedJson) + "\r\n       |}\r\n       |");
+  var x$2 = (((((((((((((("\n       |{\n       |  \"graphElements\": " + graphElementsJson) + ",\n       |  \"panelData\": { \n       |     \"enabled\": [") + allEnabledTransitions) + "], \n       |     \"clocks\": {") + clocksJson) + "}, \n       |     \"variables\": {") + valEnvJson) + "}, \n       |     \"pending\": ") + pendingJson) + ",\n       |     \"canUndo\": ") + (this$12.length__I() > 1)) + " \n       |  },\n       |  \"lastTransition\": ") + traversedJson) + "\n       |}\n       |");
   return $m_sc_StringOps$().stripMargin$extension__T__C__T(x$2, 124)
 }
 function $p_Lrta_frontend_RTAAPI$__formulaToCondition$1__Lrta_syntax_Formula__Lrta_syntax_Condition($thiz, f) {
   if ((f instanceof $c_Lrta_syntax_Formula$CondProp)) {
     var x$1 = $as_Lrta_syntax_Formula$CondProp(f);
     var this$2 = $n(x$1);
-    var x19 = this$2.Lrta_syntax_Formula$CondProp__f_cond;
-    return x19
+    var x22 = this$2.Lrta_syntax_Formula$CondProp__f_cond;
+    return x22
   } else if ((f instanceof $c_Lrta_syntax_Formula$And)) {
     var x$1$1 = $as_Lrta_syntax_Formula$And(f);
     var this$4 = $n(x$1$1);
-    var x15 = this$4.Lrta_syntax_Formula$And__f_p;
+    var x18 = this$4.Lrta_syntax_Formula$And__f_p;
     var this$5 = $n(x$1$1);
-    var x16 = this$5.Lrta_syntax_Formula$And__f_q;
-    var left = $p_Lrta_frontend_RTAAPI$__formulaToCondition$1__Lrta_syntax_Formula__Lrta_syntax_Condition($thiz, x15);
-    var right = $p_Lrta_frontend_RTAAPI$__formulaToCondition$1__Lrta_syntax_Formula__Lrta_syntax_Condition($thiz, x16);
+    var x19 = this$5.Lrta_syntax_Formula$And__f_q;
+    var left = $p_Lrta_frontend_RTAAPI$__formulaToCondition$1__Lrta_syntax_Formula__Lrta_syntax_Condition($thiz, x18);
+    var right = $p_Lrta_frontend_RTAAPI$__formulaToCondition$1__Lrta_syntax_Formula__Lrta_syntax_Condition($thiz, x19);
     return new $c_Lrta_syntax_Condition$And(left, right)
   } else {
     throw $ct_jl_Exception__T__(new $c_jl_Exception(), "Use apenas compara\u00e7\u00f5es simples unidas por && ou AND")
@@ -11672,34 +14796,218 @@ function $p_Lrta_frontend_RTAAPI$__formulaToCondition$1__Lrta_syntax_Formula__Lr
 }
 function $p_Lrta_frontend_RTAAPI$__getId$1__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__I($thiz, stateToId$1, idCounter$1, g) {
   return $uI($n($as_sci_Map($n(stateToId$1).sr_ObjectRef__f_elem)).getOrElse__O__F0__O(g, new $c_sjsr_AnonFunction0((() => {
-    var ev$14 = ((1 + $n(idCounter$1).sr_IntRef__f_elem) | 0);
-    $n(idCounter$1).sr_IntRef__f_elem = ev$14;
+    var ev$15 = ((1 + $n(idCounter$1).sr_IntRef__f_elem) | 0);
+    $n(idCounter$1).sr_IntRef__f_elem = ev$15;
     var this$4 = $n($as_sci_Map($n(stateToId$1).sr_ObjectRef__f_elem));
     var y = $n(idCounter$1).sr_IntRef__f_elem;
-    var ev$15 = $as_sci_Map(this$4.updated__O__O__sci_MapOps(g, y));
-    $n(stateToId$1).sr_ObjectRef__f_elem = ev$15;
-    ev$15 = null;
+    var ev$16 = $as_sci_Map(this$4.updated__O__O__sci_MapOps(g, y));
+    $n(stateToId$1).sr_ObjectRef__f_elem = ev$16;
+    ev$16 = null;
     return $n(idCounter$1).sr_IntRef__f_elem
   }))))
+}
+function $p_Lrta_frontend_RTAAPI$__sanitizeLabel$1__T__T($thiz, s) {
+  var this$1 = $n(s);
+  var this$2 = $n($as_T(this$1.split("<=").join("\u2264")));
+  var this$3 = $n($as_T(this$2.split(">=").join("\u2265")));
+  var this$4 = $n($as_T(this$3.split("<").join("\u22d6")));
+  var this$5 = $n($as_T(this$4.split(">").join("\u22d7")));
+  var this$6 = $n($as_T(this$5.split("\\").join("\\\\")));
+  return $as_T(this$6.split("\"").join("\\\""))
+}
+function $p_Lrta_frontend_RTAAPI$__getId$2__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__T($thiz, stateToId$4, idCounter$4, g) {
+  var inits = $n(g).Lrta_syntax_Program2$RxGraph__f_inits;
+  var vars = $n(g).Lrta_syntax_Program2$RxGraph__f_val_env;
+  var zone = $n(g).Lrta_syntax_Program2$RxGraph__f_zone;
+  var pending = $n(g).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+  var act = $n(g).Lrta_syntax_Program2$RxGraph__f_act;
+  var key = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act);
+  return $as_T($n($as_sci_Map($n(stateToId$4).sr_ObjectRef__f_elem)).getOrElse__O__F0__O(key, new $c_sjsr_AnonFunction0((() => {
+    var newId = ("z" + $n(idCounter$4).sr_IntRef__f_elem);
+    var ev$24 = ((1 + $n(idCounter$4).sr_IntRef__f_elem) | 0);
+    $n(idCounter$4).sr_IntRef__f_elem = ev$24;
+    var this$5 = $n($as_sci_Map($n(stateToId$4).sr_ObjectRef__f_elem));
+    var ev$25 = $as_sci_Map(this$5.updated__O__O__sci_MapOps(key, newId));
+    $n(stateToId$4).sr_ObjectRef__f_elem = ev$25;
+    ev$25 = null;
+    return newId
+  }))))
+}
+function $p_Lrta_frontend_RTAAPI$__buildNodeJson$1__Lrta_syntax_Program2$RxGraph__T__T($thiz, g, id) {
+  var inits = $n(g).Lrta_syntax_Program2$RxGraph__f_inits;
+  var vars = $n(g).Lrta_syntax_Program2$RxGraph__f_val_env;
+  var zone = $n(g).Lrta_syntax_Program2$RxGraph__f_zone;
+  var pending = $n(g).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+  var act = $n(g).Lrta_syntax_Program2$RxGraph__f_act;
+  var key = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act);
+  var this$2 = $n($m_Lrta_backend_RxSemantics$().advanceTimeZone__Lrta_syntax_Program2$RxGraph__s_Option(g));
+  if (this$2.isEmpty__Z()) {
+    var $$x1 = $m_s_None$()
+  } else {
+    var arg1 = this$2.get__O();
+    var _$5 = $as_Lrta_syntax_Program2$RxGraph(arg1);
+    var $$x1 = new $c_s_Some($n(_$5).Lrta_syntax_Program2$RxGraph__f_zone)
+  };
+  var this$3 = $n($$x1);
+  var displayZone = $as_Lrta_backend_DBM$Zone((this$3.isEmpty__Z() ? key.Lrta_backend_AnalyseLTS$ZoneStateKey__f_zone : this$3.get__O()));
+  var zoneStr = $p_Lrta_frontend_RTAAPI$__sanitizeLabel$1__T__T($thiz, $p_Lrta_frontend_RTAAPI$__showZoneCompact__Lrta_backend_DBM$Zone__T($thiz, displayZone));
+  var this$5 = $n($as_sc_IterableOnceOps($n($as_sc_IterableOps($n(key.Lrta_backend_AnalyseLTS$ZoneStateKey__f_vars).filterNot__F1__O(new $c_sjsr_AnonFunction1(((_$6) => {
+    var _$6$1 = $as_T2(_$6);
+    return $n($n($as_Lrta_syntax_Program2$QName($n(_$6$1)._1__O())).Lrta_syntax_Program2$QName__f_n).contains__O__Z("__return")
+  }))))).map__F1__O(new $c_sjsr_AnonFunction1(((kv) => {
+    var kv$1 = $as_T2(kv);
+    return (($n($as_Lrta_syntax_Program2$QName($n(kv$1)._1__O())).show__T() + "=") + $n($as_Lrta_syntax_RuntimeValue($n(kv$1)._2__O())).value__O())
+  })))));
+  var varsStr = $p_Lrta_frontend_RTAAPI$__sanitizeLabel$1__T__T($thiz, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$5, "", ", ", ""));
+  var this$6 = $n($as_sc_IterableOnceOps($n(key.Lrta_backend_AnalyseLTS$ZoneStateKey__f_pending).map__F1__O(new $c_sjsr_AnonFunction1(((x$1) => {
+    var x$1$1 = $as_T4(x$1);
+    if ((x$1$1 !== null)) {
+      var edge = $as_T4($n(x$1$1).T4__f__1);
+      var op = $as_T($n(x$1$1).T4__f__2);
+      var clock = $as_Lrta_syntax_Program2$QName($n(x$1$1).T4__f__3);
+      var target = $uD($n(x$1$1).T4__f__4);
+      return (((((($n($as_Lrta_syntax_Program2$QName($n(edge).T4__f__4)).show__T() + "(") + op) + ")@") + $n(clock).show__T()) + "=") + target)
+    };
+    throw new $c_s_MatchError(x$1$1)
+  })))));
+  var pendingStr = $p_Lrta_frontend_RTAAPI$__sanitizeLabel$1__T__T($thiz, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$6, "", ", ", ""));
+  $n($m_s_package$().s_package$__f_List);
+  var $$x5 = $m_sr_ScalaRunTime$();
+  var this$7 = $n(key.Lrta_backend_AnalyseLTS$ZoneStateKey__f_inits);
+  var $$x4 = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$7, "", ", ", "");
+  $m_sc_StringOps$();
+  var this$10 = $n(zoneStr);
+  if ((!(this$10 === ""))) {
+    var $$x3 = ("ZONA: " + zoneStr)
+  } else {
+    var $$x3 = "ZONA: t \u2265 0"
+  };
+  $m_sc_StringOps$();
+  var this$13 = $n(varsStr);
+  if ((!(this$13 === ""))) {
+    var $$x2 = ("VARS: " + varsStr)
+  } else {
+    var $$x2 = ""
+  };
+  $m_sc_StringOps$();
+  var this$16 = $n(pendingStr);
+  var elems = $n($$x5).wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([("ESTADOS: " + $$x4), $$x3, $$x2, ((!(this$16 === "")) ? ("PENDENTE: " + pendingStr) : "")]));
+  var this$21 = $n($m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems));
+  var f = ((_$7) => {
+    var _$7$1 = $as_T(_$7);
+    $m_sc_StringOps$();
+    var this$20 = $n(_$7$1);
+    return (!(this$20 === ""))
+  });
+  var l = this$21;
+  block: {
+    var result;
+    while (true) {
+      if ($n(l).isEmpty__Z()) {
+        var result = $m_sci_Nil$();
+        break
+      } else {
+        var h = $n(l).head__O();
+        var t = $as_sci_List($n(l).tail__O());
+        if (($uZ(f(h)) === false)) {
+          l = t;
+          continue
+        };
+        var start = l;
+        var remaining = t;
+        while (true) {
+          if ($n(remaining).isEmpty__Z()) {
+            var result = start;
+            break block
+          } else {
+            var x = $n(remaining).head__O();
+            if (($uZ(f(x)) !== false)) {
+              remaining = $as_sci_List($n(remaining).tail__O());
+              continue
+            };
+            var firstMiss = remaining;
+            var newHead = new $c_sci_$colon$colon($n(start).head__O(), $m_sci_Nil$());
+            var toProcess = $as_sci_List($n(start).tail__O());
+            var currentLast = newHead;
+            while ((toProcess !== firstMiss)) {
+              var newElem = new $c_sci_$colon$colon($n(toProcess).head__O(), $m_sci_Nil$());
+              $n(currentLast).sci_$colon$colon__f_next = newElem;
+              currentLast = newElem;
+              toProcess = $as_sci_List($n(toProcess).tail__O())
+            };
+            var next = $as_sci_List($n(firstMiss).tail__O());
+            var nextToCopy = next;
+            while ((!$n(next).isEmpty__Z())) {
+              var head = $n(next).head__O();
+              if (($uZ(f(head)) !== false)) {
+                next = $as_sci_List($n(next).tail__O())
+              } else {
+                while ((nextToCopy !== next)) {
+                  var newElem$2 = new $c_sci_$colon$colon($n(nextToCopy).head__O(), $m_sci_Nil$());
+                  $n(currentLast).sci_$colon$colon__f_next = newElem$2;
+                  currentLast = newElem$2;
+                  nextToCopy = $as_sci_List($n(nextToCopy).tail__O())
+                };
+                nextToCopy = $as_sci_List($n(next).tail__O());
+                next = $as_sci_List($n(next).tail__O())
+              }
+            };
+            if ((!$n(nextToCopy).isEmpty__Z())) {
+              $n(currentLast).sci_$colon$colon__f_next = nextToCopy
+            };
+            var result = newHead;
+            break block
+          }
+        }
+      }
+    }
+  };
+  var this$22 = $n(result);
+  var label = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$22, "", "\\n", "");
+  var isStart = ((id === "z0") ? "true" : "false");
+  matchResult34: {
+    var \u03b44$___1;
+    var \u03b44$___2;
+    var x136 = $thiz.getEdgeStatus__Lrta_syntax_Program2$RxGraph__T2(g);
+    if ((x136 !== null)) {
+      var actStr = $as_T($n(x136)._1__O());
+      var inactStr = $as_T($n(x136)._2__O());
+      var \u03b44$___1 = actStr;
+      var \u03b44$___2 = inactStr;
+      break matchResult34
+    };
+    throw new $c_s_MatchError(x136)
+  };
+  var actStr$2 = $as_T(\u03b44$___1);
+  var inactStr$2 = $as_T(\u03b44$___2);
+  var safeAct = $p_Lrta_frontend_RTAAPI$__sanitizeLabel$1__T__T($thiz, actStr$2);
+  var safeInact = $p_Lrta_frontend_RTAAPI$__sanitizeLabel$1__T__T($thiz, inactStr$2);
+  return (((((((((("{\"data\": {\"id\": \"" + id) + "\", \"label\": \"") + label) + "\", \"isStart\": ") + isStart) + ", \"actEdges\": \"") + safeAct) + "\", \"inactEdges\": \"") + safeInact) + "\"}}")
 }
 function $p_Lrta_frontend_RTAAPI$__formulaToCondition$2__Lrta_syntax_Formula__Lrta_syntax_Condition($thiz, f) {
   if ((f instanceof $c_Lrta_syntax_Formula$CondProp)) {
     var x$1 = $as_Lrta_syntax_Formula$CondProp(f);
     var this$2 = $n(x$1);
-    var x125 = this$2.Lrta_syntax_Formula$CondProp__f_cond;
-    return x125
+    var x157 = this$2.Lrta_syntax_Formula$CondProp__f_cond;
+    return x157
   } else if ((f instanceof $c_Lrta_syntax_Formula$And)) {
     var x$1$1 = $as_Lrta_syntax_Formula$And(f);
     var this$4 = $n(x$1$1);
-    var x121 = this$4.Lrta_syntax_Formula$And__f_p;
+    var x153 = this$4.Lrta_syntax_Formula$And__f_p;
     var this$5 = $n(x$1$1);
-    var x122 = this$5.Lrta_syntax_Formula$And__f_q;
-    var left = $p_Lrta_frontend_RTAAPI$__formulaToCondition$2__Lrta_syntax_Formula__Lrta_syntax_Condition($thiz, x121);
-    var right = $p_Lrta_frontend_RTAAPI$__formulaToCondition$2__Lrta_syntax_Formula__Lrta_syntax_Condition($thiz, x122);
+    var x154 = this$5.Lrta_syntax_Formula$And__f_q;
+    var left = $p_Lrta_frontend_RTAAPI$__formulaToCondition$2__Lrta_syntax_Formula__Lrta_syntax_Condition($thiz, x153);
+    var right = $p_Lrta_frontend_RTAAPI$__formulaToCondition$2__Lrta_syntax_Formula__Lrta_syntax_Condition($thiz, x154);
     return new $c_Lrta_syntax_Condition$And(left, right)
   } else {
     throw $ct_jl_Exception__T__(new $c_jl_Exception(), "Use apenas compara\u00e7\u00f5es simples unidas por && ou AND")
   }
+}
+function $p_Lrta_frontend_RTAAPI$__diagonalOk$1__Lrta_backend_DBM$Zone__Z($thiz, z) {
+  return $n($n(z).Lrta_backend_DBM$Zone__f_clocks).forall__F1__Z(new $c_sjsr_AnonFunction1(((c) => {
+    var c$1 = $as_Lrta_syntax_Program2$QName(c);
+    return (($n($as_Lrta_backend_DBM$Bound($n($n(z).Lrta_backend_DBM$Zone__f_matrix).apply__O__O(new $c_T2(c$1, c$1)))).Lrta_backend_DBM$Bound__f_value === 0.0) && (!$n($as_Lrta_backend_DBM$Bound($n($n(z).Lrta_backend_DBM$Zone__f_matrix).apply__O__O(new $c_T2(c$1, c$1)))).Lrta_backend_DBM$Bound__f_strict))
+  })))
 }
 function $p_Lrta_frontend_RTAAPI$__sanitizeForMermaid$1__T__T($thiz, s) {
   var this$1 = $n(s);
@@ -11708,21 +15016,22 @@ function $p_Lrta_frontend_RTAAPI$__sanitizeForMermaid$1__T__T($thiz, s) {
   var this$4 = $n($as_T(this$3.split("<").join("\u22d6")));
   return $as_T(this$4.split(">").join("\u22d7"))
 }
-function $p_Lrta_frontend_RTAAPI$__getId$2__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__I($thiz, stateToId$4, idCounter$4, g) {
+function $p_Lrta_frontend_RTAAPI$__getId$3__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__I($thiz, stateToId$7, idCounter$7, g) {
   var inits = $n(g).Lrta_syntax_Program2$RxGraph__f_inits;
   var vars = $n(g).Lrta_syntax_Program2$RxGraph__f_val_env;
   var zone = $n(g).Lrta_syntax_Program2$RxGraph__f_zone;
   var pending = $n(g).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  var key = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending);
-  return $uI($n($as_sci_Map($n(stateToId$4).sr_ObjectRef__f_elem)).getOrElse__O__F0__O(key, new $c_sjsr_AnonFunction0((() => {
-    var ev$29 = ((1 + $n(idCounter$4).sr_IntRef__f_elem) | 0);
-    $n(idCounter$4).sr_IntRef__f_elem = ev$29;
-    var this$5 = $n($as_sci_Map($n(stateToId$4).sr_ObjectRef__f_elem));
-    var y = $n(idCounter$4).sr_IntRef__f_elem;
-    var ev$30 = $as_sci_Map(this$5.updated__O__O__sci_MapOps(key, y));
-    $n(stateToId$4).sr_ObjectRef__f_elem = ev$30;
-    ev$30 = null;
-    return $n(idCounter$4).sr_IntRef__f_elem
+  var act = $n(g).Lrta_syntax_Program2$RxGraph__f_act;
+  var key = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act);
+  return $uI($n($as_sci_Map($n(stateToId$7).sr_ObjectRef__f_elem)).getOrElse__O__F0__O(key, new $c_sjsr_AnonFunction0((() => {
+    var ev$37 = ((1 + $n(idCounter$7).sr_IntRef__f_elem) | 0);
+    $n(idCounter$7).sr_IntRef__f_elem = ev$37;
+    var this$5 = $n($as_sci_Map($n(stateToId$7).sr_ObjectRef__f_elem));
+    var y = $n(idCounter$7).sr_IntRef__f_elem;
+    var ev$38 = $as_sci_Map(this$5.updated__O__O__sci_MapOps(key, y));
+    $n(stateToId$7).sr_ObjectRef__f_elem = ev$38;
+    ev$38 = null;
+    return $n(idCounter$7).sr_IntRef__f_elem
   }))))
 }
 /** @constructor */
@@ -11743,9 +15052,9 @@ function $h_Lrta_frontend_RTAAPI$() {
 }
 $h_Lrta_frontend_RTAAPI$.prototype = $c_Lrta_frontend_RTAAPI$.prototype;
 $c_Lrta_frontend_RTAAPI$.prototype.findBestPath__T__T = (function(targetStr) {
-  var x9 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x9 instanceof $c_s_Some)) {
-    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x9)).s_Some__f_value);
+  var x12 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x12 instanceof $c_s_Some)) {
+    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x12)).s_Some__f_value);
     var this$1 = $n(targetStr);
     var target = $as_T(String.fromCharCode(47));
     var replacement = $as_T(String.fromCharCode(46));
@@ -11754,36 +15063,36 @@ $c_Lrta_frontend_RTAAPI$.prototype.findBestPath__T__T = (function(targetStr) {
     var this$5 = $n(replacement);
     var $$x1 = $$x2.join(this$5);
     var adaptedTarget = $as_T($$x1);
-    var x4 = $m_Lrta_syntax_Parser2$().pp__O__T__s_util_Either(null, adaptedTarget);
-    if ((x4 instanceof $c_s_util_Right)) {
-      var targetQName = $as_Lrta_syntax_Program2$QName($n($as_s_util_Right(x4)).s_util_Right__f_value);
-      var x1 = $m_Lrta_backend_AnalyseLTS$().findShortestPath__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Program2$QName__I__Z__s_Option(rx, targetQName, 3000, false);
-      if ((x1 instanceof $c_s_Some)) {
-        var steps = $as_sci_List($n($as_s_Some(x1)).s_Some__f_value);
+    var x7 = $m_Lrta_syntax_Parser2$().pp__O__T__s_util_Either(null, adaptedTarget);
+    if ((x7 instanceof $c_s_util_Right)) {
+      var targetQName = $as_Lrta_syntax_Program2$QName($n($as_s_util_Right(x7)).s_util_Right__f_value);
+      var x4 = $m_Lrta_backend_AnalyseLTS$().findShortestPath__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Program2$QName__I__Z__s_Option(rx, targetQName, 3000, false);
+      if ((x4 instanceof $c_s_Some)) {
+        var steps = $as_sci_List($n($as_s_Some(x4)).s_Some__f_value);
         return $as_T(JSON.stringify([...$m_sjsr_Compat$().toJSVarArgsImpl__sci_Seq__sjs_js_Array(steps)]))
       };
       var x = $m_s_None$();
-      if ((x === x1)) {
+      if ((x === x4)) {
         return "{\"error\": \"Caminho n\u00e3o encontrado ou muito longo.\"}"
       };
-      throw new $c_s_MatchError(x1)
+      throw new $c_s_MatchError(x4)
     };
-    if ((x4 instanceof $c_s_util_Left)) {
-      var err = $as_T($n($as_s_util_Left(x4)).s_util_Left__f_value);
+    if ((x7 instanceof $c_s_util_Left)) {
+      var err = $as_T($n($as_s_util_Left(x7)).s_util_Left__f_value);
       return (("{\"error\": \"Estado inv\u00e1lido: " + err) + "\"}")
     };
-    throw new $c_s_MatchError(x4)
+    throw new $c_s_MatchError(x7)
   };
   var x$3 = $m_s_None$();
-  if ((x$3 === x9)) {
+  if ((x$3 === x12)) {
     return "{\"error\": \"Carregue o modelo primeiro.\"}"
   };
-  throw new $c_s_MatchError(x9)
+  throw new $c_s_MatchError(x12)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.findPathToValue__T__sjs_js_Any = (function(condStr) {
-  var x23 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x23 instanceof $c_s_Some)) {
-    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x23)).s_Some__f_value);
+  var x26 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x26 instanceof $c_s_Some)) {
+    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x26)).s_Some__f_value);
     try {
       var this$1 = $n(condStr);
       var this$2 = $n($as_T(this$1.split("&&").join("] &&[")));
@@ -11791,17 +15100,17 @@ $c_Lrta_frontend_RTAAPI$.prototype.findPathToValue__T__sjs_js_Any = (function(co
       var formulaStr = (("[" + formatted) + "]");
       var formula = $m_Lrta_syntax_PdlParser$().parsePdlFormula__T__Lrta_syntax_Formula(formulaStr);
       var finalCond = $p_Lrta_frontend_RTAAPI$__formulaToCondition$1__Lrta_syntax_Formula__Lrta_syntax_Condition(this, formula);
-      var x20 = $m_Lrta_backend_AnalyseLTS$().findShortestPathToCondition__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Condition__I__Z__s_Option(rx, finalCond, 50000, false);
-      if ((x20 instanceof $c_s_Some)) {
-        var steps = $as_sci_List($n($as_s_Some(x20)).s_Some__f_value);
+      var x23 = $m_Lrta_backend_AnalyseLTS$().findShortestPathToCondition__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Condition__I__Z__s_Option(rx, finalCond, 50000, false);
+      if ((x23 instanceof $c_s_Some)) {
+        var steps = $as_sci_List($n($as_s_Some(x23)).s_Some__f_value);
         return [...$m_sjsr_Compat$().toJSVarArgsImpl__sci_Seq__sjs_js_Array(steps)]
       };
       var x = $m_s_None$();
-      if ((x === x20)) {
+      if ((x === x23)) {
         var fields = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([new $c_T2("error", "Caminho n\u00e3o encontrado ou inating\u00edvel.")]));
         return $m_sjs_js_special_package$().objectLiteral__sci_Seq__sjs_js_Object(fields)
       };
-      throw new $c_s_MatchError(x20)
+      throw new $c_s_MatchError(x23)
     } catch (e) {
       var e$2 = ((e instanceof $c_jl_Throwable) ? e : new $c_sjs_js_JavaScriptException(e));
       var $$x1 = $m_sr_ScalaRunTime$();
@@ -11811,11 +15120,11 @@ $c_Lrta_frontend_RTAAPI$.prototype.findPathToValue__T__sjs_js_Any = (function(co
     }
   };
   var x$3 = $m_s_None$();
-  if ((x$3 === x23)) {
+  if ((x$3 === x26)) {
     var fields$2 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([new $c_T2("error", "Modelo n\u00e3o carregado.")]));
     return $m_sjs_js_special_package$().objectLiteral__sci_Seq__sjs_js_Object(fields$2)
   };
-  throw new $c_s_MatchError(x23)
+  throw new $c_s_MatchError(x26)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid__T = (function() {
   var this$1 = $n(this.Lrta_frontend_RTAAPI$__f_currentGraph);
@@ -11845,9 +15154,9 @@ $c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid__T = (function() {
       var this$13 = $n($as_sci_List(queue.sr_ObjectRef__f_elem));
       if (((!this$13.isEmpty__Z()) && ($n($as_sci_Set(visited.sr_ObjectRef__f_elem)).size__I() < 500))) {
         var current = $as_Lrta_syntax_Program2$RxGraph($n($as_sci_List(queue.sr_ObjectRef__f_elem)).head__O());
-        var ev$16 = $as_sci_List($n($as_sci_List(queue.sr_ObjectRef__f_elem)).tail__O());
-        queue.sr_ObjectRef__f_elem = ev$16;
-        ev$16 = null;
+        var ev$17 = $as_sci_List($n($as_sci_List(queue.sr_ObjectRef__f_elem)).tail__O());
+        queue.sr_ObjectRef__f_elem = ev$17;
+        ev$17 = null;
         var sourceId = $p_Lrta_frontend_RTAAPI$__getId$1__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__I(this, stateToId, idCounter, current);
         var edgeNexts = $m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set(current);
         var this$15 = $n(edgeNexts);
@@ -11858,11 +15167,11 @@ $c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid__T = (function() {
         var this$20 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$15, p);
         var f = new $c_sjsr_AnonFunction1(((visited, queue, transitionsStr, stateToId, idCounter, sourceId) => ((x$1$2) => {
           var x$1$3 = $as_T2(x$1$2);
-          matchResult9: {
+          matchResult10: {
             if ((x$1$3 !== null)) {
               var edge$1 = $as_T4($n(x$1$3)._1__O());
               var nextState$1 = $as_Lrta_syntax_Program2$RxGraph($n(x$1$3)._2__O());
-              matchResult8: {
+              matchResult9: {
                 var \u03b41$___1;
                 var \u03b41$___2;
                 var \u03b41$___3;
@@ -11876,7 +15185,7 @@ $c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid__T = (function() {
                   var \u03b41$___2 = to;
                   var \u03b41$___3 = tId;
                   var \u03b41$___4 = label;
-                  break matchResult8
+                  break matchResult9
                 };
                 throw new $c_s_MatchError(edge$1)
               };
@@ -11888,20 +15197,20 @@ $c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid__T = (function() {
               var displayLabel = (((tId$2 === null) ? (label$2 === null) : $n(tId$2).equals__O__Z(label$2)) ? $n(label$2).show__T() : ((($n(label$2).show__T() + "(") + $n(tId$2).show__T()) + ")"));
               var elem$1$1 = ((((sourceId + " --->|\"") + displayLabel) + "\"| ") + targetId);
               var this$17 = $n($as_sci_List(transitionsStr.sr_ObjectRef__f_elem));
-              var ev$17 = new $c_sci_$colon$colon(elem$1$1, this$17);
-              transitionsStr.sr_ObjectRef__f_elem = ev$17;
-              ev$17 = null;
+              var ev$18 = new $c_sci_$colon$colon(elem$1$1, this$17);
+              transitionsStr.sr_ObjectRef__f_elem = ev$18;
+              ev$18 = null;
               if ((!$n($as_sci_Set(visited.sr_ObjectRef__f_elem)).contains__O__Z(nextState$1))) {
                 var this$18 = $n($as_sci_Set(visited.sr_ObjectRef__f_elem));
-                var ev$18 = $as_sci_Set(this$18.incl__O__sci_SetOps(nextState$1));
-                visited.sr_ObjectRef__f_elem = ev$18;
-                ev$18 = null;
+                var ev$19 = $as_sci_Set(this$18.incl__O__sci_SetOps(nextState$1));
+                visited.sr_ObjectRef__f_elem = ev$19;
+                ev$19 = null;
                 var this$19 = $n($as_sci_List(queue.sr_ObjectRef__f_elem));
-                var ev$19 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$19, nextState$1));
-                queue.sr_ObjectRef__f_elem = ev$19;
-                ev$19 = null
+                var ev$20 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$19, nextState$1));
+                queue.sr_ObjectRef__f_elem = ev$20;
+                ev$20 = null
               };
-              break matchResult9
+              break matchResult10
             };
             throw new $c_s_MatchError(x$1$3)
           }
@@ -11950,36 +15259,38 @@ $c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid__T = (function() {
           var delays = this$36.Lrta_syntax_Program2$RxGraph__f_delays;
           var this$37 = $n(current);
           var pendingDelays = this$37.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-          var nextTimeState = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays);
+          var this$38 = $n(current);
+          var maxConstants = this$38.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+          var nextTimeState = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants);
           var canTimePass = $n($n(current).Lrta_syntax_Program2$RxGraph__f_inits).forall__F1__Z(new $c_sjsr_AnonFunction1(((nextTimeState) => ((s) => {
             var s$1 = $as_Lrta_syntax_Program2$QName(s);
-            var x40 = $n(nextTimeState.Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
-            if ((x40 instanceof $c_s_Some)) {
-              var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x40)).s_Some__f_value);
+            var x43 = $n(nextTimeState.Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
+            if ((x43 instanceof $c_s_Some)) {
+              var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x43)).s_Some__f_value);
               return $m_Lrta_backend_RxSemantics$().evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(inv, nextTimeState)
             };
             var x = $m_s_None$();
-            if ((x === x40)) {
+            if ((x === x43)) {
               return true
             };
-            throw new $c_s_MatchError(x40)
+            throw new $c_s_MatchError(x43)
           }))(nextTimeState)));
           if (canTimePass) {
             var targetId$1 = $p_Lrta_frontend_RTAAPI$__getId$1__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__I(this, stateToId, idCounter, nextTimeState);
             var elem$2$1 = ((sourceId + " --->|\"delay(1)\"| ") + targetId$1);
-            var this$39 = $n($as_sci_List(transitionsStr.sr_ObjectRef__f_elem));
-            var ev$20 = new $c_sci_$colon$colon(elem$2$1, this$39);
-            transitionsStr.sr_ObjectRef__f_elem = ev$20;
-            ev$20 = null;
+            var this$40 = $n($as_sci_List(transitionsStr.sr_ObjectRef__f_elem));
+            var ev$21 = new $c_sci_$colon$colon(elem$2$1, this$40);
+            transitionsStr.sr_ObjectRef__f_elem = ev$21;
+            ev$21 = null;
             if ((!$n($as_sci_Set(visited.sr_ObjectRef__f_elem)).contains__O__Z(nextTimeState))) {
-              var this$40 = $n($as_sci_Set(visited.sr_ObjectRef__f_elem));
-              var ev$21 = $as_sci_Set(this$40.incl__O__sci_SetOps(nextTimeState));
-              visited.sr_ObjectRef__f_elem = ev$21;
-              ev$21 = null;
-              var this$41 = $n($as_sci_List(queue.sr_ObjectRef__f_elem));
-              var ev$22 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$41, nextTimeState));
-              queue.sr_ObjectRef__f_elem = ev$22;
-              ev$22 = null
+              var this$41 = $n($as_sci_Set(visited.sr_ObjectRef__f_elem));
+              var ev$22 = $as_sci_Set(this$41.incl__O__sci_SetOps(nextTimeState));
+              visited.sr_ObjectRef__f_elem = ev$22;
+              ev$22 = null;
+              var this$42 = $n($as_sci_List(queue.sr_ObjectRef__f_elem));
+              var ev$23 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$42, nextTimeState));
+              queue.sr_ObjectRef__f_elem = ev$23;
+              ev$23 = null
             }
           }
         }
@@ -11987,37 +15298,72 @@ $c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid__T = (function() {
         break
       }
     };
-    var this$44 = $n($as_sc_IterableOnceOps($n($as_sci_Map(stateToId.sr_ObjectRef__f_elem)).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$4$1) => {
+    var this$45 = $n($as_sc_IterableOnceOps($n($as_sci_Map(stateToId.sr_ObjectRef__f_elem)).map__F1__O(new $c_sjsr_AnonFunction1(((x$1$4$1) => {
       var x$1$5 = $as_T2(x$1$4$1);
       if ((x$1$5 !== null)) {
         var state = $as_Lrta_syntax_Program2$RxGraph($n(x$1$5)._1__O());
         var id = $uI($n(x$1$5)._2__O());
-        var this$42 = $n($as_sc_IterableOnceOps($n($n(state).Lrta_syntax_Program2$RxGraph__f_clock_env).map__F1__O(new $c_sjsr_AnonFunction1(((kv) => {
+        var this$43 = $n($as_sc_IterableOnceOps($n($n(state).Lrta_syntax_Program2$RxGraph__f_clock_env).map__F1__O(new $c_sjsr_AnonFunction1(((kv) => {
           var kv$1 = $as_T2(kv);
           return (($n($as_Lrta_syntax_Program2$QName($n(kv$1)._1__O())).show__T() + "=") + $doubleToInt($uD($n(kv$1)._2__O())))
         })))));
-        var clockValues = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$42, "", ", ", "");
-        var this$43 = $n($n(state).Lrta_syntax_Program2$RxGraph__f_inits);
-        var label$1 = ((($f_sc_IterableOnceOps__mkString__T__T__T__T(this$43, "", ", ", "") + " <br/>(") + clockValues) + ")");
+        var clockValues = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$43, "", ", ", "");
+        var this$44 = $n($n(state).Lrta_syntax_Program2$RxGraph__f_inits);
+        var label$1 = ((($f_sc_IterableOnceOps__mkString__T__T__T__T(this$44, "", ", ", "") + " <br/>(") + clockValues) + ")");
         var style = (((state === null) ? (root === null) : $n(state).equals__O__Z(root)) ? (("\nstyle " + id) + " fill:#9ece6a,stroke:#333,stroke-width:2px") : "");
         return ((((id + "(\"") + label$1) + "\")") + style)
       };
       throw new $c_s_MatchError(x$1$5)
     })))));
-    var nodeDefinitions = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$44, "", "\n", "");
+    var nodeDefinitions = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$45, "", "\n", "");
     $m_sc_StringOps$();
-    var this$45 = $n($as_sci_List(transitionsStr.sr_ObjectRef__f_elem));
-    var this$46 = $n($n($as_sci_List($f_sc_SeqOps__distinct__O(this$45))).reverse__sci_List());
-    var x$2 = (((("graph LR\r\n         |" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$46, "", "\n", "")) + "\r\n         |") + nodeDefinitions) + "\r\n         |");
+    var this$46 = $n($as_sci_List(transitionsStr.sr_ObjectRef__f_elem));
+    var this$47 = $n($n($as_sci_List($f_sc_SeqOps__distinct__O(this$46))).reverse__sci_List());
+    var x$2 = (((("graph LR\n         |" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$47, "", "\n", "")) + "\n         |") + nodeDefinitions) + "\n         |");
     var $$x1 = new $c_s_Some($m_sc_StringOps$().stripMargin$extension__T__C__T(x$2, 124))
   };
-  var this$49 = $n($$x1);
-  return $as_T((this$49.isEmpty__Z() ? "graph LR\n0(Nenhum modelo carregado)" : this$49.get__O()))
+  var this$50 = $n($$x1);
+  return $as_T((this$50.isEmpty__Z() ? "graph LR\n0(Nenhum modelo carregado)" : this$50.get__O()))
 });
 $c_Lrta_frontend_RTAAPI$.prototype.loadModel__T__T = (function(sourceCode) {
   try {
     this.Lrta_frontend_RTAAPI$__f_currentSource = sourceCode;
-    var graph = $m_Lrta_syntax_Parser2$().parseProgram__T__Lrta_syntax_Program2$RxGraph(sourceCode);
+    var parsedGraph = $m_Lrta_syntax_Parser2$().parseProgram__T__Lrta_syntax_Program2$RxGraph(sourceCode);
+    var maxC = $m_Lrta_backend_RxSemantics$MaxConstants$().compute__Lrta_syntax_Program2$RxGraph__sci_Map(parsedGraph);
+    $n(parsedGraph);
+    var this$1 = $n(parsedGraph);
+    var edg = this$1.Lrta_syntax_Program2$RxGraph__f_edg;
+    var this$2 = $n(parsedGraph);
+    var on = this$2.Lrta_syntax_Program2$RxGraph__f_on;
+    var this$3 = $n(parsedGraph);
+    var off = this$3.Lrta_syntax_Program2$RxGraph__f_off;
+    var this$4 = $n(parsedGraph);
+    var lbls = this$4.Lrta_syntax_Program2$RxGraph__f_lbls;
+    var this$5 = $n(parsedGraph);
+    var inits = this$5.Lrta_syntax_Program2$RxGraph__f_inits;
+    var this$6 = $n(parsedGraph);
+    var act = this$6.Lrta_syntax_Program2$RxGraph__f_act;
+    var this$7 = $n(parsedGraph);
+    var val_env = this$7.Lrta_syntax_Program2$RxGraph__f_val_env;
+    var this$8 = $n(parsedGraph);
+    var zone = this$8.Lrta_syntax_Program2$RxGraph__f_zone;
+    var this$9 = $n(parsedGraph);
+    var functions = this$9.Lrta_syntax_Program2$RxGraph__f_functions;
+    var this$10 = $n(parsedGraph);
+    var clocks = this$10.Lrta_syntax_Program2$RxGraph__f_clocks;
+    var this$11 = $n(parsedGraph);
+    var clock_env = this$11.Lrta_syntax_Program2$RxGraph__f_clock_env;
+    var this$12 = $n(parsedGraph);
+    var invariants = this$12.Lrta_syntax_Program2$RxGraph__f_invariants;
+    var this$13 = $n(parsedGraph);
+    var edgeConditions = this$13.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+    var this$14 = $n(parsedGraph);
+    var edgeUpdates = this$14.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+    var this$15 = $n(parsedGraph);
+    var delays = this$15.Lrta_syntax_Program2$RxGraph__f_delays;
+    var this$16 = $n(parsedGraph);
+    var pendingDelays = this$16.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+    var graph = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, clock_env, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxC);
     this.Lrta_frontend_RTAAPI$__f_currentGraph = new $c_s_Some(graph);
     $n($m_s_package$().s_package$__f_List);
     var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$RxGraph.getArrayOf().constr)([graph]));
@@ -12029,9 +15375,9 @@ $c_Lrta_frontend_RTAAPI$.prototype.loadModel__T__T = (function(sourceCode) {
   }
 });
 $c_Lrta_frontend_RTAAPI$.prototype.takeStep__T__T = (function(edgeJson) {
-  var x51 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x51 instanceof $c_s_Some)) {
-    var graph = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x51)).s_Some__f_value);
+  var x54 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x54 instanceof $c_s_Some)) {
+    var graph = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x54)).s_Some__f_value);
     try {
       var edgeData = JSON.parse(edgeJson);
       var from = $p_Lrta_frontend_RTAAPI$__stringToQName__T__Lrta_syntax_Program2$QName(this, $dp_toString__T($n(edgeData.from)));
@@ -12039,15 +15385,15 @@ $c_Lrta_frontend_RTAAPI$.prototype.takeStep__T__T = (function(edgeJson) {
       var tId = $p_Lrta_frontend_RTAAPI$__stringToQName__T__Lrta_syntax_Program2$QName(this, $dp_toString__T($n(edgeData.tId)));
       var label = $p_Lrta_frontend_RTAAPI$__stringToQName__T__Lrta_syntax_Program2$QName(this, $dp_toString__T($n(edgeData.label)));
       var clickedEdge = new $c_T4(from, to, tId, label);
-      var x46 = $n($m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set(graph)).find__F1__s_Option(new $c_sjsr_AnonFunction1(((_$1) => {
+      var x49 = $n($m_Lrta_backend_RxSemantics$().nextEdge__Lrta_syntax_Program2$RxGraph__sci_Set(graph)).find__F1__s_Option(new $c_sjsr_AnonFunction1(((_$1) => {
         var _$1$1 = $as_T2(_$1);
         var x = $n(_$1$1)._1__O();
         return ((x !== null) && $dp_equals__O__Z($n(x), clickedEdge))
       })));
-      if ((x46 instanceof $c_s_Some)) {
-        var x48 = $as_T2($n($as_s_Some(x46)).s_Some__f_value);
-        if ((x48 !== null)) {
-          var nextGraph = $as_Lrta_syntax_Program2$RxGraph($n(x48)._2__O());
+      if ((x49 instanceof $c_s_Some)) {
+        var x51 = $as_T2($n($as_s_Some(x49)).s_Some__f_value);
+        if ((x51 !== null)) {
+          var nextGraph = $as_Lrta_syntax_Program2$RxGraph($n(x51)._2__O());
           var this$3 = $n(this.Lrta_frontend_RTAAPI$__f_history);
           this.Lrta_frontend_RTAAPI$__f_history = new $c_sci_$colon$colon(nextGraph, this$3);
           this.Lrta_frontend_RTAAPI$__f_currentGraph = new $c_s_Some(nextGraph);
@@ -12055,20 +15401,20 @@ $c_Lrta_frontend_RTAAPI$.prototype.takeStep__T__T = (function(edgeJson) {
         }
       };
       var x$1 = $m_s_None$();
-      if ((x$1 === x46)) {
+      if ((x$1 === x49)) {
         return "{\"error\": \"Transi\u00e7\u00e3o inv\u00e1lida.\"}"
       };
-      throw new $c_s_MatchError(x46)
+      throw new $c_s_MatchError(x49)
     } catch (e) {
       var e$2 = ((e instanceof $c_jl_Throwable) ? e : new $c_sjs_js_JavaScriptException(e));
       return (("{\"error\": \"" + $p_Lrta_frontend_RTAAPI$__escapeJson__T__T(this, e$2.getMessage__T())) + "\"}")
     }
   };
   var x$3 = $m_s_None$();
-  if ((x$3 === x51)) {
+  if ((x$3 === x54)) {
     return "{\"error\": \"Nenhum modelo carregado.\"}"
   };
-  throw new $c_s_MatchError(x51)
+  throw new $c_s_MatchError(x54)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.undo__T = (function() {
   var this$1 = $n(this.Lrta_frontend_RTAAPI$__f_history);
@@ -12090,9 +15436,9 @@ $c_Lrta_frontend_RTAAPI$.prototype.undo__T = (function() {
   }
 });
 $c_Lrta_frontend_RTAAPI$.prototype.advanceTime__D__T = (function(delayAmount) {
-  var x79 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x79 instanceof $c_s_Some)) {
-    var currentState = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x79)).s_Some__f_value);
+  var x82 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x82 instanceof $c_s_Some)) {
+    var currentState = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x82)).s_Some__f_value);
     if (($n($n(currentState).Lrta_syntax_Program2$RxGraph__f_clocks).isEmpty__Z() || (delayAmount <= 0.0))) {
       return $p_Lrta_frontend_RTAAPI$__generateSimulationJson__Lrta_syntax_Program2$RxGraph__s_Option__T(this, currentState, $m_s_None$())
     } else {
@@ -12137,24 +15483,26 @@ $c_Lrta_frontend_RTAAPI$.prototype.advanceTime__D__T = (function(delayAmount) {
       var delays = this$16.Lrta_syntax_Program2$RxGraph__f_delays;
       var this$17 = $n(currentState);
       var pendingDelays = this$17.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-      var stateWithTime = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays);
+      var this$18 = $n(currentState);
+      var maxConstants = this$18.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+      var stateWithTime = new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, delayedClockEnv, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants);
       var potentialNextState = $m_Lrta_backend_RxSemantics$().applyTimeouts__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Program2$RxGraph(stateWithTime);
       var allInvariantsHold = $n($n(potentialNextState).Lrta_syntax_Program2$RxGraph__f_inits).forall__F1__Z(new $c_sjsr_AnonFunction1(((s) => {
         var s$1 = $as_Lrta_syntax_Program2$QName(s);
-        var x76 = $n($n(potentialNextState).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
-        if ((x76 instanceof $c_s_Some)) {
-          var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x76)).s_Some__f_value);
+        var x79 = $n($n(potentialNextState).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(s$1);
+        if ((x79 instanceof $c_s_Some)) {
+          var inv = $as_Lrta_syntax_Condition($n($as_s_Some(x79)).s_Some__f_value);
           return $m_Lrta_backend_RxSemantics$().evalCondition__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph__Z(inv, potentialNextState)
         };
         var x = $m_s_None$();
-        if ((x === x76)) {
+        if ((x === x79)) {
           return true
         };
-        throw new $c_s_MatchError(x76)
+        throw new $c_s_MatchError(x79)
       })));
       if (allInvariantsHold) {
-        var this$19 = $n(this.Lrta_frontend_RTAAPI$__f_history);
-        this.Lrta_frontend_RTAAPI$__f_history = new $c_sci_$colon$colon(potentialNextState, this$19);
+        var this$20 = $n(this.Lrta_frontend_RTAAPI$__f_history);
+        this.Lrta_frontend_RTAAPI$__f_history = new $c_sci_$colon$colon(potentialNextState, this$20);
         this.Lrta_frontend_RTAAPI$__f_currentGraph = new $c_s_Some(potentialNextState);
         return $p_Lrta_frontend_RTAAPI$__generateSimulationJson__Lrta_syntax_Program2$RxGraph__s_Option__T(this, potentialNextState, $m_s_None$())
       } else {
@@ -12163,10 +15511,10 @@ $c_Lrta_frontend_RTAAPI$.prototype.advanceTime__D__T = (function(delayAmount) {
     }
   };
   var x$2 = $m_s_None$();
-  if ((x$2 === x79)) {
+  if ((x$2 === x82)) {
     return "{}"
   };
-  throw new $c_s_MatchError(x79)
+  throw new $c_s_MatchError(x82)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.getMcrl2__T = (function() {
   var this$1 = $n(this.Lrta_frontend_RTAAPI$__f_currentGraph);
@@ -12181,16 +15529,16 @@ $c_Lrta_frontend_RTAAPI$.prototype.getMcrl2__T = (function() {
   return $as_T((this$2.isEmpty__Z() ? "Modelo vazio" : this$2.get__O()))
 });
 $c_Lrta_frontend_RTAAPI$.prototype.translateToGLTS__T = (function() {
-  var x82 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x82 instanceof $c_s_Some)) {
-    var g = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x82)).s_Some__f_value);
+  var x85 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x85 instanceof $c_s_Some)) {
+    var g = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x85)).s_Some__f_value);
     return $m_Lrta_syntax_RTATranslator$().translate_syntax__Lrta_syntax_Program2$RxGraph__T__T(g, this.Lrta_frontend_RTAAPI$__f_currentSource)
   };
   var x = $m_s_None$();
-  if ((x === x82)) {
+  if ((x === x85)) {
     return "Error: Please load a model first."
   };
-  throw new $c_s_MatchError(x82)
+  throw new $c_s_MatchError(x85)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.getUppaalTGRG__T__T = (function(layoutJson) {
   var this$1 = $n(this.Lrta_frontend_RTAAPI$__f_currentGraph);
@@ -12199,7 +15547,19 @@ $c_Lrta_frontend_RTAAPI$.prototype.getUppaalTGRG__T__T = (function(layoutJson) {
   } else {
     var arg1 = this$1.get__O();
     var g = $as_Lrta_syntax_Program2$RxGraph(arg1);
-    var $$x1 = new $c_s_Some($m_Lrta_backend_UppaalConverter3$().convert__Lrta_syntax_Program2$RxGraph__T__T__T(g, this.Lrta_frontend_RTAAPI$__f_currentSource, layoutJson))
+    var $$x1 = new $c_s_Some($m_Lrta_backend_UppaalConverter3$().convert__Lrta_syntax_Program2$RxGraph__T__Lrta_backend_UppaalLayout__T(g, this.Lrta_frontend_RTAAPI$__f_currentSource, new $c_Lrta_frontend_RTAAPI$JSLayout(layoutJson)))
+  };
+  var this$2 = $n($$x1);
+  return $as_T((this$2.isEmpty__Z() ? "" : this$2.get__O()))
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getUppaal__T__T = (function(layoutJson) {
+  var this$1 = $n(this.Lrta_frontend_RTAAPI$__f_currentGraph);
+  if (this$1.isEmpty__Z()) {
+    var $$x1 = $m_s_None$()
+  } else {
+    var arg1 = this$1.get__O();
+    var g = $as_Lrta_syntax_Program2$RxGraph(arg1);
+    var $$x1 = new $c_s_Some($m_Lrta_backend_UppaalConverter4$().convert__Lrta_syntax_Program2$RxGraph__T__T__T(g, this.Lrta_frontend_RTAAPI$__f_currentSource, layoutJson))
   };
   var this$2 = $n($$x1);
   return $as_T((this$2.isEmpty__Z() ? "" : this$2.get__O()))
@@ -12211,15 +15571,15 @@ $c_Lrta_frontend_RTAAPI$.prototype.checkProblems__T = (function() {
   } else {
     var arg1 = this$1.get__O();
     var g = $as_Lrta_syntax_Program2$RxGraph(arg1);
-    matchResult20: {
+    matchResult21: {
       var $$x2;
-      var x85 = $as_sci_List($n($m_Lrta_backend_AnalyseLTS$().randomWalk__Lrta_syntax_Program2$RxGraph__I__T4(g, 5000)).T4__f__4);
+      var x88 = $as_sci_List($n($m_Lrta_backend_AnalyseLTS$().randomWalk__Lrta_syntax_Program2$RxGraph__I__T4(g, 5000)).T4__f__4);
       var x = $m_s_package$().s_package$__f_Nil;
-      if (((x === null) ? (x85 === null) : $n(x).equals__O__Z(x85))) {
+      if (((x === null) ? (x88 === null) : $n(x).equals__O__Z(x88))) {
         var $$x2 = "Nenhum problema encontrado.";
-        break matchResult20
+        break matchResult21
       };
-      var this$2 = $n(x85);
+      var this$2 = $n(x88);
       var $$x2 = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$2, "", "\n", "")
     };
     var $$x1 = new $c_s_Some($$x2)
@@ -12271,9 +15631,9 @@ $c_Lrta_frontend_RTAAPI$.prototype.getStats__T = (function() {
   return $as_T((this$10.isEmpty__Z() ? "Modelo vazio" : this$10.get__O()))
 });
 $c_Lrta_frontend_RTAAPI$.prototype.runPdl__T__T__I__T = (function(stateStr, formulaStr, traceLength) {
-  var x95 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x95 instanceof $c_s_Some)) {
-    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x95)).s_Some__f_value);
+  var x98 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x98 instanceof $c_s_Some)) {
+    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x98)).s_Some__f_value);
     try {
       var this$1 = $n(stateStr);
       var target = $as_T(String.fromCharCode(47));
@@ -12283,13 +15643,13 @@ $c_Lrta_frontend_RTAAPI$.prototype.runPdl__T__T__I__T = (function(stateStr, form
       var this$5 = $n(replacement);
       var $$x1 = $$x2.join(this$5);
       var adaptedState = $as_T($$x1);
-      var x90 = $m_Lrta_syntax_Parser2$().pp__O__T__s_util_Either(null, adaptedState);
-      if ((x90 instanceof $c_s_util_Left)) {
-        var err = $as_T($n($as_s_util_Left(x90)).s_util_Left__f_value);
+      var x93 = $m_Lrta_syntax_Parser2$().pp__O__T__s_util_Either(null, adaptedState);
+      if ((x93 instanceof $c_s_util_Left)) {
+        var err = $as_T($n($as_s_util_Left(x93)).s_util_Left__f_value);
         return (("{\"error\": \"" + $p_Lrta_frontend_RTAAPI$__escapeJson__T__T(this, ((("Error parsing state '" + stateStr) + "': ") + err))) + "\"}")
       };
-      if ((x90 instanceof $c_s_util_Right)) {
-        var startState = $as_Lrta_syntax_Program2$QName($n($as_s_util_Right(x90)).s_util_Right__f_value);
+      if ((x93 instanceof $c_s_util_Right)) {
+        var startState = $as_Lrta_syntax_Program2$QName($n($as_s_util_Right(x93)).s_util_Right__f_value);
         if ((!$n($n(rx).states__sci_Set()).contains__O__Z(startState))) {
           return (("{\"error\": \"" + $p_Lrta_frontend_RTAAPI$__escapeJson__T__T(this, (("State '" + $n(startState).show__T()) + "' not found in the current model."))) + "\"}")
         } else if ($m_Lrta_syntax_LtlParser$().looksLikeLtl__T__Z(formulaStr)) {
@@ -12327,33 +15687,35 @@ $c_Lrta_frontend_RTAAPI$.prototype.runPdl__T__T__I__T = (function(stateStr, form
           var delays$1 = this$20.Lrta_syntax_Program2$RxGraph__f_delays;
           var this$21 = $n(rx);
           var pendingDelays$1 = this$21.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+          var this$22 = $n(rx);
+          var maxConstants$1 = this$22.Lrta_syntax_Program2$RxGraph__f_maxConstants;
           $n(rx);
-          var startGraph = new $c_Lrta_syntax_Program2$RxGraph(edg$1, on$1, off$1, lbls$1, inits$1, act$1, val_env$1, zone$1, functions$1, clocks$1, clock_env$1, invariants$1, edgeConditions$1, edgeUpdates$1, delays$1, pendingDelays$1);
-          matchResult21: {
+          var startGraph = new $c_Lrta_syntax_Program2$RxGraph(edg$1, on$1, off$1, lbls$1, inits$1, act$1, val_env$1, zone$1, functions$1, clocks$1, clock_env$1, invariants$1, edgeConditions$1, edgeUpdates$1, delays$1, pendingDelays$1, maxConstants$1);
+          matchResult22: {
             var \u03b42$___1;
             var \u03b42$___2;
             var \u03b42$___3;
-            var x86 = $m_Lrta_backend_TraceGenerator$().randomTraceDetailed__Lrta_syntax_Program2$RxGraph__I__T3(startGraph, traceLength);
-            if ((x86 !== null)) {
-              var trace = $as_sci_List($n(x86).T3__f__1);
-              var pathLabels = $as_sci_List($n(x86).T3__f__2);
-              var edgeIds = $as_sci_List($n(x86).T3__f__3);
+            var x89 = $m_Lrta_backend_TraceGenerator$().randomTraceDetailed__Lrta_syntax_Program2$RxGraph__I__T3(startGraph, traceLength);
+            if ((x89 !== null)) {
+              var trace = $as_sci_List($n(x89).T3__f__1);
+              var pathLabels = $as_sci_List($n(x89).T3__f__2);
+              var edgeIds = $as_sci_List($n(x89).T3__f__3);
               var \u03b42$___1 = trace;
               var \u03b42$___2 = pathLabels;
               var \u03b42$___3 = edgeIds;
-              break matchResult21
+              break matchResult22
             };
-            throw new $c_s_MatchError(x86)
+            throw new $c_s_MatchError(x89)
           };
           var trace$2 = $as_sci_List(\u03b42$___1);
           var pathLabels$2 = $as_sci_List(\u03b42$___2);
           var edgeIds$2 = $as_sci_List(\u03b42$___3);
-          var result = $m_Lrta_backend_LtlEvaluator$().eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z(trace$2, formula, $m_Lrta_backend_LtlEvaluator$Hybrid$());
+          var result = $m_Lrta_backend_LtlEvaluator$().eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__Z(trace$2, formula, $m_Lrta_backend_LtlEvaluator$Hybrid$(), false);
           if ($n(pathLabels$2).isEmpty__Z()) {
             var traceStr = "Nenhum tra\u00e7o gerado (deadlock ou vazio)"
           } else {
-            var this$24 = $n(pathLabels$2);
-            var traceStr = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$24, "", " \u2794 ", "")
+            var this$25 = $n(pathLabels$2);
+            var traceStr = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$25, "", " \u2794 ", "")
           };
           var msg = ((((("Result: " + result) + "\n[LTL Trace: ") + traceLength) + " steps]\nStart \u2794 ") + traceStr);
           var pathJson = $as_T(JSON.stringify([...$m_sjsr_Compat$().toJSVarArgsImpl__sci_Seq__sjs_js_Array(edgeIds$2)]));
@@ -12365,7 +15727,7 @@ $c_Lrta_frontend_RTAAPI$.prototype.runPdl__T__T__I__T = (function(stateStr, form
           return (((("{\"result\": " + result$2) + ", \"text\": \"") + $p_Lrta_frontend_RTAAPI$__escapeJson__T__T(this, msg$2)) + "\", \"path\": []}")
         }
       };
-      throw new $c_s_MatchError(x90)
+      throw new $c_s_MatchError(x93)
     } catch (e) {
       var e$2 = ((e instanceof $c_jl_Throwable) ? e : new $c_sjs_js_JavaScriptException(e));
       var msg$3 = ((e$2.getMessage__T() !== null) ? e$2.getMessage__T() : e$2.toString__T());
@@ -12373,15 +15735,15 @@ $c_Lrta_frontend_RTAAPI$.prototype.runPdl__T__T__I__T = (function(stateStr, form
     }
   };
   var x = $m_s_None$();
-  if ((x === x95)) {
+  if ((x === x98)) {
     return "{\"error\": \"Model not loaded.\"}"
   };
-  throw new $c_s_MatchError(x95)
+  throw new $c_s_MatchError(x98)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.findBestPathZone__T__T = (function(targetStr) {
-  var x106 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x106 instanceof $c_s_Some)) {
-    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x106)).s_Some__f_value);
+  var x109 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x109 instanceof $c_s_Some)) {
+    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x109)).s_Some__f_value);
     var this$1 = $n(targetStr);
     var target = $as_T(String.fromCharCode(47));
     var replacement = $as_T(String.fromCharCode(46));
@@ -12390,88 +15752,328 @@ $c_Lrta_frontend_RTAAPI$.prototype.findBestPathZone__T__T = (function(targetStr)
     var this$5 = $n(replacement);
     var $$x1 = $$x2.join(this$5);
     var adaptedTarget = $as_T($$x1);
-    var x101 = $m_Lrta_syntax_Parser2$().pp__O__T__s_util_Either(null, adaptedTarget);
-    if ((x101 instanceof $c_s_util_Right)) {
-      var targetQName = $as_Lrta_syntax_Program2$QName($n($as_s_util_Right(x101)).s_util_Right__f_value);
-      var x98 = $m_Lrta_backend_AnalyseLTS$().findShortestPath__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Program2$QName__I__Z__s_Option(rx, targetQName, 5000, true);
-      if ((x98 instanceof $c_s_Some)) {
-        var steps = $as_sci_List($n($as_s_Some(x98)).s_Some__f_value);
+    var x104 = $m_Lrta_syntax_Parser2$().pp__O__T__s_util_Either(null, adaptedTarget);
+    if ((x104 instanceof $c_s_util_Right)) {
+      var targetQName = $as_Lrta_syntax_Program2$QName($n($as_s_util_Right(x104)).s_util_Right__f_value);
+      var x101 = $m_Lrta_backend_AnalyseLTS$().findShortestPath__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Program2$QName__I__Z__s_Option(rx, targetQName, 5000, true);
+      if ((x101 instanceof $c_s_Some)) {
+        var steps = $as_sci_List($n($as_s_Some(x101)).s_Some__f_value);
         return $as_T(JSON.stringify([...$m_sjsr_Compat$().toJSVarArgsImpl__sci_Seq__sjs_js_Array(steps)]))
       };
       var x = $m_s_None$();
-      if ((x === x98)) {
+      if ((x === x101)) {
         return "{\"error\": \"Caminho n\u00e3o encontrado (Motor Simb\u00f3lico / DBM).\"}"
       };
-      throw new $c_s_MatchError(x98)
+      throw new $c_s_MatchError(x101)
     };
-    if ((x101 instanceof $c_s_util_Left)) {
-      var err = $as_T($n($as_s_util_Left(x101)).s_util_Left__f_value);
+    if ((x104 instanceof $c_s_util_Left)) {
+      var err = $as_T($n($as_s_util_Left(x104)).s_util_Left__f_value);
       return (("{\"error\": \"Estado inv\u00e1lido: " + err) + "\"}")
     };
-    throw new $c_s_MatchError(x101)
+    throw new $c_s_MatchError(x104)
   };
   var x$3 = $m_s_None$();
-  if ((x$3 === x106)) {
+  if ((x$3 === x109)) {
     return "{\"error\": \"Carregue o modelo primeiro.\"}"
   };
-  throw new $c_s_MatchError(x106)
+  throw new $c_s_MatchError(x109)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.runLTLExhaustive__T__I__I__T = (function(formulaStr, maxStates, maxDepth) {
-  var x115 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x115 instanceof $c_s_Some)) {
-    var startGraph = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x115)).s_Some__f_value);
+  var x119 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x119 instanceof $c_s_Some)) {
+    var startGraph = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x119)).s_Some__f_value);
     try {
       var formula = $m_Lrta_syntax_LtlParser$().parseLtlFormula__T__Lrta_syntax_LtlFormula(formulaStr);
-      matchResult27: {
+      var queryConstants = $m_Lrta_backend_RxSemantics$MaxConstants$().fromLTL__Lrta_syntax_LtlFormula__sci_Set__sci_Map(formula, $n(startGraph).Lrta_syntax_Program2$RxGraph__f_clocks);
+      var maxConstants$2 = $m_Lrta_backend_RxSemantics$MaxConstants$().mergeMax__sci_Map__sci_Map__sci_Map($n(startGraph).Lrta_syntax_Program2$RxGraph__f_maxConstants, queryConstants);
+      var this$1 = $n(startGraph);
+      var edg$2 = this$1.Lrta_syntax_Program2$RxGraph__f_edg;
+      var this$2 = $n(startGraph);
+      var on$2 = this$2.Lrta_syntax_Program2$RxGraph__f_on;
+      var this$3 = $n(startGraph);
+      var off$2 = this$3.Lrta_syntax_Program2$RxGraph__f_off;
+      var this$4 = $n(startGraph);
+      var lbls$2 = this$4.Lrta_syntax_Program2$RxGraph__f_lbls;
+      var this$5 = $n(startGraph);
+      var inits$2 = this$5.Lrta_syntax_Program2$RxGraph__f_inits;
+      var this$6 = $n(startGraph);
+      var act$2 = this$6.Lrta_syntax_Program2$RxGraph__f_act;
+      var this$7 = $n(startGraph);
+      var val_env$2 = this$7.Lrta_syntax_Program2$RxGraph__f_val_env;
+      var this$8 = $n(startGraph);
+      var zone$2 = this$8.Lrta_syntax_Program2$RxGraph__f_zone;
+      var this$9 = $n(startGraph);
+      var functions$2 = this$9.Lrta_syntax_Program2$RxGraph__f_functions;
+      var this$10 = $n(startGraph);
+      var clocks$2 = this$10.Lrta_syntax_Program2$RxGraph__f_clocks;
+      var this$11 = $n(startGraph);
+      var clock_env$2 = this$11.Lrta_syntax_Program2$RxGraph__f_clock_env;
+      var this$12 = $n(startGraph);
+      var invariants$2 = this$12.Lrta_syntax_Program2$RxGraph__f_invariants;
+      var this$13 = $n(startGraph);
+      var edgeConditions$2 = this$13.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+      var this$14 = $n(startGraph);
+      var edgeUpdates$2 = this$14.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+      var this$15 = $n(startGraph);
+      var delays$2 = this$15.Lrta_syntax_Program2$RxGraph__f_delays;
+      var this$16 = $n(startGraph);
+      var pendingDelays$2 = this$16.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      $n(startGraph);
+      var boostedStartGraph = new $c_Lrta_syntax_Program2$RxGraph(edg$2, on$2, off$2, lbls$2, inits$2, act$2, val_env$2, zone$2, functions$2, clocks$2, clock_env$2, invariants$2, edgeConditions$2, edgeUpdates$2, delays$2, pendingDelays$2, maxConstants$2);
+      matchResult28: {
         var \u03b43$___1;
         var \u03b43$___2;
         var \u03b43$___3;
         var \u03b43$___4;
         var \u03b43$___5;
-        var x109 = $m_Lrta_backend_AnalyseLTS$().verifyLTLSymbolic__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__I__I__T5(startGraph, formula, maxStates, maxDepth);
-        if ((x109 !== null)) {
-          var success = $uZ($n(x109).T5__f__1);
-          var ceLabels = $as_sci_List($n(x109).T5__f__2);
-          var ceIds = $as_sci_List($n(x109).T5__f__3);
-          var explored = $uI($n(x109).T5__f__4);
-          var limitReached = $uZ($n(x109).T5__f__5);
+        var \u03b43$___6;
+        var x112 = $m_Lrta_backend_AnalyseLTS$().verifyLTLSymbolic__Lrta_syntax_Program2$RxGraph__Lrta_syntax_LtlFormula__I__I__T6(boostedStartGraph, formula, maxStates, maxDepth);
+        if ((x112 !== null)) {
+          var success = $uZ($n(x112).T6__f__1);
+          var ceLabels = $as_sci_List($n(x112).T6__f__2);
+          var ceIds = $as_sci_List($n(x112).T6__f__3);
+          var explored = $uI($n(x112).T6__f__4);
+          var limitReached = $uZ($n(x112).T6__f__5);
+          var visitLog = $as_sci_List($n(x112).T6__f__6);
           var \u03b43$___1 = success;
           var \u03b43$___2 = ceLabels;
           var \u03b43$___3 = ceIds;
           var \u03b43$___4 = explored;
           var \u03b43$___5 = limitReached;
-          break matchResult27
+          var \u03b43$___6 = visitLog;
+          break matchResult28
         };
-        throw new $c_s_MatchError(x109)
+        throw new $c_s_MatchError(x112)
       };
       var success$2 = $uZ(\u03b43$___1);
       var ceLabels$2 = $as_sci_List(\u03b43$___2);
       var ceIds$2 = $as_sci_List(\u03b43$___3);
       var explored$2 = $uI(\u03b43$___4);
       var limitReached$2 = $uZ(\u03b43$___5);
+      var visitLog$2 = $as_sci_List(\u03b43$___6);
       if ($n(ceLabels$2).isEmpty__Z()) {
         var ceStr = "Nenhum (Falha no 1\u00ba estado)"
       } else {
-        var this$2 = $n(ceLabels$2);
-        var ceStr = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$2, "", " \u2794 ", "")
+        var this$19 = $n(ceLabels$2);
+        var ceStr = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$19, "", " \u2794 ", "")
       };
       var pathJson = $as_T(JSON.stringify([...$m_sjsr_Compat$().toJSVarArgsImpl__sci_Seq__sjs_js_Array(ceIds$2)]));
-      return (((((((((("{\"success\": " + success$2) + ", \"explored\": ") + explored$2) + ", \"limitReached\": ") + limitReached$2) + ", \"counterExample\": \"") + $p_Lrta_frontend_RTAAPI$__escapeJson__T__T(this, ceStr)) + "\", \"path\": ") + pathJson) + "}")
+      var visitLogJson = $as_T(JSON.stringify([...$m_sjsr_Compat$().toJSVarArgsImpl__sci_Seq__sjs_js_Array(visitLog$2)]));
+      return (((((((((((("{\"success\": " + success$2) + ", \"explored\": ") + explored$2) + ", \"limitReached\": ") + limitReached$2) + ", \"counterExample\": \"") + $p_Lrta_frontend_RTAAPI$__escapeJson__T__T(this, ceStr)) + "\", \"path\": ") + pathJson) + ", \"visitLog\": ") + visitLogJson) + "}")
     } catch (e) {
       var e$2 = ((e instanceof $c_jl_Throwable) ? e : new $c_sjs_js_JavaScriptException(e));
       return (("{\"error\": \"" + $p_Lrta_frontend_RTAAPI$__escapeJson__T__T(this, ("Erro na Prova DBM: " + e$2.getMessage__T()))) + "\"}")
     }
   };
   var x = $m_s_None$();
-  if ((x === x115)) {
+  if ((x === x119)) {
     return "{\"error\": \"Modelo n\u00e3o carregado.\"}"
   };
-  throw new $c_s_MatchError(x115)
+  throw new $c_s_MatchError(x119)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getEdgeStatus__Lrta_syntax_Program2$RxGraph__T2 = (function(rx) {
+  var this$3 = $n($as_sc_IterableOnceOps($n($n(rx).Lrta_syntax_Program2$RxGraph__f_edg).flatMap__F1__O(new $c_sjsr_AnonFunction1(((x$1) => {
+    var x$1$1 = $as_T2(x$1);
+    if ((x$1$1 !== null)) {
+      var f = $as_Lrta_syntax_Program2$QName($n(x$1$1)._1__O());
+      var ts = $as_sci_Set($n(x$1$1)._2__O());
+      return $as_sci_Set($n(ts).map__F1__O(new $c_sjsr_AnonFunction1(((t) => {
+        var t$1 = $as_T3(t);
+        var _2 = $n(t$1).T3__f__1;
+        var _3 = $n(t$1).T3__f__2;
+        var _4 = $n(t$1).T3__f__3;
+        return new $c_T4(f, _2, _3, _4)
+      }))))
+    };
+    throw new $c_s_MatchError(x$1$1)
+  })))));
+  var this$6 = $n($m_sci_Set$().from__sc_IterableOnce__sci_Set($as_sc_IterableOnce(this$3)));
+  var this$5 = $n($as_sc_IterableOnceOps($n($n(rx).Lrta_syntax_Program2$RxGraph__f_on).flatMap__F1__O(new $c_sjsr_AnonFunction1(((x$1$2) => {
+    var x$1$3 = $as_T2(x$1$2);
+    if ((x$1$3 !== null)) {
+      var f$1 = $as_Lrta_syntax_Program2$QName($n(x$1$3)._1__O());
+      var ts$1 = $as_sci_Set($n(x$1$3)._2__O());
+      return $as_sci_Set($n(ts$1).map__F1__O(new $c_sjsr_AnonFunction1(((t$2) => {
+        var t$3 = $as_T3(t$2);
+        var _2$1 = $n(t$3).T3__f__1;
+        var _3$1 = $n(t$3).T3__f__2;
+        var _4$1 = $n(t$3).T3__f__3;
+        return new $c_T4(f$1, _2$1, _3$1, _4$1)
+      }))))
+    };
+    throw new $c_s_MatchError(x$1$3)
+  })))));
+  var that = $m_sci_Set$().from__sc_IterableOnce__sci_Set($as_sc_IterableOnce(this$5));
+  var this$9 = $n(this$6.concat__sc_IterableOnce__sc_SetOps(that));
+  var this$8 = $n($as_sc_IterableOnceOps($n($n(rx).Lrta_syntax_Program2$RxGraph__f_off).flatMap__F1__O(new $c_sjsr_AnonFunction1(((x$1$3$1) => {
+    var x$1$4 = $as_T2(x$1$3$1);
+    if ((x$1$4 !== null)) {
+      var f$2 = $as_Lrta_syntax_Program2$QName($n(x$1$4)._1__O());
+      var ts$2 = $as_sci_Set($n(x$1$4)._2__O());
+      return $as_sci_Set($n(ts$2).map__F1__O(new $c_sjsr_AnonFunction1(((t$4) => {
+        var t$5 = $as_T3(t$4);
+        var _2$2 = $n(t$5).T3__f__1;
+        var _3$2 = $n(t$5).T3__f__2;
+        var _4$2 = $n(t$5).T3__f__3;
+        return new $c_T4(f$2, _2$2, _3$2, _4$2)
+      }))))
+    };
+    throw new $c_s_MatchError(x$1$4)
+  })))));
+  var that$1 = $m_sci_Set$().from__sc_IterableOnce__sci_Set($as_sc_IterableOnce(this$8));
+  var allEdges = $as_sci_Set(this$9.concat__sc_IterableOnce__sc_SetOps(that$1));
+  var active = $n(rx).Lrta_syntax_Program2$RxGraph__f_act;
+  var this$10 = $n(allEdges);
+  var inactive = $as_sci_Set(this$10.removedAll__sc_IterableOnce__sci_SetOps(active));
+  var this$11 = $n($n($as_sc_IterableOnceOps($n(active).map__F1__O(new $c_sjsr_AnonFunction1(((_$3) => {
+    var _$3$1 = $as_T4(_$3);
+    return $n($as_Lrta_syntax_Program2$QName($n(_$3$1).T4__f__4)).show__T()
+  }))))).toList__sci_List());
+  var ord = $m_s_math_Ordering$String$();
+  var this$12 = $n($as_sc_IterableOnceOps($f_sc_SeqOps__sorted__s_math_Ordering__O(this$11, ord)));
+  var activeStr = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$12, "", ", ", "");
+  var this$13 = $n($n($as_sc_IterableOnceOps($n(inactive).map__F1__O(new $c_sjsr_AnonFunction1(((_$4) => {
+    var _$4$1 = $as_T4(_$4);
+    return $n($as_Lrta_syntax_Program2$QName($n(_$4$1).T4__f__4)).show__T()
+  }))))).toList__sci_List());
+  var ord$1 = $m_s_math_Ordering$String$();
+  var this$14 = $n($as_sc_IterableOnceOps($f_sc_SeqOps__sorted__s_math_Ordering__O(this$13, ord$1)));
+  var inactiveStr = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$14, "", ", ", "");
+  return new $c_T2(activeStr, inactiveStr)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsJSON__T = (function() {
+  var this$1 = $n(this.Lrta_frontend_RTAAPI$__f_currentGraph);
+  if (this$1.isEmpty__Z()) {
+    var $$x1 = $m_s_None$()
+  } else {
+    var arg1 = this$1.get__O();
+    var root = $as_Lrta_syntax_Program2$RxGraph(arg1);
+    var this$2 = $n($m_s_Predef$().s_Predef$__f_Set);
+    var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_backend_AnalyseLTS$ZoneStateKey.getArrayOf().constr)([]));
+    var elem = this$2.from__sc_IterableOnce__sci_Set(elems);
+    var visited = new $c_sr_ObjectRef(elem);
+    $n($m_s_package$().s_package$__f_List);
+    var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$RxGraph.getArrayOf().constr)([root]));
+    var elem$1 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$1);
+    var queue = new $c_sr_ObjectRef(elem$1);
+    var elems$2 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([]));
+    var elem$2 = new $c_scm_ListBuffer().scala$collection$mutable$ListBuffer$$freshFrom__sc_IterableOnce__scm_ListBuffer(elems$2);
+    var elements = new $c_sr_ObjectRef(elem$2);
+    var this$8 = $n($m_s_Predef$().s_Predef$__f_Map);
+    var elems$3 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([]));
+    var elem$3 = this$8.from__sc_IterableOnce__sci_Map(elems$3);
+    var stateToId = new $c_sr_ObjectRef(elem$3);
+    var idCounter = new $c_sr_IntRef(0);
+    var inits = $n(root).Lrta_syntax_Program2$RxGraph__f_inits;
+    var vars = $n(root).Lrta_syntax_Program2$RxGraph__f_val_env;
+    var zone = $n(root).Lrta_syntax_Program2$RxGraph__f_zone;
+    var pending = $n(root).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+    var act = $n(root).Lrta_syntax_Program2$RxGraph__f_act;
+    var startKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act);
+    var startId = $p_Lrta_frontend_RTAAPI$__getId$2__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__T(this, stateToId, idCounter, root);
+    var this$12 = $n($as_sci_Set(visited.sr_ObjectRef__f_elem));
+    var ev$26 = $as_sci_Set(this$12.incl__O__sci_SetOps(startKey));
+    visited.sr_ObjectRef__f_elem = ev$26;
+    ev$26 = null;
+    var this$13 = $n($as_scm_ListBuffer(elements.sr_ObjectRef__f_elem));
+    var elem$4 = $p_Lrta_frontend_RTAAPI$__buildNodeJson$1__Lrta_syntax_Program2$RxGraph__T__T(this, root, startId);
+    this$13.addOne__O__scm_ListBuffer(elem$4);
+    var edgeCounter = new $c_sr_IntRef(0);
+    while (true) {
+      var this$15 = $n($as_sci_List(queue.sr_ObjectRef__f_elem));
+      if (((!this$15.isEmpty__Z()) && ($n($as_sci_Set(visited.sr_ObjectRef__f_elem)).size__I() < 300))) {
+        var current = $as_Lrta_syntax_Program2$RxGraph($n($as_sci_List(queue.sr_ObjectRef__f_elem)).head__O());
+        var ev$27 = $as_sci_List($n($as_sci_List(queue.sr_ObjectRef__f_elem)).tail__O());
+        queue.sr_ObjectRef__f_elem = ev$27;
+        ev$27 = null;
+        var inits$1 = $n(current).Lrta_syntax_Program2$RxGraph__f_inits;
+        var vars$1 = $n(current).Lrta_syntax_Program2$RxGraph__f_val_env;
+        var zone$1 = $n(current).Lrta_syntax_Program2$RxGraph__f_zone;
+        var pending$1 = $n(current).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+        var act$1 = $n(current).Lrta_syntax_Program2$RxGraph__f_act;
+        var currentKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits$1, vars$1, zone$1, pending$1, act$1);
+        var sourceId = $as_T($n($as_sci_Map(stateToId.sr_ObjectRef__f_elem)).apply__O__O(currentKey));
+        var edgeNexts = $m_Lrta_backend_RxSemantics$().nextEdgeSymbolic__Lrta_syntax_Program2$RxGraph__sci_Set(current);
+        var this$18 = $n(edgeNexts);
+        var p = new $c_sjsr_AnonFunction1(((x$1) => {
+          var x$1$1 = $as_T2(x$1);
+          return ((x$1$1 !== null) && ($as_T4($n(x$1$1)._1__O()), $as_Lrta_syntax_Program2$RxGraph($n(x$1$1)._2__O()), true))
+        }));
+        var this$25 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$18, p);
+        var f = new $c_sjsr_AnonFunction1(((visited, queue, elements, stateToId, idCounter, edgeCounter, sourceId) => ((x$1$2) => {
+          var x$1$3 = $as_T2(x$1$2);
+          matchResult37: {
+            if ((x$1$3 !== null)) {
+              var edge$1 = $as_T4($n(x$1$3)._1__O());
+              var nextState$1 = $as_Lrta_syntax_Program2$RxGraph($n(x$1$3)._2__O());
+              matchResult36: {
+                var \u03b45$___1;
+                var \u03b45$___2;
+                var \u03b45$___3;
+                var \u03b45$___4;
+                if ((edge$1 !== null)) {
+                  var from = $as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__1);
+                  var to = $as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__2);
+                  var tId = $as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__3);
+                  var label = $as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__4);
+                  var \u03b45$___1 = from;
+                  var \u03b45$___2 = to;
+                  var \u03b45$___3 = tId;
+                  var \u03b45$___4 = label;
+                  break matchResult36
+                };
+                throw new $c_s_MatchError(edge$1)
+              };
+              $as_Lrta_syntax_Program2$QName(\u03b45$___1);
+              $as_Lrta_syntax_Program2$QName(\u03b45$___2);
+              var tId$2 = $as_Lrta_syntax_Program2$QName(\u03b45$___3);
+              var label$2 = $as_Lrta_syntax_Program2$QName(\u03b45$___4);
+              var targetId = $p_Lrta_frontend_RTAAPI$__getId$2__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__T(this, stateToId, idCounter, nextState$1);
+              var inits$2 = $n(nextState$1).Lrta_syntax_Program2$RxGraph__f_inits;
+              var vars$2 = $n(nextState$1).Lrta_syntax_Program2$RxGraph__f_val_env;
+              var zone$2 = $n(nextState$1).Lrta_syntax_Program2$RxGraph__f_zone;
+              var pending$2 = $n(nextState$1).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+              var act$2 = $n(nextState$1).Lrta_syntax_Program2$RxGraph__f_act;
+              var nextKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits$2, vars$2, zone$2, pending$2, act$2);
+              if ((!$n($as_sci_Set(visited.sr_ObjectRef__f_elem)).contains__O__Z(nextKey))) {
+                var this$21 = $n($as_sci_Set(visited.sr_ObjectRef__f_elem));
+                var ev$28 = $as_sci_Set(this$21.incl__O__sci_SetOps(nextKey));
+                visited.sr_ObjectRef__f_elem = ev$28;
+                ev$28 = null;
+                var this$22 = $n($as_sci_List(queue.sr_ObjectRef__f_elem));
+                var ev$29 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$22, nextState$1));
+                queue.sr_ObjectRef__f_elem = ev$29;
+                ev$29 = null;
+                var this$23 = $n($as_scm_ListBuffer(elements.sr_ObjectRef__f_elem));
+                var elem$5 = $p_Lrta_frontend_RTAAPI$__buildNodeJson$1__Lrta_syntax_Program2$RxGraph__T__T(this, nextState$1, targetId);
+                this$23.addOne__O__scm_ListBuffer(elem$5)
+              };
+              var displayLabel = (((tId$2 === null) ? (label$2 === null) : $n(tId$2).equals__O__Z(label$2)) ? $n(label$2).show__T() : ((($n(label$2).show__T() + "(") + $n(tId$2).show__T()) + ")"));
+              var this$24 = $n($as_scm_ListBuffer(elements.sr_ObjectRef__f_elem));
+              var elem$6 = (((((((("{\"data\": {\"id\": \"e" + edgeCounter.sr_IntRef__f_elem) + "\", \"source\": \"") + sourceId) + "\", \"target\": \"") + targetId) + "\", \"label\": \"") + $p_Lrta_frontend_RTAAPI$__sanitizeLabel$1__T__T(this, displayLabel)) + "\"}}");
+              this$24.addOne__O__scm_ListBuffer(elem$6);
+              var ev$30 = ((1 + edgeCounter.sr_IntRef__f_elem) | 0);
+              edgeCounter.sr_IntRef__f_elem = ev$30;
+              break matchResult37
+            };
+            throw new $c_s_MatchError(x$1$3)
+          }
+        }))(visited, queue, elements, stateToId, idCounter, edgeCounter, sourceId));
+        $n(this$25.filtered__sc_Iterable()).foreach__F1__V(f)
+      } else {
+        break
+      }
+    };
+    var this$26 = $n($as_scm_ListBuffer(elements.sr_ObjectRef__f_elem));
+    var $$x1 = new $c_s_Some((("[" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$26, "", ",", "")) + "]"))
+  };
+  var this$27 = $n($$x1);
+  return $as_T((this$27.isEmpty__Z() ? "[]" : this$27.get__O()))
 });
 $c_Lrta_frontend_RTAAPI$.prototype.findPathToValueZone__T__sjs_js_Any = (function(condStr) {
-  var x129 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x129 instanceof $c_s_Some)) {
-    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x129)).s_Some__f_value);
+  var x161 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x161 instanceof $c_s_Some)) {
+    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x161)).s_Some__f_value);
     try {
       var this$1 = $n(condStr);
       var this$2 = $n($as_T(this$1.split("&&").join("] &&[")));
@@ -12479,17 +16081,53 @@ $c_Lrta_frontend_RTAAPI$.prototype.findPathToValueZone__T__sjs_js_Any = (functio
       var formulaStr = (("[" + formatted) + "]");
       var formula = $m_Lrta_syntax_PdlParser$().parsePdlFormula__T__Lrta_syntax_Formula(formulaStr);
       var finalCond = $p_Lrta_frontend_RTAAPI$__formulaToCondition$2__Lrta_syntax_Formula__Lrta_syntax_Condition(this, formula);
-      var x126 = $m_Lrta_backend_AnalyseLTS$().findShortestPathToCondition__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Condition__I__Z__s_Option(rx, finalCond, 50000, true);
-      if ((x126 instanceof $c_s_Some)) {
-        var steps = $as_sci_List($n($as_s_Some(x126)).s_Some__f_value);
+      var queryConstants = $m_Lrta_backend_RxSemantics$MaxConstants$().fromCond__Lrta_syntax_Condition__sci_Set__sci_Map(finalCond, $n(rx).Lrta_syntax_Program2$RxGraph__f_clocks);
+      var maxConstants$3 = $m_Lrta_backend_RxSemantics$MaxConstants$().mergeMax__sci_Map__sci_Map__sci_Map($n(rx).Lrta_syntax_Program2$RxGraph__f_maxConstants, queryConstants);
+      var this$3 = $n(rx);
+      var edg$3 = this$3.Lrta_syntax_Program2$RxGraph__f_edg;
+      var this$4 = $n(rx);
+      var on$3 = this$4.Lrta_syntax_Program2$RxGraph__f_on;
+      var this$5 = $n(rx);
+      var off$3 = this$5.Lrta_syntax_Program2$RxGraph__f_off;
+      var this$6 = $n(rx);
+      var lbls$3 = this$6.Lrta_syntax_Program2$RxGraph__f_lbls;
+      var this$7 = $n(rx);
+      var inits$3 = this$7.Lrta_syntax_Program2$RxGraph__f_inits;
+      var this$8 = $n(rx);
+      var act$3 = this$8.Lrta_syntax_Program2$RxGraph__f_act;
+      var this$9 = $n(rx);
+      var val_env$3 = this$9.Lrta_syntax_Program2$RxGraph__f_val_env;
+      var this$10 = $n(rx);
+      var zone$3 = this$10.Lrta_syntax_Program2$RxGraph__f_zone;
+      var this$11 = $n(rx);
+      var functions$3 = this$11.Lrta_syntax_Program2$RxGraph__f_functions;
+      var this$12 = $n(rx);
+      var clocks$3 = this$12.Lrta_syntax_Program2$RxGraph__f_clocks;
+      var this$13 = $n(rx);
+      var clock_env$3 = this$13.Lrta_syntax_Program2$RxGraph__f_clock_env;
+      var this$14 = $n(rx);
+      var invariants$3 = this$14.Lrta_syntax_Program2$RxGraph__f_invariants;
+      var this$15 = $n(rx);
+      var edgeConditions$3 = this$15.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+      var this$16 = $n(rx);
+      var edgeUpdates$3 = this$16.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+      var this$17 = $n(rx);
+      var delays$3 = this$17.Lrta_syntax_Program2$RxGraph__f_delays;
+      var this$18 = $n(rx);
+      var pendingDelays$3 = this$18.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      $n(rx);
+      var rxWithBoostedConstants = new $c_Lrta_syntax_Program2$RxGraph(edg$3, on$3, off$3, lbls$3, inits$3, act$3, val_env$3, zone$3, functions$3, clocks$3, clock_env$3, invariants$3, edgeConditions$3, edgeUpdates$3, delays$3, pendingDelays$3, maxConstants$3);
+      var x158 = $m_Lrta_backend_AnalyseLTS$().findShortestPathToCondition__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Condition__I__Z__s_Option(rxWithBoostedConstants, finalCond, 50000, true);
+      if ((x158 instanceof $c_s_Some)) {
+        var steps = $as_sci_List($n($as_s_Some(x158)).s_Some__f_value);
         return [...$m_sjsr_Compat$().toJSVarArgsImpl__sci_Seq__sjs_js_Array(steps)]
       };
       var x = $m_s_None$();
-      if ((x === x126)) {
+      if ((x === x158)) {
         var fields = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([new $c_T2("error", "Caminho n\u00e3o encontrado ou inating\u00edvel (Motor Simb\u00f3lico / DBM).")]));
         return $m_sjs_js_special_package$().objectLiteral__sci_Seq__sjs_js_Object(fields)
       };
-      throw new $c_s_MatchError(x126)
+      throw new $c_s_MatchError(x158)
     } catch (e) {
       var e$2 = ((e instanceof $c_jl_Throwable) ? e : new $c_sjs_js_JavaScriptException(e));
       var $$x1 = $m_sr_ScalaRunTime$();
@@ -12499,16 +16137,75 @@ $c_Lrta_frontend_RTAAPI$.prototype.findPathToValueZone__T__sjs_js_Any = (functio
     }
   };
   var x$3 = $m_s_None$();
-  if ((x$3 === x129)) {
+  if ((x$3 === x161)) {
     var fields$2 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([new $c_T2("error", "Modelo n\u00e3o carregado.")]));
     return $m_sjs_js_special_package$().objectLiteral__sci_Seq__sjs_js_Object(fields$2)
   };
-  throw new $c_s_MatchError(x129)
+  throw new $c_s_MatchError(x161)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.debugZoneGraphSize__I__T = (function(hardCap) {
+  var x164 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x164 instanceof $c_s_Some)) {
+    var root = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x164)).s_Some__f_value);
+    var this$1 = $n($m_s_Predef$().s_Predef$__f_Set);
+    var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_backend_AnalyseLTS$ZoneStateKey.getArrayOf().constr)([]));
+    var visited = this$1.from__sc_IterableOnce__sci_Set(elems);
+    $n($m_s_package$().s_package$__f_List);
+    var elems$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_syntax_Program2$RxGraph.getArrayOf().constr)([root]));
+    var queue = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$1);
+    $n($m_s_package$().s_package$__f_List);
+    var elems$2 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([]));
+    var diagonalViolations = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$2);
+    while (true) {
+      var this$4 = $n(queue);
+      if (((!this$4.isEmpty__Z()) && ($n(visited).size__I() <= hardCap))) {
+        var cur = $as_Lrta_syntax_Program2$RxGraph($n(queue).head__O());
+        queue = $as_sci_List($n(queue).tail__O());
+        var inits = $n(cur).Lrta_syntax_Program2$RxGraph__f_inits;
+        var vars = $n(cur).Lrta_syntax_Program2$RxGraph__f_val_env;
+        var zone = $n(cur).Lrta_syntax_Program2$RxGraph__f_zone;
+        var pending = $n(cur).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+        var act = $n(cur).Lrta_syntax_Program2$RxGraph__f_act;
+        var key = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act);
+        if ((!$n(visited).contains__O__Z(key))) {
+          var this$6 = $n(visited);
+          visited = $as_sci_Set(this$6.incl__O__sci_SetOps(key));
+          if ((!$p_Lrta_frontend_RTAAPI$__diagonalOk$1__Lrta_backend_DBM$Zone__Z(this, $n(cur).Lrta_syntax_Program2$RxGraph__f_zone))) {
+            var this$7 = $n($n(cur).Lrta_syntax_Program2$RxGraph__f_inits);
+            var elem$3 = (("Zona " + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$7, "", ",", "")) + " viola D(x,x)=0");
+            var this$8 = $n(diagonalViolations);
+            diagonalViolations = new $c_sci_$colon$colon(elem$3, this$8)
+          };
+          var this$10 = $n(queue);
+          var suffix = $as_sc_IterableOnce($n($m_Lrta_backend_RxSemantics$().nextEdgeSymbolic__Lrta_syntax_Program2$RxGraph__sci_Set(cur)).map__F1__O(new $c_sjsr_AnonFunction1(((_$8) => {
+            var _$8$1 = $as_T2(_$8);
+            return $as_Lrta_syntax_Program2$RxGraph($n(_$8$1)._2__O())
+          }))));
+          queue = this$10.appendedAll__sc_IterableOnce__sci_List(suffix)
+        }
+      } else {
+        break
+      }
+    };
+    var exhaustive = ($n(visited).size__I() <= hardCap);
+    var $$x4 = $n(visited).size__I();
+    var this$11 = $n(diagonalViolations);
+    var $$x3 = this$11.length__I();
+    var $$x2 = JSON;
+    var seq = $n(diagonalViolations).take__I__sci_List(5);
+    var $$x1 = $$x2.stringify([...$m_sjsr_Compat$().toJSVarArgsImpl__sci_Seq__sjs_js_Array(seq)]);
+    return (((((((("{\"zoneCount\": " + $$x4) + ", \"exhaustive\": ") + exhaustive) + ", \"diagonalViolations\": ") + $$x3) + ", \"sampleViolations\": ") + $as_T($$x1)) + "}")
+  };
+  var x = $m_s_None$();
+  if ((x === x164)) {
+    return "{\"error\": \"Modelo n\u00e3o carregado.\"}"
+  };
+  throw new $c_s_MatchError(x164)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.verifyLTLBatch__T__I__I__T = (function(formulaStr, traceLength, batchSize) {
-  var x138 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x138 instanceof $c_s_Some)) {
-    var startGraph = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x138)).s_Some__f_value);
+  var x173 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x173 instanceof $c_s_Some)) {
+    var startGraph = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x173)).s_Some__f_value);
     try {
       var formula = $m_Lrta_syntax_LtlParser$().parseLtlFormula__T__Lrta_syntax_LtlFormula(formulaStr);
       var allTrue = new $c_sr_BooleanRef(true);
@@ -12529,44 +16226,44 @@ $c_Lrta_frontend_RTAAPI$.prototype.verifyLTLBatch__T__I__I__T = (function(formul
       var this$13 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$11, p);
       var f = new $c_sjsr_AnonFunction1(((v1) => {
         $uI(v1);
-        matchResult33: {
-          var \u03b44$___1;
-          var \u03b44$___2;
-          var \u03b44$___3;
-          var x133 = $m_Lrta_backend_TraceGenerator$().randomTimedTraceDetailed__Lrta_syntax_Program2$RxGraph__I__T3(startGraph, traceLength);
-          if ((x133 !== null)) {
-            var trace = $as_sci_List($n(x133).T3__f__1);
-            var pathLabels = $as_sci_List($n(x133).T3__f__2);
-            var edgeIds = $as_sci_List($n(x133).T3__f__3);
-            var \u03b44$___1 = trace;
-            var \u03b44$___2 = pathLabels;
-            var \u03b44$___3 = edgeIds;
-            break matchResult33
+        matchResult43: {
+          var \u03b46$___1;
+          var \u03b46$___2;
+          var \u03b46$___3;
+          var x168 = $m_Lrta_backend_TraceGenerator$().randomTimedTraceDetailed__Lrta_syntax_Program2$RxGraph__I__T3(startGraph, traceLength);
+          if ((x168 !== null)) {
+            var trace = $as_sci_List($n(x168).T3__f__1);
+            var pathLabels = $as_sci_List($n(x168).T3__f__2);
+            var edgeIds = $as_sci_List($n(x168).T3__f__3);
+            var \u03b46$___1 = trace;
+            var \u03b46$___2 = pathLabels;
+            var \u03b46$___3 = edgeIds;
+            break matchResult43
           };
-          throw new $c_s_MatchError(x133)
+          throw new $c_s_MatchError(x168)
         };
-        var trace$2 = $as_sci_List(\u03b44$___1);
-        var pathLabels$2 = $as_sci_List(\u03b44$___2);
-        var edgeIds$2 = $as_sci_List(\u03b44$___3);
-        var res = $m_Lrta_backend_LtlEvaluator$().eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z(trace$2, formula, $m_Lrta_backend_LtlEvaluator$Hybrid$());
+        var trace$2 = $as_sci_List(\u03b46$___1);
+        var pathLabels$2 = $as_sci_List(\u03b46$___2);
+        var edgeIds$2 = $as_sci_List(\u03b46$___3);
+        var res = $m_Lrta_backend_LtlEvaluator$().eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__Z(trace$2, formula, $m_Lrta_backend_LtlEvaluator$Hybrid$(), false);
         if ((!res)) {
-          var ev$23 = false;
-          allTrue.sr_BooleanRef__f_elem = ev$23;
-          var ev$24 = pathLabels$2;
-          counterExampleTrace.sr_ObjectRef__f_elem = ev$24;
-          ev$24 = null;
-          var ev$25 = edgeIds$2;
-          counterExampleIds.sr_ObjectRef__f_elem = ev$25;
-          ev$25 = null
+          var ev$31 = false;
+          allTrue.sr_BooleanRef__f_elem = ev$31;
+          var ev$32 = pathLabels$2;
+          counterExampleTrace.sr_ObjectRef__f_elem = ev$32;
+          ev$32 = null;
+          var ev$33 = edgeIds$2;
+          counterExampleIds.sr_ObjectRef__f_elem = ev$33;
+          ev$33 = null
         } else {
-          var ev$26 = ((1 + passedCount.sr_IntRef__f_elem) | 0);
-          passedCount.sr_IntRef__f_elem = ev$26;
-          var ev$27 = pathLabels$2;
-          sampleTrace.sr_ObjectRef__f_elem = ev$27;
-          ev$27 = null;
-          var ev$28 = edgeIds$2;
-          sampleIds.sr_ObjectRef__f_elem = ev$28;
-          ev$28 = null
+          var ev$34 = ((1 + passedCount.sr_IntRef__f_elem) | 0);
+          passedCount.sr_IntRef__f_elem = ev$34;
+          var ev$35 = pathLabels$2;
+          sampleTrace.sr_ObjectRef__f_elem = ev$35;
+          ev$35 = null;
+          var ev$36 = edgeIds$2;
+          sampleIds.sr_ObjectRef__f_elem = ev$36;
+          ev$36 = null
         }
       }));
       $n(this$13.filtered__sc_Iterable()).foreach__F1__V(f);
@@ -12597,43 +16294,43 @@ $c_Lrta_frontend_RTAAPI$.prototype.verifyLTLBatch__T__I__I__T = (function(formul
     }
   };
   var x = $m_s_None$();
-  if ((x === x138)) {
+  if ((x === x173)) {
     return "{\"error\": \"Modelo n\u00e3o carregado.\"}"
   };
-  throw new $c_s_MatchError(x138)
+  throw new $c_s_MatchError(x173)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.testLTLEquivalence__T__T__I__T = (function(retaFormulaStr, regaFormulaStr, traceLength) {
-  var x144 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
-  if ((x144 instanceof $c_s_Some)) {
-    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x144)).s_Some__f_value);
+  var x179 = this.Lrta_frontend_RTAAPI$__f_currentGraph;
+  if ((x179 instanceof $c_s_Some)) {
+    var rx = $as_Lrta_syntax_Program2$RxGraph($n($as_s_Some(x179)).s_Some__f_value);
     try {
       var retaFormula = $m_Lrta_syntax_LtlParser$().parseLtlFormula__T__Lrta_syntax_LtlFormula(retaFormulaStr);
       var regaFormula = $m_Lrta_syntax_LtlParser$().parseLtlFormula__T__Lrta_syntax_LtlFormula(regaFormulaStr);
       var gltsSource = $m_Lrta_syntax_RTATranslator$().translate_syntax__Lrta_syntax_Program2$RxGraph__T__T(rx, this.Lrta_frontend_RTAAPI$__f_currentSource);
       var gltsGraph = $m_Lrta_syntax_Parser2$().parseProgram__T__Lrta_syntax_Program2$RxGraph(gltsSource);
-      matchResult36: {
-        var \u03b45$___1;
-        var \u03b45$___2;
-        var x141 = $m_Lrta_backend_TraceGenerator$().randomTrace__Lrta_syntax_Program2$RxGraph__I__T2(rx, traceLength);
-        if ((x141 !== null)) {
-          var retaTrace = $as_sci_List($n(x141)._1__O());
-          var pathLabels = $as_sci_List($n(x141)._2__O());
-          var \u03b45$___1 = retaTrace;
-          var \u03b45$___2 = pathLabels;
-          break matchResult36
+      matchResult46: {
+        var \u03b47$___1;
+        var \u03b47$___2;
+        var x176 = $m_Lrta_backend_TraceGenerator$().randomTrace__Lrta_syntax_Program2$RxGraph__I__T2(rx, traceLength);
+        if ((x176 !== null)) {
+          var retaTrace = $as_sci_List($n(x176)._1__O());
+          var pathLabels = $as_sci_List($n(x176)._2__O());
+          var \u03b47$___1 = retaTrace;
+          var \u03b47$___2 = pathLabels;
+          break matchResult46
         };
-        throw new $c_s_MatchError(x141)
+        throw new $c_s_MatchError(x176)
       };
-      var retaTrace$2 = $as_sci_List(\u03b45$___1);
-      var pathLabels$2 = $as_sci_List(\u03b45$___2);
+      var retaTrace$2 = $as_sci_List(\u03b47$___1);
+      var pathLabels$2 = $as_sci_List(\u03b47$___2);
       var regaTrace = $m_Lrta_backend_TraceGenerator$().followPath__Lrta_syntax_Program2$RxGraph__sci_List__sci_List(gltsGraph, pathLabels$2);
-      var resReta = $m_Lrta_backend_LtlEvaluator$().eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z(retaTrace$2, retaFormula, $m_Lrta_backend_LtlEvaluator$ReTA$());
-      var resRega = $m_Lrta_backend_LtlEvaluator$().eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z(regaTrace, regaFormula, $m_Lrta_backend_LtlEvaluator$ReGA$());
+      var resReta = $m_Lrta_backend_LtlEvaluator$().eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__Z(retaTrace$2, retaFormula, $m_Lrta_backend_LtlEvaluator$ReTA$(), false);
+      var resRega = $m_Lrta_backend_LtlEvaluator$().eval__sci_List__Lrta_syntax_LtlFormula__Lrta_backend_LtlEvaluator$Mode__Z__Z(regaTrace, regaFormula, $m_Lrta_backend_LtlEvaluator$ReGA$(), false);
       var this$2 = $n(pathLabels$2);
       var traceStr = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$2, "", " \u2794 ", "");
       $m_sc_StringOps$();
       var this$3 = $n(pathLabels$2);
-      var x = (((((((((("\r\n          | === TEOREMA 1: PROVA DE EQUIVAL\u00caNCIA REAL ===\r\n          |\r\n          | Tra\u00e7o percorrido (\u03c3) [" + this$3.length__I()) + " passos]:\r\n          | Start \u2794 ") + traceStr) + "\r\n          |\r\n          | [ReTA Semantics] \u03c3 \u22a8 \u03c6 : ") + resReta) + "\r\n          | [ReGA (GLTS) Semantics] \u03c4 \u22a8 \u2206\u03c6 : ") + resRega) + "\r\n          |\r\n          | Equival\u00eancia: ") + ((resReta === resRega) ? "VERIFICADO \u2713" : "FALHOU \u2717")) + "\r\n          ");
+      var x = (((((((((("\n          | === TEOREMA 1: PROVA DE EQUIVAL\u00caNCIA REAL ===\n          |\n          | Tra\u00e7o percorrido (\u03c3) [" + this$3.length__I()) + " passos]:\n          | Start \u2794 ") + traceStr) + "\n          |\n          | [ReTA Semantics] \u03c3 \u22a8 \u03c6 : ") + resReta) + "\n          | [ReGA (GLTS) Semantics] \u03c4 \u22a8 \u2206\u03c6 : ") + resRega) + "\n          |\n          | Equival\u00eancia: ") + ((resReta === resRega) ? "VERIFICADO \u2713" : "FALHOU \u2717")) + "\n          ");
       return $m_sc_StringOps$().stripMargin$extension__T__C__T(x, 124)
     } catch (e) {
       var e$2 = ((e instanceof $c_jl_Throwable) ? e : new $c_sjs_js_JavaScriptException(e));
@@ -12641,40 +16338,40 @@ $c_Lrta_frontend_RTAAPI$.prototype.testLTLEquivalence__T__T__I__T = (function(re
     }
   };
   var x$1 = $m_s_None$();
-  if ((x$1 === x144)) {
+  if ((x$1 === x179)) {
     return "Erro: Carrega um modelo primeiro."
   };
-  throw new $c_s_MatchError(x144)
+  throw new $c_s_MatchError(x179)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.getExamples__T = (function() {
   $n($m_s_package$().s_package$__f_List);
   var $$x9 = $m_sr_ScalaRunTime$();
   $m_sc_StringOps$();
-  var y = $m_sc_StringOps$().stripMargin$extension__T__C__T("name Conditions\r\n      |int counter = 0\r\n      |init start\r\n      |start ---> middle: step1  if (counter < 2) then {\r\n      |  counter' := counter + 1\r\n      |}\r\n      |middle ---> endN: activateStep2 if (counter == 1)", 124);
+  var y = $m_sc_StringOps$().stripMargin$extension__T__C__T("name Conditions\n      |int counter = 0\n      |init start\n      |start ---> middle: step1  if (counter < 2) then {\n      |  counter' := counter + 1\n      |}\n      |middle ---> endN: activateStep2 if (counter == 1)", 124);
   var $$x8 = new $c_T2("Conditions", y);
   $m_sc_StringOps$();
-  var y$1 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name LikeAlgorithm\r\n      |init Feed\r\n      |Feed ---> Watch: watch\r\n      |Watch ---> Watch: like\r\n      |Watch ---> Feed: dontLike\r\n      |Watch ---> Feed: refresh disabled\r\n      |Feed ---> List: watchLike disabled\r\n      |List ---> Watch: watch2\r\n      |watch ->> dontLike: wd\r\n      |like --! dontLike: ld\r\n      |like ->> refresh: lr\r\n      |like ->> watchLike: lw\r\n      |dontLike --! watchLike: dw", 124);
+  var y$1 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name LikeAlgorithm\n      |init Feed\n      |Feed ---> Watch: watch\n      |Watch ---> Watch: like\n      |Watch ---> Feed: dontLike\n      |Watch ---> Feed: refresh disabled\n      |Feed ---> List: watchLike disabled\n      |List ---> Watch: watch2\n      |watch ->> dontLike: wd\n      |like --! dontLike: ld\n      |like ->> refresh: lr\n      |like ->> watchLike: lw\n      |dontLike --! watchLike: dw", 124);
   var $$x7 = new $c_T2("LikeAlgorithm", y$1);
   $m_sc_StringOps$();
-  var y$2 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name Like2\r\n  |clock x;\r\n  |inv FEED:x<=20\r\n  |inv WATCH:x<=120\r\n  |inv LIST:x<=20\r\n  |init FEED\r\n  |\r\n  |FEED -watch-> WATCH: fww if (x>=1) then {\r\n  |  x':=0\r\n  |}\r\n  |\r\n  |FEED -seeList-> LIST: fsl disabled if (x>=1) then {\r\n  |  x':=0\r\n  |}\r\n  |\r\n  |WATCH -like-> FEED: wlf disabled if (x>=10) then {\r\n  |  x':=0\r\n  |}\r\n  |\r\n  |WATCH -dontLike-> FEED: wdf if (x>=1 AND x<=9) then {\r\n  |  x':=0\r\n  |}\r\n  |\r\n  |LIST -wacth-> WATCH: lww if (x>=1) then {\r\n  |  x':=0\r\n  |}\r\n  |\r\n  |fww ->> wlf:onLike\r\n  |wdf --! wlf:offLike\r\n  |wlf ->> fsl:onSee\r\n  |wdf --! fsl:offSee\r\n  ", 124);
+  var y$2 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name Like2\n  |clock x;\n  |inv FEED:x<=20\n  |inv WATCH:x<=120\n  |inv LIST:x<=20\n  |init FEED\n  |\n  |FEED -watch-> WATCH: fww if (x>=1) then {\n  |  x':=0\n  |}\n  |\n  |FEED -seeList-> LIST: fsl disabled if (x>=1) then {\n  |  x':=0\n  |}\n  |\n  |WATCH -like-> FEED: wlf disabled if (x>=10) then {\n  |  x':=0\n  |}\n  |\n  |WATCH -dontLike-> FEED: wdf if (x>=1 AND x<=9) then {\n  |  x':=0\n  |}\n  |\n  |LIST -wacth-> WATCH: lww if (x>=1) then {\n  |  x':=0\n  |}\n  |\n  |fww ->> wlf:onLike\n  |wdf --! wlf:offLike\n  |wlf ->> fsl:onSee\n  |wdf --! fsl:offSee\n  ", 124);
   var $$x6 = new $c_T2("likeRTA", y$2);
   $m_sc_StringOps$();
-  var y$3 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name GRG\r\n      |int a_active   = 1\r\n      |int b_active   = 0\r\n      |int c_active = 0\r\n      |\r\n      |init s0\r\n      |\r\n      |s0 ---> s1: aa  if (a_active == 1) then {\r\n      |  b_active' := 1;\r\n      |  if (c_active == 1) then {\r\n      |  \ta_active' := 0\r\n      |  }\r\n      |}\r\n      |\r\n      |s1 ---> s0: bb  if (b_active == 1) then {\r\n      |  c_active' := 1;\r\n      |  if (a_active == 0) then {\r\n      |  \tb_active' := 0\r\n      |  }\r\n      |}\r\n      |\r\n      |s1 ---> s2: cc  if (c_active == 1)\r\n      |\r\n      |\r\n      |aa --! aa: offA2 disabled\r\n      |aa ->> bb: onB if (b_active == 0)\r\n      |bb ->> offA2: onOffA if (c_active == 0)\r\n      |", 124);
+  var y$3 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name GRG\n      |int a_active   = 1\n      |int b_active   = 0\n      |int c_active = 0\n      |\n      |init s0\n      |\n      |s0 ---> s1: aa  if (a_active == 1) then {\n      |  b_active' := 1;\n      |  if (c_active == 1) then {\n      |  \ta_active' := 0\n      |  }\n      |}\n      |\n      |s1 ---> s0: bb  if (b_active == 1) then {\n      |  c_active' := 1;\n      |  if (a_active == 0) then {\n      |  \tb_active' := 0\n      |  }\n      |}\n      |\n      |s1 ---> s2: cc  if (c_active == 1)\n      |\n      |\n      |aa --! aa: offA2 disabled\n      |aa ->> bb: onB if (b_active == 0)\n      |bb ->> offA2: onOffA if (c_active == 0)\n      |", 124);
   var $$x5 = new $c_T2("GRG", y$3);
   $m_sc_StringOps$();
-  var y$4 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name TIMER\r\n    |clock t;\r\n    |init s0;\r\n    |inv s1: t <= 10;\r\n    |int c = 0\r\n    |s0 ---> s1: start if(c==0) then {\r\n    |  t' := 0;\r\n    |}\r\n    |\r\n    |\r\n    |s1 ---> s2: timeout if (t >= 10)\r\n    |\r\n    |s1 ---> s0: escape if (t < 5)\r\n    |", 124);
+  var y$4 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name TIMER\n    |clock t;\n    |init s0;\n    |inv s1: t <= 10;\n    |int c = 0\n    |s0 ---> s1: start if(c==0) then {\n    |  t' := 0;\n    |}\n    |\n    |\n    |s1 ---> s2: timeout if (t >= 10)\n    |\n    |s1 ---> s0: escape if (t < 5)\n    |", 124);
   var $$x4 = new $c_T2("TIMER", y$4);
   $m_sc_StringOps$();
-  var y$5 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name Counter\r\n      |init s0\r\n      |s0 ---> s0: act\r\n      |act --! act: offAct disabled\r\n      |act ->> offAct: on1 disabled\r\n      |act ->> on1", 124);
+  var y$5 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name Counter\n      |init s0\n      |s0 ---> s0: act\n      |act --! act: offAct disabled\n      |act ->> offAct: on1 disabled\n      |act ->> on1", 124);
   var $$x3 = new $c_T2("Counter", y$5);
   $m_sc_StringOps$();
-  var y$6 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name Vending1eur\r\n      |init Insert\r\n      |Insert ---> Coffee: ct50\r\n      |Insert ---> Chocolate: eur1\r\n      |Coffee ---> Insert: GetCoffee\r\n      |Chocolate ---> Insert: GetChoc\r\n      |\r\n      |eur1 --! ct50\r\n      |eur1 --! eur1\r\n      |ct50 --! ct50: lastct50 disabled\r\n      |ct50 --! eur1\r\n      |ct50 ->> lastct50", 124);
+  var y$6 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name Vending1eur\n      |init Insert\n      |Insert ---> Coffee: ct50\n      |Insert ---> Chocolate: eur1\n      |Coffee ---> Insert: GetCoffee\n      |Chocolate ---> Insert: GetChoc\n      |\n      |eur1 --! ct50\n      |eur1 --! eur1\n      |ct50 --! ct50: lastct50 disabled\n      |ct50 --! eur1\n      |ct50 ->> lastct50", 124);
   var $$x2 = new $c_T2("Vending (max eur1)", y$6);
   $m_sc_StringOps$();
-  var y$7 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name Vending3prod\r\n      |init pay\r\n      |pay ---> select: insertCoin\r\n      |select ---> soda: askSoda\r\n      |select ---> beer: askBeer\r\n      |soda ---> pay: getSoda\r\n      |beer ---> pay: getBeer\r\n      |\r\n      |askSoda --! askSoda: noSoda disabled\r\n      |askBeer --! askBeer: noBeer\r\n      |askSoda ->> noSoda", 124);
+  var y$7 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name Vending3prod\n      |init pay\n      |pay ---> select: insertCoin\n      |select ---> soda: askSoda\n      |select ---> beer: askBeer\n      |soda ---> pay: getSoda\n      |beer ---> pay: getBeer\n      |\n      |askSoda --! askSoda: noSoda disabled\n      |askBeer --! askBeer: noBeer\n      |askSoda ->> noSoda", 124);
   var $$x1 = new $c_T2("Vending (max 3prod)", y$7);
   $m_sc_StringOps$();
-  var y$8 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name IntrusiveProduct\r\n      |aut s {\r\n      |  init i0\r\n      |  i0 ---> i1: a\r\n      |  i1 ---> i2: b\r\n      |  i2 ---> i0: d disabled\r\n      |  a --! b\r\n      |}\r\n      |aut w {\r\n      |  init i0\r\n      |  i0 ---> i1: a\r\n      |  i1 ---> i0: c\r\n      |  a --! a: noAs disabled\r\n      |  a ->> noAs\r\n      |}\r\n      |// intrusion\r\n      |w.c ->> s.b", 124);
+  var y$8 = $m_sc_StringOps$().stripMargin$extension__T__C__T("name IntrusiveProduct\n      |aut s {\n      |  init i0\n      |  i0 ---> i1: a\n      |  i1 ---> i2: b\n      |  i2 ---> i0: d disabled\n      |  a --! b\n      |}\n      |aut w {\n      |  init i0\n      |  i0 ---> i1: a\n      |  i1 ---> i0: c\n      |  a --! a: noAs disabled\n      |  a ->> noAs\n      |}\n      |// intrusion\n      |w.c ->> s.b", 124);
   var elems = $n($$x9).wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([$$x8, $$x7, $$x6, $$x5, $$x4, $$x3, $$x2, $$x1, new $c_T2("Intrusive product", y$8)]));
   var examples = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems);
   var this$40 = $n(examples);
@@ -12712,8 +16409,8 @@ $c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateText__T = (function() {
     var $$x1 = $m_s_None$()
   } else {
     var arg1 = this$1.get__O();
-    var _$3 = $as_Lrta_syntax_Program2$RxGraph(arg1);
-    var $$x1 = new $c_s_Some($n(_$3).toString__T())
+    var _$9 = $as_Lrta_syntax_Program2$RxGraph(arg1);
+    var $$x1 = new $c_s_Some($n(_$9).toString__T())
   };
   var this$2 = $n($$x1);
   return $as_T((this$2.isEmpty__Z() ? "" : this$2.get__O()))
@@ -12770,29 +16467,31 @@ $c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid__T = (function() {
     var vars = $n(root).Lrta_syntax_Program2$RxGraph__f_val_env;
     var zone = $n(root).Lrta_syntax_Program2$RxGraph__f_zone;
     var pending = $n(root).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-    var startKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending);
+    var act = $n(root).Lrta_syntax_Program2$RxGraph__f_act;
+    var startKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act);
     var this$14 = $n($as_sci_Map(stateToId.sr_ObjectRef__f_elem));
-    var ev$31 = $as_sci_Map(this$14.updated__O__O__sci_MapOps(startKey, 0));
-    stateToId.sr_ObjectRef__f_elem = ev$31;
-    ev$31 = null;
+    var ev$39 = $as_sci_Map(this$14.updated__O__O__sci_MapOps(startKey, 0));
+    stateToId.sr_ObjectRef__f_elem = ev$39;
+    ev$39 = null;
     while (true) {
       var this$15 = $n($as_sci_List(queue.sr_ObjectRef__f_elem));
       if (((!this$15.isEmpty__Z()) && ($n($as_sci_Set(visited.sr_ObjectRef__f_elem)).size__I() < 80))) {
         var current = $as_Lrta_syntax_Program2$RxGraph($n($as_sci_List(queue.sr_ObjectRef__f_elem)).head__O());
-        var ev$32 = $as_sci_List($n($as_sci_List(queue.sr_ObjectRef__f_elem)).tail__O());
-        queue.sr_ObjectRef__f_elem = ev$32;
-        ev$32 = null;
+        var ev$40 = $as_sci_List($n($as_sci_List(queue.sr_ObjectRef__f_elem)).tail__O());
+        queue.sr_ObjectRef__f_elem = ev$40;
+        ev$40 = null;
         var inits$1 = $n(current).Lrta_syntax_Program2$RxGraph__f_inits;
         var vars$1 = $n(current).Lrta_syntax_Program2$RxGraph__f_val_env;
         var zone$1 = $n(current).Lrta_syntax_Program2$RxGraph__f_zone;
         var pending$1 = $n(current).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-        var currentKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits$1, vars$1, zone$1, pending$1);
+        var act$1 = $n(current).Lrta_syntax_Program2$RxGraph__f_act;
+        var currentKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits$1, vars$1, zone$1, pending$1, act$1);
         if ((!$n($as_sci_Set(visited.sr_ObjectRef__f_elem)).contains__O__Z(currentKey))) {
           var this$17 = $n($as_sci_Set(visited.sr_ObjectRef__f_elem));
-          var ev$33 = $as_sci_Set(this$17.incl__O__sci_SetOps(currentKey));
-          visited.sr_ObjectRef__f_elem = ev$33;
-          ev$33 = null;
-          var sourceId = $p_Lrta_frontend_RTAAPI$__getId$2__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__I(this, stateToId, idCounter, current);
+          var ev$41 = $as_sci_Set(this$17.incl__O__sci_SetOps(currentKey));
+          visited.sr_ObjectRef__f_elem = ev$41;
+          ev$41 = null;
+          var sourceId = $p_Lrta_frontend_RTAAPI$__getId$3__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__I(this, stateToId, idCounter, current);
           var edgeNexts = $m_Lrta_backend_RxSemantics$().nextEdgeSymbolic__Lrta_syntax_Program2$RxGraph__sci_Set(current);
           var this$19 = $n(edgeNexts);
           var p = new $c_sjsr_AnonFunction1(((x$1) => {
@@ -12802,51 +16501,52 @@ $c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid__T = (function() {
           var this$24 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$19, p);
           var f = new $c_sjsr_AnonFunction1(((visited, queue, transitionsStr, stateToId, idCounter, sourceId) => ((x$1$2) => {
             var x$1$3 = $as_T2(x$1$2);
-            matchResult41: {
+            matchResult51: {
               if ((x$1$3 !== null)) {
                 var edge$1 = $as_T4($n(x$1$3)._1__O());
                 var nextState$1 = $as_Lrta_syntax_Program2$RxGraph($n(x$1$3)._2__O());
-                matchResult40: {
-                  var \u03b46$___1;
-                  var \u03b46$___2;
-                  var \u03b46$___3;
-                  var \u03b46$___4;
+                matchResult50: {
+                  var \u03b48$___1;
+                  var \u03b48$___2;
+                  var \u03b48$___3;
+                  var \u03b48$___4;
                   if ((edge$1 !== null)) {
                     var from = $as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__1);
                     var to = $as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__2);
                     var tId = $as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__3);
                     var label = $as_Lrta_syntax_Program2$QName($n(edge$1).T4__f__4);
-                    var \u03b46$___1 = from;
-                    var \u03b46$___2 = to;
-                    var \u03b46$___3 = tId;
-                    var \u03b46$___4 = label;
-                    break matchResult40
+                    var \u03b48$___1 = from;
+                    var \u03b48$___2 = to;
+                    var \u03b48$___3 = tId;
+                    var \u03b48$___4 = label;
+                    break matchResult50
                   };
                   throw new $c_s_MatchError(edge$1)
                 };
-                $as_Lrta_syntax_Program2$QName(\u03b46$___1);
-                $as_Lrta_syntax_Program2$QName(\u03b46$___2);
-                var tId$2 = $as_Lrta_syntax_Program2$QName(\u03b46$___3);
-                var label$2 = $as_Lrta_syntax_Program2$QName(\u03b46$___4);
-                var targetId = $p_Lrta_frontend_RTAAPI$__getId$2__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__I(this, stateToId, idCounter, nextState$1);
+                $as_Lrta_syntax_Program2$QName(\u03b48$___1);
+                $as_Lrta_syntax_Program2$QName(\u03b48$___2);
+                var tId$2 = $as_Lrta_syntax_Program2$QName(\u03b48$___3);
+                var label$2 = $as_Lrta_syntax_Program2$QName(\u03b48$___4);
+                var targetId = $p_Lrta_frontend_RTAAPI$__getId$3__sr_ObjectRef__sr_IntRef__Lrta_syntax_Program2$RxGraph__I(this, stateToId, idCounter, nextState$1);
                 var displayLabel = (((tId$2 === null) ? (label$2 === null) : $n(tId$2).equals__O__Z(label$2)) ? $n(label$2).show__T() : ((($n(label$2).show__T() + "(") + $n(tId$2).show__T()) + ")"));
-                var elem$3$1 = ((((sourceId + " --->|\"") + displayLabel) + "\"| ") + targetId);
+                var elem$4 = ((((sourceId + " --->|\"") + displayLabel) + "\"| ") + targetId);
                 var this$21 = $n($as_sci_List(transitionsStr.sr_ObjectRef__f_elem));
-                var ev$34 = new $c_sci_$colon$colon(elem$3$1, this$21);
-                transitionsStr.sr_ObjectRef__f_elem = ev$34;
-                ev$34 = null;
+                var ev$42 = new $c_sci_$colon$colon(elem$4, this$21);
+                transitionsStr.sr_ObjectRef__f_elem = ev$42;
+                ev$42 = null;
                 var inits$2 = $n(nextState$1).Lrta_syntax_Program2$RxGraph__f_inits;
                 var vars$2 = $n(nextState$1).Lrta_syntax_Program2$RxGraph__f_val_env;
                 var zone$2 = $n(nextState$1).Lrta_syntax_Program2$RxGraph__f_zone;
                 var pending$2 = $n(nextState$1).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-                var nextKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits$2, vars$2, zone$2, pending$2);
+                var act$2 = $n(nextState$1).Lrta_syntax_Program2$RxGraph__f_act;
+                var nextKey = new $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits$2, vars$2, zone$2, pending$2, act$2);
                 if ((!$n($as_sci_Set(visited.sr_ObjectRef__f_elem)).contains__O__Z(nextKey))) {
                   var this$23 = $n($as_sci_List(queue.sr_ObjectRef__f_elem));
-                  var ev$35 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$23, nextState$1));
-                  queue.sr_ObjectRef__f_elem = ev$35;
-                  ev$35 = null
+                  var ev$43 = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$23, nextState$1));
+                  queue.sr_ObjectRef__f_elem = ev$43;
+                  ev$43 = null
                 };
-                break matchResult41
+                break matchResult51
               };
               throw new $c_s_MatchError(x$1$3)
             }
@@ -12863,9 +16563,9 @@ $c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid__T = (function() {
         var key = $as_Lrta_backend_AnalyseLTS$ZoneStateKey($n(x$1$4)._1__O());
         var id = $uI($n(x$1$4)._2__O());
         var zoneStr = $p_Lrta_frontend_RTAAPI$__sanitizeForMermaid$1__T__T(this, $p_Lrta_frontend_RTAAPI$__showZoneCompact__Lrta_backend_DBM$Zone__T(this, $n(key).Lrta_backend_AnalyseLTS$ZoneStateKey__f_zone));
-        var this$25 = $n($as_sc_IterableOnceOps($n($as_sc_IterableOps($n($n(key).Lrta_backend_AnalyseLTS$ZoneStateKey__f_vars).filterNot__F1__O(new $c_sjsr_AnonFunction1(((_$4) => {
-          var _$4$1 = $as_T2(_$4);
-          return $n($n($as_Lrta_syntax_Program2$QName($n(_$4$1)._1__O())).Lrta_syntax_Program2$QName__f_n).contains__O__Z("__return")
+        var this$25 = $n($as_sc_IterableOnceOps($n($as_sc_IterableOps($n($n(key).Lrta_backend_AnalyseLTS$ZoneStateKey__f_vars).filterNot__F1__O(new $c_sjsr_AnonFunction1(((_$10) => {
+          var _$10$1 = $as_T2(_$10);
+          return $n($n($as_Lrta_syntax_Program2$QName($n(_$10$1)._1__O())).Lrta_syntax_Program2$QName__f_n).contains__O__Z("__return")
         }))))).map__F1__O(new $c_sjsr_AnonFunction1(((kv) => {
           var kv$1 = $as_T2(kv);
           return (($n($as_Lrta_syntax_Program2$QName($n(kv$1)._1__O())).show__T() + "=") + $n($as_Lrta_syntax_RuntimeValue($n(kv$1)._2__O())).value__O())
@@ -12905,10 +16605,10 @@ $c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid__T = (function() {
         var this$36 = $n(pendingStr);
         var elems$4 = $n($$x5).wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([$$x4, $$x3, $$x2, ((!(this$36 === "")) ? ("Pending: " + pendingStr) : "")]));
         var this$41 = $n($m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$4));
-        var f$1 = ((_$5) => {
-          var _$5$1 = $as_T(_$5);
+        var f$1 = ((_$11) => {
+          var _$11$1 = $as_T(_$11);
           $m_sc_StringOps$();
-          var this$40 = $n(_$5$1);
+          var this$40 = $n(_$11$1);
           return (!(this$40 === ""))
         });
         var l = this$41;
@@ -12985,48 +16685,61 @@ $c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid__T = (function() {
     $m_sc_StringOps$();
     var this$44 = $n($as_sci_List(transitionsStr.sr_ObjectRef__f_elem));
     var this$45 = $n($n($as_sci_List($f_sc_SeqOps__distinct__O(this$44))).reverse__sci_List());
-    var x$2 = (((("graph TD\r\n         |" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$45, "", "\n", "")) + "\r\n         |") + nodeDefinitions) + "\r\n         |");
+    var x$2 = (((("graph TD\n         |" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$45, "", "\n", "")) + "\n         |") + nodeDefinitions) + "\n         |");
     var $$x1 = new $c_s_Some($m_sc_StringOps$().stripMargin$extension__T__C__T(x$2, 124))
   };
   var this$48 = $n($$x1);
   return $as_T((this$48.isEmpty__Z() ? "graph LR\n0(Nenhum modelo carregado)" : this$48.get__O()))
 });
-$c_Lrta_frontend_RTAAPI$.prototype.loadModel = (function(arg) {
+$c_Lrta_frontend_RTAAPI$.prototype.findBestPath = (function(arg) {
   var prep0 = $as_T(arg);
-  return this.loadModel__T__T(prep0)
+  return this.findBestPath__T__T(prep0)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid = (function() {
-  return this.getAllStepsMermaid__T()
+$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsJSON = (function() {
+  return this.getSymbolicStepsJSON__T()
 });
-$c_Lrta_frontend_RTAAPI$.prototype.runPdl = (function(arg, arg$2, arg$3) {
-  var prep0 = $as_T(arg);
-  var prep1 = $as_T(arg$2);
-  var prep2 = $uI(arg$3);
-  return this.runPdl__T__T__I__T(prep0, prep1, prep2)
+$c_Lrta_frontend_RTAAPI$.prototype.undo = (function() {
+  return this.undo__T()
 });
-$c_Lrta_frontend_RTAAPI$.prototype.advanceTime = (function(arg) {
-  var prep0 = $uD(arg);
-  return this.advanceTime__D__T(prep0)
+$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateMermaid = (function() {
+  return this.getCurrentStateMermaid__T()
 });
 $c_Lrta_frontend_RTAAPI$.prototype.findPathToValueZone = (function(arg) {
   var prep0 = $as_T(arg);
   return this.findPathToValueZone__T__sjs_js_Any(prep0)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.checkProblems = (function() {
-  return this.checkProblems__T()
+$c_Lrta_frontend_RTAAPI$.prototype.getUppaal = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.getUppaal__T__T(prep0)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateMermaidSimple = (function() {
   return this.getCurrentStateMermaidSimple__T()
 });
-$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid = (function() {
-  return this.getSymbolicStepsMermaid__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getMcrl2 = (function() {
-  return this.getMcrl2__T()
-});
 $c_Lrta_frontend_RTAAPI$.prototype.findBestPathZone = (function(arg) {
   var prep0 = $as_T(arg);
   return this.findBestPathZone__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getUppaalTGRG = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.getUppaalTGRG__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.checkProblems = (function() {
+  return this.checkProblems__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getExamples = (function() {
+  return this.getExamples__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.advanceTime = (function(arg) {
+  var prep0 = $uD(arg);
+  return this.advanceTime__D__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.loadModel = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.loadModel__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.takeStep = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.takeStep__T__T(prep0)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.verifyLTLBatch = (function(arg, arg$2, arg$3) {
   var prep0 = $as_T(arg);
@@ -13034,29 +16747,31 @@ $c_Lrta_frontend_RTAAPI$.prototype.verifyLTLBatch = (function(arg, arg$2, arg$3)
   var prep2 = $uI(arg$3);
   return this.verifyLTLBatch__T__I__I__T(prep0, prep1, prep2)
 });
+$c_Lrta_frontend_RTAAPI$.prototype.runPdl = (function(arg, arg$2, arg$3) {
+  var prep0 = $as_T(arg);
+  var prep1 = $as_T(arg$2);
+  var prep2 = $uI(arg$3);
+  return this.runPdl__T__T__I__T(prep0, prep1, prep2)
+});
 $c_Lrta_frontend_RTAAPI$.prototype.testLTLEquivalence = (function(arg, arg$2, arg$3) {
   var prep0 = $as_T(arg);
   var prep1 = $as_T(arg$2);
   var prep2 = $uI(arg$3);
   return this.testLTLEquivalence__T__T__I__T(prep0, prep1, prep2)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.undo = (function() {
-  return this.undo__T()
+$c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid = (function() {
+  return this.getAllStepsMermaid__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.debugZoneGraphSize = (function(...rest) {
+  var prep0 = ((rest[0] === (void 0)) ? 200000 : $uI(rest[0]));
+  return this.debugZoneGraphSize__I__T(prep0)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.findPathToValue = (function(arg) {
   var prep0 = $as_T(arg);
   return this.findPathToValue__T__sjs_js_Any(prep0)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.findBestPath = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.findBestPath__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getStats = (function() {
-  return this.getStats__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getUppaalTGRG = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.getUppaalTGRG__T__T(prep0)
+$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid = (function() {
+  return this.getSymbolicStepsMermaid__T()
 });
 $c_Lrta_frontend_RTAAPI$.prototype.runLTLExhaustive = (function(arg, arg$2, arg$3) {
   var prep0 = $as_T(arg);
@@ -13064,21 +16779,17 @@ $c_Lrta_frontend_RTAAPI$.prototype.runLTLExhaustive = (function(arg, arg$2, arg$
   var prep2 = $uI(arg$3);
   return this.runLTLExhaustive__T__I__I__T(prep0, prep1, prep2)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.getExamples = (function() {
-  return this.getExamples__T()
+$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateText = (function() {
+  return this.getCurrentStateText__T()
 });
-$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateMermaid = (function() {
-  return this.getCurrentStateMermaid__T()
+$c_Lrta_frontend_RTAAPI$.prototype.getStats = (function() {
+  return this.getStats__T()
 });
 $c_Lrta_frontend_RTAAPI$.prototype.translateToGLTS = (function() {
   return this.translateToGLTS__T()
 });
-$c_Lrta_frontend_RTAAPI$.prototype.takeStep = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.takeStep__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateText = (function() {
-  return this.getCurrentStateText__T()
+$c_Lrta_frontend_RTAAPI$.prototype.getMcrl2 = (function() {
+  return this.getMcrl2__T()
 });
 var $d_Lrta_frontend_RTAAPI$ = new $TypeData().initClass({
   Lrta_frontend_RTAAPI$: 0
@@ -13167,7 +16878,7 @@ function $asArrayOf_Lrta_syntax_LtlFormula(obj, depth) {
 }
 function $p_Lrta_syntax_LtlParser$__tokenize__T__sci_List($thiz, input) {
   $m_sc_StringOps$();
-  var pattern = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "(<->|->|=>|&&|\\|\\||[!~\\[\\]\\(\\)<>]|==|!=|<=|>=|X|U|G|F|[a-zA-Z_][\\w\\.]*(\\/[a-zA-Z_][\\w\\.]*)*|-?\\d+(\\.\\d+)?)", $m_sci_Nil$());
+  var pattern = $ct_s_util_matching_Regex__T__sci_Seq__(new $c_s_util_matching_Regex(), "(<->|->|=>|&&|\\|\\||==|!=|<=|>=|[!~\\[\\]\\(\\)<>]|[a-zA-Z_][\\w\\.]*(\\/[a-zA-Z_][\\w\\.]*)*|-?\\d+(\\.\\d+)?)", $m_sci_Nil$());
   var this$3 = $n(pattern.findAllIn__jl_CharSequence__s_util_matching_Regex$MatchIterator(input));
   $m_sci_List$();
   return $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$3)
@@ -13618,8 +17329,10 @@ function $p_Lrta_syntax_Parser2$__parseBlock__Lrta_syntax_Parser2$TokenReader__L
         var delays$1 = this$45.Lrta_syntax_Program2$RxGraph__f_delays;
         var this$46 = $n(\u03b41$);
         var pendingDelays$1 = this$46.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+        var this$47 = $n(\u03b41$);
+        var maxConstants$1 = this$47.Lrta_syntax_Program2$RxGraph__f_maxConstants;
         $n(\u03b41$);
-        var ev$11 = new $c_Lrta_syntax_Program2$RxGraph(edg$1, on$1, off$1, lbls$1, inits$1, act$1, val_env$1, zone$1, functions$1, clocks$1, clock_env$1, invariants$1, edgeConditions$1, edgeUpdates$1, delays$1, pendingDelays$1);
+        var ev$11 = new $c_Lrta_syntax_Program2$RxGraph(edg$1, on$1, off$1, lbls$1, inits$1, act$1, val_env$1, zone$1, functions$1, clocks$1, clock_env$1, invariants$1, edgeConditions$1, edgeUpdates$1, delays$1, pendingDelays$1, maxConstants$1);
         elem$1 = ev$11;
         ev$11 = null
       } else if ($n(reader).eat__T__Z("def")) {
@@ -13628,13 +17341,13 @@ function $p_Lrta_syntax_Parser2$__parseBlock__Lrta_syntax_Parser2$TokenReader__L
         $n($m_s_package$().s_package$__f_List);
         var params = $m_sci_Nil$();
         if (($n(reader).current__T() !== ")")) {
-          var this$49 = $n(params);
+          var this$50 = $n(params);
           var elem$4 = $n(reader).parseQName__Lrta_syntax_Program2$QName();
-          params = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$49, elem$4));
+          params = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$50, elem$4));
           while ($n(reader).eat__T__Z(",")) {
-            var this$50 = $n(params);
+            var this$51 = $n(params);
             var elem$5 = $n(reader).parseQName__Lrta_syntax_Program2$QName();
-            params = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$50, elem$5))
+            params = $as_sci_List($f_sc_StrictOptimizedSeqOps__appended__O__O(this$51, elem$5))
           }
         };
         $n(reader).expect__T__V(")");
@@ -13642,42 +17355,44 @@ function $p_Lrta_syntax_Parser2$__parseBlock__Lrta_syntax_Parser2$TokenReader__L
         var body = $p_Lrta_syntax_Parser2$__parseStatementsBlock__Lrta_syntax_Parser2$TokenReader__sci_List($thiz, reader);
         $n(reader).expect__T__V("}");
         var \u03b42$ = $as_Lrta_syntax_Program2$RxGraph(elem$1);
-        var this$54 = $n($n($as_Lrta_syntax_Program2$RxGraph(elem$1)).Lrta_syntax_Program2$RxGraph__f_functions);
+        var this$55 = $n($n($as_Lrta_syntax_Program2$RxGraph(elem$1)).Lrta_syntax_Program2$RxGraph__f_functions);
         var params$1 = params;
         var y = new $c_Lrta_syntax_FunctionDef(fName, params$1, body);
-        var functions$2 = $as_sci_Map(this$54.updated__O__O__sci_MapOps(fName, y));
-        var this$55 = $n(\u03b42$);
-        var edg$2 = this$55.Lrta_syntax_Program2$RxGraph__f_edg;
+        var functions$2 = $as_sci_Map(this$55.updated__O__O__sci_MapOps(fName, y));
         var this$56 = $n(\u03b42$);
-        var on$2 = this$56.Lrta_syntax_Program2$RxGraph__f_on;
+        var edg$2 = this$56.Lrta_syntax_Program2$RxGraph__f_edg;
         var this$57 = $n(\u03b42$);
-        var off$2 = this$57.Lrta_syntax_Program2$RxGraph__f_off;
+        var on$2 = this$57.Lrta_syntax_Program2$RxGraph__f_on;
         var this$58 = $n(\u03b42$);
-        var lbls$2 = this$58.Lrta_syntax_Program2$RxGraph__f_lbls;
+        var off$2 = this$58.Lrta_syntax_Program2$RxGraph__f_off;
         var this$59 = $n(\u03b42$);
-        var inits$2 = this$59.Lrta_syntax_Program2$RxGraph__f_inits;
+        var lbls$2 = this$59.Lrta_syntax_Program2$RxGraph__f_lbls;
         var this$60 = $n(\u03b42$);
-        var act$2 = this$60.Lrta_syntax_Program2$RxGraph__f_act;
+        var inits$2 = this$60.Lrta_syntax_Program2$RxGraph__f_inits;
         var this$61 = $n(\u03b42$);
-        var val_env$2 = this$61.Lrta_syntax_Program2$RxGraph__f_val_env;
+        var act$2 = this$61.Lrta_syntax_Program2$RxGraph__f_act;
         var this$62 = $n(\u03b42$);
-        var zone$2 = this$62.Lrta_syntax_Program2$RxGraph__f_zone;
+        var val_env$2 = this$62.Lrta_syntax_Program2$RxGraph__f_val_env;
         var this$63 = $n(\u03b42$);
-        var clocks$2 = this$63.Lrta_syntax_Program2$RxGraph__f_clocks;
+        var zone$2 = this$63.Lrta_syntax_Program2$RxGraph__f_zone;
         var this$64 = $n(\u03b42$);
-        var clock_env$2 = this$64.Lrta_syntax_Program2$RxGraph__f_clock_env;
+        var clocks$2 = this$64.Lrta_syntax_Program2$RxGraph__f_clocks;
         var this$65 = $n(\u03b42$);
-        var invariants$2 = this$65.Lrta_syntax_Program2$RxGraph__f_invariants;
+        var clock_env$2 = this$65.Lrta_syntax_Program2$RxGraph__f_clock_env;
         var this$66 = $n(\u03b42$);
-        var edgeConditions$2 = this$66.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+        var invariants$2 = this$66.Lrta_syntax_Program2$RxGraph__f_invariants;
         var this$67 = $n(\u03b42$);
-        var edgeUpdates$2 = this$67.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+        var edgeConditions$2 = this$67.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
         var this$68 = $n(\u03b42$);
-        var delays$2 = this$68.Lrta_syntax_Program2$RxGraph__f_delays;
+        var edgeUpdates$2 = this$68.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
         var this$69 = $n(\u03b42$);
-        var pendingDelays$2 = this$69.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+        var delays$2 = this$69.Lrta_syntax_Program2$RxGraph__f_delays;
+        var this$70 = $n(\u03b42$);
+        var pendingDelays$2 = this$70.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+        var this$71 = $n(\u03b42$);
+        var maxConstants$2 = this$71.Lrta_syntax_Program2$RxGraph__f_maxConstants;
         $n(\u03b42$);
-        var ev$12 = new $c_Lrta_syntax_Program2$RxGraph(edg$2, on$2, off$2, lbls$2, inits$2, act$2, val_env$2, zone$2, functions$2, clocks$2, clock_env$2, invariants$2, edgeConditions$2, edgeUpdates$2, delays$2, pendingDelays$2);
+        var ev$12 = new $c_Lrta_syntax_Program2$RxGraph(edg$2, on$2, off$2, lbls$2, inits$2, act$2, val_env$2, zone$2, functions$2, clocks$2, clock_env$2, invariants$2, edgeConditions$2, edgeUpdates$2, delays$2, pendingDelays$2, maxConstants$2);
         elem$1 = ev$12;
         ev$12 = null
       } else if ($n(reader).eat__T__Z("aut")) {
@@ -14871,7 +18586,7 @@ $c_Lrta_syntax_Program2$.prototype.join__sci_Map__sci_Map__sci_Map = (function(r
   return $as_sci_Map(this$5.concat__sc_IterableOnce__sc_IterableOps(xs))
 });
 $c_Lrta_syntax_Program2$.prototype.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr = (function(prefix, expr) {
-  matchResult12: {
+  matchResult13: {
     var $$x1;
     matchAlts1: {
       matchAlts2: {
@@ -14893,13 +18608,13 @@ $c_Lrta_syntax_Program2$.prototype.applyPrefixToExpr__Lrta_syntax_Program2$QName
         break matchAlts1
       };
       var $$x1 = expr;
-      break matchResult12
+      break matchResult13
     };
     if ((expr instanceof $c_Lrta_syntax_UpdateExpr$LitArray)) {
       var x$1$3 = $as_Lrta_syntax_UpdateExpr$LitArray(expr);
       var this$8 = $n(x$1$3);
-      var x52 = this$8.Lrta_syntax_UpdateExpr$LitArray__f_elements;
-      var this$10 = $n(x52);
+      var x55 = this$8.Lrta_syntax_UpdateExpr$LitArray__f_elements;
+      var this$10 = $n(x55);
       var f = ((_$2) => {
         var _$2$1 = $as_Lrta_syntax_UpdateExpr(_$2);
         return this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, _$2$1)
@@ -14921,48 +18636,48 @@ $c_Lrta_syntax_Program2$.prototype.applyPrefixToExpr__Lrta_syntax_Program2$QName
         var elements = h
       };
       var $$x1 = new $c_Lrta_syntax_UpdateExpr$LitArray(elements);
-      break matchResult12
+      break matchResult13
     };
     if ((expr instanceof $c_Lrta_syntax_UpdateExpr$Var)) {
       var x$1$4 = $as_Lrta_syntax_UpdateExpr$Var(expr);
       var this$13 = $n(x$1$4);
-      var x49 = this$13.Lrta_syntax_UpdateExpr$Var__f_q;
-      var q = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x49) ? x49 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x49));
+      var x52 = this$13.Lrta_syntax_UpdateExpr$Var__f_q;
+      var q = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x52) ? x52 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x52));
       var $$x1 = new $c_Lrta_syntax_UpdateExpr$Var(q);
-      break matchResult12
+      break matchResult13
     };
     if ((expr instanceof $c_Lrta_syntax_UpdateExpr$ArrayAccess)) {
       var x$1$5 = $as_Lrta_syntax_UpdateExpr$ArrayAccess(expr);
       var this$16 = $n(x$1$5);
-      var x45 = this$16.Lrta_syntax_UpdateExpr$ArrayAccess__f_arr;
+      var x48 = this$16.Lrta_syntax_UpdateExpr$ArrayAccess__f_arr;
       var this$17 = $n(x$1$5);
-      var x46 = this$17.Lrta_syntax_UpdateExpr$ArrayAccess__f_index;
-      var arr = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x45) ? x45 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x45));
-      var index = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x46);
+      var x49 = this$17.Lrta_syntax_UpdateExpr$ArrayAccess__f_index;
+      var arr = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x48) ? x48 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x48));
+      var index = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x49);
       var $$x1 = new $c_Lrta_syntax_UpdateExpr$ArrayAccess(arr, index);
-      break matchResult12
+      break matchResult13
     };
     if ((expr instanceof $c_Lrta_syntax_UpdateExpr$MathOp)) {
       var x$1$6 = $as_Lrta_syntax_UpdateExpr$MathOp(expr);
       var this$20 = $n(x$1$6);
-      var x40 = this$20.Lrta_syntax_UpdateExpr$MathOp__f_left;
+      var x43 = this$20.Lrta_syntax_UpdateExpr$MathOp__f_left;
       var this$21 = $n(x$1$6);
-      var x41 = this$21.Lrta_syntax_UpdateExpr$MathOp__f_op;
+      var x44 = this$21.Lrta_syntax_UpdateExpr$MathOp__f_op;
       var this$22 = $n(x$1$6);
-      var x42 = this$22.Lrta_syntax_UpdateExpr$MathOp__f_right;
-      var left = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x40);
-      var right = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x42);
-      var $$x1 = new $c_Lrta_syntax_UpdateExpr$MathOp(left, x41, right);
-      break matchResult12
+      var x45 = this$22.Lrta_syntax_UpdateExpr$MathOp__f_right;
+      var left = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x43);
+      var right = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x45);
+      var $$x1 = new $c_Lrta_syntax_UpdateExpr$MathOp(left, x44, right);
+      break matchResult13
     };
     if ((expr instanceof $c_Lrta_syntax_UpdateExpr$FuncCall)) {
       var x$1$7 = $as_Lrta_syntax_UpdateExpr$FuncCall(expr);
       var this$25 = $n(x$1$7);
-      var x36 = this$25.Lrta_syntax_UpdateExpr$FuncCall__f_funcName;
+      var x39 = this$25.Lrta_syntax_UpdateExpr$FuncCall__f_funcName;
       var this$26 = $n(x$1$7);
-      var x37 = this$26.Lrta_syntax_UpdateExpr$FuncCall__f_args;
-      var funcName = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x36) ? x36 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x36));
-      var this$27 = $n(x37);
+      var x40 = this$26.Lrta_syntax_UpdateExpr$FuncCall__f_args;
+      var funcName = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x39) ? x39 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x39));
+      var this$27 = $n(x40);
       var f$1 = ((_$3) => {
         var _$3$1 = $as_Lrta_syntax_UpdateExpr(_$3);
         return this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, _$3$1)
@@ -14984,90 +18699,90 @@ $c_Lrta_syntax_Program2$.prototype.applyPrefixToExpr__Lrta_syntax_Program2$QName
         var args = h$1
       };
       var $$x1 = new $c_Lrta_syntax_UpdateExpr$FuncCall(funcName, args);
-      break matchResult12
+      break matchResult13
     };
     throw new $c_s_MatchError(expr)
   };
   return $as_Lrta_syntax_UpdateExpr($$x1)
 });
 $c_Lrta_syntax_Program2$.prototype.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition = (function(prefix, cond) {
-  matchResult13: {
+  matchResult14: {
     var $$x1;
     if ((cond instanceof $c_Lrta_syntax_Condition$AtomicCond)) {
       var x$1 = $as_Lrta_syntax_Condition$AtomicCond(cond);
       var this$2 = $n(x$1);
-      var x73 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
+      var x76 = this$2.Lrta_syntax_Condition$AtomicCond__f_left;
       var this$3 = $n(x$1);
-      var x74 = this$3.Lrta_syntax_Condition$AtomicCond__f_op;
+      var x77 = this$3.Lrta_syntax_Condition$AtomicCond__f_op;
       var this$4 = $n(x$1);
-      var x75 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
-      var left = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x73);
-      var right = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x75);
-      var $$x1 = new $c_Lrta_syntax_Condition$AtomicCond(left, x74, right);
-      break matchResult13
+      var x78 = this$4.Lrta_syntax_Condition$AtomicCond__f_right;
+      var left = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x76);
+      var right = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x78);
+      var $$x1 = new $c_Lrta_syntax_Condition$AtomicCond(left, x77, right);
+      break matchResult14
     };
     if ((cond instanceof $c_Lrta_syntax_Condition$And)) {
       var x$1$1 = $as_Lrta_syntax_Condition$And(cond);
       var this$7 = $n(x$1$1);
-      var x69 = this$7.Lrta_syntax_Condition$And__f_left;
+      var x72 = this$7.Lrta_syntax_Condition$And__f_left;
       var this$8 = $n(x$1$1);
-      var x70 = this$8.Lrta_syntax_Condition$And__f_right;
-      var left$1 = this.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition(prefix, x69);
-      var right$1 = this.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition(prefix, x70);
+      var x73 = this$8.Lrta_syntax_Condition$And__f_right;
+      var left$1 = this.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition(prefix, x72);
+      var right$1 = this.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition(prefix, x73);
       var $$x1 = new $c_Lrta_syntax_Condition$And(left$1, right$1);
-      break matchResult13
+      break matchResult14
     };
     if ((cond instanceof $c_Lrta_syntax_Condition$Or)) {
       var x$1$2 = $as_Lrta_syntax_Condition$Or(cond);
       var this$11 = $n(x$1$2);
-      var x65 = this$11.Lrta_syntax_Condition$Or__f_left;
+      var x68 = this$11.Lrta_syntax_Condition$Or__f_left;
       var this$12 = $n(x$1$2);
-      var x66 = this$12.Lrta_syntax_Condition$Or__f_right;
-      var left$2 = this.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition(prefix, x65);
-      var right$2 = this.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition(prefix, x66);
+      var x69 = this$12.Lrta_syntax_Condition$Or__f_right;
+      var left$2 = this.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition(prefix, x68);
+      var right$2 = this.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition(prefix, x69);
       var $$x1 = new $c_Lrta_syntax_Condition$Or(left$2, right$2);
-      break matchResult13
+      break matchResult14
     };
     throw new $c_s_MatchError(cond)
   };
   return $as_Lrta_syntax_Condition($$x1)
 });
 $c_Lrta_syntax_Program2$.prototype.applyPrefixToStatement__Lrta_syntax_Program2$QName__Lrta_syntax_Statement__Lrta_syntax_Statement = (function(prefix, stmt) {
-  matchResult14: {
+  matchResult15: {
     var $$x1;
     if ((stmt instanceof $c_Lrta_syntax_AssignStmt)) {
       var x$1 = $as_Lrta_syntax_AssignStmt(stmt);
       var this$2 = $n(x$1);
-      var x99 = this$2.Lrta_syntax_AssignStmt__f_variable;
+      var x102 = this$2.Lrta_syntax_AssignStmt__f_variable;
       var this$3 = $n(x$1);
-      var x100 = this$3.Lrta_syntax_AssignStmt__f_expr;
-      var newVar = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x99) ? x99 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x99));
-      var expr = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x100);
+      var x103 = this$3.Lrta_syntax_AssignStmt__f_expr;
+      var newVar = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x102) ? x102 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x102));
+      var expr = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x103);
       var $$x1 = new $c_Lrta_syntax_AssignStmt(newVar, expr);
-      break matchResult14
+      break matchResult15
     };
     if ((stmt instanceof $c_Lrta_syntax_ArrayAssignStmt)) {
       var x$1$1 = $as_Lrta_syntax_ArrayAssignStmt(stmt);
       var this$6 = $n(x$1$1);
-      var x94 = this$6.Lrta_syntax_ArrayAssignStmt__f_arrName;
+      var x97 = this$6.Lrta_syntax_ArrayAssignStmt__f_arrName;
       var this$7 = $n(x$1$1);
-      var x95 = this$7.Lrta_syntax_ArrayAssignStmt__f_index;
+      var x98 = this$7.Lrta_syntax_ArrayAssignStmt__f_index;
       var this$8 = $n(x$1$1);
-      var x96 = this$8.Lrta_syntax_ArrayAssignStmt__f_expr;
-      var newArr = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x94) ? x94 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x94));
-      var index = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x95);
-      var expr$1 = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x96);
+      var x99 = this$8.Lrta_syntax_ArrayAssignStmt__f_expr;
+      var newArr = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x97) ? x97 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x97));
+      var index = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x98);
+      var expr$1 = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x99);
       var $$x1 = new $c_Lrta_syntax_ArrayAssignStmt(newArr, index, expr$1);
-      break matchResult14
+      break matchResult15
     };
     if ((stmt instanceof $c_Lrta_syntax_IfThenStmt)) {
       var x$1$2 = $as_Lrta_syntax_IfThenStmt(stmt);
       var this$11 = $n(x$1$2);
-      var x90 = this$11.Lrta_syntax_IfThenStmt__f_condition;
+      var x93 = this$11.Lrta_syntax_IfThenStmt__f_condition;
       var this$12 = $n(x$1$2);
-      var x91 = this$12.Lrta_syntax_IfThenStmt__f_thenStmts;
-      var condition = this.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition(prefix, x90);
-      var this$14 = $n(x91);
+      var x94 = this$12.Lrta_syntax_IfThenStmt__f_thenStmts;
+      var condition = this.applyPrefixToCondition__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Condition(prefix, x93);
+      var this$14 = $n(x94);
       var f = ((s) => {
         var s$1 = $as_Lrta_syntax_Statement(s);
         return this.applyPrefixToStatement__Lrta_syntax_Program2$QName__Lrta_syntax_Statement__Lrta_syntax_Statement(prefix, s$1)
@@ -15089,19 +18804,19 @@ $c_Lrta_syntax_Program2$.prototype.applyPrefixToStatement__Lrta_syntax_Program2$
         var thenStmts = h
       };
       var $$x1 = new $c_Lrta_syntax_IfThenStmt(condition, thenStmts);
-      break matchResult14
+      break matchResult15
     };
     if ((stmt instanceof $c_Lrta_syntax_ForeachStmt)) {
       var x$1$3 = $as_Lrta_syntax_ForeachStmt(stmt);
       var this$17 = $n(x$1$3);
-      var x85 = this$17.Lrta_syntax_ForeachStmt__f_iteratorVar;
+      var x88 = this$17.Lrta_syntax_ForeachStmt__f_iteratorVar;
       var this$18 = $n(x$1$3);
-      var x86 = this$18.Lrta_syntax_ForeachStmt__f_arrayName;
+      var x89 = this$18.Lrta_syntax_ForeachStmt__f_arrayName;
       var this$19 = $n(x$1$3);
-      var x87 = this$19.Lrta_syntax_ForeachStmt__f_body;
-      var newIter = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x85) ? x85 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x85));
-      var newArr$2 = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x86) ? x86 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x86));
-      var this$20 = $n(x87);
+      var x90 = this$19.Lrta_syntax_ForeachStmt__f_body;
+      var newIter = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x88) ? x88 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x88));
+      var newArr$2 = ($p_Lrta_syntax_Program2$__isGlobalControlVar__Lrta_syntax_Program2$QName__Z(this, x89) ? x89 : $n(prefix).$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(x89));
+      var this$20 = $n(x90);
       var f$1 = ((s$2) => {
         var s$3 = $as_Lrta_syntax_Statement(s$2);
         return this.applyPrefixToStatement__Lrta_syntax_Program2$QName__Lrta_syntax_Statement__Lrta_syntax_Statement(prefix, s$3)
@@ -15123,30 +18838,30 @@ $c_Lrta_syntax_Program2$.prototype.applyPrefixToStatement__Lrta_syntax_Program2$
         var body = h$1
       };
       var $$x1 = new $c_Lrta_syntax_ForeachStmt(newIter, newArr$2, body);
-      break matchResult14
+      break matchResult15
     };
     if ((stmt instanceof $c_Lrta_syntax_ReturnStmt)) {
       var x$1$4 = $as_Lrta_syntax_ReturnStmt(stmt);
       var this$23 = $n(x$1$4);
-      var x82 = this$23.Lrta_syntax_ReturnStmt__f_expr;
-      var expr$2 = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x82);
+      var x85 = this$23.Lrta_syntax_ReturnStmt__f_expr;
+      var expr$2 = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x85);
       var $$x1 = new $c_Lrta_syntax_ReturnStmt(expr$2);
-      break matchResult14
+      break matchResult15
     };
     if ((stmt instanceof $c_Lrta_syntax_PrintStmt)) {
       var x$1$5 = $as_Lrta_syntax_PrintStmt(stmt);
       var this$26 = $n(x$1$5);
-      var x79 = this$26.Lrta_syntax_PrintStmt__f_expr;
-      var expr$3 = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x79);
+      var x82 = this$26.Lrta_syntax_PrintStmt__f_expr;
+      var expr$3 = this.applyPrefixToExpr__Lrta_syntax_Program2$QName__Lrta_syntax_UpdateExpr__Lrta_syntax_UpdateExpr(prefix, x82);
       var $$x1 = new $c_Lrta_syntax_PrintStmt(expr$3);
-      break matchResult14
+      break matchResult15
     };
     throw new $c_s_MatchError(stmt)
   };
   return $as_Lrta_syntax_Statement($$x1)
 });
 $c_Lrta_syntax_Program2$.prototype.showEdge__T4__T = (function(e) {
-  matchResult15: {
+  matchResult16: {
     var \u03b41$___1;
     var \u03b41$___2;
     var \u03b41$___3;
@@ -15160,7 +18875,7 @@ $c_Lrta_syntax_Program2$.prototype.showEdge__T4__T = (function(e) {
       var \u03b41$___2 = to;
       var \u03b41$___3 = transId;
       var \u03b41$___4 = label;
-      break matchResult15
+      break matchResult16
     };
     throw new $c_s_MatchError(e)
   };
@@ -19512,6 +23227,9 @@ $h_s_util_boundary$.prototype = $c_s_util_boundary$.prototype;
 $c_s_util_boundary$.prototype.break__O__s_util_boundary$Label__E = (function(value, label) {
   throw new $c_s_util_boundary$Break(label, value)
 });
+$c_s_util_boundary$.prototype.break__s_util_boundary$Label__E = (function(label) {
+  throw new $c_s_util_boundary$Break(label, (void 0))
+});
 var $d_s_util_boundary$ = new $TypeData().initClass({
   s_util_boundary$: 0
 }, false, "scala.util.boundary$", {
@@ -20431,7 +24149,7 @@ function $ps_s_xml_PrettyPrinter__isLeaf$1__s_xml_Node__Z(l) {
       if (false) {
         break matchAlts2
       };
-      if (false) {
+      if ((l instanceof $c_s_xml_EntityRef)) {
         break matchAlts2
       };
       if (false) {
@@ -20636,7 +24354,7 @@ $c_s_xml_PrettyPrinter.prototype.traverse__s_xml_Node__s_xml_NamespaceBinding__I
       if (false) {
         break matchAlts4
       };
-      if (false) {
+      if ((node instanceof $c_s_xml_EntityRef)) {
         break matchAlts4
       };
       if (false) {
@@ -22434,6 +26152,116 @@ function $m_ju_regex_Pattern$() {
   };
   return $n_ju_regex_Pattern$
 }
+function $p_Lrta_frontend_RTAAPI$JSLayout__liftedTree1$1__T__sjs_js_Dynamic($thiz, layoutJson$1) {
+  try {
+    return JSON.parse(layoutJson$1)
+  } catch (e) {
+    var fields = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([]));
+    return $m_sjs_js_special_package$().objectLiteral__sci_Seq__sjs_js_Object(fields)
+  }
+}
+/** @constructor */
+function $c_Lrta_frontend_RTAAPI$JSLayout(layoutJson) {
+  this.Lrta_frontend_RTAAPI$JSLayout__f_data = null;
+  this.Lrta_frontend_RTAAPI$JSLayout__f_nodesPos = null;
+  this.Lrta_frontend_RTAAPI$JSLayout__f_edgesPos = null;
+  this.Lrta_frontend_RTAAPI$JSLayout__f_data = $p_Lrta_frontend_RTAAPI$JSLayout__liftedTree1$1__T__sjs_js_Dynamic(this, layoutJson);
+  var v = this.Lrta_frontend_RTAAPI$JSLayout__f_data.nodes;
+  if (((!(v === (void 0))) && (this.Lrta_frontend_RTAAPI$JSLayout__f_data.nodes !== null))) {
+    var $$x1 = this.Lrta_frontend_RTAAPI$JSLayout__f_data.nodes
+  } else {
+    var fields = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([]));
+    var $$x1 = $m_sjs_js_special_package$().objectLiteral__sci_Seq__sjs_js_Object(fields)
+  };
+  this.Lrta_frontend_RTAAPI$JSLayout__f_nodesPos = $$x1;
+  var v$1 = this.Lrta_frontend_RTAAPI$JSLayout__f_data.edges;
+  if (((!(v$1 === (void 0))) && (this.Lrta_frontend_RTAAPI$JSLayout__f_data.edges !== null))) {
+    var $$x2 = this.Lrta_frontend_RTAAPI$JSLayout__f_data.edges
+  } else {
+    var fields$1 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([]));
+    var $$x2 = $m_sjs_js_special_package$().objectLiteral__sci_Seq__sjs_js_Object(fields$1)
+  };
+  this.Lrta_frontend_RTAAPI$JSLayout__f_edgesPos = $$x2
+}
+$c_Lrta_frontend_RTAAPI$JSLayout.prototype = new $h_O();
+$c_Lrta_frontend_RTAAPI$JSLayout.prototype.constructor = $c_Lrta_frontend_RTAAPI$JSLayout;
+/** @constructor */
+function $h_Lrta_frontend_RTAAPI$JSLayout() {
+  /*<skip>*/
+}
+$h_Lrta_frontend_RTAAPI$JSLayout.prototype = $c_Lrta_frontend_RTAAPI$JSLayout.prototype;
+$c_Lrta_frontend_RTAAPI$JSLayout.prototype.getPos__T__T2 = (function(id) {
+  var p = this.Lrta_frontend_RTAAPI$JSLayout__f_nodesPos[id];
+  if (((p !== (void 0)) && (p !== null))) {
+    var _1 = $uD(p.x);
+    var _2 = $uD(p.y);
+    return new $c_T2(_1, _2)
+  } else {
+    return new $c_T2(0.0, 0.0)
+  }
+});
+$c_Lrta_frontend_RTAAPI$JSLayout.prototype.getNails__T__T__T__sci_List = (function(sourceId, targetId, edgeId) {
+  var e = this.Lrta_frontend_RTAAPI$JSLayout__f_edgesPos[edgeId];
+  if (((e === (void 0)) || (e === null))) {
+    return $m_s_package$().s_package$__f_Nil
+  };
+  var array = e.distances;
+  var this$3 = $ct_sjs_js_WrappedArray__sjs_js_Array__(new $c_sjs_js_WrappedArray(), array);
+  $m_sci_List$();
+  var dists = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$3);
+  var array$1 = e.weights;
+  var this$6 = $ct_sjs_js_WrappedArray__sjs_js_Array__(new $c_sjs_js_WrappedArray(), array$1);
+  $m_sci_List$();
+  var weights = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(this$6);
+  var s = this.getPos__T__T2(sourceId);
+  var t = this.getPos__T__T2(targetId);
+  var dx = ($uD($n(t)._1__O()) - $uD($n(s)._1__O()));
+  var dy = ($uD($n(t)._2__O()) - $uD($n(s)._2__O()));
+  var a = ((dx * dx) + (dy * dy));
+  var length = $uD(Math.sqrt(a));
+  if ((length === 0.0)) {
+    return $m_s_package$().s_package$__f_Nil
+  };
+  var nx = ((-dy) / length);
+  var ny = (dx / length);
+  var this$9 = $n(dists);
+  var this$12 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zip__sc_IterableOnce__O(this$9, weights)));
+  var f = ((x$1) => {
+    var x$1$1 = $as_T2(x$1);
+    if ((x$1$1 !== null)) {
+      var d = $uD($n(x$1$1)._1__O());
+      var w = $uD($n(x$1$1)._2__O());
+      var _1 = (($uD($n(s)._1__O()) + (w * dx)) + (d * nx));
+      var _2 = (($uD($n(s)._2__O()) + (w * dy)) + (d * ny));
+      return new $c_T2(_1, _2)
+    };
+    throw new $c_s_MatchError(x$1$1)
+  });
+  if ((this$12 === $m_sci_Nil$())) {
+    return $m_sci_Nil$()
+  } else {
+    var arg1 = this$12.head__O();
+    var h = new $c_sci_$colon$colon(f(arg1), $m_sci_Nil$());
+    var t$1 = h;
+    var rest = $as_sci_List(this$12.tail__O());
+    while ((rest !== $m_sci_Nil$())) {
+      var arg1$1 = $n(rest).head__O();
+      var nx$1 = new $c_sci_$colon$colon(f(arg1$1), $m_sci_Nil$());
+      $n(t$1).sci_$colon$colon__f_next = nx$1;
+      t$1 = nx$1;
+      rest = $as_sci_List($n(rest).tail__O())
+    };
+    return h
+  }
+});
+var $d_Lrta_frontend_RTAAPI$JSLayout = new $TypeData().initClass({
+  Lrta_frontend_RTAAPI$JSLayout: 0
+}, false, "rta.frontend.RTAAPI$JSLayout", {
+  Lrta_frontend_RTAAPI$JSLayout: 1,
+  O: 1,
+  Lrta_backend_UppaalLayout: 1
+});
+$c_Lrta_frontend_RTAAPI$JSLayout.prototype.$classData = $d_Lrta_frontend_RTAAPI$JSLayout;
 /** @constructor */
 function $c_s_$less$colon$less$() {
   this.s_$less$colon$less$__f_singleton = null;
@@ -24304,13 +28132,13 @@ function $p_Lrta_syntax_Program2$RxGraph$__drawEdges__sci_Map__Lrta_syntax_Progr
   return $f_sc_IterableOnceOps__mkString__T__T__T__T(this$27, "", "", "")
 }
 function $p_Lrta_syntax_Program2$RxGraph$__fresh$5__sr_IntRef__I($thiz, i$1) {
-  var ev$28 = ((1 + $n(i$1).sr_IntRef__f_elem) | 0);
-  $n(i$1).sr_IntRef__f_elem = ev$28;
+  var ev$29 = ((1 + $n(i$1).sr_IntRef__f_elem) | 0);
+  $n(i$1).sr_IntRef__f_elem = ev$29;
   return $n(i$1).sr_IntRef__f_elem
 }
 function $p_Lrta_syntax_Program2$RxGraph$__fresh$6__sr_IntRef__I($thiz, i$2) {
-  var ev$29 = ((1 + $n(i$2).sr_IntRef__f_elem) | 0);
-  $n(i$2).sr_IntRef__f_elem = ev$29;
+  var ev$30 = ((1 + $n(i$2).sr_IntRef__f_elem) | 0);
+  $n(i$2).sr_IntRef__f_elem = ev$30;
   return $n(i$2).sr_IntRef__f_elem
 }
 /** @constructor */
@@ -24394,7 +28222,10 @@ $c_Lrta_syntax_Program2$RxGraph$.prototype.apply__Lrta_syntax_Program2$RxGraph =
   var this$26 = $n($m_s_Predef$().s_Predef$__f_Set);
   var elems$19 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T4.getArrayOf().constr)([]));
   var pendingDelays = this$26.from__sc_IterableOnce__sci_Set(elems$19);
-  return new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, clock_env, invariants, edgeConditions, edgeUpdates, delays, pendingDelays)
+  var this$27 = $n($m_s_Predef$().s_Predef$__f_Map);
+  var elems$20 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T2.getArrayOf().constr)([]));
+  var maxConstants = this$27.from__sc_IterableOnce__sci_Map(elems$20);
+  return new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, clock_env, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants)
 });
 $c_Lrta_syntax_Program2$RxGraph$.prototype.toMermaid__Lrta_syntax_Program2$RxGraph__T = (function(rx) {
   var i = new $c_sr_IntRef((-1));
@@ -24728,6 +28559,37 @@ function $f_s_Product5__productElement__I__O($thiz, n) {
     }
   }
 }
+function $f_s_Product6__productElement__I__O($thiz, n) {
+  switch (n) {
+    case 0: {
+      return $thiz.T6__f__1;
+      break
+    }
+    case 1: {
+      return $thiz.T6__f__2;
+      break
+    }
+    case 2: {
+      return $thiz.T6__f__3;
+      break
+    }
+    case 3: {
+      return $thiz.T6__f__4;
+      break
+    }
+    case 4: {
+      return $thiz.T6__f__5;
+      break
+    }
+    case 5: {
+      return $thiz.T6__f__6;
+      break
+    }
+    default: {
+      throw $ct_jl_IndexOutOfBoundsException__T__(new $c_jl_IndexOutOfBoundsException(), (n + " is out of bounds (min 0, max 5)"))
+    }
+  }
+}
 /** @constructor */
 function $c_sc_BuildFrom$() {
   $n_sc_BuildFrom$ = this;
@@ -24845,6 +28707,15 @@ function $f_sc_IterableOps__drop__I__O($thiz, n) {
 }
 function $f_sc_IterableOps__dropRight__I__O($thiz, n) {
   return $thiz.fromSpecific__sc_IterableOnce__O($ct_sc_View$DropRight__sc_IterableOps__I__(new $c_sc_View$DropRight(), $thiz, n))
+}
+function $f_sc_IterableOps__sliding__I__I__sc_Iterator($thiz, size, step) {
+  var this$1 = $n($thiz.iterator__sc_Iterator());
+  var this$3 = new $c_sc_Iterator$GroupedIterator(this$1, this$1, size, step);
+  var f = new $c_sjsr_AnonFunction1(((coll$2) => {
+    var coll = $as_sc_IterableOnce(coll$2);
+    return $thiz.fromSpecific__sc_IterableOnce__O(coll)
+  }));
+  return new $c_sc_Iterator$$anon$9(this$3, f)
 }
 function $f_sc_IterableOps__tail__O($thiz) {
   if ($thiz.isEmpty__Z()) {
@@ -29532,13 +33403,15 @@ function $m_ju_internal_GenericArrayOps$ShortArrayOps$() {
   return $n_ju_internal_GenericArrayOps$ShortArrayOps$
 }
 /** @constructor */
-function $c_Lrta_backend_AnalyseLTS$FastStateKey(inits, vars, clocks) {
+function $c_Lrta_backend_AnalyseLTS$FastStateKey(inits, vars, clocks, act) {
   this.Lrta_backend_AnalyseLTS$FastStateKey__f_inits = null;
   this.Lrta_backend_AnalyseLTS$FastStateKey__f_vars = null;
   this.Lrta_backend_AnalyseLTS$FastStateKey__f_clocks = null;
+  this.Lrta_backend_AnalyseLTS$FastStateKey__f_act = null;
   this.Lrta_backend_AnalyseLTS$FastStateKey__f_inits = inits;
   this.Lrta_backend_AnalyseLTS$FastStateKey__f_vars = vars;
-  this.Lrta_backend_AnalyseLTS$FastStateKey__f_clocks = clocks
+  this.Lrta_backend_AnalyseLTS$FastStateKey__f_clocks = clocks;
+  this.Lrta_backend_AnalyseLTS$FastStateKey__f_act = act
 }
 $c_Lrta_backend_AnalyseLTS$FastStateKey.prototype = new $h_O();
 $c_Lrta_backend_AnalyseLTS$FastStateKey.prototype.constructor = $c_Lrta_backend_AnalyseLTS$FastStateKey;
@@ -29564,14 +33437,21 @@ $c_Lrta_backend_AnalyseLTS$FastStateKey.prototype.equals__O__Z = (function(x$0) 
     if (((x === null) ? (x$2 === null) : $n(x).equals__O__Z(x$2))) {
       var x$3 = this.Lrta_backend_AnalyseLTS$FastStateKey__f_vars;
       var x$4 = $n(x$0$2).Lrta_backend_AnalyseLTS$FastStateKey__f_vars;
-      var $$x2 = ((x$3 === null) ? (x$4 === null) : $n(x$3).equals__O__Z(x$4))
+      var $$x3 = ((x$3 === null) ? (x$4 === null) : $n(x$3).equals__O__Z(x$4))
+    } else {
+      var $$x3 = false
+    };
+    if ($$x3) {
+      var x$5 = this.Lrta_backend_AnalyseLTS$FastStateKey__f_clocks;
+      var x$6 = $n(x$0$2).Lrta_backend_AnalyseLTS$FastStateKey__f_clocks;
+      var $$x2 = ((x$5 === null) ? (x$6 === null) : $n(x$5).equals__O__Z(x$6))
     } else {
       var $$x2 = false
     };
     if ($$x2) {
-      var x$5 = this.Lrta_backend_AnalyseLTS$FastStateKey__f_clocks;
-      var x$6 = $n(x$0$2).Lrta_backend_AnalyseLTS$FastStateKey__f_clocks;
-      var $$x1 = ((x$5 === null) ? (x$6 === null) : $n(x$5).equals__O__Z(x$6))
+      var x$7 = this.Lrta_backend_AnalyseLTS$FastStateKey__f_act;
+      var x$8 = $n(x$0$2).Lrta_backend_AnalyseLTS$FastStateKey__f_act;
+      var $$x1 = ((x$7 === null) ? (x$8 === null) : $n(x$7).equals__O__Z(x$8))
     } else {
       var $$x1 = false
     };
@@ -29589,7 +33469,7 @@ $c_Lrta_backend_AnalyseLTS$FastStateKey.prototype.toString__T = (function() {
   return $m_sr_ScalaRunTime$()._toString__s_Product__T(this)
 });
 $c_Lrta_backend_AnalyseLTS$FastStateKey.prototype.productArity__I = (function() {
-  return 3
+  return 4
 });
 $c_Lrta_backend_AnalyseLTS$FastStateKey.prototype.productPrefix__T = (function() {
   return "FastStateKey"
@@ -29606,6 +33486,10 @@ $c_Lrta_backend_AnalyseLTS$FastStateKey.prototype.productElement__I__O = (functi
     }
     case 2: {
       return this.Lrta_backend_AnalyseLTS$FastStateKey__f_clocks;
+      break
+    }
+    case 3: {
+      return this.Lrta_backend_AnalyseLTS$FastStateKey__f_act;
       break
     }
     default: {
@@ -29633,15 +33517,17 @@ var $d_Lrta_backend_AnalyseLTS$FastStateKey = new $TypeData().initClass({
 });
 $c_Lrta_backend_AnalyseLTS$FastStateKey.prototype.$classData = $d_Lrta_backend_AnalyseLTS$FastStateKey;
 /** @constructor */
-function $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending) {
+function $c_Lrta_backend_AnalyseLTS$ZoneStateKey(inits, vars, zone, pending, act) {
   this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_inits = null;
   this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_vars = null;
   this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_zone = null;
   this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_pending = null;
+  this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_act = null;
   this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_inits = inits;
   this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_vars = vars;
   this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_zone = zone;
-  this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_pending = pending
+  this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_pending = pending;
+  this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_act = act
 }
 $c_Lrta_backend_AnalyseLTS$ZoneStateKey.prototype = new $h_O();
 $c_Lrta_backend_AnalyseLTS$ZoneStateKey.prototype.constructor = $c_Lrta_backend_AnalyseLTS$ZoneStateKey;
@@ -29667,21 +33553,28 @@ $c_Lrta_backend_AnalyseLTS$ZoneStateKey.prototype.equals__O__Z = (function(x$0) 
     if (((x === null) ? (x$2 === null) : $n(x).equals__O__Z(x$2))) {
       var x$3 = this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_vars;
       var x$4 = $n(x$0$2).Lrta_backend_AnalyseLTS$ZoneStateKey__f_vars;
-      var $$x3 = ((x$3 === null) ? (x$4 === null) : $n(x$3).equals__O__Z(x$4))
+      var $$x4 = ((x$3 === null) ? (x$4 === null) : $n(x$3).equals__O__Z(x$4))
+    } else {
+      var $$x4 = false
+    };
+    if ($$x4) {
+      var x$5 = this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_zone;
+      var x$6 = $n(x$0$2).Lrta_backend_AnalyseLTS$ZoneStateKey__f_zone;
+      var $$x3 = ((x$5 === null) ? (x$6 === null) : $n(x$5).equals__O__Z(x$6))
     } else {
       var $$x3 = false
     };
     if ($$x3) {
-      var x$5 = this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_zone;
-      var x$6 = $n(x$0$2).Lrta_backend_AnalyseLTS$ZoneStateKey__f_zone;
-      var $$x2 = ((x$5 === null) ? (x$6 === null) : $n(x$5).equals__O__Z(x$6))
+      var x$7 = this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_pending;
+      var x$8 = $n(x$0$2).Lrta_backend_AnalyseLTS$ZoneStateKey__f_pending;
+      var $$x2 = ((x$7 === null) ? (x$8 === null) : $n(x$7).equals__O__Z(x$8))
     } else {
       var $$x2 = false
     };
     if ($$x2) {
-      var x$7 = this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_pending;
-      var x$8 = $n(x$0$2).Lrta_backend_AnalyseLTS$ZoneStateKey__f_pending;
-      var $$x1 = ((x$7 === null) ? (x$8 === null) : $n(x$7).equals__O__Z(x$8))
+      var x$9 = this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_act;
+      var x$10 = $n(x$0$2).Lrta_backend_AnalyseLTS$ZoneStateKey__f_act;
+      var $$x1 = ((x$9 === null) ? (x$10 === null) : $n(x$9).equals__O__Z(x$10))
     } else {
       var $$x1 = false
     };
@@ -29699,7 +33592,7 @@ $c_Lrta_backend_AnalyseLTS$ZoneStateKey.prototype.toString__T = (function() {
   return $m_sr_ScalaRunTime$()._toString__s_Product__T(this)
 });
 $c_Lrta_backend_AnalyseLTS$ZoneStateKey.prototype.productArity__I = (function() {
-  return 4
+  return 5
 });
 $c_Lrta_backend_AnalyseLTS$ZoneStateKey.prototype.productPrefix__T = (function() {
   return "ZoneStateKey"
@@ -29720,6 +33613,10 @@ $c_Lrta_backend_AnalyseLTS$ZoneStateKey.prototype.productElement__I__O = (functi
     }
     case 3: {
       return this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_pending;
+      break
+    }
+    case 4: {
+      return this.Lrta_backend_AnalyseLTS$ZoneStateKey__f_act;
       break
     }
     default: {
@@ -29844,9 +33741,9 @@ function $p_Lrta_backend_DBM$Zone__canonicalize__Lrta_backend_DBM$Zone($thiz) {
         var j$1 = $as_Lrta_syntax_Program2$QName(j);
         var direct = $as_Lrta_backend_DBM$Bound($n($as_sci_Map(mat.sr_ObjectRef__f_elem)).apply__O__O(new $c_T2(i$1, j$1)));
         var indirect = $n($as_Lrta_backend_DBM$Bound($n($as_sci_Map(mat.sr_ObjectRef__f_elem)).apply__O__O(new $c_T2(i$1, k$1)))).$plus__Lrta_backend_DBM$Bound__Lrta_backend_DBM$Bound($as_Lrta_backend_DBM$Bound($n($as_sci_Map(mat.sr_ObjectRef__f_elem)).apply__O__O(new $c_T2(k$1, j$1))));
-        var ev$5 = $as_sci_Map($n($as_sci_Map(mat.sr_ObjectRef__f_elem)).updated__O__O__sci_MapOps(new $c_T2(i$1, j$1), $n(direct).min__Lrta_backend_DBM$Bound__Lrta_backend_DBM$Bound(indirect)));
-        mat.sr_ObjectRef__f_elem = ev$5;
-        ev$5 = null
+        var ev$7 = $as_sci_Map($n($as_sci_Map(mat.sr_ObjectRef__f_elem)).updated__O__O__sci_MapOps(new $c_T2(i$1, j$1), $n(direct).min__Lrta_backend_DBM$Bound__Lrta_backend_DBM$Bound(indirect)));
+        mat.sr_ObjectRef__f_elem = ev$7;
+        ev$7 = null
       })))
     })))
   })));
@@ -29982,6 +33879,56 @@ $c_Lrta_backend_DBM$Zone.prototype.reset__Lrta_syntax_Program2$QName__Lrta_backe
   var matrix = $as_sci_Map(newMat.sr_ObjectRef__f_elem);
   return $p_Lrta_backend_DBM$Zone__canonicalize__Lrta_backend_DBM$Zone(new $c_Lrta_backend_DBM$Zone(clocks, matrix))
 });
+$c_Lrta_backend_DBM$Zone.prototype.extrapolate__sci_Map__Lrta_backend_DBM$Zone = (function(maxConst) {
+  var elem = this.Lrta_backend_DBM$Zone__f_matrix;
+  var newMat = new $c_sr_ObjectRef(elem);
+  var this$2 = $n(this.Lrta_backend_DBM$Zone__f_clocks);
+  var elem$1 = $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK;
+  var nonZero = $as_sci_Set(this$2.excl__O__sci_SetOps(elem$1));
+  $n(nonZero).foreach__F1__V(new $c_sjsr_AnonFunction1(((x) => {
+    var x$1 = $as_Lrta_syntax_Program2$QName(x);
+    var mx = $uD($n(maxConst).getOrElse__O__F0__O(x$1, new $c_sjsr_AnonFunction0((() => 0.0))));
+    var $$x1 = $as_sci_Map(newMat.sr_ObjectRef__f_elem);
+    var _2 = $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK;
+    var upperX = $n($as_Lrta_backend_DBM$Bound($n($$x1).apply__O__O(new $c_T2(x$1, _2)))).Lrta_backend_DBM$Bound__f_value;
+    var $$x2 = $as_sci_Map(newMat.sr_ObjectRef__f_elem);
+    var _1 = $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_ZERO_CLOCK;
+    var lowerXNeg = $n($as_Lrta_backend_DBM$Bound($n($$x2).apply__O__O(new $c_T2(_1, x$1)))).Lrta_backend_DBM$Bound__f_value;
+    if ((upperX > mx)) {
+      var this$6 = $n(this.Lrta_backend_DBM$Zone__f_clocks);
+      var p = new $c_sjsr_AnonFunction1(((y) => {
+        var y$1 = $as_Lrta_syntax_Program2$QName(y);
+        return (!((y$1 === null) ? (x$1 === null) : $n(y$1).equals__O__Z(x$1)))
+      }));
+      var this$8 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$6, p);
+      var f = new $c_sjsr_AnonFunction1(((y$2) => {
+        var y$3 = $as_Lrta_syntax_Program2$QName(y$2);
+        var ev$5 = $as_sci_Map($n($as_sci_Map(newMat.sr_ObjectRef__f_elem)).updated__O__O__sci_MapOps(new $c_T2(x$1, y$3), $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_INF_BOUND));
+        newMat.sr_ObjectRef__f_elem = ev$5;
+        ev$5 = null
+      }));
+      $n(this$8.filtered__sc_Iterable()).foreach__F1__V(f)
+    };
+    if (((-lowerXNeg) > mx)) {
+      var this$9 = $n(this.Lrta_backend_DBM$Zone__f_clocks);
+      var p$1 = new $c_sjsr_AnonFunction1(((y$3$1) => {
+        var y$4 = $as_Lrta_syntax_Program2$QName(y$3$1);
+        return (!((y$4 === null) ? (x$1 === null) : $n(y$4).equals__O__Z(x$1)))
+      }));
+      var this$11 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$9, p$1);
+      var f$1 = new $c_sjsr_AnonFunction1(((y$4$1) => {
+        var y$5 = $as_Lrta_syntax_Program2$QName(y$4$1);
+        var ev$6 = $as_sci_Map($n($as_sci_Map(newMat.sr_ObjectRef__f_elem)).updated__O__O__sci_MapOps(new $c_T2(y$5, x$1), $m_Lrta_backend_DBM$().Lrta_backend_DBM$__f_INF_BOUND));
+        newMat.sr_ObjectRef__f_elem = ev$6;
+        ev$6 = null
+      }));
+      $n(this$11.filtered__sc_Iterable()).foreach__F1__V(f$1)
+    }
+  })));
+  var clocks = this.Lrta_backend_DBM$Zone__f_clocks;
+  var matrix = $as_sci_Map(newMat.sr_ObjectRef__f_elem);
+  return $p_Lrta_backend_DBM$Zone__canonicalize__Lrta_backend_DBM$Zone(new $c_Lrta_backend_DBM$Zone(clocks, matrix))
+});
 function $as_Lrta_backend_DBM$Zone(obj) {
   return (((obj instanceof $c_Lrta_backend_DBM$Zone) || (obj === null)) ? obj : $throwClassCastException(obj, "rta.backend.DBM$Zone"))
 }
@@ -30081,6 +34028,86 @@ var $d_Lrta_backend_UppaalConverter3$Point = new $TypeData().initClass({
   Ljava_io_Serializable: 1
 });
 $c_Lrta_backend_UppaalConverter3$Point.prototype.$classData = $d_Lrta_backend_UppaalConverter3$Point;
+/** @constructor */
+function $c_Lrta_backend_UppaalConverter4$Point(x, y) {
+  this.Lrta_backend_UppaalConverter4$Point__f_x = 0.0;
+  this.Lrta_backend_UppaalConverter4$Point__f_y = 0.0;
+  this.Lrta_backend_UppaalConverter4$Point__f_x = x;
+  this.Lrta_backend_UppaalConverter4$Point__f_y = y
+}
+$c_Lrta_backend_UppaalConverter4$Point.prototype = new $h_O();
+$c_Lrta_backend_UppaalConverter4$Point.prototype.constructor = $c_Lrta_backend_UppaalConverter4$Point;
+/** @constructor */
+function $h_Lrta_backend_UppaalConverter4$Point() {
+  /*<skip>*/
+}
+$h_Lrta_backend_UppaalConverter4$Point.prototype = $c_Lrta_backend_UppaalConverter4$Point.prototype;
+$c_Lrta_backend_UppaalConverter4$Point.prototype.productIterator__sc_Iterator = (function() {
+  return new $c_s_Product$$anon$1(this)
+});
+$c_Lrta_backend_UppaalConverter4$Point.prototype.hashCode__I = (function() {
+  var acc = (-889275714);
+  var hash = acc;
+  var data = $f_T__hashCode__I("Point");
+  acc = $m_sr_Statics$().mix__I__I__I(hash, data);
+  var hash$1 = acc;
+  var dv = this.Lrta_backend_UppaalConverter4$Point__f_x;
+  var data$1 = $m_sr_Statics$().doubleHash__D__I(dv);
+  acc = $m_sr_Statics$().mix__I__I__I(hash$1, data$1);
+  var hash$2 = acc;
+  var dv$1 = this.Lrta_backend_UppaalConverter4$Point__f_y;
+  var data$2 = $m_sr_Statics$().doubleHash__D__I(dv$1);
+  acc = $m_sr_Statics$().mix__I__I__I(hash$2, data$2);
+  var hash$3 = acc;
+  return $m_sr_Statics$().finalizeHash__I__I__I(hash$3, 2)
+});
+$c_Lrta_backend_UppaalConverter4$Point.prototype.equals__O__Z = (function(x$0) {
+  if ((this === x$0)) {
+    return true
+  } else if ((x$0 instanceof $c_Lrta_backend_UppaalConverter4$Point)) {
+    var x$0$2 = $as_Lrta_backend_UppaalConverter4$Point(x$0);
+    return (((this.Lrta_backend_UppaalConverter4$Point__f_x === $n(x$0$2).Lrta_backend_UppaalConverter4$Point__f_x) && (this.Lrta_backend_UppaalConverter4$Point__f_y === $n(x$0$2).Lrta_backend_UppaalConverter4$Point__f_y)) && ($n(x$0$2), true))
+  } else {
+    return false
+  }
+});
+$c_Lrta_backend_UppaalConverter4$Point.prototype.toString__T = (function() {
+  return $m_sr_ScalaRunTime$()._toString__s_Product__T(this)
+});
+$c_Lrta_backend_UppaalConverter4$Point.prototype.productArity__I = (function() {
+  return 2
+});
+$c_Lrta_backend_UppaalConverter4$Point.prototype.productPrefix__T = (function() {
+  return "Point"
+});
+$c_Lrta_backend_UppaalConverter4$Point.prototype.productElement__I__O = (function(n) {
+  if ((n === 0)) {
+    return this.Lrta_backend_UppaalConverter4$Point__f_x
+  };
+  if ((n === 1)) {
+    return this.Lrta_backend_UppaalConverter4$Point__f_y
+  };
+  throw $ct_jl_IndexOutOfBoundsException__T__(new $c_jl_IndexOutOfBoundsException(), ("" + n))
+});
+function $as_Lrta_backend_UppaalConverter4$Point(obj) {
+  return (((obj instanceof $c_Lrta_backend_UppaalConverter4$Point) || (obj === null)) ? obj : $throwClassCastException(obj, "rta.backend.UppaalConverter4$Point"))
+}
+function $isArrayOf_Lrta_backend_UppaalConverter4$Point(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lrta_backend_UppaalConverter4$Point)))
+}
+function $asArrayOf_Lrta_backend_UppaalConverter4$Point(obj, depth) {
+  return (($isArrayOf_Lrta_backend_UppaalConverter4$Point(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lrta.backend.UppaalConverter4$Point;", depth))
+}
+var $d_Lrta_backend_UppaalConverter4$Point = new $TypeData().initClass({
+  Lrta_backend_UppaalConverter4$Point: 0
+}, false, "rta.backend.UppaalConverter4$Point", {
+  Lrta_backend_UppaalConverter4$Point: 1,
+  O: 1,
+  s_Equals: 1,
+  s_Product: 1,
+  Ljava_io_Serializable: 1
+});
+$c_Lrta_backend_UppaalConverter4$Point.prototype.$classData = $d_Lrta_backend_UppaalConverter4$Point;
 /** @constructor */
 function $c_Lrta_syntax_FunctionDef(name, params, body) {
   this.Lrta_syntax_FunctionDef__f_name = null;
@@ -30575,9 +34602,19 @@ $c_Lrta_syntax_Program2$QName.prototype.$div__Lrta_syntax_Program2$RxGraph__Lrta
     };
     throw new $c_s_MatchError(x$1$9)
   }))));
+  var maxConstants$9 = $as_sci_Map($n($n(rx).Lrta_syntax_Program2$RxGraph__f_maxConstants).map__F1__sc_IterableOps(new $c_sjsr_AnonFunction1(((x$1$9$1) => {
+    var x$1$10 = $as_T2(x$1$9$1);
+    if ((x$1$10 !== null)) {
+      var k$4 = $as_Lrta_syntax_Program2$QName($n(x$1$10)._1__O());
+      var v$3 = $uD($n(x$1$10)._2__O());
+      var self$7 = this.$div__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName(k$4);
+      return new $c_T2(self$7, v$3)
+    };
+    throw new $c_s_MatchError(x$1$10)
+  }))));
   $n(rx);
   var zone = $n(rx).Lrta_syntax_Program2$RxGraph__f_zone;
-  return new $c_Lrta_syntax_Program2$RxGraph(edg$9, on$9, off$9, lbls$9, inits$9, act$9, val_env$9, zone, functions$9, clocks$8, clock_env$9, invariants$9, edgeConditions$9, edgeUpdates$9, delays$9, pendingDelays$9)
+  return new $c_Lrta_syntax_Program2$RxGraph(edg$9, on$9, off$9, lbls$9, inits$9, act$9, val_env$9, zone, functions$9, clocks$8, clock_env$9, invariants$9, edgeConditions$9, edgeUpdates$9, delays$9, pendingDelays$9, maxConstants$9)
 });
 function $as_Lrta_syntax_Program2$QName(obj) {
   return (((obj instanceof $c_Lrta_syntax_Program2$QName) || (obj === null)) ? obj : $throwClassCastException(obj, "rta.syntax.Program2$QName"))
@@ -30599,7 +34636,7 @@ var $d_Lrta_syntax_Program2$QName = new $TypeData().initClass({
 });
 $c_Lrta_syntax_Program2$QName.prototype.$classData = $d_Lrta_syntax_Program2$QName;
 /** @constructor */
-function $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, clock_env, invariants, edgeConditions, edgeUpdates, delays, pendingDelays) {
+function $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, clock_env, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants) {
   this.Lrta_syntax_Program2$RxGraph__f_edg = null;
   this.Lrta_syntax_Program2$RxGraph__f_on = null;
   this.Lrta_syntax_Program2$RxGraph__f_off = null;
@@ -30616,6 +34653,7 @@ function $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env
   this.Lrta_syntax_Program2$RxGraph__f_edgeUpdates = null;
   this.Lrta_syntax_Program2$RxGraph__f_delays = null;
   this.Lrta_syntax_Program2$RxGraph__f_pendingDelays = null;
+  this.Lrta_syntax_Program2$RxGraph__f_maxConstants = null;
   this.Lrta_syntax_Program2$RxGraph__f_edg = edg;
   this.Lrta_syntax_Program2$RxGraph__f_on = on;
   this.Lrta_syntax_Program2$RxGraph__f_off = off;
@@ -30631,7 +34669,8 @@ function $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env
   this.Lrta_syntax_Program2$RxGraph__f_edgeConditions = edgeConditions;
   this.Lrta_syntax_Program2$RxGraph__f_edgeUpdates = edgeUpdates;
   this.Lrta_syntax_Program2$RxGraph__f_delays = delays;
-  this.Lrta_syntax_Program2$RxGraph__f_pendingDelays = pendingDelays
+  this.Lrta_syntax_Program2$RxGraph__f_pendingDelays = pendingDelays;
+  this.Lrta_syntax_Program2$RxGraph__f_maxConstants = maxConstants
 }
 $c_Lrta_syntax_Program2$RxGraph.prototype = new $h_O();
 $c_Lrta_syntax_Program2$RxGraph.prototype.constructor = $c_Lrta_syntax_Program2$RxGraph;
@@ -30657,105 +34696,112 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.equals__O__Z = (function(x$0) {
     if (((x === null) ? (x$2 === null) : $n(x).equals__O__Z(x$2))) {
       var x$3 = this.Lrta_syntax_Program2$RxGraph__f_on;
       var x$4 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_on;
-      var $$x15 = ((x$3 === null) ? (x$4 === null) : $n(x$3).equals__O__Z(x$4))
+      var $$x16 = ((x$3 === null) ? (x$4 === null) : $n(x$3).equals__O__Z(x$4))
+    } else {
+      var $$x16 = false
+    };
+    if ($$x16) {
+      var x$5 = this.Lrta_syntax_Program2$RxGraph__f_off;
+      var x$6 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_off;
+      var $$x15 = ((x$5 === null) ? (x$6 === null) : $n(x$5).equals__O__Z(x$6))
     } else {
       var $$x15 = false
     };
     if ($$x15) {
-      var x$5 = this.Lrta_syntax_Program2$RxGraph__f_off;
-      var x$6 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_off;
-      var $$x14 = ((x$5 === null) ? (x$6 === null) : $n(x$5).equals__O__Z(x$6))
+      var x$7 = this.Lrta_syntax_Program2$RxGraph__f_lbls;
+      var x$8 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_lbls;
+      var $$x14 = ((x$7 === null) ? (x$8 === null) : $n(x$7).equals__O__Z(x$8))
     } else {
       var $$x14 = false
     };
     if ($$x14) {
-      var x$7 = this.Lrta_syntax_Program2$RxGraph__f_lbls;
-      var x$8 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_lbls;
-      var $$x13 = ((x$7 === null) ? (x$8 === null) : $n(x$7).equals__O__Z(x$8))
+      var x$9 = this.Lrta_syntax_Program2$RxGraph__f_inits;
+      var x$10 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_inits;
+      var $$x13 = ((x$9 === null) ? (x$10 === null) : $n(x$9).equals__O__Z(x$10))
     } else {
       var $$x13 = false
     };
     if ($$x13) {
-      var x$9 = this.Lrta_syntax_Program2$RxGraph__f_inits;
-      var x$10 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_inits;
-      var $$x12 = ((x$9 === null) ? (x$10 === null) : $n(x$9).equals__O__Z(x$10))
+      var x$11 = this.Lrta_syntax_Program2$RxGraph__f_act;
+      var x$12 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_act;
+      var $$x12 = ((x$11 === null) ? (x$12 === null) : $n(x$11).equals__O__Z(x$12))
     } else {
       var $$x12 = false
     };
     if ($$x12) {
-      var x$11 = this.Lrta_syntax_Program2$RxGraph__f_act;
-      var x$12 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_act;
-      var $$x11 = ((x$11 === null) ? (x$12 === null) : $n(x$11).equals__O__Z(x$12))
+      var x$13 = this.Lrta_syntax_Program2$RxGraph__f_val_env;
+      var x$14 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_val_env;
+      var $$x11 = ((x$13 === null) ? (x$14 === null) : $n(x$13).equals__O__Z(x$14))
     } else {
       var $$x11 = false
     };
     if ($$x11) {
-      var x$13 = this.Lrta_syntax_Program2$RxGraph__f_val_env;
-      var x$14 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_val_env;
-      var $$x10 = ((x$13 === null) ? (x$14 === null) : $n(x$13).equals__O__Z(x$14))
+      var x$15 = this.Lrta_syntax_Program2$RxGraph__f_zone;
+      var x$16 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_zone;
+      var $$x10 = ((x$15 === null) ? (x$16 === null) : $n(x$15).equals__O__Z(x$16))
     } else {
       var $$x10 = false
     };
     if ($$x10) {
-      var x$15 = this.Lrta_syntax_Program2$RxGraph__f_zone;
-      var x$16 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_zone;
-      var $$x9 = ((x$15 === null) ? (x$16 === null) : $n(x$15).equals__O__Z(x$16))
+      var x$17 = this.Lrta_syntax_Program2$RxGraph__f_functions;
+      var x$18 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_functions;
+      var $$x9 = ((x$17 === null) ? (x$18 === null) : $n(x$17).equals__O__Z(x$18))
     } else {
       var $$x9 = false
     };
     if ($$x9) {
-      var x$17 = this.Lrta_syntax_Program2$RxGraph__f_functions;
-      var x$18 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_functions;
-      var $$x8 = ((x$17 === null) ? (x$18 === null) : $n(x$17).equals__O__Z(x$18))
+      var x$19 = this.Lrta_syntax_Program2$RxGraph__f_clocks;
+      var x$20 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_clocks;
+      var $$x8 = ((x$19 === null) ? (x$20 === null) : $n(x$19).equals__O__Z(x$20))
     } else {
       var $$x8 = false
     };
     if ($$x8) {
-      var x$19 = this.Lrta_syntax_Program2$RxGraph__f_clocks;
-      var x$20 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_clocks;
-      var $$x7 = ((x$19 === null) ? (x$20 === null) : $n(x$19).equals__O__Z(x$20))
+      var x$21 = this.Lrta_syntax_Program2$RxGraph__f_clock_env;
+      var x$22 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_clock_env;
+      var $$x7 = ((x$21 === null) ? (x$22 === null) : $n(x$21).equals__O__Z(x$22))
     } else {
       var $$x7 = false
     };
     if ($$x7) {
-      var x$21 = this.Lrta_syntax_Program2$RxGraph__f_clock_env;
-      var x$22 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_clock_env;
-      var $$x6 = ((x$21 === null) ? (x$22 === null) : $n(x$21).equals__O__Z(x$22))
+      var x$23 = this.Lrta_syntax_Program2$RxGraph__f_invariants;
+      var x$24 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_invariants;
+      var $$x6 = ((x$23 === null) ? (x$24 === null) : $n(x$23).equals__O__Z(x$24))
     } else {
       var $$x6 = false
     };
     if ($$x6) {
-      var x$23 = this.Lrta_syntax_Program2$RxGraph__f_invariants;
-      var x$24 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_invariants;
-      var $$x5 = ((x$23 === null) ? (x$24 === null) : $n(x$23).equals__O__Z(x$24))
+      var x$25 = this.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+      var x$26 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_edgeConditions;
+      var $$x5 = ((x$25 === null) ? (x$26 === null) : $n(x$25).equals__O__Z(x$26))
     } else {
       var $$x5 = false
     };
     if ($$x5) {
-      var x$25 = this.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
-      var x$26 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_edgeConditions;
-      var $$x4 = ((x$25 === null) ? (x$26 === null) : $n(x$25).equals__O__Z(x$26))
+      var x$27 = this.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+      var x$28 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
+      var $$x4 = ((x$27 === null) ? (x$28 === null) : $n(x$27).equals__O__Z(x$28))
     } else {
       var $$x4 = false
     };
     if ($$x4) {
-      var x$27 = this.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
-      var x$28 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
-      var $$x3 = ((x$27 === null) ? (x$28 === null) : $n(x$27).equals__O__Z(x$28))
+      var x$29 = this.Lrta_syntax_Program2$RxGraph__f_delays;
+      var x$30 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_delays;
+      var $$x3 = ((x$29 === null) ? (x$30 === null) : $n(x$29).equals__O__Z(x$30))
     } else {
       var $$x3 = false
     };
     if ($$x3) {
-      var x$29 = this.Lrta_syntax_Program2$RxGraph__f_delays;
-      var x$30 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_delays;
-      var $$x2 = ((x$29 === null) ? (x$30 === null) : $n(x$29).equals__O__Z(x$30))
+      var x$31 = this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      var x$32 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
+      var $$x2 = ((x$31 === null) ? (x$32 === null) : $n(x$31).equals__O__Z(x$32))
     } else {
       var $$x2 = false
     };
     if ($$x2) {
-      var x$31 = this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-      var x$32 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-      var $$x1 = ((x$31 === null) ? (x$32 === null) : $n(x$31).equals__O__Z(x$32))
+      var x$33 = this.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+      var x$34 = $n(x$0$2).Lrta_syntax_Program2$RxGraph__f_maxConstants;
+      var $$x1 = ((x$33 === null) ? (x$34 === null) : $n(x$33).equals__O__Z(x$34))
     } else {
       var $$x1 = false
     };
@@ -30770,7 +34816,7 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.equals__O__Z = (function(x$0) {
   }
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.productArity__I = (function() {
-  return 16
+  return 17
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.productPrefix__T = (function() {
   return "RxGraph"
@@ -30841,6 +34887,10 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.productElement__I__O = (function(n) {
       return this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
       break
     }
+    case 16: {
+      return this.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+      break
+    }
     default: {
       throw $ct_jl_IndexOutOfBoundsException__T__(new $c_jl_IndexOutOfBoundsException(), ("" + n))
     }
@@ -30867,7 +34917,7 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.toString__T = (function() {
     var p$1 = $as_T4(p);
     return (((((($n($as_Lrta_syntax_Program2$QName($n($as_T4($n(p$1).T4__f__1)).T4__f__4)).show__T() + "(") + $n(p$1).T4__f__2) + ")@") + $n(p$1).T4__f__3) + "=") + $n(p$1).T4__f__4)
   })))));
-  return ((((((((((((((("[init]  " + $$x7) + "\r\n         |[clocks] ") + $$x6) + "\r\n         |[vars]  ") + $$x5) + "\r\n         |[act]   ") + $$x4) + "\r\n         |[edges] ") + $$x3) + "\r\n         |[on]    ") + $$x2) + "\r\n         |[off]   ") + $$x1) + "\r\n         |[pending] ") + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$5, "", ", ", ""))
+  return ((((((((((((((("[init]  " + $$x7) + "\n         |[clocks] ") + $$x6) + "\n         |[vars]  ") + $$x5) + "\n         |[act]   ") + $$x4) + "\n         |[edges] ") + $$x3) + "\n         |[on]    ") + $$x2) + "\n         |[off]   ") + $$x1) + "\n         |[pending] ") + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$5, "", ", ", ""))
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.states__sci_Set = (function() {
   var this$1 = $n(this.Lrta_syntax_Program2$RxGraph__f_edg);
@@ -30922,7 +34972,8 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.addClock__Lrta_syntax_Program2$QName__
   var edgeUpdates$2 = this.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
   var delays$2 = this.Lrta_syntax_Program2$RxGraph__f_delays;
   var pendingDelays$2 = this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  return new $c_Lrta_syntax_Program2$RxGraph(edg$2, on$2, off$2, lbls$2, inits$2, act$2, val_env$2, zone$2, functions$2, newClocks, clock_env$2, invariants$2, edgeConditions$2, edgeUpdates$2, delays$2, pendingDelays$2)
+  var maxConstants$2 = this.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  return new $c_Lrta_syntax_Program2$RxGraph(edg$2, on$2, off$2, lbls$2, inits$2, act$2, val_env$2, zone$2, functions$2, newClocks, clock_env$2, invariants$2, edgeConditions$2, edgeUpdates$2, delays$2, pendingDelays$2, maxConstants$2)
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.addInvariant__Lrta_syntax_Program2$QName__Lrta_syntax_Condition__Lrta_syntax_Program2$RxGraph = (function(state, cond) {
   var this$3 = $n(this.Lrta_syntax_Program2$RxGraph__f_invariants);
@@ -30942,7 +34993,8 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.addInvariant__Lrta_syntax_Program2$QNa
   var edgeUpdates$3 = this.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
   var delays$3 = this.Lrta_syntax_Program2$RxGraph__f_delays;
   var pendingDelays$3 = this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  return new $c_Lrta_syntax_Program2$RxGraph(edg$3, on$3, off$3, lbls$3, inits$3, act$3, val_env$3, zone$3, functions$3, clocks$2, clock_env$3, invariants$3, edgeConditions$3, edgeUpdates$3, delays$3, pendingDelays$3)
+  var maxConstants$3 = this.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  return new $c_Lrta_syntax_Program2$RxGraph(edg$3, on$3, off$3, lbls$3, inits$3, act$3, val_env$3, zone$3, functions$3, clocks$2, clock_env$3, invariants$3, edgeConditions$3, edgeUpdates$3, delays$3, pendingDelays$3, maxConstants$3)
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.addDelay__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__D__Lrta_syntax_Program2$RxGraph = (function(rule, clock, value) {
   var this$4 = $n(this.Lrta_syntax_Program2$RxGraph__f_delays);
@@ -30963,7 +35015,8 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.addDelay__Lrta_syntax_Program2$QName__
   var edgeConditions$4 = this.Lrta_syntax_Program2$RxGraph__f_edgeConditions;
   var edgeUpdates$4 = this.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
   var pendingDelays$4 = this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  return new $c_Lrta_syntax_Program2$RxGraph(edg$4, on$4, off$4, lbls$4, inits$4, act$4, val_env$4, zone$4, functions$4, clocks$3, clock_env$4, invariants$4, edgeConditions$4, edgeUpdates$4, delays$4, pendingDelays$4)
+  var maxConstants$4 = this.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  return new $c_Lrta_syntax_Program2$RxGraph(edg$4, on$4, off$4, lbls$4, inits$4, act$4, val_env$4, zone$4, functions$4, clocks$3, clock_env$4, invariants$4, edgeConditions$4, edgeUpdates$4, delays$4, pendingDelays$4, maxConstants$4)
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.addEdge__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__s_Option__sci_List__Lrta_syntax_Program2$RxGraph = (function(s1, s2, transId, label, cond, upd) {
   var edge = new $c_T4(s1, s2, transId, label);
@@ -30995,7 +35048,8 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.addEdge__Lrta_syntax_Program2$QName__L
   var invariants$5 = this.Lrta_syntax_Program2$RxGraph__f_invariants;
   var delays$5 = this.Lrta_syntax_Program2$RxGraph__f_delays;
   var pendingDelays$5 = this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  return new $c_Lrta_syntax_Program2$RxGraph(edg$5, on$5, off$5, lbls$5, inits$5, act$5, val_env$5, zone$5, functions$5, clocks$4, clock_env$5, invariants$5, edgeConditions$5, edgeUpdates$5, delays$5, pendingDelays$5)
+  var maxConstants$5 = this.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  return new $c_Lrta_syntax_Program2$RxGraph(edg$5, on$5, off$5, lbls$5, inits$5, act$5, val_env$5, zone$5, functions$5, clocks$4, clock_env$5, invariants$5, edgeConditions$5, edgeUpdates$5, delays$5, pendingDelays$5, maxConstants$5)
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.addOn__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__s_Option__sci_List__Lrta_syntax_Program2$RxGraph = (function(s1, s2, transId, label, cond, upd) {
   var edge = new $c_T4(s1, s2, transId, label);
@@ -31027,7 +35081,8 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.addOn__Lrta_syntax_Program2$QName__Lrt
   var invariants$6 = this.Lrta_syntax_Program2$RxGraph__f_invariants;
   var delays$6 = this.Lrta_syntax_Program2$RxGraph__f_delays;
   var pendingDelays$6 = this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  return new $c_Lrta_syntax_Program2$RxGraph(edg$6, on$6, off$6, lbls$6, inits$6, act$6, val_env$6, zone$6, functions$6, clocks$5, clock_env$6, invariants$6, edgeConditions$6, edgeUpdates$6, delays$6, pendingDelays$6)
+  var maxConstants$6 = this.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  return new $c_Lrta_syntax_Program2$RxGraph(edg$6, on$6, off$6, lbls$6, inits$6, act$6, val_env$6, zone$6, functions$6, clocks$5, clock_env$6, invariants$6, edgeConditions$6, edgeUpdates$6, delays$6, pendingDelays$6, maxConstants$6)
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.addOff__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__s_Option__sci_List__Lrta_syntax_Program2$RxGraph = (function(s1, s2, transId, label, cond, upd) {
   var edge = new $c_T4(s1, s2, transId, label);
@@ -31059,7 +35114,8 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.addOff__Lrta_syntax_Program2$QName__Lr
   var invariants$7 = this.Lrta_syntax_Program2$RxGraph__f_invariants;
   var delays$7 = this.Lrta_syntax_Program2$RxGraph__f_delays;
   var pendingDelays$7 = this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  return new $c_Lrta_syntax_Program2$RxGraph(edg$7, on$7, off$7, lbls$7, inits$7, act$7, val_env$7, zone$7, functions$7, clocks$6, clock_env$7, invariants$7, edgeConditions$7, edgeUpdates$7, delays$7, pendingDelays$7)
+  var maxConstants$7 = this.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  return new $c_Lrta_syntax_Program2$RxGraph(edg$7, on$7, off$7, lbls$7, inits$7, act$7, val_env$7, zone$7, functions$7, clocks$6, clock_env$7, invariants$7, edgeConditions$7, edgeUpdates$7, delays$7, pendingDelays$7, maxConstants$7)
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.deactivate__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$RxGraph = (function(s1, s2, tId, l) {
   var this$2 = $n(this.Lrta_syntax_Program2$RxGraph__f_act);
@@ -31080,7 +35136,8 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.deactivate__Lrta_syntax_Program2$QName
   var edgeUpdates$8 = this.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
   var delays$8 = this.Lrta_syntax_Program2$RxGraph__f_delays;
   var pendingDelays$8 = this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  return new $c_Lrta_syntax_Program2$RxGraph(edg$8, on$8, off$8, lbls$8, inits$8, act$8, val_env$8, zone$8, functions$8, clocks$7, clock_env$8, invariants$8, edgeConditions$8, edgeUpdates$8, delays$8, pendingDelays$8)
+  var maxConstants$8 = this.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  return new $c_Lrta_syntax_Program2$RxGraph(edg$8, on$8, off$8, lbls$8, inits$8, act$8, val_env$8, zone$8, functions$8, clocks$7, clock_env$8, invariants$8, edgeConditions$8, edgeUpdates$8, delays$8, pendingDelays$8, maxConstants$8)
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.addInit__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$RxGraph = (function(s) {
   var this$1 = $n(this.Lrta_syntax_Program2$RxGraph__f_inits);
@@ -31100,7 +35157,8 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.addInit__Lrta_syntax_Program2$QName__L
   var edgeUpdates$1 = this.Lrta_syntax_Program2$RxGraph__f_edgeUpdates;
   var delays$1 = this.Lrta_syntax_Program2$RxGraph__f_delays;
   var pendingDelays$1 = this.Lrta_syntax_Program2$RxGraph__f_pendingDelays;
-  return new $c_Lrta_syntax_Program2$RxGraph(edg$1, on$1, off$1, lbls$1, inits$1, act$1, val_env$1, zone$1, functions$1, clocks$1, clock_env$1, invariants$1, edgeConditions$1, edgeUpdates$1, delays$1, pendingDelays$1)
+  var maxConstants$1 = this.Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  return new $c_Lrta_syntax_Program2$RxGraph(edg$1, on$1, off$1, lbls$1, inits$1, act$1, val_env$1, zone$1, functions$1, clocks$1, clock_env$1, invariants$1, edgeConditions$1, edgeUpdates$1, delays$1, pendingDelays$1, maxConstants$1)
 });
 $c_Lrta_syntax_Program2$RxGraph.prototype.$plus$plus__Lrta_syntax_Program2$RxGraph__Lrta_syntax_Program2$RxGraph = (function(r) {
   var edg = $m_Lrta_syntax_Program2$().join__sci_Map__sci_Map__sci_Map(this.Lrta_syntax_Program2$RxGraph__f_edg, $n(r).Lrta_syntax_Program2$RxGraph__f_edg);
@@ -31141,7 +35199,10 @@ $c_Lrta_syntax_Program2$RxGraph.prototype.$plus$plus__Lrta_syntax_Program2$RxGra
   var this$11 = $n(this.Lrta_syntax_Program2$RxGraph__f_pendingDelays);
   var that$3 = $n(r).Lrta_syntax_Program2$RxGraph__f_pendingDelays;
   var pendingDelays = $as_sci_Set(this$11.concat__sc_IterableOnce__sc_SetOps(that$3));
-  return new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, clock_env, invariants, edgeConditions, edgeUpdates, delays, pendingDelays)
+  var this$12 = $n(this.Lrta_syntax_Program2$RxGraph__f_maxConstants);
+  var xs$7 = $n(r).Lrta_syntax_Program2$RxGraph__f_maxConstants;
+  var maxConstants = $as_sci_Map(this$12.concat__sc_IterableOnce__sc_IterableOps(xs$7));
+  return new $c_Lrta_syntax_Program2$RxGraph(edg, on, off, lbls, inits, act, val_env, zone, functions, clocks, clock_env, invariants, edgeConditions, edgeUpdates, delays, pendingDelays, maxConstants)
 });
 function $as_Lrta_syntax_Program2$RxGraph(obj) {
   return (((obj instanceof $c_Lrta_syntax_Program2$RxGraph) || (obj === null)) ? obj : $throwClassCastException(obj, "rta.syntax.Program2$RxGraph"))
@@ -31961,8 +36022,9 @@ function $m_sci_LazyList$() {
 }
 /** @constructor */
 function $c_sci_WrappedString$() {
+  this.sci_WrappedString$__f_empty = null;
   $n_sci_WrappedString$ = this;
-  new $c_sci_WrappedString("")
+  this.sci_WrappedString$__f_empty = new $c_sci_WrappedString("")
 }
 $c_sci_WrappedString$.prototype = new $h_O();
 $c_sci_WrappedString$.prototype.constructor = $c_sci_WrappedString$;
@@ -32593,9 +36655,9 @@ $c_Lrta_backend_RxSemantics$$anon$1.prototype.isDefinedAt__Lrta_syntax_Statement
   if ((x instanceof $c_Lrta_syntax_AssignStmt)) {
     var x$1 = $as_Lrta_syntax_AssignStmt(x);
     var this$2 = $n(x$1);
-    var x217 = this$2.Lrta_syntax_AssignStmt__f_variable;
+    var x323 = this$2.Lrta_syntax_AssignStmt__f_variable;
     var this$3 = $n(x$1);
-    if ($n($n(this.Lrta_backend_RxSemantics$$anon$1__f_rx$12).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x217)) {
+    if ($n($n(this.Lrta_backend_RxSemantics$$anon$1__f_rx$12).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x323)) {
       return true
     }
   };
@@ -32605,10 +36667,10 @@ $c_Lrta_backend_RxSemantics$$anon$1.prototype.applyOrElse__Lrta_syntax_Statement
   if ((x instanceof $c_Lrta_syntax_AssignStmt)) {
     var x$1 = $as_Lrta_syntax_AssignStmt(x);
     var this$2 = $n(x$1);
-    var x222 = this$2.Lrta_syntax_AssignStmt__f_variable;
+    var x328 = this$2.Lrta_syntax_AssignStmt__f_variable;
     var this$3 = $n(x$1);
-    if ($n($n(this.Lrta_backend_RxSemantics$$anon$1__f_rx$12).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x222)) {
-      return x222
+    if ($n($n(this.Lrta_backend_RxSemantics$$anon$1__f_rx$12).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x328)) {
+      return x328
     }
   };
   return $n(default$1).apply__O__O(x)
@@ -32646,9 +36708,9 @@ $c_Lrta_backend_RxSemantics$$anon$2.prototype.isDefinedAt__Lrta_syntax_Statement
   if ((x instanceof $c_Lrta_syntax_AssignStmt)) {
     var x$1 = $as_Lrta_syntax_AssignStmt(x);
     var this$2 = $n(x$1);
-    var x285 = this$2.Lrta_syntax_AssignStmt__f_variable;
+    var x396 = this$2.Lrta_syntax_AssignStmt__f_variable;
     var this$3 = $n(x$1);
-    if ($n($n(this.Lrta_backend_RxSemantics$$anon$2__f_rx$19).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x285)) {
+    if ($n($n(this.Lrta_backend_RxSemantics$$anon$2__f_rx$19).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x396)) {
       return true
     }
   };
@@ -32658,10 +36720,10 @@ $c_Lrta_backend_RxSemantics$$anon$2.prototype.applyOrElse__Lrta_syntax_Statement
   if ((x instanceof $c_Lrta_syntax_AssignStmt)) {
     var x$1 = $as_Lrta_syntax_AssignStmt(x);
     var this$2 = $n(x$1);
-    var x290 = this$2.Lrta_syntax_AssignStmt__f_variable;
+    var x401 = this$2.Lrta_syntax_AssignStmt__f_variable;
     var this$3 = $n(x$1);
-    if ($n($n(this.Lrta_backend_RxSemantics$$anon$2__f_rx$19).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x290)) {
-      return x290
+    if ($n($n(this.Lrta_backend_RxSemantics$$anon$2__f_rx$19).Lrta_syntax_Program2$RxGraph__f_clocks).contains__O__Z(x401)) {
+      return x401
     }
   };
   return $n(default$1).apply__O__O(x)
@@ -37084,6 +41146,77 @@ var $d_T5 = new $TypeData().initClass({
 });
 $c_T5.prototype.$classData = $d_T5;
 /** @constructor */
+function $c_T6(_1, _2, _3, _4, _5, _6) {
+  this.T6__f__1 = null;
+  this.T6__f__2 = null;
+  this.T6__f__3 = null;
+  this.T6__f__4 = null;
+  this.T6__f__5 = null;
+  this.T6__f__6 = null;
+  this.T6__f__1 = _1;
+  this.T6__f__2 = _2;
+  this.T6__f__3 = _3;
+  this.T6__f__4 = _4;
+  this.T6__f__5 = _5;
+  this.T6__f__6 = _6
+}
+$c_T6.prototype = new $h_O();
+$c_T6.prototype.constructor = $c_T6;
+/** @constructor */
+function $h_T6() {
+  /*<skip>*/
+}
+$h_T6.prototype = $c_T6.prototype;
+$c_T6.prototype.productArity__I = (function() {
+  return 6
+});
+$c_T6.prototype.productElement__I__O = (function(n) {
+  return $f_s_Product6__productElement__I__O(this, n)
+});
+$c_T6.prototype.toString__T = (function() {
+  return (((((((((((("(" + this.T6__f__1) + ",") + this.T6__f__2) + ",") + this.T6__f__3) + ",") + this.T6__f__4) + ",") + this.T6__f__5) + ",") + this.T6__f__6) + ")")
+});
+$c_T6.prototype.productPrefix__T = (function() {
+  return "Tuple6"
+});
+$c_T6.prototype.productIterator__sc_Iterator = (function() {
+  return new $c_sr_ScalaRunTime$$anon$1(this)
+});
+$c_T6.prototype.hashCode__I = (function() {
+  var this$2 = $m_s_util_hashing_MurmurHash3$();
+  return this$2.productHash__s_Product__I__Z__I(this, (-889275714), false)
+});
+$c_T6.prototype.equals__O__Z = (function(x$1) {
+  if ((this === x$1)) {
+    return true
+  } else if ((x$1 instanceof $c_T6)) {
+    var Tuple6$1 = $as_T6(x$1);
+    return (($m_sr_BoxesRunTime$().equals__O__O__Z(this.T6__f__1, $n(Tuple6$1).T6__f__1) && ($m_sr_BoxesRunTime$().equals__O__O__Z(this.T6__f__2, $n(Tuple6$1).T6__f__2) && $m_sr_BoxesRunTime$().equals__O__O__Z(this.T6__f__3, $n(Tuple6$1).T6__f__3))) && ($m_sr_BoxesRunTime$().equals__O__O__Z(this.T6__f__4, $n(Tuple6$1).T6__f__4) && ($m_sr_BoxesRunTime$().equals__O__O__Z(this.T6__f__5, $n(Tuple6$1).T6__f__5) && $m_sr_BoxesRunTime$().equals__O__O__Z(this.T6__f__6, $n(Tuple6$1).T6__f__6))))
+  } else {
+    return false
+  }
+});
+function $as_T6(obj) {
+  return (((obj instanceof $c_T6) || (obj === null)) ? obj : $throwClassCastException(obj, "scala.Tuple6"))
+}
+function $isArrayOf_T6(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.T6)))
+}
+function $asArrayOf_T6(obj, depth) {
+  return (($isArrayOf_T6(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lscala.Tuple6;", depth))
+}
+var $d_T6 = new $TypeData().initClass({
+  T6: 0
+}, false, "scala.Tuple6", {
+  T6: 1,
+  O: 1,
+  s_Product6: 1,
+  s_Product: 1,
+  s_Equals: 1,
+  Ljava_io_Serializable: 1
+});
+$c_T6.prototype.$classData = $d_T6;
+/** @constructor */
 function $c_sc_ClassTagSeqFactory$AnySeqDelegate(delegate) {
   this.sc_ClassTagIterableFactory$AnyIterableDelegate__f_delegate = null;
   $ct_sc_ClassTagIterableFactory$AnyIterableDelegate__sc_ClassTagIterableFactory__(this, delegate)
@@ -37604,6 +41737,146 @@ var $d_sc_Iterator$ConcatIterator = new $TypeData().initClass({
   sc_IterableOnceOps: 1
 });
 $c_sc_Iterator$ConcatIterator.prototype.$classData = $d_sc_Iterator$ConcatIterator;
+function $p_sc_Iterator$GroupedIterator__pad__Z($thiz) {
+  return ($thiz.sc_Iterator$GroupedIterator__f_padding !== null)
+}
+function $p_sc_Iterator$GroupedIterator__newBuilder__scm_ArrayBuilder($thiz) {
+  $m_s_reflect_ManifestFactory$AnyManifest$();
+  var b = new $c_scm_ArrayBuilder$generic($d_O.getClassOf());
+  var k = $n($thiz.sc_Iterator$GroupedIterator__f_self).knownSize__I();
+  if ((k > 0)) {
+    var that = $thiz.sc_Iterator$GroupedIterator__f_size;
+    b.sizeHint__I__V(((k < that) ? k : that))
+  };
+  return b
+}
+function $p_sc_Iterator$GroupedIterator__fulfill__Z($thiz) {
+  var builder = $p_sc_Iterator$GroupedIterator__newBuilder__scm_ArrayBuilder($thiz);
+  var done = false;
+  if (($thiz.sc_Iterator$GroupedIterator__f_prev !== null)) {
+    $n(builder).addAll__O__scm_ArrayBuilder($thiz.sc_Iterator$GroupedIterator__f_prev)
+  };
+  if (((!$thiz.sc_Iterator$GroupedIterator__f_first) && ($thiz.sc_Iterator$GroupedIterator__f_step > $thiz.sc_Iterator$GroupedIterator__f_size))) {
+    var dropping = (($thiz.sc_Iterator$GroupedIterator__f_step - $thiz.sc_Iterator$GroupedIterator__f_size) | 0);
+    while (((dropping > 0) && $n($thiz.sc_Iterator$GroupedIterator__f_self).hasNext__Z())) {
+      $n($thiz.sc_Iterator$GroupedIterator__f_self).next__O();
+      dropping = (((-1) + dropping) | 0)
+    };
+    done = (dropping > 0)
+  };
+  var index = $n(builder).length__I();
+  if ((!done)) {
+    while (((index < $thiz.sc_Iterator$GroupedIterator__f_size) && $n($thiz.sc_Iterator$GroupedIterator__f_self).hasNext__Z())) {
+      var this$1 = $n(builder);
+      var elem = $n($thiz.sc_Iterator$GroupedIterator__f_self).next__O();
+      this$1.addOne__O__scm_ArrayBuilder$generic(elem);
+      index = ((1 + index) | 0)
+    };
+    if (((index < $thiz.sc_Iterator$GroupedIterator__f_size) && $p_sc_Iterator$GroupedIterator__pad__Z($thiz))) {
+      $n(builder).sizeHint__I__V($thiz.sc_Iterator$GroupedIterator__f_size);
+      while ((index < $thiz.sc_Iterator$GroupedIterator__f_size)) {
+        var this$2 = $n(builder);
+        var elem$1 = $n($thiz.sc_Iterator$GroupedIterator__f_padding).apply__O();
+        this$2.addOne__O__scm_ArrayBuilder$generic(elem$1);
+        index = ((1 + index) | 0)
+      }
+    }
+  };
+  var ok = ((index > 0) && ($thiz.sc_Iterator$GroupedIterator__f_partial || (index === $thiz.sc_Iterator$GroupedIterator__f_size)));
+  if (ok) {
+    $thiz.sc_Iterator$GroupedIterator__f_buffer = $n(builder).result__O()
+  } else {
+    $thiz.sc_Iterator$GroupedIterator__f_prev = null
+  };
+  return ok
+}
+function $p_sc_Iterator$GroupedIterator__fill__Z($thiz) {
+  if ($thiz.sc_Iterator$GroupedIterator__f_filled) {
+    return true
+  } else {
+    $thiz.sc_Iterator$GroupedIterator__f_filled = ($n($thiz.sc_Iterator$GroupedIterator__f_self).hasNext__Z() && $p_sc_Iterator$GroupedIterator__fulfill__Z($thiz));
+    return $thiz.sc_Iterator$GroupedIterator__f_filled
+  }
+}
+/** @constructor */
+function $c_sc_Iterator$GroupedIterator(outer, self, size, step) {
+  this.sc_Iterator$GroupedIterator__f_self = null;
+  this.sc_Iterator$GroupedIterator__f_size = 0;
+  this.sc_Iterator$GroupedIterator__f_step = 0;
+  this.sc_Iterator$GroupedIterator__f_buffer = null;
+  this.sc_Iterator$GroupedIterator__f_prev = null;
+  this.sc_Iterator$GroupedIterator__f_first = false;
+  this.sc_Iterator$GroupedIterator__f_filled = false;
+  this.sc_Iterator$GroupedIterator__f_partial = false;
+  this.sc_Iterator$GroupedIterator__f_padding = null;
+  this.sc_Iterator$GroupedIterator__f_self = self;
+  this.sc_Iterator$GroupedIterator__f_size = size;
+  this.sc_Iterator$GroupedIterator__f_step = step;
+  if ((outer === null)) {
+    $n(null)
+  };
+  var requirement = ((size >= 1) && (step >= 1));
+  if ((!requirement)) {
+    var $$x1 = $m_sc_StringOps$();
+    var array = [this.sc_Iterator$GroupedIterator__f_size, this.sc_Iterator$GroupedIterator__f_step];
+    throw $ct_jl_IllegalArgumentException__T__(new $c_jl_IllegalArgumentException(), ("requirement failed: " + $n($$x1).format$extension__T__sci_Seq__T("size=%d and step=%d, but both must be positive", new $c_sjsr_WrappedVarArgs(array))))
+  };
+  this.sc_Iterator$GroupedIterator__f_buffer = null;
+  this.sc_Iterator$GroupedIterator__f_prev = null;
+  this.sc_Iterator$GroupedIterator__f_first = true;
+  this.sc_Iterator$GroupedIterator__f_filled = false;
+  this.sc_Iterator$GroupedIterator__f_partial = true;
+  this.sc_Iterator$GroupedIterator__f_padding = null
+}
+$c_sc_Iterator$GroupedIterator.prototype = new $h_sc_AbstractIterator();
+$c_sc_Iterator$GroupedIterator.prototype.constructor = $c_sc_Iterator$GroupedIterator;
+/** @constructor */
+function $h_sc_Iterator$GroupedIterator() {
+  /*<skip>*/
+}
+$h_sc_Iterator$GroupedIterator.prototype = $c_sc_Iterator$GroupedIterator.prototype;
+$c_sc_Iterator$GroupedIterator.prototype.hasNext__Z = (function() {
+  return $p_sc_Iterator$GroupedIterator__fill__Z(this)
+});
+$c_sc_Iterator$GroupedIterator.prototype.next__sci_Seq = (function() {
+  if ((!$p_sc_Iterator$GroupedIterator__fill__Z(this))) {
+    return $as_sci_Seq($n($m_sc_Iterator$().sc_Iterator$__f_scala$collection$Iterator$$_empty).next__O())
+  } else {
+    this.sc_Iterator$GroupedIterator__f_filled = false;
+    if ((this.sc_Iterator$GroupedIterator__f_step < this.sc_Iterator$GroupedIterator__f_size)) {
+      if (this.sc_Iterator$GroupedIterator__f_first) {
+        var $$x1 = $m_sc_ArrayOps$();
+        var xs = this.sc_Iterator$GroupedIterator__f_buffer;
+        this.sc_Iterator$GroupedIterator__f_prev = $n($$x1).drop$extension__O__I__O(xs, this.sc_Iterator$GroupedIterator__f_step)
+      } else {
+        var xs$1 = this.sc_Iterator$GroupedIterator__f_buffer;
+        if (($m_jl_reflect_Array$().getLength__O__I(xs$1) === this.sc_Iterator$GroupedIterator__f_size)) {
+          $m_s_Array$().copy__O__I__O__I__I__V(this.sc_Iterator$GroupedIterator__f_buffer, this.sc_Iterator$GroupedIterator__f_step, this.sc_Iterator$GroupedIterator__f_prev, 0, ((this.sc_Iterator$GroupedIterator__f_size - this.sc_Iterator$GroupedIterator__f_step) | 0))
+        } else {
+          this.sc_Iterator$GroupedIterator__f_prev = null
+        }
+      }
+    };
+    var res = $m_sci_ArraySeq$().unsafeWrapArray__O__sci_ArraySeq(this.sc_Iterator$GroupedIterator__f_buffer);
+    this.sc_Iterator$GroupedIterator__f_buffer = null;
+    this.sc_Iterator$GroupedIterator__f_first = false;
+    return res
+  }
+});
+$c_sc_Iterator$GroupedIterator.prototype.next__O = (function() {
+  return this.next__sci_Seq()
+});
+var $d_sc_Iterator$GroupedIterator = new $TypeData().initClass({
+  sc_Iterator$GroupedIterator: 0
+}, false, "scala.collection.Iterator$GroupedIterator", {
+  sc_Iterator$GroupedIterator: 1,
+  sc_AbstractIterator: 1,
+  O: 1,
+  sc_Iterator: 1,
+  sc_IterableOnce: 1,
+  sc_IterableOnceOps: 1
+});
+$c_sc_Iterator$GroupedIterator.prototype.$classData = $d_sc_Iterator$GroupedIterator;
 function $p_sc_Iterator$SliceIterator__skip__V($thiz) {
   while (($thiz.sc_Iterator$SliceIterator__f_dropping > 0)) {
     if ($n($thiz.sc_Iterator$SliceIterator__f_underlying).hasNext__Z()) {
@@ -43713,6 +47986,10 @@ $h_scm_ArrayBuilder.prototype = $c_scm_ArrayBuilder.prototype;
 $c_scm_ArrayBuilder.prototype.sizeHint__I__V = (function(size) {
   /*<skip>*/
 });
+$c_scm_ArrayBuilder.prototype.addAll__O__scm_ArrayBuilder = (function(xs) {
+  var length = $m_jl_reflect_Array$().getLength__O__I(xs);
+  return this.addAll__O__I__I__scm_ArrayBuilder$generic(xs, 0, length)
+});
 /** @constructor */
 function $c_scm_ArraySeq$() {
   this.scm_ArraySeq$__f_untagged = null;
@@ -45505,9 +49782,22 @@ function $h_scm_ArrayBuilder$generic() {
   /*<skip>*/
 }
 $h_scm_ArrayBuilder$generic.prototype = $c_scm_ArrayBuilder$generic.prototype;
+$c_scm_ArrayBuilder$generic.prototype.length__I = (function() {
+  return $uI(this.scm_ArrayBuilder$generic__f_jsElems.length)
+});
 $c_scm_ArrayBuilder$generic.prototype.addOne__O__scm_ArrayBuilder$generic = (function(elem) {
   var unboxedElem = (this.scm_ArrayBuilder$generic__f_isCharArrayBuilder ? $uC(elem) : ((elem === null) ? $n(this.scm_ArrayBuilder$generic__f_elementClass).jl_Class__f_data.zero : elem));
   this.scm_ArrayBuilder$generic__f_jsElems.push(unboxedElem);
+  return this
+});
+$c_scm_ArrayBuilder$generic.prototype.addAll__O__I__I__scm_ArrayBuilder$generic = (function(xs, offset, length) {
+  var end = ((offset + length) | 0);
+  var i = offset;
+  while ((i < end)) {
+    var elem = $m_sr_ScalaRunTime$().array_apply__O__I__O(xs, i);
+    this.addOne__O__scm_ArrayBuilder$generic(elem);
+    i = ((1 + i) | 0)
+  };
   return this
 });
 $c_scm_ArrayBuilder$generic.prototype.addAll__sc_IterableOnce__scm_ArrayBuilder$generic = (function(xs) {
@@ -54309,6 +58599,15 @@ $c_s_xml_Node.prototype.nonEmptyChildren__sc_Seq = (function() {
 $c_s_xml_Node.prototype.canEqual__O__Z = (function(other) {
   return ((!false) && (other instanceof $c_s_xml_Node))
 });
+$c_s_xml_Node.prototype.basisForHashCode__sc_Seq = (function() {
+  var elem$3 = this.prefix__T();
+  var elem$2 = this.label__T();
+  var elem$1 = this.attributes__s_xml_MetaData();
+  var this$1 = $n($n(this.nonEmptyChildren__sc_Seq()).toList__sci_List());
+  var this$2 = new $c_sci_$colon$colon(elem$1, this$1);
+  var this$3 = new $c_sci_$colon$colon(elem$2, this$2);
+  return new $c_sci_$colon$colon(elem$3, this$3)
+});
 $c_s_xml_Node.prototype.strict_$eq$eq__s_xml_Equality__Z = (function(other) {
   if ((!false)) {
     if ((other instanceof $c_s_xml_Node)) {
@@ -56021,8 +60320,71 @@ function $isArrayOf_s_xml_Comment(obj, depth) {
 function $asArrayOf_s_xml_Comment(obj, depth) {
   return (($isArrayOf_s_xml_Comment(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lscala.xml.Comment;", depth))
 }
+/** @constructor */
+function $c_s_xml_EntityRef(entityName) {
+  this.s_xml_EntityRef__f_entityName = null;
+  this.s_xml_EntityRef__f_entityName = entityName
+}
+$c_s_xml_EntityRef.prototype = new $h_s_xml_SpecialNode();
+$c_s_xml_EntityRef.prototype.constructor = $c_s_xml_EntityRef;
+/** @constructor */
+function $h_s_xml_EntityRef() {
+  /*<skip>*/
+}
+$h_s_xml_EntityRef.prototype = $c_s_xml_EntityRef.prototype;
+$c_s_xml_EntityRef.prototype.productIterator__sc_Iterator = (function() {
+  return new $c_s_Product$$anon$1(this)
+});
+$c_s_xml_EntityRef.prototype.productArity__I = (function() {
+  return 1
+});
+$c_s_xml_EntityRef.prototype.productPrefix__T = (function() {
+  return "EntityRef"
+});
+$c_s_xml_EntityRef.prototype.productElement__I__O = (function(n) {
+  if ((n === 0)) {
+    return this.s_xml_EntityRef__f_entityName
+  };
+  throw $ct_jl_IndexOutOfBoundsException__T__(new $c_jl_IndexOutOfBoundsException(), ("" + n))
+});
+$c_s_xml_EntityRef.prototype.label__T = (function() {
+  return "#ENTITY"
+});
+$c_s_xml_EntityRef.prototype.text__T = (function() {
+  var x3 = this.s_xml_EntityRef__f_entityName;
+  switch (x3) {
+    case "lt": {
+      return "<";
+      break
+    }
+    case "gt": {
+      return ">";
+      break
+    }
+    case "amp": {
+      return "&";
+      break
+    }
+    case "apos": {
+      return "'";
+      break
+    }
+    case "quot": {
+      return "\"";
+      break
+    }
+    default: {
+      var sb = $ct_scm_StringBuilder__(new $c_scm_StringBuilder());
+      this.buildString__scm_StringBuilder__scm_StringBuilder(sb);
+      return $n(sb.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content
+    }
+  }
+});
+$c_s_xml_EntityRef.prototype.buildString__scm_StringBuilder__scm_StringBuilder = (function(sb) {
+  return $n(sb).append__T__scm_StringBuilder((("&" + this.s_xml_EntityRef__f_entityName) + ";"))
+});
 function $as_s_xml_EntityRef(obj) {
-  return ((false || (obj === null)) ? obj : $throwClassCastException(obj, "scala.xml.EntityRef"))
+  return (((obj instanceof $c_s_xml_EntityRef) || (obj === null)) ? obj : $throwClassCastException(obj, "scala.xml.EntityRef"))
 }
 function $isArrayOf_s_xml_EntityRef(obj, depth) {
   return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.s_xml_EntityRef)))
@@ -56030,6 +60392,38 @@ function $isArrayOf_s_xml_EntityRef(obj, depth) {
 function $asArrayOf_s_xml_EntityRef(obj, depth) {
   return (($isArrayOf_s_xml_EntityRef(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lscala.xml.EntityRef;", depth))
 }
+var $d_s_xml_EntityRef = new $TypeData().initClass({
+  s_xml_EntityRef: 0
+}, false, "scala.xml.EntityRef", {
+  s_xml_EntityRef: 1,
+  s_xml_SpecialNode: 1,
+  s_xml_Node: 1,
+  s_xml_NodeSeq: 1,
+  sc_AbstractSeq: 1,
+  sc_AbstractIterable: 1,
+  O: 1,
+  sc_Iterable: 1,
+  sc_IterableOnce: 1,
+  sc_IterableOps: 1,
+  sc_IterableOnceOps: 1,
+  sc_IterableFactoryDefaults: 1,
+  sc_Seq: 1,
+  s_PartialFunction: 1,
+  F1: 1,
+  sc_SeqOps: 1,
+  s_Equals: 1,
+  sci_Iterable: 1,
+  sci_SeqOps: 1,
+  sci_Seq: 1,
+  sc_StrictOptimizedIterableOps: 1,
+  sc_StrictOptimizedSeqOps: 1,
+  sci_StrictOptimizedSeqOps: 1,
+  s_xml_ScalaVersionSpecificNodeSeq: 1,
+  s_xml_Equality: 1,
+  Ljava_io_Serializable: 1,
+  s_Product: 1
+});
+$c_s_xml_EntityRef.prototype.$classData = $d_s_xml_EntityRef;
 function $as_s_xml_ProcInstr(obj) {
   return ((false || (obj === null)) ? obj : $throwClassCastException(obj, "scala.xml.ProcInstr"))
 }

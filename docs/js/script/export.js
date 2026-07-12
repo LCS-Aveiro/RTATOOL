@@ -300,6 +300,10 @@ function downloadUppaal(type) {
         content = RTA.getUppaalTGRG(layoutJson); 
         name = "model_tgrg.xml"; 
     }
+    if (type === 'teste') { 
+        content = RTA.getUppaal(layoutJson); 
+        name = "model_teste.xml"; 
+    }
     if (content) downloadString(name, content);
     else alert("Modelo não carregado.");
 }

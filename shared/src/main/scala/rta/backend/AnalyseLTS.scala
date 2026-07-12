@@ -10,45 +10,165 @@ import rta.backend.LtlEvaluator
 
 object AnalyseLTS:
 
-  // Chaves de memoização: uma para simulação discreta, outra para análise DBM/Zonas
-  case class FastStateKey(inits: Set[QName], vars: Map[QName, RuntimeValue], clocks: Map[QName, Double])
-  case class ZoneStateKey(inits: Set[QName], vars: Map[QName, RuntimeValue], zone: DBM.Zone, pending: Set[(Edge, String, QName, Double)] = Set.empty)
+  case class FastStateKey(inits: Set[QName], vars: Map[QName, RuntimeValue], clocks: Map[QName, Double], act: Edges)
+  case class ZoneStateKey(inits: Set[QName], vars: Map[QName, RuntimeValue], zone: DBM.Zone, pending: Set[(Edge, String, QName, Double)], act: Edges)
 
 
-  // ====================================================================
-  // PROVA LTL EXAUSTIVA (BMC SOBRE ZONAS DBM)
-  // ====================================================================
-  def verifyLTLSymbolic(start: RxGraph, formula: LtlFormula, maxStates: Int = 50000, maxDepth: Int = 30): (Boolean, List[String], List[String], Int, Boolean) = {
+  def verifyLTLSymbolic(start: RxGraph, formula: LtlFormula, requestedMaxStates: Int = 50000, requestedMaxDepth: Int = 30): (Boolean, List[String], List[String], Int, Boolean, List[String]) = {
+    
+    def preComputeSpace(): Option[Int] = {
+      var visited = Set[ZoneStateKey]()
+      var queue = List(start)
+      while (queue.nonEmpty && visited.size <= requestedMaxStates) {
+        val cur = queue.head
+        queue = queue.tail
+        val key = ZoneStateKey(cur.inits, cur.val_env, cur.zone, cur.pendingDelays, cur.act)
+        if (!visited.contains(key)) {
+          visited += key
+          queue = queue ++ RxSemantics.nextEdgeSymbolic(cur).map(_._2)
+        }
+      }
+      if (visited.size > requestedMaxStates) None else Some(visited.size)
+    }
+
+    val exactSizeOpt = preComputeSpace()
+    val isExhaustive = exactSizeOpt.isDefined
+    
+    val maxStates = exactSizeOpt.getOrElse(requestedMaxStates)
+    val maxDepth = exactSizeOpt.getOrElse(requestedMaxDepth)
+
     var counterExample: Option[(List[String], List[String])] = None
     var statesExplored = 0
-    var limitReached = false
+    val visitLog = collection.mutable.ListBuffer[String]()
+
+    def evalOnLassoGeneral(prefix: List[RxGraph], cycle: List[RxGraph], f: LtlFormula): Boolean = {
+      val p = prefix.length
+      val states = (prefix ++ cycle).toVector
+      val n = states.length
+      
+      def succ(i: Int): Int = if (i == n - 1) p else i + 1
+
+      def leaf(g: RxGraph, form: LtlFormula): Boolean = form match {
+        case LtlFormula.StateProp(e) => g.act.exists(_._4 == e)
+        case LtlFormula.CondProp(c) => RxSemantics.evalConditionForLTL(c, g)
+        case _ => false
+      }
+
+      def satAt(formula: LtlFormula): Array[Boolean] = formula match {
+        case LtlFormula.True  => Array.fill(n)(true)
+        case LtlFormula.False => Array.fill(n)(false)
+        case LtlFormula.StateProp(_) | LtlFormula.CondProp(_) =>
+          Array.tabulate(n)(i => leaf(states(i), formula))
+        case LtlFormula.Not(a)     => satAt(a).map(!_)
+        case LtlFormula.And(a, b)  => (satAt(a), satAt(b)).zipped.map(_ && _).toArray
+        case LtlFormula.Or(a, b)   => (satAt(a), satAt(b)).zipped.map(_ || _).toArray
+        case LtlFormula.Impl(a, b) => (satAt(a), satAt(b)).zipped.map((x, y) => !x || y).toArray
+        case LtlFormula.Iff(a, b)  => (satAt(a), satAt(b)).zipped.map(_ == _).toArray
+
+        case LtlFormula.Next(a) =>
+          val aOk = satAt(a)
+          Array.tabulate(n)(i => aOk(succ(i)))
+
+        case LtlFormula.Globally(a) =>
+          val aOk = satAt(a)
+          var res = Array.fill(n)(true)
+          var changed = true
+          while (changed) {
+            val next = Array.tabulate(n)(i => aOk(i) && res(succ(i)))
+            changed = !next.sameElements(res)
+            res = next
+          }
+          res
+
+        case LtlFormula.Eventually(a) =>
+          val aOk = satAt(a)
+          var res = Array.fill(n)(false)
+          var changed = true
+          while (changed) {
+            val next = Array.tabulate(n)(i => aOk(i) || res(succ(i)))
+            changed = !next.sameElements(res)
+            res = next
+          }
+          res
+
+        case LtlFormula.Until(a, b) =>
+          val aOk = satAt(a); val bOk = satAt(b)
+          var res = Array.fill(n)(false)
+          var changed = true
+          while (changed) {
+            val next = Array.tabulate(n)(i => bOk(i) || (aOk(i) && res(succ(i))))
+            changed = !next.sameElements(res)
+            res = next
+          }
+          res
+      }
+
+      satAt(f)(0)
+    }
+
+    def isTimeDivergent(cycleStates: List[RxGraph], cycleEdgeIds: List[String]): Boolean = {
+      if (start.clocks.isEmpty) return true
+      if (cycleEdgeIds.contains("delay_node")) return true
+      
+      cycleStates.sliding(2).exists { 
+        case List(a, b) => a.clocks.nonEmpty && a.zone.delay != a.zone
+        case _          => false
+      }
+    }
 
     def dfs(current: RxGraph, path: List[RxGraph], labels: List[String], edgeIds: List[String], depth: Int, visitedInPath: Set[ZoneStateKey]): Unit = {
       if (counterExample.isDefined) return
-      if (statesExplored >= maxStates) {
-        limitReached = true
+      if (statesExplored >= maxStates && !isExhaustive) {
         return
       }
       statesExplored += 1
+      visitLog += current.inits.mkString(",")
 
-      val key = ZoneStateKey(current.inits, current.val_env, current.zone, current.pendingDelays)
+      val key = ZoneStateKey(current.inits, current.val_env, current.zone, current.pendingDelays, current.act)
       val isCycle = visitedInPath.contains(key)
       val nexts = RxSemantics.nextEdgeSymbolic(current)
       val isDeadlock = nexts.isEmpty
 
-      // Chegou ao fim de um ramo (Ciclo, Deadlock ou Limite de Profundidade)
       if (isCycle || isDeadlock || depth >= maxDepth) {
-        val res = LtlEvaluator.eval(path, formula, LtlEvaluator.Hybrid)
+        
+        if (isCycle) {
+          val cycleStartIdx = path.indexWhere { s =>
+            ZoneStateKey(s.inits, s.val_env, s.zone, s.pendingDelays, s.act) == key
+          }
+          val cycleStates = path.drop(cycleStartIdx)
+          val cycleEdges = edgeIds.drop(cycleStartIdx)
+          
+          if (!isTimeDivergent(cycleStates, cycleEdges)) {
+            return 
+          }
+        }
+
+        val res = if (isCycle) {
+          val cycleStartIdx = path.indexWhere { s =>
+            ZoneStateKey(s.inits, s.val_env, s.zone, s.pendingDelays, s.act) == key
+          }
+          evalOnLassoGeneral(path.take(cycleStartIdx), path.drop(cycleStartIdx), formula)
+        } else {
+          LtlEvaluator.eval(path, formula, LtlEvaluator.Hybrid, isSymbolic = true)
+        }
+
         if (!res) {
-          // Formata o contra-exemplo detalhado: {estado atual, act: [arestas]}
           val ceFormatted = collection.mutable.ListBuffer[String]()
           for (i <- path.indices) {
             val g = path(i)
             val inits = g.inits.map(_.show).mkString(",")
             val acts = g.act.map(_._4.show).mkString(", ")
-            ceFormatted += s"{$inits, act: [$acts]}"
             
-            // Adiciona a ação que ligou este estado ao próximo
+            var stateStr = s"{$inits, act: [$acts]}"
+            
+            if (i == path.length - 1) {
+              if (isDeadlock) stateStr += " [DEADLOCK - Semântica de Traço Finito]"
+              else if (isCycle) stateStr += " [CICLO/LASSO DETETADO]"
+              else if (depth >= maxDepth) stateStr += " [LIMITE PROFUNDIDADE]"
+            }
+            
+            ceFormatted += stateStr
+            
             if (i < labels.length) {
               ceFormatted += labels(i)
             }
@@ -58,11 +178,10 @@ object AnalyseLTS:
         return
       }
 
-      // Expande todos os futuros possíveis (Matematicamente esmagados pelo DBM)
       for ((edge, nextGraph) <- nexts) {
         if (counterExample.isEmpty) {
           val label = edge._4.show
-          val edgeId = s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
+          val edgeId = if (label == "timeout") "delay_node" else s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
           dfs(nextGraph, path :+ nextGraph, labels :+ label, edgeIds :+ edgeId, depth + 1, visitedInPath + key)
         }
       }
@@ -71,8 +190,8 @@ object AnalyseLTS:
     dfs(start, List(start), Nil, Nil, 0, Set())
 
     counterExample match {
-      case Some((lbls, ids)) => (false, lbls, ids, statesExplored, limitReached)
-      case None => (true, Nil, Nil, statesExplored, limitReached)
+      case Some((lbls, ids)) => (false, lbls, ids, statesExplored, !isExhaustive, visitLog.toList)
+      case None => (true, Nil, Nil, statesExplored, !isExhaustive, visitLog.toList)
     }
   }
 
@@ -140,9 +259,6 @@ object AnalyseLTS:
     aux(Set(rx), Set(), 0, Set(), Nil, max)
 
 
-  // ====================================================================
-  // DISPATCHERS (Escolhem qual motor usar: Zonas ou Simulação Discreta)
-  // ====================================================================
 
   def findShortestPath(start: RxGraph, targetName: QName, maxStates: Int = 3000, useZones: Boolean = false): Option[List[String]] = {
     if (useZones) findShortestPathSymbolic(start, targetName, maxStates)
@@ -155,9 +271,6 @@ object AnalyseLTS:
   }
 
 
-  // ====================================================================
-  // MOTOR SIMBÓLICO (DBM / ZONAS TEMPORAIS) - Extremamente Rápido
-  // ====================================================================
 
   private def findShortestPathSymbolic(start: RxGraph, targetName: QName, maxStates: Int): Option[List[String]] = {
     val queue = collection.mutable.Queue[(RxGraph, List[String])]()
@@ -171,12 +284,11 @@ object AnalyseLTS:
         return Some(path)
       }
       
-      val key = ZoneStateKey(current.inits, current.val_env, current.zone)
+      val key = ZoneStateKey(current.inits, current.val_env, current.zone, current.pendingDelays, current.act)
       
       if (!visited.contains(key)) {
         visited += key
         
-        // O nextEdgeSymbolic avalia exaustivamente intervalos de tempo infinitos
         val transitions = RxSemantics.nextEdgeSymbolic(current)
         for ((edge, nextGraph) <- transitions) {
           val label = edge._4.show
@@ -193,7 +305,7 @@ object AnalyseLTS:
     val queue = collection.mutable.Queue[RxGraph]()
     val parentOf = collection.mutable.Map[ZoneStateKey, (RxGraph, String)]()
     
-    val startKey = ZoneStateKey(start.inits, start.val_env, start.zone, start.pendingDelays)
+    val startKey = ZoneStateKey(start.inits, start.val_env, start.zone, start.pendingDelays, start.act)
     queue.enqueue(start)
     
     var visitedCount = 0
@@ -205,7 +317,7 @@ object AnalyseLTS:
       val transitions = RxSemantics.nextEdgeSymbolic(current)
       
       for ((edge, nextGraph) <- transitions) {
-        val nextKey = ZoneStateKey(nextGraph.inits, nextGraph.val_env, nextGraph.zone, nextGraph.pendingDelays)
+        val nextKey = ZoneStateKey(nextGraph.inits, nextGraph.val_env, nextGraph.zone, nextGraph.pendingDelays, nextGraph.act)
         val label = edge._4.show
         
         if (!parentOf.contains(nextKey) && nextKey != startKey) {
@@ -231,15 +343,12 @@ object AnalyseLTS:
     while (parentOf.contains(currKey)) {
       val (parentGraph, label) = parentOf(currKey)
       path.prepend(label)
-      currKey = ZoneStateKey(parentGraph.inits, parentGraph.val_env, parentGraph.zone, parentGraph.pendingDelays)
+      currKey = ZoneStateKey(parentGraph.inits, parentGraph.val_env, parentGraph.zone, parentGraph.pendingDelays, parentGraph.act)
     }
     path.toList
   }
 
 
-  // ====================================================================
-  // MOTOR DISCRETO (O que já tinhas, avança com saltos numéricos delay)
-  // ====================================================================
 
   private def findShortestPathDiscrete(start: RxGraph, targetName: QName, maxStates: Int): Option[List[String]] = {
     val queue = collection.mutable.Queue[(RxGraph, List[String])]()
@@ -253,7 +362,7 @@ object AnalyseLTS:
         return Some(path)
       }
       
-      val key = FastStateKey(current.inits, current.val_env, current.clock_env)
+      val key = FastStateKey(current.inits, current.val_env, current.clock_env, current.act)
       
       if (!visited.contains(key)) {
         visited += key
@@ -293,7 +402,7 @@ object AnalyseLTS:
     val queue = collection.mutable.Queue[RxGraph]()
     val parentOf = collection.mutable.Map[FastStateKey, (RxGraph, String)]()
     
-    val startKey = FastStateKey(start.inits, start.val_env, start.clock_env)
+    val startKey = FastStateKey(start.inits, start.val_env, start.clock_env, start.act)
     queue.enqueue(start)
     
     var visitedCount = 0
@@ -319,7 +428,7 @@ object AnalyseLTS:
       } else Nil
 
       for ((label, nextGraph) <- edgeTransitions ++ timeTransitions) {
-        val nextKey = FastStateKey(nextGraph.inits, nextGraph.val_env, nextGraph.clock_env)
+        val nextKey = FastStateKey(nextGraph.inits, nextGraph.val_env, nextGraph.clock_env, nextGraph.act)
         
         if (!parentOf.contains(nextKey) && nextKey != startKey) {
           parentOf(nextKey) = (current, label)
@@ -344,7 +453,7 @@ object AnalyseLTS:
     while (parentOf.contains(currKey)) {
       val (parentGraph, label) = parentOf(currKey)
       path.prepend(label)
-      currKey = FastStateKey(parentGraph.inits, parentGraph.val_env, parentGraph.clock_env)
+      currKey = FastStateKey(parentGraph.inits, parentGraph.val_env, parentGraph.clock_env, parentGraph.act)
     }
     path.toList
   }

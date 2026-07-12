@@ -3,12 +3,63 @@ package rta.backend
 import rta.syntax.Program2.{Edge, Edges, QName, RxGraph}
 import rta.syntax.{Condition, Statement, UpdateExpr, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt, RuntimeValue}
 import scala.annotation.tailrec
+import rta.syntax.LtlFormula
 
 object RxSemantics {
 
   private val EPSILON = 1e-7
 
-  // Avaliação de Expressões (lê clocks como floats se a variável for um clock)
+  object MaxConstants {
+    private def fromExpr(e: UpdateExpr, clock: QName): Option[Double] = e match {
+      case UpdateExpr.LitInt(i) => Some(i.toDouble)
+      case UpdateExpr.LitFloat(f) => Some(f)
+      case _ => None
+    }
+
+    def fromCond(cond: Condition, clocks: Set[QName]): Map[QName, Double] = cond match {
+      case Condition.AtomicCond(UpdateExpr.Var(c), _, rhs) if clocks.contains(c) =>
+        fromExpr(rhs, c).map(v => Map(c -> v)).getOrElse(Map.empty)
+      case Condition.AtomicCond(lhs, _, UpdateExpr.Var(c)) if clocks.contains(c) =>
+        fromExpr(lhs, c).map(v => Map(c -> v)).getOrElse(Map.empty)
+      case Condition.And(l, r) => mergeMax(fromCond(l, clocks), fromCond(r, clocks))
+      case Condition.Or(l, r)  => mergeMax(fromCond(l, clocks), fromCond(r, clocks))
+      case _ => Map.empty
+    }
+
+
+    def fromLTL(f: LtlFormula, clocks: Set[QName]): Map[QName, Double] = f match {
+      case LtlFormula.CondProp(c) => fromCond(c, clocks)
+      case LtlFormula.Not(p) => fromLTL(p, clocks)
+      case LtlFormula.And(p, q) => mergeMax(fromLTL(p, clocks), fromLTL(q, clocks))
+      case LtlFormula.Or(p, q)  => mergeMax(fromLTL(p, clocks), fromLTL(q, clocks))
+      case LtlFormula.Impl(p, q) => mergeMax(fromLTL(p, clocks), fromLTL(q, clocks))
+      case LtlFormula.Iff(p, q)  => mergeMax(fromLTL(p, clocks), fromLTL(q, clocks))
+      case LtlFormula.Next(p) => fromLTL(p, clocks)
+      case LtlFormula.Globally(p) => fromLTL(p, clocks)
+      case LtlFormula.Eventually(p) => fromLTL(p, clocks)
+      case LtlFormula.Until(p, q) => mergeMax(fromLTL(p, clocks), fromLTL(q, clocks))
+      case _ => Map.empty
+    }
+
+    def mergeMax(a: Map[QName, Double], b: Map[QName, Double]): Map[QName, Double] =
+      (a.keySet ++ b.keySet).map(k => k -> Math.max(a.getOrElse(k, 0.0), b.getOrElse(k, 0.0))).toMap
+
+    def compute(rx: RxGraph): Map[QName, Double] = {
+      val clocks = rx.clocks
+      var acc = Map.empty[QName, Double]
+
+      rx.invariants.values.foreach(c => acc = mergeMax(acc, fromCond(c, clocks)))
+      rx.edgeConditions.values.flatten.foreach(c => acc = mergeMax(acc, fromCond(c, clocks)))
+      
+      rx.delays.values.foreach { case (clock, v) =>
+        if (clocks.contains(clock)) acc = mergeMax(acc, Map(clock -> v))
+      }
+      
+      clocks.foreach(c => if (!acc.contains(c)) acc += (c -> 0.0))
+      acc
+    }
+  }
+
   def evalExpr(expr: UpdateExpr, env: Map[QName, RuntimeValue], rx: RxGraph): RuntimeValue = expr match {
     case UpdateExpr.LitInt(i) => RuntimeValue.VInt(i)
     case UpdateExpr.LitFloat(f) => RuntimeValue.VFloat(f)
@@ -53,7 +104,6 @@ object RxSemantics {
           val evalArgs = args.map(a => evalExpr(a, env, rx))
           var localEnv = env
           funcDef.params.zip(evalArgs).foreach { case (param, v) => localEnv += (param -> v) }
-          // Executa a função localmente (clocks não são alterados em scope de função puramente lógico)
           val (finalEnv, _) = applyUpdates(funcDef.body, rx.copy(val_env = localEnv))
           finalEnv.getOrElse(QName(List("__return")), RuntimeValue.VInt(0))
         case None => RuntimeValue.VInt(0)
@@ -67,7 +117,29 @@ object RxSemantics {
     case Condition.Or(l, r) => evalCondition(l, rx) || evalCondition(r, rx)
   }
 
-  // Não altera a Zona, apenas afeta as variáveis e os doubles (Motor Discreto)
+  def evalConditionForLTL(cond: Condition, rx: RxGraph): Boolean = cond match {
+    case Condition.AtomicCond(UpdateExpr.Var(c), _, _) if rx.clocks.contains(c) =>
+      throw new Exception("Avaliação LTL de relógios em Zonas DBM exige 'zone-splitting' (não suportado).")
+    case Condition.AtomicCond(_, _, UpdateExpr.Var(c)) if rx.clocks.contains(c) =>
+      throw new Exception("Avaliação LTL de relógios em Zonas DBM exige 'zone-splitting' (não suportado).")
+    case Condition.AtomicCond(l, op, r) =>
+      Condition.compareValues(evalExpr(l, rx.val_env, rx), op, evalExpr(r, rx.val_env, rx))
+    case Condition.And(l, r) => evalConditionForLTL(l, rx) && evalConditionForLTL(r, rx)
+    case Condition.Or(l, r) => evalConditionForLTL(l, rx) || evalConditionForLTL(r, rx)
+  }
+
+  @tailrec
+  private def cascade(pending: Set[QName], done: Set[Edge])(using rx: RxGraph): Edges = {
+    if (pending.isEmpty) done
+    else {
+      val curr = pending.head
+      val rulesOn = rx.on.getOrElse(curr, Set.empty).map(t => (curr, t._1, t._2, t._3))
+      val rulesOff = rx.off.getOrElse(curr, Set.empty).map(t => (curr, t._1, t._2, t._3))
+      val newRules = (rulesOn ++ rulesOff).filter(rx.act.contains) -- done
+      cascade(pending.tail ++ newRules.map(_._4).filter(_.n.nonEmpty), done ++ newRules)
+    }
+  }
+
   def applyUpdates(stmts: List[Statement], rx: RxGraph): (Map[QName, RuntimeValue], Map[QName, Double]) = {
     var currentEnv = rx.val_env
     var currentClockEnv = rx.clock_env
@@ -155,22 +227,10 @@ object RxSemantics {
 
   def from(e: Edge, rx: RxGraph): Set[Edge] = cascade(Set(e._4), Set())(using rx)
 
-  @tailrec
-  private def cascade(pending: Set[QName], done: Set[Edge])(using rx: RxGraph): Edges = {
-    if (pending.isEmpty) done
-    else {
-      val curr = pending.head
-      val rulesOn = rx.on.getOrElse(curr, Set.empty).map(t => (curr, t._1, t._2, t._3))
-      val rulesOff = rx.off.getOrElse(curr, Set.empty).map(t => (curr, t._1, t._2, t._3))
-      val newRules = (rulesOn ++ rulesOff).filter(rx.act.contains) -- done
-      cascade(pending.tail ++ newRules.map(_._4).filter(_.n.nonEmpty), done ++ newRules)
-    }
-  }
-
   private def getHyperEdgeEffects(e: Edge, rx: RxGraph, evalFn: (Condition, RxGraph) => Boolean = evalCondition): (Edges, Edges, List[Statement], Set[(Edge, String, QName, Double)]) = {
     val triggeredHyperEdges = from(e, rx)
     var toActivate = Set.empty[Edge]
-    var toDeactivate = Set.empty[Edge] // <-- CORRIGIDO
+    var toDeactivate = Set.empty[Edge]
     var updatesToApply = List.empty[Statement]
     var newPending = Set.empty[(Edge, String, QName, Double)]
 
@@ -187,19 +247,17 @@ object RxSemantics {
           
           if (rx.delays.contains(ruleLabel)) {
             val (clock, delayVal) = rx.delays(ruleLabel)
-            val currentClock = rx.clock_env.getOrElse(clock, 0.0)
-            if (isOn) newPending += ((hyperEdge, "on", clock, currentClock + delayVal))
-            if (isOff) newPending += ((hyperEdge, "off", clock, currentClock + delayVal))
+            if (isOn) newPending += ((hyperEdge, "on", clock, delayVal))
+            if (isOff) newPending += ((hyperEdge, "off", clock, delayVal))
           } else {
             if (isOn) toActivate = toActivate ++ rx.lbls.getOrElse(targetLabel, Set.empty)
-            if (isOff) toDeactivate = toDeactivate ++ rx.lbls.getOrElse(targetLabel, Set.empty) // <-- CORRIGIDO
+            if (isOff) toDeactivate = toDeactivate ++ rx.lbls.getOrElse(targetLabel, Set.empty)
           }
         }
       }
     }
-    (toActivate, toDeactivate, updatesToApply, newPending) // <-- CORRIGIDO
+    (toActivate, toDeactivate, updatesToApply, newPending)
   }
-
 
   def evalDataCondition(cond: Condition, rx: RxGraph): Boolean = cond match {
     case Condition.AtomicCond(UpdateExpr.Var(c), _, _) if rx.clocks.contains(c) => true
@@ -223,14 +281,11 @@ object RxSemantics {
     }
   }
 
-
-
   def nextEdgeSymbolic(rx0: RxGraph): Set[(Edge, RxGraph)] = {
     val rxTimeOpt = advanceTimeZone(rx0)
     if (rxTimeOpt.isEmpty) return Set.empty
     val rx = rxTimeOpt.get
 
-    // 1. Transições Físicas Padrão (só ocorrem se a aresta estiver ativa)
     val transitions = for {
       st <- rx.inits
       (st2, tid, lbl) <- rx.edg.getOrElse(st, Set.empty)
@@ -250,11 +305,17 @@ object RxSemantics {
         
         val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ hStmts
         val (nextEnv, nextClockEnv) = applyUpdates(allStmts, rx)
+
+        val absolutePending = newPending.map { case (he, op, clk, dVal) =>
+          (he, op, clk, nextClockEnv.getOrElse(clk, 0.0) + dVal)
+        }
         
         val clockResets = allStmts.collect { 
           case AssignStmt(v, _) if rx.clocks.contains(v) => v 
         }
-        val zoneAfterUpdates = clockResets.foldLeft(zoneAfterGuard.get)(_.reset(_))
+        
+        val zoneAfterResets = clockResets.foldLeft(zoneAfterGuard.get)(_.reset(_))
+        val zoneAfterUpdates = zoneAfterResets.extrapolate(rx.maxConstants)
 
         Some((edge, rx.copy(
           inits = (rx.inits - st) + st2,
@@ -262,7 +323,7 @@ object RxSemantics {
           val_env = nextEnv,
           clock_env = nextClockEnv,
           zone = zoneAfterUpdates,
-          pendingDelays = rx.pendingDelays ++ newPending
+          pendingDelays = rx.pendingDelays ++ absolutePending
         )))
       } else None
     }
@@ -274,20 +335,16 @@ object RxSemantics {
       })
     }.toSet
 
-    // 2. Transições Simbólicas de Timeout (Amadurecimento do Delay na Zona DBM)
-    // Se houver delays pendentes que matematicamente conseguem amadurecer (clock >= targetVal)
     val timeoutTransitions = for {
       pending <- rx.pendingDelays
       (hyperEdge, opType, clock, targetVal) = pending
-      // Constringimos a zona para garantir que o relógio chegou ao valor do timeout
       maturedZoneOpt = rx.zone.constrain(DBM.ZERO_CLOCK, clock, -targetVal, isStrict = false)
       if maturedZoneOpt.isDefined
     } yield {
-      val maturedZone = maturedZoneOpt.get
+      val maturedZone = maturedZoneOpt.get.extrapolate(rx.maxConstants)
       val targetLabel = hyperEdge._2
       val affectedEdges = rx.lbls.getOrElse(targetLabel, Set.empty)
       
-      // Aplica a reconfiguração (Ligar/Desligar) na lista de arestas ativas
       val newAct = if (opType == "on") rx.act ++ affectedEdges else rx.act -- affectedEdges
       
       val nextRx = rx.copy(
@@ -297,7 +354,6 @@ object RxSemantics {
       )
       
       val ruleLabel = hyperEdge._4
-      // Criamos uma pseudo-aresta de transição de tempo para desenhar no grafo
       val pseudoEdge: Edge = (
         rx.inits.headOption.getOrElse(QName(Nil)), 
         rx.inits.headOption.getOrElse(QName(Nil)), 
@@ -310,11 +366,7 @@ object RxSemantics {
     standardTransitions ++ timeoutTransitions
   }
 
-  // =======================================================
-  // MOTOR DISCRETO CLÁSSICO (O Original que conta Segundos)
-  // =======================================================
   def nextEdge(rx0: RxGraph): Set[(Edge, RxGraph)] = {
-    // 1. O Tempo passa e corta nos Invariantes (para acompanhar o backend)
     val rxTimeOpt = advanceTimeZone(rx0)
     if (rxTimeOpt.isEmpty) return Set.empty
     val rx = rxTimeOpt.get
@@ -332,14 +384,16 @@ object RxSemantics {
         case None => Some(rx.zone)
       }
 
-      // Só avança se a Guarda de tempo permitir (a zona não é None)
       if (zoneAfterGuard.isDefined && condOpt.forall(c => evalCondition(c, rx))) {
-        val (toAct, toDeact, hStmts, newPending) = getHyperEdgeEffects(edge, rx)
+        val (toAct, toDeact, hStmts, relativePending) = getHyperEdgeEffects(edge, rx)
         val currentAct = (rx.act ++ toAct) -- toDeact
         
         val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ hStmts
-        
         val (nextEnv, nextClockEnv) = applyUpdates(allStmts, rx)
+        
+        val absolutePending = relativePending.map { case (he, op, clk, dVal) =>
+          (he, op, clk, nextClockEnv.getOrElse(clk, 0.0) + dVal)
+        }
         
         val clockResets = allStmts.collect { 
           case AssignStmt(v, _) if rx.clocks.contains(v) => v 
@@ -352,7 +406,7 @@ object RxSemantics {
           val_env = nextEnv,
           clock_env = nextClockEnv,
           zone = zoneAfterUpdates, 
-          pendingDelays = rx.pendingDelays ++ newPending
+          pendingDelays = rx.pendingDelays ++ absolutePending
         )))
       } else None
     }
@@ -442,13 +496,15 @@ object RxSemantics {
       }
     }
     
-    currentZone.map(z => rx0.copy(zone = z))
+    for (pending <- rx0.pendingDelays) {
+      val clock = pending._3
+      val targetVal = pending._4
+      currentZone = currentZone.flatMap(z => z.constrain(clock, DBM.ZERO_CLOCK, targetVal, isStrict = false))
+    }
+    
+    currentZone.map(z => rx0.copy(zone = z.extrapolate(rx0.maxConstants)))
   }
 
-  
-
-
-  // Recebe RX explicitamente para ter acesso à lista de Clocks (rx.clocks)
   def intersectConditionWithZone(cond: Condition, zone: DBM.Zone, rx: RxGraph): Option[DBM.Zone] = cond match {
     case Condition.AtomicCond(UpdateExpr.Var(clock), op, UpdateExpr.LitInt(v)) if rx.clocks.contains(clock) => 
       op match {
@@ -463,7 +519,6 @@ object RxSemantics {
       }
       
     case Condition.And(l, r) =>
-      // Passamos os 3 parâmetros corretamente em vez de usar o "using"
       intersectConditionWithZone(l, zone, rx).flatMap(z => intersectConditionWithZone(r, z, rx))
       
     case _ => Some(zone)

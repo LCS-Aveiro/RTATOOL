@@ -51,7 +51,8 @@ object Program2:
         clock_env = rx.clock_env.map { case (k, v) => (this / k) -> v },
         invariants = rx.invariants.map { case (k, v) => (this / k) -> applyPrefixToCondition(this, v) },
         delays = rx.delays.map { case (rule, (clock, value)) => (this / rule) -> (this / clock, value) },
-        pendingDelays = rx.pendingDelays.map { case (edge, op, clock, value) => ((this / edge._1, this / edge._2, this / edge._3, this / edge._4), op, this / clock, value) }
+        pendingDelays = rx.pendingDelays.map { case (edge, op, clock, value) => ((this / edge._1, this / edge._2, this / edge._3, this / edge._4), op, this / clock, value) },
+        maxConstants = rx.maxConstants.map { case (k, v) => (this / k) -> v }
       )
   
   def applyPrefixToExpr(prefix: QName, expr: UpdateExpr): UpdateExpr = expr match {
@@ -120,7 +121,8 @@ object Program2:
                      edgeConditions: Map[Edge, Option[Condition]], 
                      edgeUpdates: Map[Edge, List[Statement]],
                      delays: Map[QName, (QName, Double)] = Map.empty,
-                     pendingDelays: Set[(Edge, String, QName, Double)] = Set.empty
+                     pendingDelays: Set[(Edge, String, QName, Double)] = Set.empty,
+                     maxConstants: Map[QName, Double] = Map.empty
                     ):
 
     override def toString: String =
@@ -174,7 +176,7 @@ object Program2:
         inits++r.inits,
         act++r.act,
         val_env ++ r.val_env,
-        zone, // Mantemos a zona base (idealmente a união dos clocks)
+        zone, 
         functions ++ r.functions,
         clocks ++ r.clocks,
         clock_env ++ r.clock_env,
@@ -182,7 +184,8 @@ object Program2:
         edgeConditions ++ r.edgeConditions,
         edgeUpdates ++ r.edgeUpdates,
         delays ++ r.delays,
-        pendingDelays ++ r.pendingDelays
+        pendingDelays ++ r.pendingDelays,
+        maxConstants ++ r.maxConstants
       )
 
   object RxGraph: 
@@ -202,7 +205,8 @@ object Program2:
       edgeConditions = Map().withDefaultValue(None), 
       edgeUpdates = Map().withDefaultValue(Nil),
       delays = Map(), 
-      pendingDelays = Set()
+      pendingDelays = Set(),
+      maxConstants = Map()
     )
 
     def toMermaid(rx: RxGraph): String =
