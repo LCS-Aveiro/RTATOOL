@@ -308,17 +308,14 @@ function startLTLSimulation() {
             ltlTotalTraces += resObj.passedCount;
             document.getElementById("ltlSimStats").innerText = "Avaliados: " + ltlTotalTraces;
 
-            // Escreve uma amostra visual do lote no terminal (com os Delays!)
-            // Escreve uma amostra visual do lote no terminal
             if (resObj.sample && resObj.passedCount > 0) {
                 var line = `[Pass ${ltlTotalTraces}] ➔ ${resObj.sample}\n`;
                 consoleDiv.innerHTML += line;
                 consoleDiv.scrollTop = consoleDiv.scrollHeight;
 
-                // NOVO: PISCA O TRAÇO DE SUCESSO ULTRA-RÁPIDO!
                 if (resObj.samplePath && resObj.samplePath.length > 0) {
                     if (typeof playCounterexample === 'function') {
-                        playCounterexample(true, resObj.samplePath, 40); // 40ms speed!
+                        playCounterexample(true, resObj.samplePath, 40); 
                     }
                 }
             }
@@ -328,7 +325,6 @@ function startLTLSimulation() {
             }
 
 
-            // Se falhou num dos traços deste lote
             if (!resObj.success) {
                 ltlTotalTraces += 1;
                 document.getElementById("ltlSimStats").innerText = "Avaliados: " + ltlTotalTraces + " (FALHOU!)";
@@ -340,7 +336,6 @@ function startLTLSimulation() {
                 
                 document.getElementById("ltlResult").innerHTML = '<span style="color:red"><span class="glyphicon glyphicon-remove"></span> A fórmula falhou num dos percursos. A animar o erro...</span>';
 
-                // Toca a animação vermelha do contra-exemplo no grafo
                 window.lastCounterexample = resObj.path;
                 if (typeof playCounterexample === 'function') {
                     playCounterexample(false);
@@ -349,9 +344,8 @@ function startLTLSimulation() {
                 return;
             }
 
-            // Continua a pedir o próximo lote
             if (isLtlSimulating) {
-                ltlSimTimer = setTimeout(simLoop, 20); // 20ms de delay para não travar o ecrã
+                ltlSimTimer = setTimeout(simLoop, 20); 
             }
         } catch (e) {
             consoleDiv.innerHTML += "<span style='color:orange'>Erro interno de parsing.</span>\n";
@@ -373,13 +367,11 @@ function stopLTLSimulation() {
     }
 }
 
-// Botão para testar apenas 1 vez (dispara 1 lote de tamanho 1)
 function runLtlMultiple() {
     var backupSize = document.getElementById("ltlBatchSize").value;
     document.getElementById("ltlBatchSize").value = 1;
     startLTLSimulation();
     
-    // Paramos logo após iniciar para que ele faça apenas 1 iteração
     setTimeout(() => {
         stopLTLSimulation();
         document.getElementById("ltlBatchSize").value = backupSize;

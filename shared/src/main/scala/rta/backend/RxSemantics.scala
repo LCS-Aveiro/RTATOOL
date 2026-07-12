@@ -7,7 +7,7 @@ import rta.syntax.LtlFormula
 
 object RxSemantics {
 
-  private val EPSILON = 1e-7
+  private val EPSILON = 1e-5
 
   object MaxConstants {
     private def fromExpr(e: UpdateExpr, clock: QName): Option[Double] = e match {

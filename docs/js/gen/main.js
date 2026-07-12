@@ -8814,7 +8814,7 @@ function $p_Lrta_backend_RxSemantics$__process$1__Lrta_syntax_Program2$RxGraph__
 /** @constructor */
 function $c_Lrta_backend_RxSemantics$() {
   this.Lrta_backend_RxSemantics$__f_EPSILON = 0.0;
-  this.Lrta_backend_RxSemantics$__f_EPSILON = 1.0E-7
+  this.Lrta_backend_RxSemantics$__f_EPSILON = 1.0E-5
 }
 $c_Lrta_backend_RxSemantics$.prototype = new $h_O();
 $c_Lrta_backend_RxSemantics$.prototype.constructor = $c_Lrta_backend_RxSemantics$;
@@ -16691,87 +16691,20 @@ $c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid__T = (function() {
   var this$48 = $n($$x1);
   return $as_T((this$48.isEmpty__Z() ? "graph LR\n0(Nenhum modelo carregado)" : this$48.get__O()))
 });
-$c_Lrta_frontend_RTAAPI$.prototype.findBestPath = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.findBestPath__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsJSON = (function() {
-  return this.getSymbolicStepsJSON__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.undo = (function() {
-  return this.undo__T()
-});
 $c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateMermaid = (function() {
   return this.getCurrentStateMermaid__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.findPathToValueZone = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.findPathToValueZone__T__sjs_js_Any(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getUppaal = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.getUppaal__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateMermaidSimple = (function() {
-  return this.getCurrentStateMermaidSimple__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.findBestPathZone = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.findBestPathZone__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getUppaalTGRG = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.getUppaalTGRG__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.checkProblems = (function() {
-  return this.checkProblems__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getExamples = (function() {
-  return this.getExamples__T()
 });
 $c_Lrta_frontend_RTAAPI$.prototype.advanceTime = (function(arg) {
   var prep0 = $uD(arg);
   return this.advanceTime__D__T(prep0)
 });
+$c_Lrta_frontend_RTAAPI$.prototype.findBestPathZone = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.findBestPathZone__T__T(prep0)
+});
 $c_Lrta_frontend_RTAAPI$.prototype.loadModel = (function(arg) {
   var prep0 = $as_T(arg);
   return this.loadModel__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.takeStep = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.takeStep__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.verifyLTLBatch = (function(arg, arg$2, arg$3) {
-  var prep0 = $as_T(arg);
-  var prep1 = $uI(arg$2);
-  var prep2 = $uI(arg$3);
-  return this.verifyLTLBatch__T__I__I__T(prep0, prep1, prep2)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.runPdl = (function(arg, arg$2, arg$3) {
-  var prep0 = $as_T(arg);
-  var prep1 = $as_T(arg$2);
-  var prep2 = $uI(arg$3);
-  return this.runPdl__T__T__I__T(prep0, prep1, prep2)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.testLTLEquivalence = (function(arg, arg$2, arg$3) {
-  var prep0 = $as_T(arg);
-  var prep1 = $as_T(arg$2);
-  var prep2 = $uI(arg$3);
-  return this.testLTLEquivalence__T__T__I__T(prep0, prep1, prep2)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid = (function() {
-  return this.getAllStepsMermaid__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.debugZoneGraphSize = (function(...rest) {
-  var prep0 = ((rest[0] === (void 0)) ? 200000 : $uI(rest[0]));
-  return this.debugZoneGraphSize__I__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.findPathToValue = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.findPathToValue__T__sjs_js_Any(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid = (function() {
-  return this.getSymbolicStepsMermaid__T()
 });
 $c_Lrta_frontend_RTAAPI$.prototype.runLTLExhaustive = (function(arg, arg$2, arg$3) {
   var prep0 = $as_T(arg);
@@ -16779,17 +16712,84 @@ $c_Lrta_frontend_RTAAPI$.prototype.runLTLExhaustive = (function(arg, arg$2, arg$
   var prep2 = $uI(arg$3);
   return this.runLTLExhaustive__T__I__I__T(prep0, prep1, prep2)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateText = (function() {
-  return this.getCurrentStateText__T()
+$c_Lrta_frontend_RTAAPI$.prototype.translateToGLTS = (function() {
+  return this.translateToGLTS__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getUppaal = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.getUppaal__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.takeStep = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.takeStep__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsJSON = (function() {
+  return this.getSymbolicStepsJSON__T()
 });
 $c_Lrta_frontend_RTAAPI$.prototype.getStats = (function() {
   return this.getStats__T()
 });
-$c_Lrta_frontend_RTAAPI$.prototype.translateToGLTS = (function() {
-  return this.translateToGLTS__T()
+$c_Lrta_frontend_RTAAPI$.prototype.undo = (function() {
+  return this.undo__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateText = (function() {
+  return this.getCurrentStateText__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid = (function() {
+  return this.getSymbolicStepsMermaid__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.findPathToValue = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.findPathToValue__T__sjs_js_Any(prep0)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.getMcrl2 = (function() {
   return this.getMcrl2__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.checkProblems = (function() {
+  return this.checkProblems__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.findBestPath = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.findBestPath__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.findPathToValueZone = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.findPathToValueZone__T__sjs_js_Any(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getExamples = (function() {
+  return this.getExamples__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.debugZoneGraphSize = (function(...rest) {
+  var prep0 = ((rest[0] === (void 0)) ? 200000 : $uI(rest[0]));
+  return this.debugZoneGraphSize__I__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getUppaalTGRG = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.getUppaalTGRG__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateMermaidSimple = (function() {
+  return this.getCurrentStateMermaidSimple__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.verifyLTLBatch = (function(arg, arg$2, arg$3) {
+  var prep0 = $as_T(arg);
+  var prep1 = $uI(arg$2);
+  var prep2 = $uI(arg$3);
+  return this.verifyLTLBatch__T__I__I__T(prep0, prep1, prep2)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid = (function() {
+  return this.getAllStepsMermaid__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.testLTLEquivalence = (function(arg, arg$2, arg$3) {
+  var prep0 = $as_T(arg);
+  var prep1 = $as_T(arg$2);
+  var prep2 = $uI(arg$3);
+  return this.testLTLEquivalence__T__T__I__T(prep0, prep1, prep2)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.runPdl = (function(arg, arg$2, arg$3) {
+  var prep0 = $as_T(arg);
+  var prep1 = $as_T(arg$2);
+  var prep2 = $uI(arg$3);
+  return this.runPdl__T__T__I__T(prep0, prep1, prep2)
 });
 var $d_Lrta_frontend_RTAAPI$ = new $TypeData().initClass({
   Lrta_frontend_RTAAPI$: 0
