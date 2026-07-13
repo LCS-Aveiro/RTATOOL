@@ -99,7 +99,6 @@ function applySavedPositions(graphElements, sourceCode) {
     }
 }
 
-// ── File import / export ─────────────────────────────────────
 
 function exportAllLayoutsToFile() {
     if (typeof localStorage === 'undefined') {

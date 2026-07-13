@@ -16,7 +16,7 @@ function updateBPField() {
 
 function findPathByValue() {
     const type         = document.getElementById('bpType').value;
-    const engine       = document.getElementById('bpEngine').value; // NOVO
+    const engine       = document.getElementById('bpEngine').value; 
     const targetValue  = document.getElementById('bpValue').value.trim();
     const summaryDiv   = document.getElementById('bpResultSummary');
     const pathDiv      = document.getElementById('bpResultPath');
@@ -34,7 +34,6 @@ function findPathByValue() {
 
     let response;
     
-    // Faz o dispatch baseado no motor escolhido!
     if (type === 'state') {
         if (engine === 'symbolic') {
             response = RTA.findBestPathZone(targetValue);

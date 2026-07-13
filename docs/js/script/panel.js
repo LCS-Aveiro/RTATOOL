@@ -15,7 +15,6 @@ function renderGlobalPanel(data, targetId) {
     var t      = i18n[currentLang];
     var suffix = containerId === 'sidePanel' ? '' : ('-' + containerId);
 
-    // BOTOES DE TOPO (Undo e Auto-Play)
     var topBtns = document.createElement('div');
     topBtns.style.display = 'flex';
     topBtns.style.gap = '5px';
@@ -27,7 +26,7 @@ function renderGlobalPanel(data, targetId) {
     undoBtn.innerHTML = '<span class="glyphicon glyphicon-step-backward"></span> Undo';
     undoBtn.disabled  = !panelData.canUndo;
     undoBtn.onclick   = function () {
-        if (autoPlayTimer) toggleAutoPlay(); // Para auto-play se estiver a correr
+        if (autoPlayTimer) toggleAutoPlay(); 
         var json = RTA.undo();
         if (jsTextHistory.length > 1) jsTextHistory.pop();
         updateAllViews(json);
@@ -43,7 +42,6 @@ function renderGlobalPanel(data, targetId) {
     topBtns.appendChild(autoPlayBtn);
     panelDiv.appendChild(topBtns);
 
-    // VARIÁVEIS E RELÓGIOS
     if (
         (panelData.clocks   && Object.keys(panelData.clocks).length   > 0) ||
         (panelData.variables && Object.keys(panelData.variables).length > 0)
@@ -71,7 +69,6 @@ function renderGlobalPanel(data, targetId) {
         panelDiv.appendChild(infoList);
     }
 
-    // NOVO: PENDENTES / AGENDADOS
     if (panelData.pending && panelData.pending.length > 0) {
         var pendHeader = document.createElement('div');
         pendHeader.className = 'sec-label';
@@ -92,7 +89,6 @@ function renderGlobalPanel(data, targetId) {
         panelDiv.appendChild(pendList);
     }
 
-    // TRANSIÇÕES DISPONÍVEIS
     panelDiv.appendChild(document.createElement('hr'));
     var transHeader       = document.createElement('div');
     transHeader.className = 'sec-label';
@@ -108,7 +104,7 @@ function renderGlobalPanel(data, targetId) {
         dead.style.cssText = "padding:5px; font-size:12px; font-weight:bold;";
         dead.innerText = (t.deadlock || "DEADLOCK") + " (LOOP)";
         panelDiv.appendChild(dead);
-        if(autoPlayTimer) toggleAutoPlay(); // Para o auto-play se bater em deadlock
+        if(autoPlayTimer) toggleAutoPlay();
     }
 
     if (panelData.enabled.length > 0) {
@@ -123,12 +119,11 @@ function renderGlobalPanel(data, targetId) {
     }
 }
 
-// O MOTOR DO AUTO-PLAY
 function toggleAutoPlay() {
     if (autoPlayTimer) {
         clearInterval(autoPlayTimer);
         autoPlayTimer = null;
-        updateAllViews(JSON.stringify(lastModelData)); // Atualiza UI para repor botões
+        updateAllViews(JSON.stringify(lastModelData));
     } else {
         autoPlayTimer = setInterval(() => {
             if(!lastModelData || !lastModelData.panelData || !lastModelData.panelData.enabled) return;
@@ -137,23 +132,20 @@ function toggleAutoPlay() {
                 toggleAutoPlay(); return;
             }
             
-            // Escolhe uma ação aleatória da lista
             let valid = enabled.filter(e => e.label !== 'deadlock');
             if(valid.length === 0) return;
             let choice = valid[Math.floor(Math.random() * valid.length)];
             
             if (choice.isDelay) {
-                // Se escolheu Delay, avança o tempo por um valor aleatório (ex: até 1.5s)
                 let rDelay = parseFloat((0.1 + Math.random() * 1.5).toFixed(2));
                 updateAllViews(RTA.advanceTime(rDelay));
             } else {
-                // Se escolheu transição, clica nela
                 var json = RTA.takeStep(JSON.stringify(choice));
                 var newStateText = RTA.getCurrentStateText();
                 jsTextHistory.push({ label: choice.label + " ->", text: newStateText });
                 updateAllViews(json);
             }
-        }, 1200); // 1.2 segundos por passo
+        }, 1200); 
         updateAllViews(JSON.stringify(lastModelData)); 
     }
 }

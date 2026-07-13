@@ -140,7 +140,6 @@ async function setupInitialCytoscape(mainContainerId, data) {
         pixelRatio: 1
     });
 
-    // Edge-editing extension
     if (cy.edgeEditing) {
         cy.edgeEditing({
             undoable: false,
@@ -159,7 +158,6 @@ async function setupInitialCytoscape(mainContainerId, data) {
         });
     }
 
-    // Auto-save layout on drag
     let saveTimeout;
     const triggerAutoSave = () => {
         clearTimeout(saveTimeout);
@@ -172,7 +170,6 @@ async function setupInitialCytoscape(mainContainerId, data) {
     cy.on('dragfree',  'node', triggerAutoSave);
     cy.on('cedragfree','edge', triggerAutoSave);
 
-    // Step on event node tap
     cy.on('tap', 'node.event-node.enabled', function (evt) {
         var node  = evt.target;
         var parts = node.id().split('_');
@@ -185,8 +182,7 @@ async function setupInitialCytoscape(mainContainerId, data) {
         }
     });
 
-    // Hover: restore original hover_label swap (technical/full name preview)
-    // plus the 'hovered' class / cursor handling used elsewhere in the styles.
+
     cy.on('mouseover', 'node.event-node, edge', function (evt) {
         var target = evt.target;
         target.addClass('hovered');
@@ -213,7 +209,6 @@ async function setupInitialCytoscape(mainContainerId, data) {
         }
     });
 
-    // Edge detail modal on double-tap
     cy.on('dbltap', 'edge.has-details', function (evt) {
         var rawText      = evt.target.data('full_label');
         var contentPre   = document.getElementById('edgeDetailContent');
@@ -230,7 +225,6 @@ async function setupInitialCytoscape(mainContainerId, data) {
     if (window.applyFilters) window.applyFilters();
 }
 
-// ── Misc helpers ─────────────────────────────────────────────
 
 function formatCode(code) {
     if (!code) return "";
@@ -301,7 +295,6 @@ function downloadString(filename, content) {
 function showStats()    { document.getElementById("analysisResult").innerText = RTA.getStats(); }
 function checkProblems(){ document.getElementById("analysisResult").innerText = RTA.checkProblems(); }
 
-// ── jQuery ready ─────────────────────────────────────────────
 
 $(document).ready(function () {
     loadAppSettings();

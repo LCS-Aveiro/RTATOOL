@@ -12,6 +12,8 @@ import rta.backend.{LtlEvaluator, TraceGenerator}
 import rta.syntax.{LtlParser, PdlParser}
 import rta.backend.AnalyseLTS.ZoneStateKey
 import rta.backend.{UppaalLayout, EmptyLayout}
+import rta.syntax.{CtlFormula, CtlParser}
+import rta.backend.CtlEvaluator
 
 @JSExportTopLevel("RTA")
 object RTAAPI {
@@ -446,6 +448,33 @@ object RTAAPI {
     val inactiveStr = inactive.map(_._4.show).toList.sorted.mkString(", ")
     
     (activeStr, inactiveStr)
+  }
+
+
+  @JSExport
+  def runCTLExhaustive(formulaStr: String, maxStates: Int): String = {
+    currentGraph match {
+      case Some(startGraph) =>
+        try {
+          val formula = CtlParser.parseCtlFormula(formulaStr)
+
+          // Impulso do Limite de Extrapolação de Relógios (DBM MaxConstants) baseado nas Variáveis lidas na Fórmula
+          val queryConstants = CtlEvaluator.getConstants(formula, startGraph.clocks)
+          val boostedStartGraph = startGraph.copy(
+            maxConstants = rta.backend.RxSemantics.MaxConstants.mergeMax(startGraph.maxConstants, queryConstants)
+          )
+
+          val (success, explored, ceLabels, ceIds) = CtlEvaluator.verifyCTLSymbolic(boostedStartGraph, formula, maxStates)
+
+          val ceStr = if (ceLabels.isEmpty) "Omissão (Provas CTL em árvore nem sempre produzem traços lineares diretos, ou a sua query não gerou nenhum.)" else ceLabels.mkString(" ➔ ")
+          val pathJson = js.JSON.stringify(js.Array(ceIds: _*))
+
+          s"""{"success": $success, "explored": $explored, "counterExample": "${escapeJson(ceStr)}", "path": $pathJson}"""
+        } catch {
+          case e: Throwable => s"""{"error": "${escapeJson(s"Erro na Prova CTL: ${e.getMessage}")}"}"""
+        }
+      case None => """{"error": "Modelo não carregado."}"""
+    }
   }
 
 

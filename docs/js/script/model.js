@@ -28,7 +28,6 @@ function loadExample() {
     }
 }
 
-// ── Core: load source → engine → render ─────────────────────
 
 function loadAndRender() {
     var fullCode  = editor.getValue();
@@ -54,7 +53,6 @@ function loadAndRender() {
     }
 }
 
-// ── GLTS translation ─────────────────────────────────────────
 
 function translateToGLTS() {
     var newCode = RTA.translateToGLTS();

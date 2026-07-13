@@ -1,4 +1,3 @@
-// Rastreador global para saber qual caixa de input tem o foco (útil se tivermos múltiplos inputs de fórmulas)
 let lastFocusedInput = null;
 
 document.addEventListener('focusin', function(e) {
@@ -7,16 +6,12 @@ document.addEventListener('focusin', function(e) {
     }
 });
 
-// -------------------------------------------------------------
-// RENDERIZAÇÃO DOS BOTÕES DE AJUDA (ESTADOS, VARIÁVEIS, REGRAS)
-// -------------------------------------------------------------
 function renderPdlHelpers(data) {
     if (!data || !data.graphElements) return;
 
     var uniqueStates = new Set();
     var actionMap = new Map();
 
-    // Extrai estados e ações do grafo atual
     data.graphElements.forEach(function (el) {
         var cls = el.classes || "";
         var d = el.data;
@@ -36,11 +31,95 @@ function renderPdlHelpers(data) {
         if (data.panelData.clocks) Object.assign(allVars, data.panelData.clocks);
     }
 
-    // Popula todas as abas lógicas simultaneamente (PDL e LTL)
-    ['pdl', 'ltl'].forEach(prefix => {
+    ['pdl', 'ltl','ctl'].forEach(prefix => {
         populateHelperForTab(prefix, uniqueStates, actionMap, allVars);
     });
 }
+
+
+
+
+
+
+
+function runCtlExhaustive() {
+    var visualFormula = document.getElementById("ctlFormula").value;
+    if (!visualFormula || visualFormula.trim() === "") {
+        alert("Escreva uma fórmula CTL para verificar.");
+        return;
+    }
+
+    var finalCode = visualFormula
+        .replace(/¬/g, '!').replace(/∧/g, '&&').replace(/∨/g, '||')
+        .replace(/→/g, '->').replace(/↔/g, '<->').replace(/⊤/g, 'true')
+        .replace(/⊥/g, 'false')
+        .replace(/□/g, 'G ').replace(/♢/g, 'F ')
+        .replace(/∃/g, 'E ').replace(/∀/g, 'A ').replace(/⃝/g, 'X ');
+
+    var consoleDiv = document.getElementById("ctlLiveConsole");
+    consoleDiv.innerHTML = "🌲 Iniciando Verificador CTL...\nExplorando a Árvore de Computação...\n";
+    document.getElementById("ctlSimStats").innerText = "A Iniciar Prova...";
+    document.getElementById("ctlResult").innerHTML = "";
+
+    var cyWrapper = document.getElementById("cyWrapper");
+    var scanner = document.getElementById("cy-scanner-overlay");
+    if (cyWrapper) cyWrapper.classList.add("cy-processing");
+    if (scanner) scanner.style.display = "block";
+    if (typeof showCanvasTab === 'function') showCanvasTab('cyTab');
+
+    setTimeout(() => {
+        var resStr;
+        try {
+            if (RTA.runCTLExhaustive) {
+                resStr = RTA.runCTLExhaustive(finalCode, 50000);
+            } else {
+                resStr = JSON.stringify({ error: "Motor CTL ainda não exposto no backend Scala." });
+            }
+        } catch (e) {
+            resStr = JSON.stringify({ error: e.message });
+        }
+        
+        if (cyWrapper) cyWrapper.classList.remove("cy-processing");
+        if (scanner) scanner.style.display = "none";
+
+        try {
+            var resObj = JSON.parse(resStr);
+            if (resObj.error) {
+                consoleDiv.innerHTML += `<span style="color:#FF6B6B">Erro: ${resObj.error}</span>\n`;
+                return;
+            }
+
+            document.getElementById("ctlSimStats").innerText = "Zonas/Estados Explorados: " + (resObj.explored || 0);
+
+            if (resObj.success) {
+                consoleDiv.innerHTML += `\n<span style="color:#10B981; font-weight:bold;">✅ PROVA CTL CONCLUÍDA!\nA propriedade é VÁLIDA sobre a árvore de computação.</span>\n`;
+                document.getElementById("ctlResult").innerHTML = '<span style="color:green"><span class="glyphicon glyphicon-ok"></span> Propriedade Satisfeita!</span>';
+                
+                if (cyWrapper) {
+                    cyWrapper.classList.add("cy-success-flash");
+                    setTimeout(() => cyWrapper.classList.remove("cy-success-flash"), 1000);
+                }
+            } else {
+                consoleDiv.innerHTML += `\n<span style="color:#FF6B6B; font-weight:bold;">❌ FALHOU!</span>\n`;
+                if (resObj.counterExample) {
+                    consoleDiv.innerHTML += `<span style="color:#FF6B6B">Traço Testemunha: Start ➔ ${resObj.counterExample}</span>\n`;
+                }
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                document.getElementById("ctlResult").innerHTML = '<span style="color:red"><span class="glyphicon glyphicon-remove"></span> A propriedade falhou.</span>';
+
+                if (resObj.path && typeof playCounterexample === 'function') {
+                    playCounterexample(false, resObj.path, 800);
+                }
+            }
+        } catch (e) {
+            consoleDiv.innerHTML += "<span style='color:orange'>Erro interno ao processar a prova CTL.</span>\n";
+        }
+    }, 100);
+}
+
+
+
+
 
 function populateHelperForTab(prefix, uniqueStates, actionMap, allVars) {
     var statesDiv = document.getElementById(prefix + '-states-list');
@@ -51,7 +130,6 @@ function populateHelperForTab(prefix, uniqueStates, actionMap, allVars) {
     if (actionsDiv) actionsDiv.innerHTML = '';
     if (varsDiv) varsDiv.innerHTML = '';
 
-    // 1. Estados
     if (uniqueStates.size === 0) {
         if (statesDiv) statesDiv.innerHTML = '<span class="text-muted" style="font-size:10px;">Sem estados.</span>';
     } else {
@@ -74,7 +152,6 @@ function populateHelperForTab(prefix, uniqueStates, actionMap, allVars) {
         });
     }
 
-    // 2. Variáveis
     var hasVars = Object.keys(allVars).length > 0;
     if (hasVars) {
         for (var vName in allVars) {
@@ -91,7 +168,6 @@ function populateHelperForTab(prefix, uniqueStates, actionMap, allVars) {
         if (varsDiv) varsDiv.innerHTML = '<span class="text-muted" style="font-size:10px;">Sem variáveis.</span>';
     }
 
-    // 3. Ações / Hyperedges
     var hasActions = false;
     if (actionMap.size > 0) {
         Array.from(actionMap.keys()).sort().forEach(function (display) {
@@ -106,7 +182,6 @@ function populateHelperForTab(prefix, uniqueStates, actionMap, allVars) {
         hasActions = true;
     }
 
-    // 4. Injetar Estados também nos atalhos de Ações (para PDL)
     if (uniqueStates.size > 0 && actionsDiv) {
         if (hasActions) {
             var divider = document.createElement('span');
@@ -134,7 +209,6 @@ function populateHelperForTab(prefix, uniqueStates, actionMap, allVars) {
     }
 }
 
-// Inserção direcionada para as caixas PDL ou LTL
 function insertSymbol(prefix, text, suffix) {
     var input = document.getElementById(prefix + 'Formula');
     if (!input) return;
@@ -174,15 +248,11 @@ function insertSymbolFocused(text, suffix) {
 }
 
 
-// -------------------------------------------------------------
-// AVALIAÇÃO PDL CLÁSSICA (Lógica Standard Modal)
-// -------------------------------------------------------------
 function runPdl() {
     var prefix = 'pdl';
     var stateInput = document.getElementById(prefix + "State");
     var s = stateInput ? stateInput.value : "";
     
-    // Se não há estado, inferir do grafo atual (estado verde)
     if (!s && typeof currentCytoscapeInstance !== 'undefined' && currentCytoscapeInstance) {
         var currentNodes = currentCytoscapeInstance.nodes('.current-state');
         if (currentNodes.length > 0) s = currentNodes[0].data('label');
@@ -253,9 +323,6 @@ function runPdl() {
 }
 
 
-// -------------------------------------------------------------
-// LÓGICA DO SIMULADOR CONTÍNUO LTL (Estilo UPPAAL SMC com Delays)
-// -------------------------------------------------------------
 let ltlSimTimer = null;
 let ltlTotalTraces = 0;
 let isLtlSimulating = false;
@@ -353,7 +420,7 @@ function startLTLSimulation() {
         }
     }
 
-    simLoop(); // Arranca a máquina!
+    simLoop();
 }
 
 function stopLTLSimulation() {
@@ -400,18 +467,15 @@ function runLTLExhaustive() {
     document.getElementById("ltlSimStats").innerText = "A Iniciar Prova...";
     document.getElementById("ltlResult").innerHTML = "";
 
-    // -- ANIMAÇÃO LIGADA --
     var cyWrapper = document.getElementById("cyWrapper");
     var scanner = document.getElementById("cy-scanner-overlay");
     if (cyWrapper) cyWrapper.classList.add("cy-processing");
     if (scanner) scanner.style.display = "block";
-    if (typeof showCanvasTab === 'function') showCanvasTab('cyTab'); // Muda para o Grafo para ver o show!
+    if (typeof showCanvasTab === 'function') showCanvasTab('cyTab'); 
 
-    // Atraso de 100ms para a UI atualizar e mostrar o scanner antes da conta pesada bloquear o browser
     setTimeout(() => {
         var resStr = RTA.runLTLExhaustive(finalCode, 50000, maxDepth);
         
-        // -- ANIMAÇÃO DESLIGADA --
         if (cyWrapper) cyWrapper.classList.remove("cy-processing");
         if (scanner) scanner.style.display = "none";
 
@@ -432,7 +496,6 @@ function runLTLExhaustive() {
                 consoleDiv.innerHTML += `<span style="color:#10B981; font-weight:bold;">${msg}</span>\n`;
                 document.getElementById("ltlResult").innerHTML = '<span style="color:green"><span class="glyphicon glyphicon-ok"></span> Prova Exaustiva Concluída com Sucesso!</span>';
                 
-                // Piscar a verde!
                 if (cyWrapper) {
                     cyWrapper.classList.add("cy-success-flash");
                     setTimeout(() => cyWrapper.classList.remove("cy-success-flash"), 1000);
@@ -446,7 +509,7 @@ function runLTLExhaustive() {
 
                 window.lastCounterexample = resObj.path;
                 if (typeof playCounterexample === 'function') {
-                    playCounterexample(false, resObj.path, 800); // Anima o erro no grafo normal
+                    playCounterexample(false, resObj.path, 800); 
                 }
             }
         } catch (e) {
@@ -467,10 +530,8 @@ function showDBMGraphModal() {
         return;
     }
     
-    // Abre a modal
     $('#dbmGraphModal').modal('show');
     
-    // Pequeno atraso para a Modal ganhar as dimensões certas antes de injetar o Cytoscape
     setTimeout(() => {
         if (dbmCyInstance) dbmCyInstance.destroy();
         
@@ -484,7 +545,7 @@ function showDBMGraphModal() {
                         'shape': 'round-rectangle',
                         'background-color': '#ffffff',
                         'border-width': 2,
-                        'border-color': '#4f46e5', // Azul índigo
+                        'border-color': '#4f46e5',
                         'label': 'data(label)',
                         'text-wrap': 'wrap',
                         'text-valign': 'center',
@@ -501,7 +562,7 @@ function showDBMGraphModal() {
                     selector: 'node[isStart = true]',
                     style: {
                         'border-width': 4,
-                        'border-color': '#10b981', // Verde
+                        'border-color': '#10b981',
                         'background-color': '#ecfdf5'
                     }
                 },
@@ -524,15 +585,14 @@ function showDBMGraphModal() {
                 }
             ],
             layout: {
-                name: 'dagre',      // Organiza hierarquicamente como uma árvore de estados
-                rankDir: 'TB',      // De cima (Top) para baixo (Bottom)
+                name: 'dagre', 
+                rankDir: 'TB',
                 spacingFactor: 1.2
             },
             wheelSensitivity: 0.2
         });
     document.getElementById('dbmNodeDetails').style.display = 'none';
 
-        // Evento ao clicar num Node
         dbmCyInstance.on('tap', 'node', function(evt){
             var node = evt.target;
             var actEdges = node.data('actEdges');
@@ -541,12 +601,10 @@ function showDBMGraphModal() {
             document.getElementById('dbmActEdges').innerText = actEdges || "Nenhuma";
             document.getElementById('dbmInactEdges').innerText = inactEdges || "Nenhuma";
             
-            // Mostra o painel com animação rápida
             var panel = document.getElementById('dbmNodeDetails');
             panel.style.display = 'block';
         });
 
-        // Evento para fechar o painel se clicar no fundo vazio do grafo
         dbmCyInstance.on('tap', function(evt){
             if(evt.target === dbmCyInstance){
                 document.getElementById('dbmNodeDetails').style.display = 'none';
@@ -563,21 +621,18 @@ window.animateDFS = function(visitLog) {
     var cy = currentCytoscapeInstance;
     let step = 0;
     
-    // Cálculo inteligente da velocidade:
-    // Se ele explorar 19 zonas, demora uns 300ms em cada uma (dá para ver bem).
-    // Se ele explorar 5000 zonas, acelera para 10ms para não demorar horas!
+
     let speed = Math.max(10, Math.min(300, 5000 / visitLog.length));
 
     function nextStep() {
-        cy.elements().removeClass('dfs-node'); // Limpa a cor do anterior
+        cy.elements().removeClass('dfs-node'); 
         
         if (step >= visitLog.length) {
-            return; // Fim do caminho
+            return; 
         }
 
         let stateName = visitLog[step];
         
-        // Encontra o nó no Grafo Principal através do texto do nome do estado
         let node = cy.nodes().filter(n => {
             let lbl = n.data('label');
             return lbl === stateName || lbl.startsWith(stateName + '\n');

@@ -3,9 +3,8 @@ window.playCounterexample = function (isSuccess, customPath, speedMs) {
     if (!path || !currentCytoscapeInstance) return;
 
     var cy = currentCytoscapeInstance;
-    var duration = speedMs || 900; // Por defeito é 900ms, mas aceita custom!
-
-    var pathColor = isSuccess ? '#10B981' : '#DC2626'; // Verde para sucesso
+    var duration = speedMs || 900; 
+    var pathColor = isSuccess ? '#10B981' : '#DC2626'; 
     var nodeColor = isSuccess ? '#D1FAE5' : '#FECACA';
     var borderColor = isSuccess ? '#059669' : '#B91C1C';
 
@@ -29,7 +28,6 @@ window.playCounterexample = function (isSuccess, customPath, speedMs) {
             eventNode.incomers('edge').addClass('cx-path').sources().addClass('cx-node');
             eventNode.outgoers('edge').addClass('cx-path').targets().addClass('cx-node');
             
-            // Só faz Zoom in se for lento (erro), não faz no rápido
             if(duration > 100) cy.animate({ center: { eles: eventNode }, zoom: 1.2 }, { duration: duration/2 });
         }
 
