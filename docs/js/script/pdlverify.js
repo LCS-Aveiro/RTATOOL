@@ -332,6 +332,7 @@ function toggleLTLSimulation() {
     else startLTLSimulation();
 }
 
+
 function startLTLSimulation() {
     var visualFormula = document.getElementById("ltlFormula").value;
     if (!visualFormula || visualFormula.trim() === "") {
@@ -350,13 +351,15 @@ function startLTLSimulation() {
     isLtlSimulating = true;
     ltlTotalTraces = 0;
     
+    if (RTA.resetLTLSimulation) RTA.resetLTLSimulation();
+    
     var btn = document.getElementById("btnLtlSim");
     btn.innerHTML = '<span class="glyphicon glyphicon-stop"></span> Parar Simulador';
     btn.style.backgroundColor = '#DC2626';
     btn.style.color = '#fff';
 
     var consoleDiv = document.getElementById("ltlLiveConsole");
-    consoleDiv.innerHTML = "🔧 Iniciando Simulador LTL Contínuo...\n";
+    consoleDiv.innerHTML = "🔧 Iniciando Simulador LTL Contínuo (Apenas Traços Únicos)...\n";
     document.getElementById("ltlSimStats").innerText = "Avaliados: 0";
     document.getElementById("ltlResult").innerHTML = "";
 
@@ -372,11 +375,19 @@ function startLTLSimulation() {
                 return;
             }
 
+            if (resObj.exhausted) {
+                consoleDiv.innerHTML += `\n<span style="color:#F59E0B; font-weight:bold;">⚠️ Espaço de amostragem esgotado! Todos os traços estruturais possíveis (até este comprimento) já foram avaliados.</span>\n`;
+                document.getElementById("ltlResult").innerHTML = '<span style="color:green"><span class="glyphicon glyphicon-ok"></span> Simulação concluída (Espaço percorrido).</span>';
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                stopLTLSimulation();
+                return;
+            }
+
             ltlTotalTraces += resObj.passedCount;
-            document.getElementById("ltlSimStats").innerText = "Avaliados: " + ltlTotalTraces;
+            document.getElementById("ltlSimStats").innerText = "Avaliados (Únicos): " + ltlTotalTraces;
 
             if (resObj.sample && resObj.passedCount > 0) {
-                var line = `[Pass ${ltlTotalTraces}] ➔ ${resObj.sample}\n`;
+                var line = `[Avaliados: ${ltlTotalTraces}] ➔ ${resObj.sample}\n`;
                 consoleDiv.innerHTML += line;
                 consoleDiv.scrollTop = consoleDiv.scrollHeight;
 
@@ -386,11 +397,6 @@ function startLTLSimulation() {
                     }
                 }
             }
-
-            if (resObj.visitLog && resObj.visitLog.length > 0) {
-                consoleDiv.innerHTML += `\n<span style="color:#94a3b8; font-size: 8px;">[DEBUG] Rota do Explorador DFS (${resObj.visitLog.length} saltos): ${resObj.visitLog.join(" ➔ ")}</span>\n`;
-            }
-
 
             if (!resObj.success) {
                 ltlTotalTraces += 1;
@@ -422,6 +428,8 @@ function startLTLSimulation() {
 
     simLoop();
 }
+
+
 
 function stopLTLSimulation() {
     isLtlSimulating = false;

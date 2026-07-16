@@ -638,6 +638,13 @@ object RTAAPI {
     }
   }
 
+  private val seenLtlTraces = collection.mutable.Set[Int]()
+
+  @JSExport
+  def resetLTLSimulation(): Unit = {
+    seenLtlTraces.clear()
+  }
+
 
   @JSExport
   def verifyLTLBatch(formulaStr: String, traceLength: Int, batchSize: Int): String = {
@@ -651,21 +658,33 @@ object RTAAPI {
           var passedCount = 0
           var sampleTrace: List[String] = Nil
           var sampleIds: List[String] = Nil
+          
+          var attempts = 0
+          val maxAttempts = 50000 + (batchSize * 100)
 
-          for (_ <- 1 to batchSize if allTrue) {
-            val (trace, pathLabels, edgeIds) = TraceGenerator.randomTimedTraceDetailed(startGraph, traceLength)
+          while (passedCount < batchSize && allTrue && attempts < maxAttempts) {
+            attempts += 1
             
-            val res = LtlEvaluator.eval(trace, formula, LtlEvaluator.Hybrid) 
-            if (!res) {
-              allTrue = false
-              counterExampleTrace = pathLabels
-              counterExampleIds = edgeIds
-            } else {
-              passedCount += 1
-              sampleTrace = pathLabels 
-              sampleIds = edgeIds
+            val (trace, pathLabels, edgeIds) = TraceGenerator.randomTimedTraceDetailed(startGraph, traceLength)
+            val traceHash = edgeIds.hashCode()
+
+            if (!seenLtlTraces.contains(traceHash)) {
+              seenLtlTraces += traceHash
+              val res = LtlEvaluator.eval(trace, formula, LtlEvaluator.Hybrid)
+              
+              if (!res) {
+                allTrue = false
+                counterExampleTrace = pathLabels
+                counterExampleIds = edgeIds
+              } else {
+                passedCount += 1
+                sampleTrace = pathLabels
+                sampleIds = edgeIds
+              }
             }
           }
+
+          val exhausted = (passedCount == 0 && attempts >= maxAttempts)
 
           val sampleStr = if (sampleTrace.isEmpty) "Traço Vazio/Deadlock" else sampleTrace.mkString(" ➔ ")
           val ceStr = if (counterExampleTrace.isEmpty) "Traço Vazio/Deadlock" else counterExampleTrace.mkString(" ➔ ")
@@ -673,9 +692,9 @@ object RTAAPI {
           val samplePathJson = js.JSON.stringify(js.Array(sampleIds: _*))
 
           if (allTrue) {
-            s"""{"success": true, "passedCount": $passedCount, "sample": "${escapeJson(sampleStr)}", "samplePath": $samplePathJson}"""
+            s"""{"success": true, "passedCount": $passedCount, "exhausted": $exhausted, "sample": "${escapeJson(sampleStr)}", "samplePath": $samplePathJson}"""
           } else {
-            s"""{"success": false, "passedCount": $passedCount, "sample": "${escapeJson(sampleStr)}", "samplePath": $samplePathJson, "counterExample": "${escapeJson(ceStr)}", "path": $pathJson}"""
+            s"""{"success": false, "passedCount": $passedCount, "exhausted": $exhausted, "sample": "${escapeJson(sampleStr)}", "samplePath": $samplePathJson, "counterExample": "${escapeJson(ceStr)}", "path": $pathJson}"""
           }
         } catch {
           case e: Throwable => s"""{"error": "${escapeJson(s"Erro LTL: ${e.getMessage}")}"}"""

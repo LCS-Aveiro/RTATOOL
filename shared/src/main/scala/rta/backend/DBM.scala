@@ -20,7 +20,11 @@ object DBM {
 
   case class Zone(clocks: Set[QName], matrix: Map[(QName, QName), Bound]) {
     
-    def isSatisfiable: Boolean = clocks.forall(c => matrix((c, c)).value >= 0)
+    // CORREÇÃO: Agora rejeita (0 < 0). Só aceita valores > 0, ou = 0 desde que não seja estrito (<=)
+    def isSatisfiable: Boolean = clocks.forall { c => 
+      val b = matrix((c, c))
+      b.value > 0 || (b.value == 0 && !b.strict)
+    }
 
 
     def delay: Zone = {

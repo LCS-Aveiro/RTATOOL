@@ -26,7 +26,6 @@ object RxSemantics {
       case _ => Map.empty
     }
 
-
     def fromLTL(f: LtlFormula, clocks: Set[QName]): Map[QName, Double] = f match {
       case LtlFormula.CondProp(c) => fromCond(c, clocks)
       case LtlFormula.Not(p) => fromLTL(p, clocks)
@@ -47,14 +46,11 @@ object RxSemantics {
     def compute(rx: RxGraph): Map[QName, Double] = {
       val clocks = rx.clocks
       var acc = Map.empty[QName, Double]
-
       rx.invariants.values.foreach(c => acc = mergeMax(acc, fromCond(c, clocks)))
       rx.edgeConditions.values.flatten.foreach(c => acc = mergeMax(acc, fromCond(c, clocks)))
-      
       rx.delays.values.foreach { case (clock, v) =>
         if (clocks.contains(clock)) acc = mergeMax(acc, Map(clock -> v))
       }
-      
       clocks.foreach(c => if (!acc.contains(c)) acc += (c -> 0.0))
       acc
     }
@@ -65,31 +61,26 @@ object RxSemantics {
     case UpdateExpr.LitFloat(f) => RuntimeValue.VFloat(f)
     case UpdateExpr.LitBool(b) => RuntimeValue.VBool(b)
     case UpdateExpr.LitArray(elems) => RuntimeValue.VArray(elems.map(e => evalExpr(e, env, rx)), isDynamic = true)
-    
     case UpdateExpr.Var(q) => 
       if (rx.clock_env.contains(q)) RuntimeValue.VFloat(rx.clock_env(q))
       else env.get(q).orElse {
         if (q.n.size > 1) {
            val globalName = QName(List(q.n.last))
-           rx.clock_env.get(globalName).map(RuntimeValue.VFloat(_))
-             .orElse(env.get(globalName))
+           rx.clock_env.get(globalName).map(RuntimeValue.VFloat(_)).orElse(env.get(globalName))
         } else None
       }.getOrElse(RuntimeValue.VInt(0)) 
-    
     case UpdateExpr.ArrayAccess(arrName, idxExpr) =>
       val idx = Condition.extractDouble(evalExpr(idxExpr, env, rx)).toInt
       env.get(arrName) match {
         case Some(RuntimeValue.VArray(elems, _, _)) if idx >= 0 && idx < elems.size => elems(idx)
         case _ => RuntimeValue.VInt(0)
       }
-      
     case UpdateExpr.MathOp(l, op, r) =>
       val leftVal = evalExpr(l, env, rx)
       val rightVal = evalExpr(r, env, rx)
       val isFloat = leftVal.isInstanceOf[RuntimeValue.VFloat] || rightVal.isInstanceOf[RuntimeValue.VFloat]
       val lD = Condition.extractDouble(leftVal)
       val rD = Condition.extractDouble(rightVal)
-
       op match {
         case "+" => if(isFloat) RuntimeValue.VFloat(lD + rD) else RuntimeValue.VInt((lD + rD).toInt)
         case "-" => if(isFloat) RuntimeValue.VFloat(lD - rD) else RuntimeValue.VInt((lD - rD).toInt)
@@ -97,7 +88,6 @@ object RxSemantics {
         case "/" => if(rD != 0) { if(isFloat) RuntimeValue.VFloat(lD / rD) else RuntimeValue.VInt((lD / rD).toInt) } else RuntimeValue.VInt(0)
         case _ => RuntimeValue.VInt(0)
       }
-
     case UpdateExpr.FuncCall(funcName, args) =>
       rx.functions.get(funcName) match {
         case Some(funcDef) =>
@@ -119,13 +109,33 @@ object RxSemantics {
 
   def evalConditionForLTL(cond: Condition, rx: RxGraph): Boolean = cond match {
     case Condition.AtomicCond(UpdateExpr.Var(c), _, _) if rx.clocks.contains(c) =>
-      throw new Exception("Avaliação LTL de relógios em Zonas DBM exige 'zone-splitting' (não suportado).")
-    case Condition.AtomicCond(_, _, UpdateExpr.Var(c)) if rx.clocks.contains(c) =>
-      throw new Exception("Avaliação LTL de relógios em Zonas DBM exige 'zone-splitting' (não suportado).")
+      intersectConditionWithZone(cond, rx.zone, rx).isDefined
+    case Condition.AtomicCond(lhs, op, UpdateExpr.Var(c)) if rx.clocks.contains(c) =>
+      val invOp = op match { case "<" => ">"; case "<=" => ">="; case ">" => "<"; case ">=" => "<="; case _ => op }
+      intersectConditionWithZone(Condition.AtomicCond(UpdateExpr.Var(c), invOp, lhs), rx.zone, rx).isDefined
     case Condition.AtomicCond(l, op, r) =>
       Condition.compareValues(evalExpr(l, rx.val_env, rx), op, evalExpr(r, rx.val_env, rx))
     case Condition.And(l, r) => evalConditionForLTL(l, rx) && evalConditionForLTL(r, rx)
     case Condition.Or(l, r) => evalConditionForLTL(l, rx) || evalConditionForLTL(r, rx)
+  }
+
+  def negateCondition(cond: Condition): Condition = cond match {
+    case Condition.AtomicCond(l, op, r) =>
+      val invOp = op match {
+        case "<" => ">="; case "<=" => ">"; case ">" => "<="; case ">=" => "<"
+        case "==" | "=" => "!="; case "!=" => "=="; case _ => op
+      }
+      Condition.AtomicCond(l, invOp, r)
+    case Condition.And(l, r) => Condition.Or(negateCondition(l), negateCondition(r))
+    case Condition.Or(l, r) => Condition.And(negateCondition(l), negateCondition(r))
+  }
+
+  def hasClockCondition(cond: Condition, clocks: Set[QName]): Boolean = cond match {
+    case Condition.AtomicCond(UpdateExpr.Var(c), _, _) if clocks.contains(c) => true
+    case Condition.AtomicCond(_, _, UpdateExpr.Var(c)) if clocks.contains(c) => true
+    case Condition.And(l, r) => hasClockCondition(l, clocks) || hasClockCondition(r, clocks)
+    case Condition.Or(l, r) => hasClockCondition(l, clocks) || hasClockCondition(r, clocks)
+    case _ => false
   }
 
   @tailrec
@@ -176,11 +186,8 @@ object RxSemantics {
         it.next() match {
           case AssignStmt(v, expr) =>
             val evaluated = evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv))
-            if (rx.clocks.contains(v)) {
-               currentClockEnv += (v -> Condition.extractDouble(evaluated))
-            } else {
-               assignWithBounds(v, evaluated)
-            }
+            if (rx.clocks.contains(v)) currentClockEnv += (v -> Condition.extractDouble(evaluated))
+            else assignWithBounds(v, evaluated)
 
           case ArrayAssignStmt(arrName, idxExpr, valExpr) =>
             val idx = Condition.extractDouble(evalExpr(idxExpr, currentEnv, rx.copy(clock_env = currentClockEnv))).toInt
@@ -195,10 +202,7 @@ object RxSemantics {
                 }
               case _ =>
             }
-
-          case IfThenStmt(cond, thens) =>
-            if (evalCondition(cond, rx.copy(val_env = currentEnv, clock_env = currentClockEnv))) process(thens)
-
+          case IfThenStmt(cond, thens) => if (evalCondition(cond, rx.copy(val_env = currentEnv, clock_env = currentClockEnv))) process(thens)
           case ForeachStmt(iter, arr, body) =>
             currentEnv.get(arr) match {
               case Some(RuntimeValue.VArray(elems, _, _)) =>
@@ -210,17 +214,11 @@ object RxSemantics {
                 currentEnv -= iter
               case _ =>
             }
-
-          case ReturnStmt(expr) =>
-            currentEnv += (returnKey -> evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv)))
-
-          case PrintStmt(expr) =>
-            val evaluated = evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv))
-            println(s"🖨️ RTA Print | ${UpdateExpr.show(expr)} = ${evaluated.value}")
+          case ReturnStmt(expr) => currentEnv += (returnKey -> evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv)))
+          case PrintStmt(expr) => val evaluated = evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv)); println(s"🖨️ RTA Print | ${UpdateExpr.show(expr)} = ${evaluated.value}")
         }
       }
     }
-
     process(stmts)
     (currentEnv, currentClockEnv)
   }
@@ -237,11 +235,9 @@ object RxSemantics {
     for (hyperEdge <- triggeredHyperEdges) {
       if (rx.act.contains(hyperEdge)) {
         val conditionHolds = rx.edgeConditions.getOrElse(hyperEdge, None).forall(c => evalFn(c, rx))
-        
         if (conditionHolds) {
           updatesToApply = updatesToApply ::: rx.edgeUpdates.getOrElse(hyperEdge, Nil)
           val (triggerLabel, targetLabel, ruleId, ruleLabel) = hyperEdge
-          
           val isOn = rx.on.getOrElse(triggerLabel, Set.empty).contains((targetLabel, ruleId, ruleLabel))
           val isOff = rx.off.getOrElse(triggerLabel, Set.empty).contains((targetLabel, ruleId, ruleLabel))
           
@@ -293,39 +289,90 @@ object RxSemantics {
       if rx.act.contains(edge)
     } yield {
       val condOpt = rx.edgeConditions.getOrElse(edge, None)
-      
       val zoneAfterGuard = condOpt match {
         case Some(cond) => intersectConditionWithZone(cond, rx.zone, rx)
         case None => Some(rx.zone)
       }
 
       if (zoneAfterGuard.isDefined && condOpt.forall(c => evalDataCondition(c, rx))) {
-        val (toAct, toDeact, hStmts, newPending) = getHyperEdgeEffects(edge, rx, evalDataCondition)
-        val currentAct = (rx.act ++ toAct) -- toDeact
+        val triggeredHyperEdges = from(edge, rx).filter(rx.act.contains).toList
         
-        val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ hStmts
-        val (nextEnv, nextClockEnv) = applyUpdates(allStmts, rx)
+        def splitZones(heList: List[Edge], currentZ: DBM.Zone): List[(DBM.Zone, Set[Edge])] = {
+          heList match {
+            case Nil => List((currentZ, Set.empty))
+            case he :: tail =>
+              val heCondOpt = rx.edgeConditions.getOrElse(he, None)
+              val dataHolds = heCondOpt.forall(c => evalDataCondition(c, rx))
+              
+              if (!dataHolds) {
+                splitZones(tail, currentZ)
+              } else {
+                val hasClocks = heCondOpt.exists(c => hasClockCondition(c, rx.clocks))
+                if (!hasClocks) {
+                  splitZones(tail, currentZ).map { case (fZ, fHE) => (fZ, fHE + he) }
+                } else {
+                  val zTrue = heCondOpt.flatMap(c => intersectConditionWithZone(c, currentZ, rx)).orElse(if(heCondOpt.isEmpty) Some(currentZ) else None)
+                  val zFalse = heCondOpt.flatMap(c => intersectConditionWithZone(negateCondition(c), currentZ, rx))
 
-        val absolutePending = newPending.map { case (he, op, clk, dVal) =>
-          (he, op, clk, nextClockEnv.getOrElse(clk, 0.0) + dVal)
+                  val resTrue = zTrue.toList.flatMap(z => splitZones(tail, z).map { case (fZ, fHE) => (fZ, fHE + he) })
+                  val resFalse = zFalse.toList.flatMap(z => splitZones(tail, z))
+                  
+                  resTrue ++ resFalse
+                }
+              }
+          }
         }
         
-        val clockResets = allStmts.collect { 
-          case AssignStmt(v, _) if rx.clocks.contains(v) => v 
-        }
+        val splitResults = splitZones(triggeredHyperEdges, zoneAfterGuard.get)
         
-        val zoneAfterResets = clockResets.foldLeft(zoneAfterGuard.get)(_.reset(_))
-        val zoneAfterUpdates = zoneAfterResets.extrapolate(rx.maxConstants)
+        splitResults.map { case (finalZone, firedHEs) =>
+          var toAct = Set.empty[Edge]
+          var toDeact = Set.empty[Edge]
+          var updatesToApply = List.empty[Statement]
+          var newPending = Set.empty[(Edge, String, QName, Double)]
 
-        Some((edge, rx.copy(
-          inits = (rx.inits - st) + st2,
-          act = currentAct,
-          val_env = nextEnv,
-          clock_env = nextClockEnv,
-          zone = zoneAfterUpdates,
-          pendingDelays = rx.pendingDelays ++ absolutePending
-        )))
-      } else None
+          for (hyperEdge <- firedHEs) {
+            updatesToApply = updatesToApply ::: rx.edgeUpdates.getOrElse(hyperEdge, Nil)
+            val (triggerLabel, targetLabel, ruleId, ruleLabel) = hyperEdge
+            
+            val isOn = rx.on.getOrElse(triggerLabel, Set.empty).contains((targetLabel, ruleId, ruleLabel))
+            val isOff = rx.off.getOrElse(triggerLabel, Set.empty).contains((targetLabel, ruleId, ruleLabel))
+            
+            if (rx.delays.contains(ruleLabel)) {
+              val (clock, delayVal) = rx.delays(ruleLabel)
+              if (isOn) newPending += ((hyperEdge, "on", clock, delayVal))
+              if (isOff) newPending += ((hyperEdge, "off", clock, delayVal))
+            } else {
+              if (isOn) toAct = toAct ++ rx.lbls.getOrElse(targetLabel, Set.empty)
+              if (isOff) toDeact = toDeact ++ rx.lbls.getOrElse(targetLabel, Set.empty)
+            }
+          }
+          
+          val currentAct = (rx.act ++ toAct) -- toDeact
+          val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ updatesToApply
+          val (nextEnv, nextClockEnv) = applyUpdates(allStmts, rx)
+
+          val absolutePending = newPending.map { case (he, op, clk, dVal) =>
+            (he, op, clk, nextClockEnv.getOrElse(clk, 0.0) + dVal)
+          }
+          
+          val clockResets = allStmts.collect { 
+            case AssignStmt(v, _) if rx.clocks.contains(v) => v 
+          }
+          
+          val zoneAfterResets = clockResets.foldLeft(finalZone)(_.reset(_))
+          val zoneAfterUpdates = zoneAfterResets.extrapolate(rx.maxConstants)
+
+          (edge, rx.copy(
+            inits = (rx.inits - st) + st2,
+            act = currentAct,
+            val_env = nextEnv,
+            clock_env = nextClockEnv,
+            zone = zoneAfterUpdates,
+            pendingDelays = rx.pendingDelays ++ absolutePending
+          ))
+        }
+      } else Nil
     }
 
     val standardTransitions = transitions.flatten.filter { case (_, nextRx) =>
@@ -378,7 +425,6 @@ object RxSemantics {
       if rx.act.contains(edge)
     } yield {
       val condOpt = rx.edgeConditions.getOrElse(edge, None)
-      
       val zoneAfterGuard = condOpt match {
         case Some(cond) => intersectConditionWithZone(cond, rx.zone, rx)
         case None => Some(rx.zone)
@@ -387,7 +433,6 @@ object RxSemantics {
       if (zoneAfterGuard.isDefined && condOpt.forall(c => evalCondition(c, rx))) {
         val (toAct, toDeact, hStmts, relativePending) = getHyperEdgeEffects(edge, rx)
         val currentAct = (rx.act ++ toAct) -- toDeact
-        
         val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ hStmts
         val (nextEnv, nextClockEnv) = applyUpdates(allStmts, rx)
         
@@ -442,18 +487,15 @@ object RxSemantics {
     val matured = rx.pendingDelays.filter { case (_, _, clock, targetVal) => 
        rx.clock_env.getOrElse(clock, 0.0) >= targetVal - EPSILON
     }
-    
     if (matured.nonEmpty) {
        var toAct = Set.empty[Edge]
        var toDeact = Set.empty[Edge]
-       
        for (m <- matured) {
           val (hyperEdge, opType, _, _) = m
           val targetLabel = hyperEdge._2
           if (opType == "on") toAct = toAct ++ rx.lbls.getOrElse(targetLabel, Set.empty)
           if (opType == "off") toDeact = toDeact ++ rx.lbls.getOrElse(targetLabel, Set.empty)
        }
-       
        val nextRx = rx.copy(
          act = (rx.act ++ toAct) -- toDeact, 
          pendingDelays = rx.pendingDelays -- matured
@@ -465,7 +507,6 @@ object RxSemantics {
   def advanceTimeBy(rx0: RxGraph, delay: Double): Option[RxGraph] = {
     if (delay <= 0) return Some(rx0)
     val rx = applyTimeouts(rx0)
-    
     val canPass = rx.pendingDelays.forall { case (_, _, clock, targetVal) => 
         rx.clock_env.getOrElse(clock, 0.0) + delay <= targetVal + EPSILON
     }
@@ -473,53 +514,55 @@ object RxSemantics {
 
     val delayedClockEnv = rx.clock_env.map { case (c, v) => (c, v + delay) }
     val potentialNextRx = rx.copy(clock_env = delayedClockEnv)
-    
     val invariantsHold = rx.inits.forall(s => 
       potentialNextRx.invariants.get(s) match {
         case Some(inv) => evalCondition(inv, potentialNextRx)
         case None => true
       }
     )
-    
     if (invariantsHold) Some(applyTimeouts(potentialNextRx)) else None
   }
 
   def advanceTimeZone(rx0: RxGraph): Option[RxGraph] = {
     if (rx0.clocks.isEmpty) return Some(rx0)
-
     val delayedZone = rx0.zone.delay
     var currentZone = Option(delayedZone)
-    
     for (st <- rx0.inits) {
       rx0.invariants.get(st).foreach { inv =>
         currentZone = currentZone.flatMap(z => intersectConditionWithZone(inv, z, rx0))
       }
     }
-    
     for (pending <- rx0.pendingDelays) {
       val clock = pending._3
       val targetVal = pending._4
       currentZone = currentZone.flatMap(z => z.constrain(clock, DBM.ZERO_CLOCK, targetVal, isStrict = false))
     }
-    
     currentZone.map(z => rx0.copy(zone = z.extrapolate(rx0.maxConstants)))
   }
 
   def intersectConditionWithZone(cond: Condition, zone: DBM.Zone, rx: RxGraph): Option[DBM.Zone] = cond match {
-    case Condition.AtomicCond(UpdateExpr.Var(clock), op, UpdateExpr.LitInt(v)) if rx.clocks.contains(clock) => 
+    case Condition.AtomicCond(UpdateExpr.Var(clock), op, rhs) if rx.clocks.contains(clock) => 
+      val v = Condition.extractDouble(evalExpr(rhs, rx.val_env, rx))
       op match {
-        case "<"  => zone.constrain(clock, DBM.ZERO_CLOCK, v.toDouble, isStrict = true)
-        case "<=" => zone.constrain(clock, DBM.ZERO_CLOCK, v.toDouble, isStrict = false)
-        case ">"  => zone.constrain(DBM.ZERO_CLOCK, clock, -v.toDouble, isStrict = true)
-        case ">=" => zone.constrain(DBM.ZERO_CLOCK, clock, -v.toDouble, isStrict = false)
-        case "==" => 
-          zone.constrain(clock, DBM.ZERO_CLOCK, v.toDouble, isStrict = false)
-              .flatMap(_.constrain(DBM.ZERO_CLOCK, clock, -v.toDouble, isStrict = false))
+        case "<"  => zone.constrain(clock, DBM.ZERO_CLOCK, v, isStrict = true)
+        case "<=" => zone.constrain(clock, DBM.ZERO_CLOCK, v, isStrict = false)
+        case ">"  => zone.constrain(DBM.ZERO_CLOCK, clock, -v, isStrict = true)
+        case ">=" => zone.constrain(DBM.ZERO_CLOCK, clock, -v, isStrict = false)
+        case "==" | "=" => 
+          zone.constrain(clock, DBM.ZERO_CLOCK, v, isStrict = false)
+              .flatMap(_.constrain(DBM.ZERO_CLOCK, clock, -v, isStrict = false))
         case _    => Some(zone)
       }
       
+    case Condition.AtomicCond(lhs, op, UpdateExpr.Var(clock)) if rx.clocks.contains(clock) =>
+      val invOp = op match { case "<" => ">"; case "<=" => ">="; case ">" => "<"; case ">=" => "<="; case _ => op }
+      intersectConditionWithZone(Condition.AtomicCond(UpdateExpr.Var(clock), invOp, lhs), zone, rx)
+      
     case Condition.And(l, r) =>
       intersectConditionWithZone(l, zone, rx).flatMap(z => intersectConditionWithZone(r, z, rx))
+      
+    case Condition.Or(l, r) =>
+      intersectConditionWithZone(l, zone, rx).orElse(intersectConditionWithZone(r, zone, rx))
       
     case _ => Some(zone)
   }

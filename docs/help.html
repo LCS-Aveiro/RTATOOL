@@ -477,6 +477,8 @@
     <li><a href="#rules">Rules</a></li>
     <li><a href="#variables">Variables</a></li>
     <li><a href="#pdl">PDL</a></li>
+    <li><a href="#ltl">LTL</a></li>
+    <li><a href="#ctl">CTL</a></li>
     <li><a href="#examples">Examples</a></li>
   </ul>
 </nav>
@@ -504,6 +506,8 @@
     <div class="side-section">
       <div class="side-label">Verification</div>
       <a class="side-link" href="#pdl">PDL Logic</a>
+      <a class="side-link" href="#ltl">LTL Logic</a>
+      <a class="side-link" href="#ctl">CTL Logic</a>
       <a class="side-link" href="#path">Path Optimizer</a>
     </div>
     <div class="side-section">
@@ -611,7 +615,7 @@
 <span class="cm">// The system cannot stay in 'working' if clock x > 5.</span></pre></div>
         </div>
 
-        <h3>Delays on Rules</h3>
+       <!--  <h3>Delays on Rules</h3>
         <p>You can force a rule (hyper-edge) to only take effect a certain amount of time <em>after</em> the trigger transition fired.</p>
         <div class="code-block">
           <div class="code-body"><pre><span class="cm">// delay ruleName : clockToUse , timeAmount</span>
@@ -619,7 +623,7 @@
 
 <span class="ac">trigger</span> <span class="ar">->></span> <span class="ac">target</span> : <span class="rl">slowEnable</span>
 <span class="cm">// When 'trigger' fires, 'target' will only be enabled after 2.0 time units.</span></pre></div>
-        </div>
+        </div>-->
       </section>
 
       <!-- ═══════════════════════════════════════════════ -->
@@ -971,7 +975,159 @@ RobotA.start <span class="ar">->></span> RobotB.start : <span class="rl">sync</s
           </div>
         </div>
       </section>
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 12. LTL -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="ltl">
+        <div class="section-eyebrow">Section 12</div>
+        <h2>LTL Verification</h2>
+        <p>Linear Temporal Logic (LTL) checks properties over a single infinite/finite <em>trace</em> of the model, rather than a branching tree of states. RTA Tool evaluates LTL either over a randomly generated trace (fast, approximate) or exhaustively via a symbolic lasso search (slower, provides real proofs / counter-examples).</p>
 
+        <div class="callout callout-info">
+          <strong>Same input box as PDL</strong>
+          LTL and PDL formulae share the same input field. The tool auto-detects LTL by the presence of the <code>X</code>, <code>U</code>, <code>G</code> or <code>F</code> operators — if none of these appear, the formula is parsed as PDL instead.
+        </div>
+
+        <h3>Propositional connectives</h3>
+        <div class="formula-box">
+          <span class="pdl">true</span>  &nbsp;|&nbsp;  <span class="pdl">false</span>  &nbsp;|&nbsp;  <span class="pdl">¬φ</span>  &nbsp;|&nbsp;  <span class="pdl">φ ∧ ψ</span>  &nbsp;|&nbsp;  <span class="pdl">φ ∨ ψ</span>  &nbsp;|&nbsp;  <span class="pdl">φ → ψ</span>  &nbsp;|&nbsp;  <span class="pdl">φ ↔ ψ</span>
+        </div>
+
+        <h3>Edge / hyperedge &amp; condition propositions</h3>
+        <p><strong>Note:</strong> unlike PDL, LTL propositions do <em>not</em> refer to the current location/state. A bare name checks whether that <strong>edge or hyperedge label is currently active</strong> (i.e. present in the model's <code>act</code> set) — clocks and data variables are checked separately via <code>[ ]</code> conditions.</p>
+        <div class="formula-box">
+          <span class="pdl">open</span>             <span class="cm">// true if the 'open' edge/rule label is currently active</span><br>
+          <span class="pdl">[counter == 3]</span>   <span class="cm">// data variable condition</span><br>
+          <span class="pdl">[t <= 5]</span>         <span class="cm">// clock condition</span>
+        </div>
+
+        <h3>Temporal operators</h3>
+        <table class="ref-table">
+          <tr><th>Symbol</th><th>Name</th><th>Meaning</th></tr>
+          <tr><td>X φ</td><td>Next</td><td>φ holds in the very next step of the trace</td></tr>
+          <tr><td>G φ</td><td>Globally</td><td>φ holds in every step from here onward</td></tr>
+          <tr><td>F φ</td><td>Eventually</td><td>φ holds at some step from here onward</td></tr>
+          <tr><td>φ U ψ</td><td>Until</td><td>φ holds until ψ becomes true (ψ must eventually hold)</td></tr>
+        </table>
+
+        <h3>Evaluation modes</h3>
+        <table class="ref-table">
+          <tr><th>Mode</th><th>Description</th></tr>
+          <tr><td>Single trace</td><td>Generates one random trace of N steps and evaluates φ over it.</td></tr>
+          <tr><td>Batch</td><td>Generates many distinct random traces; reports how many satisfy φ and returns the first counter-example found, if any.</td></tr>
+          <tr><td>Exhaustive (symbolic)</td><td>Explores the full symbolic (zone-based) state space up to a limit, searching for a lasso (loop) that violates φ. If the space is small enough, the result is a real proof, not just a sample.</td></tr>
+        </table>
+
+        <h3>LTL examples</h3>
+        <div class="code-block">
+          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>ltl-examples.txt</span></div>
+          <div class="code-body"><pre><span class="cm">// Whatever happens, the 'finish' edge always eventually fires again</span>
+<span class="pdl">G F finish</span>
+
+<span class="cm">// Once 'lock' fires, 'open' never becomes active again</span>
+<span class="pdl">G (lock -> G !open)</span>
+
+<span class="cm">// The counter variable stays non-negative forever</span>
+<span class="pdl">G [counter >= 0]</span>
+
+<span class="cm">// 'pending' rule stays active until 'done' fires</span>
+<span class="pdl">pending U done</span>
+
+<span class="cm">// In the next step, the 'safe' edge is active</span>
+<span class="pdl">X safe</span>
+
+<span class="cm">// Clock guard: t never exceeds 10 along the whole trace</span>
+<span class="pdl">G [t <= 10]</span></pre></div>
+        </div>
+
+        <div class="callout callout-info">
+          <strong>Same input box as PDL</strong>
+          LTL and PDL formulae share the same input field. The tool auto-detects LTL by the presence of the <code>X</code>, <code>U</code>, <code>G</code> or <code>F</code> operators. Unlike PDL's <code>StateProp</code> (which can mean "currently in this location"), LTL's bare-name propositions test whether an <strong>edge/hyperedge label is active</strong> — combine with <code>[ ]</code> conditions to check clocks or variables.
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- 13. CTL -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <section class="doc-section" id="ctl">
+        <div class="section-eyebrow">Section 13</div>
+        <h2>CTL Verification</h2>
+        <p>Computation Tree Logic (CTL) reasons about the full branching tree of reachable states rather than a single trace. Every temporal operator is paired with a path quantifier: <code>E</code> (there exists a path) or <code>A</code> (for all paths). Verification is exhaustive and symbolic (zone-based), exploring the reachable state graph up to a state limit.</p>
+
+        <h3>Propositional connectives</h3>
+        <div class="formula-box">
+          <span class="pdl">true</span>  &nbsp;|&nbsp;  <span class="pdl">false</span>  &nbsp;|&nbsp;  <span class="pdl">¬φ</span>  &nbsp;|&nbsp;  <span class="pdl">φ ∧ ψ</span>  &nbsp;|&nbsp;  <span class="pdl">φ ∨ ψ</span>  &nbsp;|&nbsp;  <span class="pdl">φ → ψ</span>  &nbsp;|&nbsp;  <span class="pdl">φ ↔ ψ</span>
+        </div>
+
+        <h3>Existential operators (E)</h3>
+        <table class="ref-table">
+          <tr><th>Formula</th><th>Meaning</th></tr>
+          <tr><td>EX φ</td><td>Some next state satisfies φ</td></tr>
+          <tr><td>EF φ</td><td>Some reachable state satisfies φ</td></tr>
+          <tr><td>EG φ</td><td>There is a path where φ holds forever</td></tr>
+          <tr><td>E[φ U ψ]</td><td>There is a path where φ holds until ψ becomes true</td></tr>
+        </table>
+
+        <h3>Universal operators (A)</h3>
+        <table class="ref-table">
+          <tr><th>Formula</th><th>Meaning</th></tr>
+          <tr><td>AX φ</td><td>Every next state satisfies φ</td></tr>
+          <tr><td>AF φ</td><td>Every path eventually reaches a state satisfying φ</td></tr>
+          <tr><td>AG φ</td><td>φ holds in every reachable state, on every path</td></tr>
+          <tr><td>A[φ U ψ]</td><td>On every path, φ holds until ψ becomes true</td></tr>
+        </table>
+
+        <h3>Hybrid binder (↓)</h3>
+        <p>CTL in RTA Tool supports a hybrid down-arrow binder, letting a formula refer back to "the state where we started evaluating".</p>
+        <div class="formula-box">
+          <span class="pdl">↓x . φ</span>  &nbsp;<span class="cm">// binds x to the current state, then evaluates φ</span>
+        </div>
+        <div class="code-block">
+          <div class="code-body"><pre><span class="cm">// Can we return to the exact state we started from?</span>
+<span class="pdl">↓x . EF x</span></pre></div>
+        </div>
+
+        <h3>CTL examples</h3>
+        <div class="tab-group">
+          <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab(this,'ctl1')">Reachability</button>
+            <button class="tab-btn" onclick="switchTab(this,'ctl2')">Safety / Liveness</button>
+            <button class="tab-btn" onclick="switchTab(this,'ctl3')">Until</button>
+          </div>
+          <div id="ctl1" class="tab-pane active">
+            <div class="code-block">
+              <div class="code-body"><pre><span class="cm">// Is 'win' reachable from here?</span>
+<span class="pdl">EF win</span>
+
+<span class="cm">// No matter what happens, can we always still reach 'win'?</span>
+<span class="pdl">AG EF win</span></pre></div>
+            </div>
+          </div>
+          <div id="ctl2" class="tab-pane">
+            <div class="code-block">
+              <div class="code-body"><pre><span class="cm">// counter never goes negative, on every path, forever</span>
+<span class="pdl">AG [counter >= 0]</span>
+
+<span class="cm">// there's some infinite path that stays in 'idle' forever</span>
+<span class="pdl">EG idle</span></pre></div>
+            </div>
+          </div>
+          <div id="ctl3" class="tab-pane">
+            <div class="code-block">
+              <div class="code-body"><pre><span class="cm">// On every path, 'loading' holds until 'ready' becomes true</span>
+<span class="pdl">A[loading U ready]</span>
+
+<span class="cm">// There is some path where 'retry' holds until 'success'</span>
+<span class="pdl">E[retry U success]</span></pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <strong>Counter-examples</strong>
+          When an <code>AG</code> formula fails, or an <code>EF</code> formula succeeds, the tool reconstructs a shortest witness path via BFS over the explored symbolic state graph and displays it alongside the result.
+        </div>
+      </section>
       <!-- ═══════════════════════════════════════════════ -->
       <!-- 13. PATH OPTIMIZER -->
       <!-- ═══════════════════════════════════════════════ -->
@@ -982,8 +1138,8 @@ RobotA.start <span class="ar">->></span> RobotB.start : <span class="rl">sync</s
 
         <table class="ref-table">
           <tr><th>Option</th><th>Meaning</th></tr>
-          <tr><td>Reach State</td><td>Finds the shortest sequence of actions/delays to reach a specific state.</td></tr>
-          <tr><td>Variable Condition</td><td>Finds the shortest sequence of actions/delays until a specific boolean condition holds (e.g. <code>counter == 5</code>).</td></tr>
+          <tr><td>Reach State</td><td>Finds the shortest sequence of actions to reach a specific state.</td></tr>
+          <tr><td>Variable Condition</td><td>Finds the shortest sequence of actions until a specific boolean condition holds (e.g. <code>counter == 5</code>).</td></tr>
         </table>
       </section>
 
@@ -1072,8 +1228,6 @@ RobotA.start <span class="ar">->></span> RobotB.start : <span class="rl">sync</s
           <tr><td>->></td><td>Rule ON</td><td>Hyper-edge: activate target transition</td></tr>
           <tr><td>--!</td><td>Rule OFF</td><td>Hyper-edge: deactivate target transition</td></tr>
           <tr><td>--x</td><td>Rule OFF</td><td>Alias for --!</td></tr>
-          <tr><td>----></td><td>Strong Dep.</td><td>Activate target, deactivate self</td></tr>
-          <tr><td>--#--</td><td>Mutual Exc.</td><td>Cross-disable both labels</td></tr>
         </table>
       </section>
 
