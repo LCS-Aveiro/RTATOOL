@@ -2,6 +2,7 @@ package rta.backend
 
 import rta.syntax.Program2.{Edges, RxGraph, QName, Edge, showEdges}
 import rta.syntax.Condition
+import rta.syntax.UpdateExpr 
 import rta.syntax.RuntimeValue
 import scala.util.boundary, boundary.break
 import scala.util.Random
@@ -13,6 +14,37 @@ object AnalyseLTS:
   case class FastStateKey(inits: Set[QName], vars: Map[QName, RuntimeValue], clocks: Map[QName, Double], act: Edges)
   case class ZoneStateKey(inits: Set[QName], vars: Map[QName, RuntimeValue], zone: DBM.Zone, pending: Set[(Edge, String, QName, Double)], act: Edges)
 
+
+  private def collectClockAtoms(cond: Condition, clocks: Set[QName]): Set[Condition] = cond match {
+    case c @ Condition.AtomicCond(UpdateExpr.Var(x), _, _) if clocks.contains(x) => Set(c)
+    case c @ Condition.AtomicCond(_, _, UpdateExpr.Var(x)) if clocks.contains(x) => Set(c)
+    case Condition.And(l, r) => collectClockAtoms(l, clocks) ++ collectClockAtoms(r, clocks)
+    case Condition.Or(l, r)  => collectClockAtoms(l, clocks) ++ collectClockAtoms(r, clocks)
+    case _ => Set.empty
+  }
+
+  private def collectClockConds(f: LtlFormula, clocks: Set[QName]): Set[Condition] = f match {
+    case LtlFormula.CondProp(c)   => collectClockAtoms(c, clocks)
+    case LtlFormula.Not(p)        => collectClockConds(p, clocks)
+    case LtlFormula.And(p, q)     => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case LtlFormula.Or(p, q)      => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case LtlFormula.Impl(p, q)    => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case LtlFormula.Iff(p, q)     => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case LtlFormula.Next(p)       => collectClockConds(p, clocks)
+    case LtlFormula.Globally(p)   => collectClockConds(p, clocks)
+    case LtlFormula.Eventually(p) => collectClockConds(p, clocks)
+    case LtlFormula.Until(p, q)   => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case _ => Set.empty
+  }
+
+  private def splitByConditions(rx: RxGraph, conds: List[Condition]): List[RxGraph] = conds match {
+    case Nil => List(rx)
+    case c :: rest =>
+      val trueZone  = RxSemantics.intersectConditionWithZone(c, rx.zone, rx)
+      val falseZone = RxSemantics.intersectConditionWithZone(RxSemantics.negateCondition(c), rx.zone, rx)
+      trueZone.toList.flatMap(z => splitByConditions(rx.copy(zone = z), rest)) ++
+      falseZone.toList.flatMap(z => splitByConditions(rx.copy(zone = z), rest))
+  }
 
   def verifyLTLSymbolic(start: RxGraph, formula: LtlFormula, requestedMaxStates: Int = 50000, requestedMaxDepth: Int = 30): (Boolean, List[String], List[String], Int, Boolean, List[String]) = {
     
@@ -116,78 +148,92 @@ object AnalyseLTS:
       }
     }
 
-    def dfs(current: RxGraph, path: List[RxGraph], labels: List[String], edgeIds: List[String], depth: Int, visitedInPath: Set[ZoneStateKey]): Unit = {
-      if (counterExample.isDefined) return
-      if (statesExplored >= maxStates && !isExhaustive) {
-        return
-      }
-      statesExplored += 1
-      visitLog += current.inits.mkString(",")
+    def dfs(current0: RxGraph, pathPrefix: List[RxGraph], labels: List[String], edgeIds: List[String], depth: Int, visitedInPath: Set[ZoneStateKey]): Unit = boundary {
+      
+      val currentWithTime = RxSemantics.advanceTimeZone(current0).getOrElse(current0)
+      
+      val clockConds = collectClockConds(formula, currentWithTime.clocks).toList
+      val refinedStates = if (clockConds.isEmpty) List(currentWithTime) else splitByConditions(currentWithTime, clockConds)
+      
+      for (current <- refinedStates if counterExample.isEmpty) {
+        if (statesExplored >= maxStates && !isExhaustive) break() 
 
-      val key = ZoneStateKey(current.inits, current.val_env, current.zone, current.pendingDelays, current.act)
-      val isCycle = visitedInPath.contains(key)
-      val nexts = RxSemantics.nextEdgeSymbolic(current)
-      val isDeadlock = nexts.isEmpty
+        statesExplored += 1
+        visitLog += current.inits.mkString(",")
 
-      if (isCycle || isDeadlock || depth >= maxDepth) {
+        val key = ZoneStateKey(current.inits, current.val_env, current.zone, current.pendingDelays, current.act)
+        val isCycle = visitedInPath.contains(key)
+        val nexts = RxSemantics.nextEdgeSymbolic(current)
+        val isDeadlock = nexts.isEmpty
         
-        if (isCycle) {
-          val cycleStartIdx = path.indexWhere { s =>
-            ZoneStateKey(s.inits, s.val_env, s.zone, s.pendingDelays, s.act) == key
-          }
-          val cycleStates = path.drop(cycleStartIdx)
-          val cycleEdges = edgeIds.drop(cycleStartIdx)
+        val currentPath = pathPrefix :+ current
+
+        if (isCycle || isDeadlock || depth >= maxDepth) {
           
-          if (!isTimeDivergent(cycleStates, cycleEdges)) {
-            return 
+          var skipEvaluation = false
+          if (isCycle) {
+            val cycleStartIdx = currentPath.indexWhere { s =>
+              ZoneStateKey(s.inits, s.val_env, s.zone, s.pendingDelays, s.act) == key
+            }
+            val cycleStates = currentPath.drop(cycleStartIdx)
+            val cycleEdges = edgeIds.drop(cycleStartIdx)
+            
+            if (!isTimeDivergent(cycleStates, cycleEdges)) {
+              skipEvaluation = true
+            }
           }
-        }
 
-        val res = if (isCycle) {
-          val cycleStartIdx = path.indexWhere { s =>
-            ZoneStateKey(s.inits, s.val_env, s.zone, s.pendingDelays, s.act) == key
+          if (!skipEvaluation) {
+            val res = if (isCycle) {
+              val cycleStartIdx = currentPath.indexWhere { s =>
+                ZoneStateKey(s.inits, s.val_env, s.zone, s.pendingDelays, s.act) == key
+              }
+              evalOnLassoGeneral(currentPath.take(cycleStartIdx), currentPath.drop(cycleStartIdx), formula)
+            } else {
+              LtlEvaluator.eval(currentPath, formula, LtlEvaluator.Hybrid, isSymbolic = true)
+            }
+
+            if (!res) {
+              val ceFormatted = collection.mutable.ListBuffer[String]()
+              for (i <- currentPath.indices) {
+                val g = currentPath(i)
+                val inits = g.inits.map(_.show).mkString(",")
+                val acts = g.act.map(_._4.show).mkString(", ")
+                
+                var stateStr = s"{$inits, act: [$acts]}"
+                
+                if (i == currentPath.length - 1) {
+                  if (isDeadlock) stateStr += " [DEADLOCK - Semântica de Traço Finito]"
+                  else if (isCycle) stateStr += " [CICLO/LASSO DETETADO]"
+                  else if (depth >= maxDepth) stateStr += " [LIMITE PROFUNDIDADE]"
+                }
+                
+                ceFormatted += stateStr
+                
+                if (i < labels.length) {
+                  ceFormatted += labels(i)
+                }
+              }
+              counterExample = Some((ceFormatted.toList, edgeIds))
+              
+              break() 
+            }
           }
-          evalOnLassoGeneral(path.take(cycleStartIdx), path.drop(cycleStartIdx), formula)
+          
         } else {
-          LtlEvaluator.eval(path, formula, LtlEvaluator.Hybrid, isSymbolic = true)
-        }
-
-        if (!res) {
-          val ceFormatted = collection.mutable.ListBuffer[String]()
-          for (i <- path.indices) {
-            val g = path(i)
-            val inits = g.inits.map(_.show).mkString(",")
-            val acts = g.act.map(_._4.show).mkString(", ")
-            
-            var stateStr = s"{$inits, act: [$acts]}"
-            
-            if (i == path.length - 1) {
-              if (isDeadlock) stateStr += " [DEADLOCK - Semântica de Traço Finito]"
-              else if (isCycle) stateStr += " [CICLO/LASSO DETETADO]"
-              else if (depth >= maxDepth) stateStr += " [LIMITE PROFUNDIDADE]"
-            }
-            
-            ceFormatted += stateStr
-            
-            if (i < labels.length) {
-              ceFormatted += labels(i)
+          for ((edge, nextGraph) <- nexts) {
+            if (counterExample.isEmpty) {
+              val label = edge._4.show
+              val edgeId = if (label == "timeout") "delay_node" else s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
+              
+              dfs(nextGraph, currentPath, labels :+ label, edgeIds :+ edgeId, depth + 1, visitedInPath + key)
             }
           }
-          counterExample = Some((ceFormatted.toList, edgeIds))
-        }
-        return
-      }
-
-      for ((edge, nextGraph) <- nexts) {
-        if (counterExample.isEmpty) {
-          val label = edge._4.show
-          val edgeId = if (label == "timeout") "delay_node" else s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
-          dfs(nextGraph, path :+ nextGraph, labels :+ label, edgeIds :+ edgeId, depth + 1, visitedInPath + key)
         }
       }
     }
 
-    dfs(start, List(start), Nil, Nil, 0, Set())
+    dfs(start, Nil, Nil, Nil, 0, Set())
 
     counterExample match {
       case Some((lbls, ids)) => (false, lbls, ids, statesExplored, !isExhaustive, visitLog.toList)

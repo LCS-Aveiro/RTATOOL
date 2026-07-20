@@ -98,7 +98,8 @@ object TraceGenerator {
               if (RxSemantics.advanceTimeBy(rx, mid).isDefined) low = mid
               else high = mid
             }
-            math.max(0.0, low - 0.000002) 
+
+            low 
           }
 
           val maxDelay = findMaxDelay(current)
@@ -121,7 +122,16 @@ object TraceGenerator {
                 targetVal - current.clock_env.getOrElse(clock, 0.0)
               }.filter(_ > 0.00001)
 
-              val baseDelay = if (pendingDiffs.nonEmpty) pendingDiffs.min else (0.1 + rand.nextDouble() * 3.0)
+
+              val jumpToBoundary = maxDelay < 99.0 && rand.nextBoolean()
+
+              val baseDelay = if (pendingDiffs.nonEmpty) {
+                pendingDiffs.min
+              } else if (jumpToBoundary) {
+                maxDelay
+              } else {
+                (0.1 + rand.nextDouble() * 3.0)
+              }
               
               val delayVal = math.min(baseDelay, maxDelay)
               

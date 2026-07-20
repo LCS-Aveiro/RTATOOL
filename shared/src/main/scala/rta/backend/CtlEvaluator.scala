@@ -4,6 +4,8 @@ import rta.syntax.Program2.{QName, RxGraph}
 import rta.syntax.CtlFormula
 import rta.syntax.CtlFormula.*
 import rta.backend.AnalyseLTS.ZoneStateKey
+import rta.syntax.Condition
+import rta.syntax.UpdateExpr
 
 object CtlEvaluator {
 
@@ -24,24 +26,71 @@ object CtlEvaluator {
       case AF(p) => getConstants(p, clocks)
       case AG(p) => getConstants(p, clocks)
       case AU(p, q) => mergeMax(getConstants(p, clocks), getConstants(q, clocks))
-      case Bind(_, p) => getConstants(p, clocks) // Hybrid
+      case Bind(_, p) => getConstants(p, clocks)
       case _ => Map.empty
     }
   }
 
+  private def collectClockAtoms(cond: Condition, clocks: Set[QName]): Set[Condition] = cond match {
+    case c @ Condition.AtomicCond(UpdateExpr.Var(x), _, _) if clocks.contains(x) => Set(c)
+    case c @ Condition.AtomicCond(_, _, UpdateExpr.Var(x)) if clocks.contains(x) => Set(c)
+    case Condition.And(l, r) => collectClockAtoms(l, clocks) ++ collectClockAtoms(r, clocks)
+    case Condition.Or(l, r)  => collectClockAtoms(l, clocks) ++ collectClockAtoms(r, clocks)
+    case _ => Set.empty
+  }
+
+  private def collectClockConds(f: CtlFormula, clocks: Set[QName]): Set[Condition] = f match {
+    case CondProp(c)   => collectClockAtoms(c, clocks)
+    case Not(p)        => collectClockConds(p, clocks)
+    case And(p, q)     => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case Or(p, q)      => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case Impl(p, q)    => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case Iff(p, q)     => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case EX(p)         => collectClockConds(p, clocks)
+    case EF(p)         => collectClockConds(p, clocks)
+    case EG(p)         => collectClockConds(p, clocks)
+    case EU(p, q)      => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case AX(p)         => collectClockConds(p, clocks)
+    case AF(p)         => collectClockConds(p, clocks)
+    case AG(p)         => collectClockConds(p, clocks)
+    case AU(p, q)      => collectClockConds(p, clocks) ++ collectClockConds(q, clocks)
+    case Bind(_, p)    => collectClockConds(p, clocks)
+    case _ => Set.empty
+  }
+
+  private def splitByConditions(rx: RxGraph, conds: List[Condition]): List[RxGraph] = conds match {
+    case Nil => List(rx)
+    case c :: rest =>
+      val trueZone  = RxSemantics.intersectConditionWithZone(c, rx.zone, rx)
+      val falseZone = RxSemantics.intersectConditionWithZone(RxSemantics.negateCondition(c), rx.zone, rx)
+      trueZone.toList.flatMap(z => splitByConditions(rx.copy(zone = z), rest)) ++
+      falseZone.toList.flatMap(z => splitByConditions(rx.copy(zone = z), rest))
+  }
+
   def verifyCTLSymbolic(start: RxGraph, formula: CtlFormula, maxStates: Int): (Boolean, Int, List[String], List[String]) = {
-    // 1. Construir o Espaço de Estados Simbólico
+    val clockConds = collectClockConds(formula, start.clocks).toList
+
     val states = collection.mutable.ArrayBuffer[RxGraph]()
     val stateIndices = collection.mutable.Map[ZoneStateKey, Int]()
     val adj = collection.mutable.ArrayBuffer[List[(Int, String, String)]]()
 
     def getKey(g: RxGraph) = ZoneStateKey(g.inits, g.val_env, g.zone, g.pendingDelays, g.act)
 
-    states += start
-    stateIndices(getKey(start)) = 0
-    adj += List.empty
+    val startWithTime = RxSemantics.advanceTimeZone(start).getOrElse(start)
+    val initialStates = if (clockConds.isEmpty) List(startWithTime) else splitByConditions(startWithTime, clockConds)
+    var queue = List.empty[Int]
+    
+    for (s <- initialStates) {
+      val key = getKey(s)
+      if (!stateIndices.contains(key)) {
+        val idx = states.length
+        states += s
+        stateIndices(key) = idx
+        adj += List.empty
+        queue = queue :+ idx
+      }
+    }
 
-    var queue = List(0)
     var explored = 0
 
     while (queue.nonEmpty && states.length <= maxStates) {
@@ -51,21 +100,29 @@ object CtlEvaluator {
       explored += 1
 
       val nexts = RxSemantics.nextEdgeSymbolic(currGraph)
-      val transitions = nexts.toList.map { case (edge, nextGraph) =>
-        val key = getKey(nextGraph)
-        val nextIdx = stateIndices.get(key) match {
-          case Some(idx) => idx
-          case None =>
-            val idx = states.length
-            states += nextGraph
-            stateIndices(key) = idx
-            adj += List.empty
-            queue = queue :+ idx
-            idx
+      
+      val transitions = nexts.toList.flatMap { case (edge, nextGraph0) =>
+        
+        val nextGraph = RxSemantics.advanceTimeZone(nextGraph0).getOrElse(nextGraph0)
+        
+        val refinedNexts = if (clockConds.isEmpty) List(nextGraph) else splitByConditions(nextGraph, clockConds)
+        
+        refinedNexts.map { refinedNext =>
+          val key = getKey(refinedNext)
+          val nextIdx = stateIndices.get(key) match {
+            case Some(idx) => idx
+            case None =>
+              val idx = states.length
+              states += refinedNext
+              stateIndices(key) = idx
+              adj += List.empty
+              queue = queue :+ idx
+              idx
+          }
+          val label = edge._4.show
+          val edgeId = if (label == "timeout") "delay_node" else s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
+          (nextIdx, label, edgeId)
         }
-        val label = edge._4.show
-        val edgeId = if (label == "timeout") "delay_node" else s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
-        (nextIdx, label, edgeId)
       }
       adj(currIdx) = transitions
     }
@@ -73,10 +130,8 @@ object CtlEvaluator {
     val N = states.length
     val adjArray = adj.map(_.map(_._1)).toArray
 
-    // Memória para não recalcular a mesma fórmula com as mesmas variáveis
     val cache = collection.mutable.Map[(CtlFormula, Map[String, Int]), Array[Boolean]]()
 
-    // 2. Model Checking Recursivo com Ambiente de Variáveis Híbridas (g)
     def eval(f: CtlFormula, env: Map[String, Int]): Array[Boolean] = {
       cache.getOrElseUpdate((f, env), {
         f match {
@@ -86,34 +141,28 @@ object CtlEvaluator {
           case StateProp(e) =>
             val name = e.show
             if (env.contains(name)) {
-              // Híbrido: É uma Variável Nominal (c == g(x))
               val boundStateIdx = env(name)
               Array.tabulate(N)(i => i == boundStateIdx)
             } else {
-              // Standard: É um Nominal de Localização ou Aresta Ativa
               Array.tabulate(N)(i => states(i).act.exists(_._4 == e) || states(i).inits.contains(e))
             }
             
           case CondProp(c) => 
             Array.tabulate(N)(i => RxSemantics.evalConditionForLTL(c, states(i)))
 
-          // Operador Hybrid Down-Arrow (↓)
           case Bind(x, p) =>
             val res = new Array[Boolean](N)
             for (i <- 0 until N) {
-              // Avalia `p` sabendo que a variável `x` vale o estado `i` atual.
               res(i) = eval(p, env + (x -> i))(i)
             }
             res
           
-          // Booleanos Standard
           case Not(p) => eval(p, env).map(!_)
           case And(p, q) => (eval(p, env), eval(q, env)).zipped.map(_ && _).toArray
           case Or(p, q) => (eval(p, env), eval(q, env)).zipped.map(_ || _).toArray
           case Impl(p, q) => (eval(p, env), eval(q, env)).zipped.map((a, b) => !a || b).toArray
           case Iff(p, q) => (eval(p, env), eval(q, env)).zipped.map(_ == _).toArray
 
-          // Operadores CTL Point-Fix Iteration
           case EX(p) =>
             val pRes = eval(p, env)
             Array.tabulate(N)(i => adjArray(i).exists(pRes))
@@ -189,22 +238,22 @@ object CtlEvaluator {
       })
     }
 
-    // Arranca a avaliação com o ambiente vazio
-    val result = eval(formula, Map.empty)(0)
+    val initialIndices = initialStates.map(s => stateIndices(getKey(s)))
+    val result = initialIndices.forall(idx => eval(formula, Map.empty)(idx))
 
     var traceLabels = List[String]()
     var traceIds = List[String]()
 
     def extractPath(targetCond: Int => Boolean): Unit = {
-      val queue = collection.mutable.Queue[Int](0)
+      val queue = collection.mutable.Queue[Int](initialIndices: _*)
       val parent = collection.mutable.Map[Int, (Int, String, String)]()
-      val visited = collection.mutable.Set[Int](0)
+      val visited = collection.mutable.Set[Int](initialIndices: _*)
 
       while (queue.nonEmpty) {
         val curr = queue.dequeue()
         if (targetCond(curr)) {
           var p = curr
-          while (p != 0) {
+          while (!initialIndices.contains(p)) {
             val (prev, l, e) = parent(p)
             traceLabels = l :: traceLabels
             traceIds = e :: traceIds
