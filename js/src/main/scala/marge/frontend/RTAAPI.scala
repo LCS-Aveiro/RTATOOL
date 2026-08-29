@@ -35,6 +35,11 @@ object RTAAPI {
       else (0.0, 0.0)
     }
 
+    override def hasPos(id: String): Boolean = {
+      val p = nodesPos.selectDynamic(id)
+      !js.isUndefined(p) && p != null
+    }
+
     def getNails(sourceId: String, targetId: String, edgeId: String): List[(Double, Double)] = {
       val e = edgesPos.selectDynamic(edgeId)
       if (js.isUndefined(e) || e == null) return Nil

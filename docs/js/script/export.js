@@ -290,20 +290,36 @@ function downloadString(filename, content) {
 
 
 
-function downloadUppaal(type) {
-    var sourceCode = editor.getValue();
-    const graphId = getLayoutKey(sourceCode);
-    var layoutJson = localStorage.getItem(`cyLayout_${graphId}`) || "{}";
-    var content = ""; var name = "model.xml";
 
-    if (type === 'tgrg') { 
-        content = RTA.getUppaalTGRG(layoutJson); 
-        name = "model_tgrg.xml"; 
+
+function captureLiveLayout() {
+  if (!currentCytoscapeInstance) return null;
+  const cy = currentCytoscapeInstance;
+  const layoutData = { nodes: {}, edges: {} };
+  cy.nodes().forEach(node => {
+    if (node.children().length === 0) {
+      const p = node.position();
+      layoutData.nodes[node.id()] = { x: Math.round(p.x), y: Math.round(p.y) };
     }
-    if (type === 'teste') { 
-        content = RTA.getUppaal(layoutJson); 
-        name = "model_teste.xml"; 
+  });
+  cy.edges().forEach(edge => {
+    const dists   = edge.data('cyedgecontroleditingDistances') || edge.data('edgeDistances');
+    const weights = edge.data('cyedgecontroleditingWeights')   || edge.data('edgeWeights');
+    if (dists && dists.length > 0) {
+      layoutData.edges[edge.id()] = { distances: dists, weights: weights };
     }
-    if (content) downloadString(name, content);
-    else alert("Modelo não carregado.");
+  });
+  return JSON.stringify(layoutData);
+}
+
+function downloadUppaal(type) {
+  var sourceCode = editor.getValue();
+  const graphId = getLayoutKey(sourceCode);
+  var layoutJson = captureLiveLayout() || localStorage.getItem(`cyLayout_${graphId}`) || "{}";
+  try { localStorage.setItem(`cyLayout_${graphId}`, layoutJson); } catch (e) {}
+  var content = ""; var name = "model.xml";
+  if (type === 'tgrg')  { content = RTA.getUppaalTGRG(layoutJson); name = "model_tgrg.xml"; }
+  if (type === 'teste') { content = RTA.getUppaal(layoutJson);     name = "model_teste.xml"; }
+  if (content) downloadString(name, content);
+  else alert("Modelo não carregado.");
 }

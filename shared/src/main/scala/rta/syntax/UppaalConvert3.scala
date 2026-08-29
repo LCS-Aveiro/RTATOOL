@@ -75,6 +75,8 @@ object UppaalConverter3 {
       val (x, y) = layout.getPos(id)
       Point(x, y)
     }
+    def optPos(id: String): Option[Point] = if (layout.hasPos(id)) Some(getPos(id)) else None
+
 
     def calculateNails(sourceId: String, targetId: String, edgeId: String): List[Point] = {
       layout.getNails(sourceId, targetId, edgeId).map(p => Point(p._1, p._2))
@@ -283,65 +285,65 @@ object UppaalConverter3 {
         |}
         |""".stripMargin)
 
+    val cols = 8
+    val fallbackPos: Map[QName, Point] = allStates.zipWithIndex.map { case (s, idx) =>
+      s -> Point((idx % cols) * 260.0, (idx / cols) * 180.0)
+    }.toMap
+    def statePos(s: QName): Point = optPos(s.toString).getOrElse(fallbackPos(s))
+    def actionPos(actionNodeId: String, src: QName, dst: QName): Point =
+      optPos(actionNodeId).getOrElse {
+        val s = statePos(src); val t = statePos(dst)
+        Point((s.x + t.x) / 2.0, (s.y + t.y) / 2.0 - 70.0)
+      }
+
     val locationNodes = allStates.map { stateName =>
       val stateId = stateToId(stateName)
-      val pos = getPos(stateName.toString)
+      val pos = statePos(stateName)
+      val px = Math.round(pos.x).toInt; val py = Math.round(pos.y).toInt
       val invariantNode = rxGraph.invariants.get(stateName)
-        .map(cond => <label kind="invariant" x={pos.x.toString} y={(pos.y + 15).toString}>{conditionToString(cond)}</label>)
+        .map(cond => <label kind="invariant" x={px.toString} y={(py + 15).toString}>{conditionToString(cond)}</label>)
         .getOrElse(NodeSeq.Empty)
-
-      <location id={stateId} x={pos.x.toString} y={pos.y.toString}>
-        <name x={(pos.x - 20).toString} y={(pos.y - 30).toString}>{sanitizeQName(stateName)}</name>
+      <location id={stateId} x={px.toString} y={py.toString}>
+        <name x={(px - 20).toString} y={(py - 30).toString}>{sanitizeQName(stateName)}</name>
         {invariantNode}
       </location>
     }
 
     val transitionNodes = simpleEdges.map { edge =>
-        val (source, target,transId, lbl) = edge
-        val edgeIndex = edgeToIndex(edge)
-        val actionId = labelToId.getOrElse(lbl, -1)
-        val actionNodeId = s"event_${source}_${target}_${transId}_${lbl}"
-
-        val cyEdge1Id = s"s_to_a_${source}_${actionNodeId}"
-        val cyEdge2Id = s"a_to_s_${actionNodeId}_${target}"
-
-        val nails1 = calculateNails(source.toString, actionNodeId, cyEdge1Id)
-        val actionNodePos = getPos(actionNodeId)
-        val nails2 = calculateNails(actionNodeId, target.toString, cyEdge2Id)
-
-        val allNails = nails1 ++ List(actionNodePos) ++ nails2
-
-        val labelX = actionNodePos.x.toInt
-        val labelY = actionNodePos.y.toInt
-        
-        val reactiveGuard = s"A[$edgeIndex].stat == 1"
-        val dataGuardOpt = rxGraph.edgeConditions.get(edge).flatten.map(conditionToString)
-        
-        val fullGuard = dataGuardOpt match {
-            case Some(dg) => s"($reactiveGuard) && ($dg)"
-            case None => reactiveGuard
-        }
-
-        val statements = rxGraph.edgeUpdates.getOrElse(edge, Nil)
-        val dataUpdateCall = if (statements.nonEmpty) {
-            val funcName = s"update_data_${functionCounter.getAndIncrement()}"
-            val funcBody = statements.map(statementToString).mkString("\n\t")
-            dataFunctions.append(s"void $funcName() {\n\t$funcBody\n}\n")
-            s"$funcName(), "
-        } else {
-            ""
-        }
-        
-        val fullAssignment = s"${dataUpdateCall}update_hyperedges_by_id($actionId)"
-
-
-        <transition>
-          <source ref={stateToId(source)}/>
-          <target ref={stateToId(target)}/>
-          <label kind="guard" x={(labelX - 40).toString} y={(labelY - 35).toString}>{fullGuard}</label>
-          <label kind="assignment" x={(labelX - 40).toString} y={(labelY + 15).toString}>{fullAssignment}</label>
-          {allNails.map(p => <nail x={p.x.toInt.toString} y={p.y.toInt.toString}/>)}
-        </transition>
+      val (source, target, transId, lbl) = edge
+      val edgeIndex = edgeToIndex(edge)
+      val actionId  = labelToId.getOrElse(lbl, -1)
+      val actionNodeId = s"event_${source}_${target}_${transId}_${lbl}"
+      val cyEdge1Id = s"s_to_a_${source}_${actionNodeId}"
+      val cyEdge2Id = s"a_to_s_${actionNodeId}_${target}"
+      val aPos   = actionPos(actionNodeId, source, target)
+      val nails1 = calculateNails(source.toString, actionNodeId, cyEdge1Id)
+      val nails2 = calculateNails(actionNodeId, target.toString, cyEdge2Id)
+      val allNails = (nails1 :+ aPos) ++ nails2
+      val labelX = Math.round(aPos.x).toInt; val labelY = Math.round(aPos.y).toInt
+      val reactiveGuard = s"A[$edgeIndex].stat == 1"
+      val dataGuardOpt  = rxGraph.edgeConditions.get(edge).flatten.map(conditionToString)
+      val fullGuard = dataGuardOpt match {
+        case Some(dg) => s"($reactiveGuard) && ($dg)"; case None => reactiveGuard
+      }
+      val statements = rxGraph.edgeUpdates.getOrElse(edge, Nil)
+      val dataUpdateCall = if (statements.nonEmpty) {
+        val funcName = s"update_data_${functionCounter.getAndIncrement()}"
+        val funcBody = statements.map(statementToString).mkString("\n\t")
+        dataFunctions.append(s"void $funcName() {\n\t$funcBody\n}\n")
+        s"$funcName(), "
+      } else ""
+      val fullAssignment = s"${dataUpdateCall}update_hyperedges_by_id($actionId)"
+      <transition>
+        <source ref={stateToId(source)}/>
+        <target ref={stateToId(target)}/>
+        <label kind="guard" x={(labelX - 40).toString} y={(labelY - 35).toString}>{fullGuard}</label>
+        <label kind="assignment" x={(labelX - 40).toString} y={(labelY + 15).toString}>{fullAssignment}</label>
+        {allNails.map { p =>
+          val nx = Math.round(p.x).toInt; val ny = Math.round(p.y).toInt
+          <nail x={nx.toString} y={ny.toString}/>
+        }}
+      </transition>
     }
 
     declarationBuilder.append(

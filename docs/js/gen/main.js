@@ -14300,8 +14300,16 @@ function $p_Lrta_backend_UppaalConverter3$__getPos$1__Lrta_backend_UppaalLayout_
   var y$2 = $uD(\u03b41$___2);
   return new $c_Lrta_backend_UppaalConverter3$Point(x$2, y$2)
 }
-function $p_Lrta_backend_UppaalConverter3$__calculateNails$1__Lrta_backend_UppaalLayout__T__T__T__sci_List($thiz, layout$2, sourceId, targetId, edgeId) {
-  var this$3 = $n($n(layout$2).getNails__T__T__T__sci_List(sourceId, targetId, edgeId));
+function $p_Lrta_backend_UppaalConverter3$__optPos$1__Lrta_backend_UppaalLayout__T__s_Option($thiz, layout$2, id) {
+  if ($n(layout$2).hasPos__T__Z(id)) {
+    var value = $p_Lrta_backend_UppaalConverter3$__getPos$1__Lrta_backend_UppaalLayout__T__Lrta_backend_UppaalConverter3$Point($thiz, layout$2, id);
+    return new $c_s_Some(value)
+  } else {
+    return $m_s_None$()
+  }
+}
+function $p_Lrta_backend_UppaalConverter3$__calculateNails$1__Lrta_backend_UppaalLayout__T__T__T__sci_List($thiz, layout$3, sourceId, targetId, edgeId) {
+  var this$3 = $n($n(layout$3).getNails__T__T__T__sci_List(sourceId, targetId, edgeId));
   var f = ((p) => {
     var p$1 = $as_T2(p);
     var x = $uD($n(p$1)._1__O());
@@ -14478,6 +14486,25 @@ function $p_Lrta_backend_UppaalConverter3$__getReturnType$1__sci_List__T($thiz, 
   } else {
     return "void"
   }
+}
+function $p_Lrta_backend_UppaalConverter3$__statePos$1__Lrta_backend_UppaalLayout__sci_Map__Lrta_syntax_Program2$QName__Lrta_backend_UppaalConverter3$Point($thiz, layout$4, fallbackPos$1, s) {
+  var this$1 = $n(s);
+  var this$2 = $n(this$1.Lrta_syntax_Program2$QName__f_n);
+  var this$3 = $n($p_Lrta_backend_UppaalConverter3$__optPos$1__Lrta_backend_UppaalLayout__T__s_Option($thiz, layout$4, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$2, "", "/", "")));
+  return $as_Lrta_backend_UppaalConverter3$Point((this$3.isEmpty__Z() ? $as_Lrta_backend_UppaalConverter3$Point($n(fallbackPos$1).apply__O__O(s)) : this$3.get__O()))
+}
+function $p_Lrta_backend_UppaalConverter3$__actionPos$1__Lrta_backend_UppaalLayout__sci_Map__T__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_backend_UppaalConverter3$Point($thiz, layout$8, fallbackPos$6, actionNodeId, src, dst) {
+  var this$1 = $n($p_Lrta_backend_UppaalConverter3$__optPos$1__Lrta_backend_UppaalLayout__T__s_Option($thiz, layout$8, actionNodeId));
+  if (this$1.isEmpty__Z()) {
+    var s = $p_Lrta_backend_UppaalConverter3$__statePos$1__Lrta_backend_UppaalLayout__sci_Map__Lrta_syntax_Program2$QName__Lrta_backend_UppaalConverter3$Point($thiz, layout$8, fallbackPos$6, src);
+    var t = $p_Lrta_backend_UppaalConverter3$__statePos$1__Lrta_backend_UppaalLayout__sci_Map__Lrta_syntax_Program2$QName__Lrta_backend_UppaalConverter3$Point($thiz, layout$8, fallbackPos$6, dst);
+    var x = (($n(s).Lrta_backend_UppaalConverter3$Point__f_x + $n(t).Lrta_backend_UppaalConverter3$Point__f_x) / 2.0);
+    var y = ((($n(s).Lrta_backend_UppaalConverter3$Point__f_y + $n(t).Lrta_backend_UppaalConverter3$Point__f_y) / 2.0) - 70.0);
+    var $$x1 = new $c_Lrta_backend_UppaalConverter3$Point(x, y)
+  } else {
+    var $$x1 = this$1.get__O()
+  };
+  return $as_Lrta_backend_UppaalConverter3$Point($$x1)
 }
 /** @constructor */
 function $c_Lrta_backend_UppaalConverter3$() {
@@ -15183,82 +15210,118 @@ $c_Lrta_backend_UppaalConverter3$.prototype.convert__Lrta_syntax_Program2$RxGrap
     declarationBuilder.append__T__scm_StringBuilder((("Hyperedge L[NUM_HYPEREDGES] = {\n" + $f_sc_IterableOnceOps__mkString__T__T__T__T(this$121, "", ",\n", "")) + "\n};\n"))
   };
   declarationBuilder.append__T__scm_StringBuilder(($m_sc_StringOps$(), $m_sc_StringOps$().stripMargin$extension__T__C__T("\n        |// -----------------------------------------------------------\n        |// 4. L\u00f3gica de Atualiza\u00e7\u00e3o Reativa\n        |// -----------------------------------------------------------\n        |void update_hyperedges_by_id(int edge_id) {\n        |    int i;\n        |    for (i = 0; i < NUM_HYPEREDGES; i++) {\n        |        if (L[i].id == edge_id && L[i].stat) { \n        |            if (L[i].is_edge_target) {\n        |                A[L[i].trg_index].stat = L[i].type;\n        |            } else {\n        |                L[L[i].trg_index].stat = L[i].type;\n        |            }\n        |        }\n        |    }\n        |}\n        |", 124)));
-  var this$143 = $n(allStates);
-  var f$17 = ((stateName) => {
-    var stateName$1 = $as_Lrta_syntax_Program2$QName(stateName);
-    var stateId = $as_T($n(stateToId).apply__O__O(stateName$1));
-    var this$124 = $n(stateName$1);
-    var this$125 = $n(this$124.Lrta_syntax_Program2$QName__f_n);
-    var pos = $p_Lrta_backend_UppaalConverter3$__getPos$1__Lrta_backend_UppaalLayout__T__Lrta_backend_UppaalConverter3$Point(this, layout, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$125, "", "/", ""));
-    var this$126 = $n($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(stateName$1));
-    if (this$126.isEmpty__Z()) {
-      var $$x12 = $m_s_None$()
-    } else {
-      var arg1$17 = this$126.get__O();
-      var cond = $as_Lrta_syntax_Condition(arg1$17);
-      var \u03b4md = $m_s_xml_Null$();
-      var this$127 = ($n(pos).Lrta_backend_UppaalConverter3$Point__f_y + 15.0);
-      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$127), \u03b4md);
-      var this$129 = $n(pos).Lrta_backend_UppaalConverter3$Point__f_x;
-      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$129), \u03b4md);
-      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("invariant"), \u03b4md);
-      var $$x14 = \u03b4md;
-      var $$x13 = $m_s_xml_TopScope$();
-      var \u03b4buf = new $c_s_xml_NodeBuffer();
-      \u03b4buf.$amp$plus__O__s_xml_NodeBuffer($p_Lrta_backend_UppaalConverter3$__conditionToString__Lrta_syntax_Condition__T(this, cond));
-      $m_s_xml_NodeSeq$();
-      var $$x12 = new $c_s_Some(new $c_s_xml_Elem(null, "label", $$x14, $$x13, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf)))
+  var this$124 = $n(allStates);
+  var this$128 = $n($as_sci_List($f_sc_StrictOptimizedIterableOps__zipWithIndex__O(this$124)));
+  var f$17 = ((x$1$7$1) => {
+    var x$1$17 = $as_T2(x$1$7$1);
+    if ((x$1$17 !== null)) {
+      var s$1 = $as_Lrta_syntax_Program2$QName($n(x$1$17)._1__O());
+      var idx = $uI($n(x$1$17)._2__O());
+      var x$6 = (260.0 * ((idx % 8) | 0));
+      var y$1 = (180.0 * ((idx / 8) | 0));
+      var y$2 = new $c_Lrta_backend_UppaalConverter3$Point(x$6, y$1);
+      return new $c_T2(s$1, y$2)
     };
-    var this$132 = $n($$x12);
-    var invariantNode = $as_s_xml_NodeSeq((this$132.isEmpty__Z() ? $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty : this$132.get__O()));
-    var \u03b4md$1 = $m_s_xml_Null$();
-    var this$133 = $n(pos).Lrta_backend_UppaalConverter3$Point__f_y;
-    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$133), \u03b4md$1);
-    var this$135 = $n(pos).Lrta_backend_UppaalConverter3$Point__f_x;
-    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$135), \u03b4md$1);
-    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "id", stateId, \u03b4md$1);
-    var $$x18 = \u03b4md$1;
-    var $$x17 = $m_s_xml_TopScope$();
-    var \u03b4buf$1 = new $c_s_xml_NodeBuffer();
-    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
-    var \u03b4md$2 = $m_s_xml_Null$();
-    var this$137 = ($n(pos).Lrta_backend_UppaalConverter3$Point__f_y - 30.0);
-    \u03b4md$2 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$137), \u03b4md$2);
-    var this$139 = ($n(pos).Lrta_backend_UppaalConverter3$Point__f_x - 20.0);
-    \u03b4md$2 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$139), \u03b4md$2);
-    var $$x16 = \u03b4md$2;
-    var $$x15 = $m_s_xml_TopScope$();
-    var \u03b4buf$2 = new $c_s_xml_NodeBuffer();
-    var name$4 = $n(stateName$1).show__T();
-    \u03b4buf$2.$amp$plus__O__s_xml_NodeBuffer($f_T__replaceAll__T__T__T($n(name$4), "[^a-zA-Z0-9_]", "_"));
-    $m_s_xml_NodeSeq$();
-    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x16, $$x15, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2)));
-    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
-    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(invariantNode);
-    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n      "));
-    $m_s_xml_NodeSeq$();
-    return new $c_s_xml_Elem(null, "location", $$x18, $$x17, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$1))
+    throw new $c_s_MatchError(x$1$17)
   });
-  if ((this$143 === $m_sci_Nil$())) {
-    var locationNodes = $m_sci_Nil$()
+  if ((this$128 === $m_sci_Nil$())) {
+    var $$x12 = $m_sci_Nil$()
   } else {
-    var arg1$18 = this$143.head__O();
-    var h$11 = new $c_sci_$colon$colon(f$17(arg1$18), $m_sci_Nil$());
+    var arg1$17 = this$128.head__O();
+    var h$11 = new $c_sci_$colon$colon(f$17(arg1$17), $m_sci_Nil$());
     var t$15 = h$11;
-    var rest$9 = $as_sci_List(this$143.tail__O());
+    var rest$9 = $as_sci_List(this$128.tail__O());
     while ((rest$9 !== $m_sci_Nil$())) {
-      var arg1$19 = $n(rest$9).head__O();
-      var nx$9 = new $c_sci_$colon$colon(f$17(arg1$19), $m_sci_Nil$());
+      var arg1$18 = $n(rest$9).head__O();
+      var nx$9 = new $c_sci_$colon$colon(f$17(arg1$18), $m_sci_Nil$());
       $n(t$15).sci_$colon$colon__f_next = nx$9;
       t$15 = nx$9;
       rest$9 = $as_sci_List($n(rest$9).tail__O())
     };
-    var locationNodes = h$11
+    var $$x12 = h$11
   };
-  var this$173 = $n(simpleEdges);
-  var f$20 = ((edge$3$1) => {
+  var this$130 = $n($$x12);
+  var this$129 = $m_s_$less$colon$less$();
+  var fallbackPos = $m_sci_Map$().from__sc_IterableOnce__sci_Map(this$130);
+  var this$149 = $n(allStates);
+  var f$18 = ((stateName) => {
+    var stateName$1 = $as_Lrta_syntax_Program2$QName(stateName);
+    var stateId = $as_T($n(stateToId).apply__O__O(stateName$1));
+    var pos = $p_Lrta_backend_UppaalConverter3$__statePos$1__Lrta_backend_UppaalLayout__sci_Map__Lrta_syntax_Program2$QName__Lrta_backend_UppaalConverter3$Point(this, layout, fallbackPos, stateName$1);
+    var a = $n(pos).Lrta_backend_UppaalConverter3$Point__f_x;
+    var this$132 = $m_RTLong$();
+    var value$2 = $uD(Math.round(a));
+    var lo = this$132.org$scalajs$linker$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$2);
+    var a$1 = $n(pos).Lrta_backend_UppaalConverter3$Point__f_y;
+    var this$134 = $m_RTLong$();
+    var value$3 = $uD(Math.round(a$1));
+    var lo$1 = this$134.org$scalajs$linker$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$3);
+    var this$135 = $n($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_invariants).get__O__s_Option(stateName$1));
+    if (this$135.isEmpty__Z()) {
+      var $$x13 = $m_s_None$()
+    } else {
+      var arg1$19 = this$135.get__O();
+      var cond = $as_Lrta_syntax_Condition(arg1$19);
+      var \u03b4md = $m_s_xml_Null$();
+      var this$136 = ((15 + lo$1) | 0);
+      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$136), \u03b4md);
+      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + lo), \u03b4md);
+      \u03b4md = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("invariant"), \u03b4md);
+      var $$x15 = \u03b4md;
+      var $$x14 = $m_s_xml_TopScope$();
+      var \u03b4buf = new $c_s_xml_NodeBuffer();
+      \u03b4buf.$amp$plus__O__s_xml_NodeBuffer($p_Lrta_backend_UppaalConverter3$__conditionToString__Lrta_syntax_Condition__T(this, cond));
+      $m_s_xml_NodeSeq$();
+      var $$x13 = new $c_s_Some(new $c_s_xml_Elem(null, "label", $$x15, $$x14, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf)))
+    };
+    var this$140 = $n($$x13);
+    var invariantNode = $as_s_xml_NodeSeq((this$140.isEmpty__Z() ? $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty : this$140.get__O()));
+    var \u03b4md$1 = $m_s_xml_Null$();
+    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + lo$1), \u03b4md$1);
+    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + lo), \u03b4md$1);
+    \u03b4md$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "id", stateId, \u03b4md$1);
+    var $$x19 = \u03b4md$1;
+    var $$x18 = $m_s_xml_TopScope$();
+    var \u03b4buf$1 = new $c_s_xml_NodeBuffer();
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var \u03b4md$2 = $m_s_xml_Null$();
+    var this$143 = (((-30) + lo$1) | 0);
+    \u03b4md$2 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$143), \u03b4md$2);
+    var this$145 = (((-20) + lo) | 0);
+    \u03b4md$2 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$145), \u03b4md$2);
+    var $$x17 = \u03b4md$2;
+    var $$x16 = $m_s_xml_TopScope$();
+    var \u03b4buf$2 = new $c_s_xml_NodeBuffer();
+    var name$4 = $n(stateName$1).show__T();
+    \u03b4buf$2.$amp$plus__O__s_xml_NodeBuffer($f_T__replaceAll__T__T__T($n(name$4), "[^a-zA-Z0-9_]", "_"));
+    $m_s_xml_NodeSeq$();
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x17, $$x16, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2)));
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(invariantNode);
+    \u03b4buf$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n      "));
+    $m_s_xml_NodeSeq$();
+    return new $c_s_xml_Elem(null, "location", $$x19, $$x18, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$1))
+  });
+  if ((this$149 === $m_sci_Nil$())) {
+    var locationNodes = $m_sci_Nil$()
+  } else {
+    var arg1$20 = this$149.head__O();
+    var h$12 = new $c_sci_$colon$colon(f$18(arg1$20), $m_sci_Nil$());
+    var t$16 = h$12;
+    var rest$10 = $as_sci_List(this$149.tail__O());
+    while ((rest$10 !== $m_sci_Nil$())) {
+      var arg1$21 = $n(rest$10).head__O();
+      var nx$10 = new $c_sci_$colon$colon(f$18(arg1$21), $m_sci_Nil$());
+      $n(t$16).sci_$colon$colon__f_next = nx$10;
+      t$16 = nx$10;
+      rest$10 = $as_sci_List($n(rest$10).tail__O())
+    };
+    var locationNodes = h$12
+  };
+  var this$184 = $n(simpleEdges);
+  var f$21 = ((edge$3$1) => {
     var edge$4 = $as_T4(edge$3$1);
-    matchResult32: {
+    matchResult33: {
       var \u03b43$___1;
       var \u03b43$___2;
       var \u03b43$___3;
@@ -15272,7 +15335,7 @@ $c_Lrta_backend_UppaalConverter3$.prototype.convert__Lrta_syntax_Program2$RxGrap
         var \u03b43$___2 = target;
         var \u03b43$___3 = transId$1;
         var \u03b43$___4 = lbl$1;
-        break matchResult32
+        break matchResult33
       };
       throw new $c_s_MatchError(edge$4)
     };
@@ -15285,236 +15348,245 @@ $c_Lrta_backend_UppaalConverter3$.prototype.convert__Lrta_syntax_Program2$RxGrap
     var actionNodeId = ((((((("event_" + source$2) + "_") + target$2) + "_") + transId$2) + "_") + lbl$2);
     var cyEdge1Id = ((("s_to_a_" + source$2) + "_") + actionNodeId);
     var cyEdge2Id = ((("a_to_s_" + actionNodeId) + "_") + target$2);
-    var this$145 = $n(source$2);
-    var this$146 = $n(this$145.Lrta_syntax_Program2$QName__f_n);
-    var nails1 = $p_Lrta_backend_UppaalConverter3$__calculateNails$1__Lrta_backend_UppaalLayout__T__T__T__sci_List(this, layout, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$146, "", "/", ""), actionNodeId, cyEdge1Id);
-    var actionNodePos = $p_Lrta_backend_UppaalConverter3$__getPos$1__Lrta_backend_UppaalLayout__T__Lrta_backend_UppaalConverter3$Point(this, layout, actionNodeId);
-    var this$147 = $n(target$2);
-    var this$148 = $n(this$147.Lrta_syntax_Program2$QName__f_n);
-    var nails2 = $p_Lrta_backend_UppaalConverter3$__calculateNails$1__Lrta_backend_UppaalLayout__T__T__T__sci_List(this, layout, actionNodeId, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$148, "", "/", ""), cyEdge2Id);
-    var this$150 = $n(nails1);
-    $n($m_s_package$().s_package$__f_List);
-    var elems = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_Lrta_backend_UppaalConverter3$Point.getArrayOf().constr)([actionNodePos]));
-    var suffix$1 = $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems);
-    var this$151 = $n(this$150.appendedAll__sc_IterableOnce__sci_List(suffix$1));
-    var allNails = this$151.appendedAll__sc_IterableOnce__sci_List(nails2);
-    var labelX = $doubleToInt($n(actionNodePos).Lrta_backend_UppaalConverter3$Point__f_x);
-    var labelY = $doubleToInt($n(actionNodePos).Lrta_backend_UppaalConverter3$Point__f_y);
+    var aPos = $p_Lrta_backend_UppaalConverter3$__actionPos$1__Lrta_backend_UppaalLayout__sci_Map__T__Lrta_syntax_Program2$QName__Lrta_syntax_Program2$QName__Lrta_backend_UppaalConverter3$Point(this, layout, fallbackPos, actionNodeId, source$2, target$2);
+    var this$151 = $n(source$2);
+    var this$152 = $n(this$151.Lrta_syntax_Program2$QName__f_n);
+    var nails1 = $p_Lrta_backend_UppaalConverter3$__calculateNails$1__Lrta_backend_UppaalLayout__T__T__T__sci_List(this, layout, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$152, "", "/", ""), actionNodeId, cyEdge1Id);
+    var this$153 = $n(target$2);
+    var this$154 = $n(this$153.Lrta_syntax_Program2$QName__f_n);
+    var nails2 = $p_Lrta_backend_UppaalConverter3$__calculateNails$1__Lrta_backend_UppaalLayout__T__T__T__sci_List(this, layout, actionNodeId, $f_sc_IterableOnceOps__mkString__T__T__T__T(this$154, "", "/", ""), cyEdge2Id);
+    var this$155 = $n(nails1);
+    var this$156 = $n($as_sc_IterableOps($f_sc_StrictOptimizedSeqOps__appended__O__O(this$155, aPos)));
+    var allNails = $as_sci_List(this$156.concat__sc_IterableOnce__O(nails2));
+    var a$2 = $n(aPos).Lrta_backend_UppaalConverter3$Point__f_x;
+    var this$158 = $m_RTLong$();
+    var value$4 = $uD(Math.round(a$2));
+    var lo$2 = this$158.org$scalajs$linker$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$4);
+    var a$3 = $n(aPos).Lrta_backend_UppaalConverter3$Point__f_y;
+    var this$160 = $m_RTLong$();
+    var value$5 = $uD(Math.round(a$3));
+    var lo$3 = this$160.org$scalajs$linker$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$5);
     var reactiveGuard = (("A[" + edgeIndex) + "].stat == 1");
-    var $$x19 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_edgeConditions).get__O__s_Option(edge$4);
-    var this$152 = $m_s_$less$colon$less$();
-    var this$153 = $n($n($$x19).flatten__s_$less$colon$less__s_Option(this$152.s_$less$colon$less$__f_singleton));
-    if (this$153.isEmpty__Z()) {
+    var $$x20 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_edgeConditions).get__O__s_Option(edge$4);
+    var this$161 = $m_s_$less$colon$less$();
+    var this$162 = $n($n($$x20).flatten__s_$less$colon$less__s_Option(this$161.s_$less$colon$less$__f_singleton));
+    if (this$162.isEmpty__Z()) {
       var dataGuardOpt = $m_s_None$()
     } else {
-      var arg1$20 = this$153.get__O();
-      var cond$1 = $as_Lrta_syntax_Condition(arg1$20);
+      var arg1$22 = this$162.get__O();
+      var cond$1 = $as_Lrta_syntax_Condition(arg1$22);
       var dataGuardOpt = new $c_s_Some($p_Lrta_backend_UppaalConverter3$__conditionToString__Lrta_syntax_Condition__T(this, cond$1))
     };
-    matchResult33: {
+    matchResult34: {
       var fullGuard;
       if ((dataGuardOpt instanceof $c_s_Some)) {
         var dg = $as_T($n($as_s_Some(dataGuardOpt)).s_Some__f_value);
         var fullGuard = (((("(" + reactiveGuard) + ") && (") + dg) + ")");
-        break matchResult33
+        break matchResult34
       };
-      var x$6 = $m_s_None$();
-      if ((x$6 === dataGuardOpt)) {
+      var x$7 = $m_s_None$();
+      if ((x$7 === dataGuardOpt)) {
         var fullGuard = reactiveGuard;
-        break matchResult33
+        break matchResult34
       };
       throw new $c_s_MatchError(dataGuardOpt)
     };
     var statements = $as_sci_List($n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_edgeUpdates).getOrElse__O__F0__O(edge$4, new $c_sjsr_AnonFunction0((() => $m_s_package$().s_package$__f_Nil))));
-    var this$154 = $n(statements);
-    if ((!this$154.isEmpty__Z())) {
+    var this$163 = $n(statements);
+    if ((!this$163.isEmpty__Z())) {
       var old = functionCounter.ju_concurrent_atomic_AtomicInteger__f_java$util$concurrent$atomic$AtomicInteger$$value;
       functionCounter.ju_concurrent_atomic_AtomicInteger__f_java$util$concurrent$atomic$AtomicInteger$$value = ((1 + old) | 0);
       var funcName = ("update_data_" + old);
-      var this$155 = $n(statements);
-      var f$18 = ((stmt$2) => {
+      var this$164 = $n(statements);
+      var f$19 = ((stmt$2) => {
         var stmt$3 = $as_Lrta_syntax_Statement(stmt$2);
         return $p_Lrta_backend_UppaalConverter3$__statementToString__Lrta_syntax_Statement__T(this, stmt$3)
       });
-      if ((this$155 === $m_sci_Nil$())) {
-        var $$x20 = $m_sci_Nil$()
+      if ((this$164 === $m_sci_Nil$())) {
+        var $$x21 = $m_sci_Nil$()
       } else {
-        var arg1$21 = this$155.head__O();
-        var h$12 = new $c_sci_$colon$colon(f$18(arg1$21), $m_sci_Nil$());
-        var t$16 = h$12;
-        var rest$10 = $as_sci_List(this$155.tail__O());
-        while ((rest$10 !== $m_sci_Nil$())) {
-          var arg1$22 = $n(rest$10).head__O();
-          var nx$10 = new $c_sci_$colon$colon(f$18(arg1$22), $m_sci_Nil$());
-          $n(t$16).sci_$colon$colon__f_next = nx$10;
-          t$16 = nx$10;
-          rest$10 = $as_sci_List($n(rest$10).tail__O())
+        var arg1$23 = this$164.head__O();
+        var h$13 = new $c_sci_$colon$colon(f$19(arg1$23), $m_sci_Nil$());
+        var t$17 = h$13;
+        var rest$11 = $as_sci_List(this$164.tail__O());
+        while ((rest$11 !== $m_sci_Nil$())) {
+          var arg1$24 = $n(rest$11).head__O();
+          var nx$11 = new $c_sci_$colon$colon(f$19(arg1$24), $m_sci_Nil$());
+          $n(t$17).sci_$colon$colon__f_next = nx$11;
+          t$17 = nx$11;
+          rest$11 = $as_sci_List($n(rest$11).tail__O())
         };
-        var $$x20 = h$12
+        var $$x21 = h$13
       };
-      var this$156 = $n($$x20);
-      var funcBody = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$156, "", "\n\t", "");
+      var this$165 = $n($$x21);
+      var funcBody = $f_sc_IterableOnceOps__mkString__T__T__T__T(this$165, "", "\n\t", "");
       dataFunctions.append__T__scm_StringBuilder((((("void " + funcName) + "() {\n\t") + funcBody) + "\n}\n"));
       var dataUpdateCall = (funcName + "(), ")
     } else {
       var dataUpdateCall = ""
     };
     var fullAssignment = (((dataUpdateCall + "update_hyperedges_by_id(") + actionId) + ")");
-    var $$x27 = $m_s_xml_Null$();
-    var $$x26 = $m_s_xml_TopScope$();
+    var $$x28 = $m_s_xml_Null$();
+    var $$x27 = $m_s_xml_TopScope$();
     var \u03b4buf$3 = new $c_s_xml_NodeBuffer();
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
     var \u03b4md$3 = $m_s_xml_Null$();
     \u03b4md$3 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", $as_T($n(stateToId).apply__O__O(source$2)), \u03b4md$3);
     \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "source", \u03b4md$3, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
     var \u03b4md$2$1 = $m_s_xml_Null$();
     \u03b4md$2$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", $as_T($n(stateToId).apply__O__O(target$2)), \u03b4md$2$1);
     \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "target", \u03b4md$2$1, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))));
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
     var \u03b4md$3$1 = $m_s_xml_Null$();
-    var this$157 = (((-35) + labelY) | 0);
-    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$157), \u03b4md$3$1);
-    var this$159 = (((-40) + labelX) | 0);
-    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$159), \u03b4md$3$1);
+    var this$166 = (((-35) + lo$3) | 0);
+    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$166), \u03b4md$3$1);
+    var this$168 = (((-40) + lo$2) | 0);
+    \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$168), \u03b4md$3$1);
     \u03b4md$3$1 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("guard"), \u03b4md$3$1);
-    var $$x22 = \u03b4md$3$1;
-    var $$x21 = $m_s_xml_TopScope$();
+    var $$x23 = \u03b4md$3$1;
+    var $$x22 = $m_s_xml_TopScope$();
     var \u03b4buf$2$1 = new $c_s_xml_NodeBuffer();
     \u03b4buf$2$1.$amp$plus__O__s_xml_NodeBuffer(fullGuard);
     $m_s_xml_NodeSeq$();
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x22, $$x21, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2$1)));
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x23, $$x22, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2$1)));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
     var \u03b4md$4 = $m_s_xml_Null$();
-    var this$162 = ((15 + labelY) | 0);
-    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$162), \u03b4md$4);
-    var this$164 = (((-40) + labelX) | 0);
-    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$164), \u03b4md$4);
+    var this$171 = ((15 + lo$3) | 0);
+    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$171), \u03b4md$4);
+    var this$173 = (((-40) + lo$2) | 0);
+    \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$173), \u03b4md$4);
     \u03b4md$4 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "kind", new $c_s_xml_Text("assignment"), \u03b4md$4);
-    var $$x24 = \u03b4md$4;
-    var $$x23 = $m_s_xml_TopScope$();
+    var $$x25 = \u03b4md$4;
+    var $$x24 = $m_s_xml_TopScope$();
     var \u03b4buf$3$1 = new $c_s_xml_NodeBuffer();
     \u03b4buf$3$1.$amp$plus__O__s_xml_NodeBuffer(fullAssignment);
     $m_s_xml_NodeSeq$();
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x24, $$x23, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3$1)));
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-    var this$171 = $n(allNails);
-    var f$19 = ((p$3) => {
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "label", $$x25, $$x24, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3$1)));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    var this$182 = $n(allNails);
+    var f$20 = ((p$3) => {
       var p$4 = $as_Lrta_backend_UppaalConverter3$Point(p$3);
+      var a$4 = $n(p$4).Lrta_backend_UppaalConverter3$Point__f_x;
+      var this$177 = $m_RTLong$();
+      var value$6 = $uD(Math.round(a$4));
+      var lo$4 = this$177.org$scalajs$linker$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$6);
+      var a$5 = $n(p$4).Lrta_backend_UppaalConverter3$Point__f_y;
+      var this$179 = $m_RTLong$();
+      var value$7 = $uD(Math.round(a$5));
+      var lo$5 = this$179.org$scalajs$linker$runtime$RuntimeLong$$fromDoubleImpl__D__I(value$7);
       var \u03b4md$5 = $m_s_xml_Null$();
-      var this$167 = $doubleToInt($n(p$4).Lrta_backend_UppaalConverter3$Point__f_y);
-      \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + this$167), \u03b4md$5);
-      var this$169 = $doubleToInt($n(p$4).Lrta_backend_UppaalConverter3$Point__f_x);
-      \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + this$169), \u03b4md$5);
+      \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", ("" + lo$5), \u03b4md$5);
+      \u03b4md$5 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", ("" + lo$4), \u03b4md$5);
       return new $c_s_xml_Elem(null, "nail", \u03b4md$5, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([])))
     });
-    if ((this$171 === $m_sci_Nil$())) {
-      var $$x25 = $m_sci_Nil$()
+    if ((this$182 === $m_sci_Nil$())) {
+      var $$x26 = $m_sci_Nil$()
     } else {
-      var arg1$23 = this$171.head__O();
-      var h$13 = new $c_sci_$colon$colon(f$19(arg1$23), $m_sci_Nil$());
-      var t$17 = h$13;
-      var rest$11 = $as_sci_List(this$171.tail__O());
-      while ((rest$11 !== $m_sci_Nil$())) {
-        var arg1$24 = $n(rest$11).head__O();
-        var nx$11 = new $c_sci_$colon$colon(f$19(arg1$24), $m_sci_Nil$());
-        $n(t$17).sci_$colon$colon__f_next = nx$11;
-        t$17 = nx$11;
-        rest$11 = $as_sci_List($n(rest$11).tail__O())
+      var arg1$25 = this$182.head__O();
+      var h$14 = new $c_sci_$colon$colon(f$20(arg1$25), $m_sci_Nil$());
+      var t$18 = h$14;
+      var rest$12 = $as_sci_List(this$182.tail__O());
+      while ((rest$12 !== $m_sci_Nil$())) {
+        var arg1$26 = $n(rest$12).head__O();
+        var nx$12 = new $c_sci_$colon$colon(f$20(arg1$26), $m_sci_Nil$());
+        $n(t$18).sci_$colon$colon__f_next = nx$12;
+        t$18 = nx$12;
+        rest$12 = $as_sci_List($n(rest$12).tail__O())
       };
-      var $$x25 = h$13
+      var $$x26 = h$14
     };
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer($$x25);
-    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer($$x26);
+    \u03b4buf$3.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n      "));
     $m_s_xml_NodeSeq$();
-    return new $c_s_xml_Elem(null, "transition", $$x27, $$x26, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3))
+    return new $c_s_xml_Elem(null, "transition", $$x28, $$x27, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3))
   });
-  if ((this$173 === $m_sci_Nil$())) {
+  if ((this$184 === $m_sci_Nil$())) {
     var transitionNodes = $m_sci_Nil$()
   } else {
-    var arg1$25 = this$173.head__O();
-    var h$14 = new $c_sci_$colon$colon(f$20(arg1$25), $m_sci_Nil$());
-    var t$18 = h$14;
-    var rest$12 = $as_sci_List(this$173.tail__O());
-    while ((rest$12 !== $m_sci_Nil$())) {
-      var arg1$26 = $n(rest$12).head__O();
-      var nx$12 = new $c_sci_$colon$colon(f$20(arg1$26), $m_sci_Nil$());
-      $n(t$18).sci_$colon$colon__f_next = nx$12;
-      t$18 = nx$12;
-      rest$12 = $as_sci_List($n(rest$12).tail__O())
+    var arg1$27 = this$184.head__O();
+    var h$15 = new $c_sci_$colon$colon(f$21(arg1$27), $m_sci_Nil$());
+    var t$19 = h$15;
+    var rest$13 = $as_sci_List(this$184.tail__O());
+    while ((rest$13 !== $m_sci_Nil$())) {
+      var arg1$28 = $n(rest$13).head__O();
+      var nx$13 = new $c_sci_$colon$colon(f$21(arg1$28), $m_sci_Nil$());
+      $n(t$19).sci_$colon$colon__f_next = nx$13;
+      t$19 = nx$13;
+      rest$13 = $as_sci_List($n(rest$13).tail__O())
     };
-    var transitionNodes = h$14
+    var transitionNodes = h$15
   };
   $m_sc_StringOps$();
-  var x$7 = (("\n         |// -----------------------------------------------------------\n         |// 5. Fun\u00e7\u00f5es de Dados (Geradas)\n         |// -----------------------------------------------------------\n         |" + $n(dataFunctions.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content) + "\n         |");
-  declarationBuilder.append__T__scm_StringBuilder($m_sc_StringOps$().stripMargin$extension__T__C__T(x$7, 124));
-  var this$176 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_inits);
-  var this$177 = $n($f_sc_IterableOps__headOption__s_Option(this$176));
-  if (this$177.isEmpty__Z()) {
+  var x$8 = (("\n         |// -----------------------------------------------------------\n         |// 5. Fun\u00e7\u00f5es de Dados (Geradas)\n         |// -----------------------------------------------------------\n         |" + $n(dataFunctions.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content) + "\n         |");
+  declarationBuilder.append__T__scm_StringBuilder($m_sc_StringOps$().stripMargin$extension__T__C__T(x$8, 124));
+  var this$187 = $n($n(rxGraph).Lrta_syntax_Program2$RxGraph__f_inits);
+  var this$188 = $n($f_sc_IterableOps__headOption__s_Option(this$187));
+  if (this$188.isEmpty__Z()) {
     var initRef = $m_s_None$()
   } else {
-    var arg1$27 = this$177.get__O();
-    var key$1 = $as_Lrta_syntax_Program2$QName(arg1$27);
+    var arg1$29 = this$188.get__O();
+    var key$1 = $as_Lrta_syntax_Program2$QName(arg1$29);
     var initRef = $n(stateToId).get__O__s_Option(key$1)
   };
-  var $$x38 = $m_s_xml_Null$();
-  var $$x37 = $m_s_xml_TopScope$();
+  var $$x39 = $m_s_xml_Null$();
+  var $$x38 = $m_s_xml_TopScope$();
   var \u03b4buf$4 = new $c_s_xml_NodeBuffer();
   \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
-  var $$x29 = $m_s_xml_Null$();
-  var $$x28 = $m_s_xml_TopScope$();
+  var $$x30 = $m_s_xml_Null$();
+  var $$x29 = $m_s_xml_TopScope$();
   var \u03b4buf$2$2 = new $c_s_xml_NodeBuffer();
   \u03b4buf$2$2.$amp$plus__O__s_xml_NodeBuffer($n(declarationBuilder.scm_StringBuilder__f_underlying).jl_StringBuilder__f_java$lang$StringBuilder$$content);
   $m_s_xml_NodeSeq$();
-  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "declaration", $$x29, $$x28, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2$2)));
+  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "declaration", $$x30, $$x29, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$2$2)));
   \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
-  var $$x34 = $m_s_xml_Null$();
-  var $$x33 = $m_s_xml_TopScope$();
+  var $$x35 = $m_s_xml_Null$();
+  var $$x34 = $m_s_xml_TopScope$();
   var \u03b4buf$3$2 = new $c_s_xml_NodeBuffer();
   \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
   var \u03b4md$6 = $m_s_xml_Null$();
   \u03b4md$6 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "y", new $c_s_xml_Text("5"), \u03b4md$6);
   \u03b4md$6 = $ct_s_xml_UnprefixedAttribute__T__sc_Seq__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "x", new $c_s_xml_Text("5"), \u03b4md$6);
-  var $$x31 = \u03b4md$6;
-  var $$x30 = $m_s_xml_TopScope$();
+  var $$x32 = \u03b4md$6;
+  var $$x31 = $m_s_xml_TopScope$();
   var \u03b4buf$4$1 = new $c_s_xml_NodeBuffer();
   \u03b4buf$4$1.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("Template"));
   $m_s_xml_NodeSeq$();
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x31, $$x30, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$4$1)));
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "name", $$x32, $$x31, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$4$1)));
   \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
   \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(locationNodes);
   \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
-  var this$180 = $n(initRef);
-  if (this$180.isEmpty__Z()) {
-    var $$x32 = $m_s_None$()
+  var this$191 = $n(initRef);
+  if (this$191.isEmpty__Z()) {
+    var $$x33 = $m_s_None$()
   } else {
-    var arg1$28 = this$180.get__O();
-    var ref = $as_T(arg1$28);
+    var arg1$30 = this$191.get__O();
+    var ref = $as_T(arg1$30);
     var \u03b4md$7 = $m_s_xml_Null$();
     \u03b4md$7 = $ct_s_xml_UnprefixedAttribute__T__T__s_xml_MetaData__(new $c_s_xml_UnprefixedAttribute(), "ref", ref, \u03b4md$7);
-    var $$x32 = new $c_s_Some(new $c_s_xml_Elem(null, "init", \u03b4md$7, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))))
+    var $$x33 = new $c_s_Some(new $c_s_xml_Elem(null, "init", \u03b4md$7, $m_s_xml_TopScope$(), true, $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_s_xml_Node.getArrayOf().constr)([]))))
   };
-  var this$181 = $n($$x32);
-  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer((this$181.isEmpty__Z() ? $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty : this$181.get__O()));
+  var this$192 = $n($$x33);
+  \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer((this$192.isEmpty__Z() ? $m_s_xml_NodeSeq$().s_xml_NodeSeq$__f_Empty : this$192.get__O()));
   \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n          "));
   \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(transitionNodes);
   \u03b4buf$3$2.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
   $m_s_xml_NodeSeq$();
-  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "template", $$x34, $$x33, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3$2)));
+  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "template", $$x35, $$x34, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$3$2)));
   \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n        "));
-  var $$x36 = $m_s_xml_Null$();
-  var $$x35 = $m_s_xml_TopScope$();
+  var $$x37 = $m_s_xml_Null$();
+  var $$x36 = $m_s_xml_TopScope$();
   var \u03b4buf$5 = new $c_s_xml_NodeBuffer();
   \u03b4buf$5.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("Process = Template(); system Process;"));
   $m_s_xml_NodeSeq$();
-  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "system", $$x36, $$x35, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$5)));
+  \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Elem(null, "system", $$x37, $$x36, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$5)));
   \u03b4buf$4.$amp$plus__O__s_xml_NodeBuffer(new $c_s_xml_Text("\n      "));
   $m_s_xml_NodeSeq$();
-  var nta = new $c_s_xml_Elem(null, "nta", $$x38, $$x37, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$4));
+  var nta = new $c_s_xml_Elem(null, "nta", $$x39, $$x38, false, new $c_s_xml_NodeSeq$$anon$1(\u03b4buf$4));
   var pp = $ct_s_xml_PrettyPrinter__I__I__(new $c_s_xml_PrettyPrinter(), 200, 2);
-  var this$185 = $n(pp.format__s_xml_Node__s_xml_NamespaceBinding__T(nta, $m_s_xml_TopScope$()));
-  var this$186 = $n($as_T(this$185.split("&amp;&amp;").join("&&")));
-  var formattedXml = $as_T(this$186.split("&&").join("&amp;&amp;"));
+  var this$196 = $n(pp.format__s_xml_Node__s_xml_NamespaceBinding__T(nta, $m_s_xml_TopScope$()));
+  var this$197 = $n($as_T(this$196.split("&amp;&amp;").join("&&")));
+  var formattedXml = $as_T(this$197.split("&&").join("&amp;&amp;"));
   var xmlString = ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>\n" + formattedXml);
   return $as_T(xmlString.split("  ").join("\t"))
 });
@@ -20189,77 +20261,12 @@ $c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid__T = (function() {
   var this$48 = $n($$x1);
   return $as_T((this$48.isEmpty__Z() ? "graph LR\n0(Nenhum modelo carregado)" : this$48.get__O()))
 });
-$c_Lrta_frontend_RTAAPI$.prototype.undo = (function() {
-  return this.undo__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.findBestPathZone = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.findBestPathZone__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.verifyLTLBatch = (function(arg, arg$2, arg$3) {
-  var prep0 = $as_T(arg);
-  var prep1 = $uI(arg$2);
-  var prep2 = $uI(arg$3);
-  return this.verifyLTLBatch__T__I__I__T(prep0, prep1, prep2)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateMermaidSimple = (function() {
-  return this.getCurrentStateMermaidSimple__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.translateToGLTS = (function() {
-  return this.translateToGLTS__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateText = (function() {
-  return this.getCurrentStateText__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getExamples = (function() {
-  return this.getExamples__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.takeStep = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.takeStep__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getUppaal = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.getUppaal__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.debugZoneGraphSize = (function(...rest) {
-  var prep0 = ((rest[0] === (void 0)) ? 200000 : $uI(rest[0]));
-  return this.debugZoneGraphSize__I__T(prep0)
-});
 $c_Lrta_frontend_RTAAPI$.prototype.getMcrl2 = (function() {
   return this.getMcrl2__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.testLTLEquivalence = (function(arg, arg$2, arg$3) {
-  var prep0 = $as_T(arg);
-  var prep1 = $as_T(arg$2);
-  var prep2 = $uI(arg$3);
-  return this.testLTLEquivalence__T__T__I__T(prep0, prep1, prep2)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.checkBreakpoints = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.checkBreakpoints__T__T(prep0)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.advanceTime = (function(arg) {
   var prep0 = $uD(arg);
   return this.advanceTime__D__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.checkProblems = (function() {
-  return this.checkProblems__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.findBestPath = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.findBestPath__T__T(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid = (function() {
-  return this.getSymbolicStepsMermaid__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsJSON = (function() {
-  return this.getSymbolicStepsJSON__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.runCTLExhaustive = (function(arg, arg$2) {
-  var prep0 = $as_T(arg);
-  var prep1 = $uI(arg$2);
-  return this.runCTLExhaustive__T__I__T(prep0, prep1)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.runLTLExhaustive = (function(arg, arg$2, arg$3) {
   var prep0 = $as_T(arg);
@@ -20267,43 +20274,108 @@ $c_Lrta_frontend_RTAAPI$.prototype.runLTLExhaustive = (function(arg, arg$2, arg$
   var prep2 = $uI(arg$3);
   return this.runLTLExhaustive__T__I__I__T(prep0, prep1, prep2)
 });
+$c_Lrta_frontend_RTAAPI$.prototype.checkProblems = (function() {
+  return this.checkProblems__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.resetLTLSimulation = (function() {
+  this.resetLTLSimulation__V()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getUppaalTGRG = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.getUppaalTGRG__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsJSON = (function() {
+  return this.getSymbolicStepsJSON__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateMermaid = (function() {
+  return this.getCurrentStateMermaid__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getSymbolicStepsMermaid = (function() {
+  return this.getSymbolicStepsMermaid__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getUppaal = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.getUppaal__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.evalWatchExpression = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.evalWatchExpression__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.translateToGLTS = (function() {
+  return this.translateToGLTS__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateMermaidSimple = (function() {
+  return this.getCurrentStateMermaidSimple__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.findBestPath = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.findBestPath__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateText = (function() {
+  return this.getCurrentStateText__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.runCTLExhaustive = (function(arg, arg$2) {
+  var prep0 = $as_T(arg);
+  var prep1 = $uI(arg$2);
+  return this.runCTLExhaustive__T__I__T(prep0, prep1)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid = (function() {
+  return this.getAllStepsMermaid__T()
+});
 $c_Lrta_frontend_RTAAPI$.prototype.runPdl = (function(arg, arg$2, arg$3) {
   var prep0 = $as_T(arg);
   var prep1 = $as_T(arg$2);
   var prep2 = $uI(arg$3);
   return this.runPdl__T__T__I__T(prep0, prep1, prep2)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.evalWatchExpression = (function(arg) {
+$c_Lrta_frontend_RTAAPI$.prototype.takeStep = (function(arg) {
   var prep0 = $as_T(arg);
-  return this.evalWatchExpression__T__T(prep0)
+  return this.takeStep__T__T(prep0)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.findPathToValue = (function(arg) {
+$c_Lrta_frontend_RTAAPI$.prototype.getExamples = (function() {
+  return this.getExamples__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.testLTLEquivalence = (function(arg, arg$2, arg$3) {
   var prep0 = $as_T(arg);
-  return this.findPathToValue__T__sjs_js_Any(prep0)
-});
-$c_Lrta_frontend_RTAAPI$.prototype.getStats = (function() {
-  return this.getStats__T()
-});
-$c_Lrta_frontend_RTAAPI$.prototype.findPathToValueZone = (function(arg) {
-  var prep0 = $as_T(arg);
-  return this.findPathToValueZone__T__sjs_js_Any(prep0)
+  var prep1 = $as_T(arg$2);
+  var prep2 = $uI(arg$3);
+  return this.testLTLEquivalence__T__T__I__T(prep0, prep1, prep2)
 });
 $c_Lrta_frontend_RTAAPI$.prototype.loadModel = (function(arg) {
   var prep0 = $as_T(arg);
   return this.loadModel__T__T(prep0)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.getCurrentStateMermaid = (function() {
-  return this.getCurrentStateMermaid__T()
+$c_Lrta_frontend_RTAAPI$.prototype.debugZoneGraphSize = (function(...rest) {
+  var prep0 = ((rest[0] === (void 0)) ? 200000 : $uI(rest[0]));
+  return this.debugZoneGraphSize__I__T(prep0)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.getUppaalTGRG = (function(arg) {
+$c_Lrta_frontend_RTAAPI$.prototype.findBestPathZone = (function(arg) {
   var prep0 = $as_T(arg);
-  return this.getUppaalTGRG__T__T(prep0)
+  return this.findBestPathZone__T__T(prep0)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.getAllStepsMermaid = (function() {
-  return this.getAllStepsMermaid__T()
+$c_Lrta_frontend_RTAAPI$.prototype.findPathToValueZone = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.findPathToValueZone__T__sjs_js_Any(prep0)
 });
-$c_Lrta_frontend_RTAAPI$.prototype.resetLTLSimulation = (function() {
-  this.resetLTLSimulation__V()
+$c_Lrta_frontend_RTAAPI$.prototype.verifyLTLBatch = (function(arg, arg$2, arg$3) {
+  var prep0 = $as_T(arg);
+  var prep1 = $uI(arg$2);
+  var prep2 = $uI(arg$3);
+  return this.verifyLTLBatch__T__I__I__T(prep0, prep1, prep2)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.findPathToValue = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.findPathToValue__T__sjs_js_Any(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.checkBreakpoints = (function(arg) {
+  var prep0 = $as_T(arg);
+  return this.checkBreakpoints__T__T(prep0)
+});
+$c_Lrta_frontend_RTAAPI$.prototype.undo = (function() {
+  return this.undo__T()
+});
+$c_Lrta_frontend_RTAAPI$.prototype.getStats = (function() {
+  return this.getStats__T()
 });
 var $d_Lrta_frontend_RTAAPI$ = new $TypeData().initClass({
   Lrta_frontend_RTAAPI$: 0
@@ -30290,6 +30362,10 @@ $c_Lrta_frontend_RTAAPI$JSLayout.prototype.getPos__T__T2 = (function(id) {
   } else {
     return new $c_T2(0.0, 0.0)
   }
+});
+$c_Lrta_frontend_RTAAPI$JSLayout.prototype.hasPos__T__Z = (function(id) {
+  var p = this.Lrta_frontend_RTAAPI$JSLayout__f_nodesPos[id];
+  return ((p !== (void 0)) && (p !== null))
 });
 $c_Lrta_frontend_RTAAPI$JSLayout.prototype.getNails__T__T__T__sci_List = (function(sourceId, targetId, edgeId) {
   var e = this.Lrta_frontend_RTAAPI$JSLayout__f_edgesPos[edgeId];
