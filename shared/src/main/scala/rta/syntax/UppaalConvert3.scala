@@ -34,30 +34,35 @@ object UppaalConverter3 {
     case Condition.Or(l, r) => s"(${conditionToString(l)}) || (${conditionToString(r)})"
   }
 
-  private def statementToString(stmt: Statement): String = stmt match {
+  private def statementToString(stmt: Statement, rx: RxGraph): String = stmt match {
     case AssignStmt(variable, expr) =>
-      s"${sanitizeQName(variable)} = ${exprToString(expr)};"
+      val rhs  = exprToString(expr)
+      val safe = if (targetIsInt(variable, rx) && exprIsFloat(expr, rx)) s"fint($rhs)" else rhs
+      s"${sanitizeQName(variable)} = $safe;"
     case ArrayAssignStmt(arrName, index, expr) =>
-      s"${sanitizeQName(arrName)}[${exprToString(index)}] = ${exprToString(expr)};"
+      val rhs = exprToString(expr)
+      val elemIsInt = rx.val_env.get(arrName) match {
+        case Some(RuntimeValue.VArray(elems, _, _)) =>
+          !elems.headOption.exists(_.isInstanceOf[RuntimeValue.VFloat])
+        case _ => true
+      }
+      val safe = if (elemIsInt && exprIsFloat(expr, rx)) s"fint($rhs)" else rhs
+      s"${sanitizeQName(arrName)}[${exprToString(index)}] = $safe;"
     case IfThenStmt(condition, thenStmts) =>
-      val thenBlock = thenStmts.map(statementToString).map("\t" + _).mkString("\n")
+      val thenBlock = thenStmts.map(statementToString(_, rx)).map("\t" + _).mkString("\n")
       s"if (${conditionToString(condition)}) {\n$thenBlock\n}"
     case ForeachStmt(iter, arr, body) =>
-      val bodyBlock = body.map(statementToString).map("\t" + _).mkString("\n")
-      s"for (${sanitizeQName(iter)} : ${sanitizeQName(arr)}) {\n$bodyBlock\n}" // UPPAAL C-like syntax
-    case ReturnStmt(expr) =>
-      s"return ${exprToString(expr)};"
-    case PrintStmt(_) =>
-      "// print not supported in UPPAAL"
-    case FuncCallStmt(funcName, args) => 
-        s"${sanitizeQName(funcName)}(${args.map(exprToString).mkString(", ")});"
+      val bodyBlock = body.map(statementToString(_, rx)).map("\t" + _).mkString("\n")
+      s"for (${sanitizeQName(iter)} : ${sanitizeQName(arr)}) {\n$bodyBlock\n}"
+    case ReturnStmt(expr) => s"return ${exprToString(expr)};"
+    case PrintStmt(_)     => "// print not supported in UPPAAL"
+    case FuncCallStmt(funcName, args) =>
+      s"${sanitizeQName(funcName)}(${args.map(exprToString).mkString(", ")});"
     case LocalDecl(typeName, variable, expr) =>
-      val uppaalType = typeName match {
-        case "float" => "double"
-        case other   => other
-      }
-
-      s"$uppaalType ${sanitizeQName(variable)} = ${exprToString(expr)};"
+      val uppaalType = typeName match { case "float" => "double"; case other => other }
+      val rhs  = exprToString(expr)
+      val safe = if (typeName == "int" && exprIsFloat(expr, rx)) s"fint($rhs)" else rhs
+      s"$uppaalType ${sanitizeQName(variable)} = $safe;"
   }
 
   private def stringToQName(str: String): QName = {
@@ -66,7 +71,44 @@ object UppaalConverter3 {
   }
 
 
-  
+  private def exprIsFloat(expr: UpdateExpr, rx: RxGraph): Boolean = expr match {
+    case UpdateExpr.LitFloat(_)      => true
+    case UpdateExpr.LitInt(_)        => false
+    case UpdateExpr.LitBool(_)       => false
+    case UpdateExpr.LitArray(_)      => false
+    case UpdateExpr.Var(q) =>
+      rx.clocks.contains(q) || (rx.val_env.get(q) match {
+        case Some(_: RuntimeValue.VFloat) => true
+        case _                            => false
+      })
+    case UpdateExpr.ArrayAccess(arr, _) =>
+      rx.val_env.get(arr) match {
+        case Some(RuntimeValue.VArray(elems, _, _)) =>
+          elems.headOption.exists(_.isInstanceOf[RuntimeValue.VFloat])
+        case _ => false
+      }
+    case UpdateExpr.MathOp(l, _, r) => exprIsFloat(l, rx) || exprIsFloat(r, rx)
+    case UpdateExpr.FuncCall(f, args) =>
+      f.n.lastOption.getOrElse("") match {
+        case "floor" | "ceil" | "round" | "fint" => false
+        case "sqrt" | "pow" | "random"                => true
+        case "min" | "max" | "abs" | "mod" | "clamp"  => args.exists(a => exprIsFloat(a, rx))
+        case _ => rx.functions.get(f).exists(fd => returnsFloat(fd.body, rx))
+      }
+  }
+
+  private def returnsFloat(stmts: List[Statement], rx: RxGraph): Boolean = stmts.exists {
+    case ReturnStmt(e)          => exprIsFloat(e, rx)
+    case IfThenStmt(_, thens)   => returnsFloat(thens, rx)
+    case _                      => false
+  }
+
+  private def targetIsInt(q: QName, rx: RxGraph): Boolean =
+    !rx.clocks.contains(q) && (rx.val_env.get(q) match {
+      case Some(_: RuntimeValue.VFloat) => false
+      case Some(_: RuntimeValue.VBool)  => false
+      case _                            => true 
+    })
 
 
   def convert(rxGraph: RxGraph, currentCode: String, layout: UppaalLayout = EmptyLayout): String = {
@@ -177,7 +219,7 @@ object UppaalConverter3 {
 
     val functionCounter = new AtomicInteger(0)
     val dataFunctions = new StringBuilder
-
+    val bodyToFuncName = mutable.Map[String, String]() 
     val clockDecl = if (rxGraph.clocks.nonEmpty) s"clock ${rxGraph.clocks.map(sanitizeQName).mkString(", ")};" else ""
     val varDecl = rxGraph.val_env.map { case (q, v) => 
       val typeStr = v match {
@@ -206,11 +248,11 @@ object UppaalConverter3 {
     }
 
     val customFuncs = rxGraph.functions.values.map { f =>
-        val params = f.params.map(p => s"int ${sanitizeQName(p)}").mkString(", ")
-        val retType = getReturnType(f.body)
-        val body = f.body.map(statementToString).map("\t" + _).mkString("\n")
-        s"$retType ${sanitizeQName(f.name)}($params) {\n$body\n}"
-    }.mkString("\n\n")
+      val params  = f.params.map(p => s"int ${sanitizeQName(p)}").mkString(", ")
+      val retType = getReturnType(f.body)
+      val body    = f.body.map(statementToString(_, rxGraph)).map("\t" + _).mkString("\n")
+      s"$retType ${sanitizeQName(f.name)}($params) {\n$body\n}"
+    }.mkString("\n")
 
     val declarationBuilder = new StringBuilder(
       s"""// -----------------------------------------------------------
@@ -328,11 +370,16 @@ object UppaalConverter3 {
       }
       val statements = rxGraph.edgeUpdates.getOrElse(edge, Nil)
       val dataUpdateCall = if (statements.nonEmpty) {
-        val funcName = s"update_data_${functionCounter.getAndIncrement()}"
-        val funcBody = statements.map(statementToString).mkString("\n\t")
-        dataFunctions.append(s"void $funcName() {\n\t$funcBody\n}\n")
+        val funcBody = statements.map(st => statementToString(st, rxGraph)).mkString("\n\t")
+        val funcName = bodyToFuncName.getOrElseUpdate(funcBody, {
+          val n = s"update_data_${functionCounter.getAndIncrement()}"
+          dataFunctions.append(s"void $n() {\n\t$funcBody\n}\n")
+          n
+        })
         s"$funcName(), "
-      } else ""
+      } else {
+        ""
+      }
       val fullAssignment = s"${dataUpdateCall}update_hyperedges_by_id($actionId)"
       <transition>
         <source ref={stateToId(source)}/>
