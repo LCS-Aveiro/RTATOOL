@@ -452,13 +452,82 @@ object RTAAPI {
 
 
   @JSExport
+  def evalWatchExpression(exprStr: String): String = {
+    currentGraph match {
+      case Some(rx) =>
+        try {
+          val adapted = exprStr.trim
+          // Tentar parsear como condição (ex: "x > 5", "t <= 10")
+          if (adapted.contains("==") || adapted.contains("!=") || 
+              adapted.contains("<=") || adapted.contains(">=") || 
+              adapted.contains("<") || adapted.contains(">")) {
+            val cond = Parser2.parseConditionFromString(adapted)
+            val result = RxSemantics.evalCondition(cond, rx)
+            s"""{"type": "bool", "value": $result, "expr": "${escapeJson(exprStr)}"}"""
+          } else {
+            // Parsear como expressão simples (ex: "x + 1", "t", "floor(t)")
+            val expr = Parser2.parseExprFromString(adapted)
+            val result = RxSemantics.evalExpr(expr, rx.val_env, rx)
+            val value = result match {
+              case rta.syntax.RuntimeValue.VInt(v, _, _) => s"""{"type": "int", "value": $v}"""
+              case rta.syntax.RuntimeValue.VFloat(v, _, _) => s"""{"type": "float", "value": $v}"""
+              case rta.syntax.RuntimeValue.VBool(v) => s"""{"type": "bool", "value": $v}"""
+              case rta.syntax.RuntimeValue.VArray(elems, _, _) => 
+                s"""{"type": "array", "value": "${elems.map(_.value.toString).mkString("[", ", ", "]")}"}"""
+            }
+            s"""{"expr": "${escapeJson(exprStr)}", ${value.drop(1)}"""
+          }
+        } catch {
+          case e: Throwable => 
+            s"""{"type": "error", "value": "${escapeJson(e.getMessage)}", "expr": "${escapeJson(exprStr)}"}"""
+        }
+      case None => """{"type": "error", "value": "Modelo não carregado"}"""
+    }
+  }
+
+  @JSExport
+  def checkBreakpoints(breakpointsJson: String): String = {
+    currentGraph match {
+      case Some(rx) =>
+        try {
+          val bps = js.JSON.parse(breakpointsJson).asInstanceOf[js.Array[js.Dynamic]]
+          var triggered: List[String] = Nil
+          
+          for (bp <- bps) {
+            val condStr = bp.selectDynamic("condition").toString
+            val enabled = bp.selectDynamic("enabled").asInstanceOf[Boolean]
+            
+            if (enabled) {
+              try {
+                val cond = Parser2.parseConditionFromString(condStr)
+                if (RxSemantics.evalCondition(cond, rx)) {
+                  triggered = condStr :: triggered
+                }
+              } catch {
+                case _: Throwable => // skip invalid conditions
+              }
+            }
+          }
+          
+          if (triggered.nonEmpty) {
+            s"""{"triggered": true, "conditions": [${triggered.map(t => s""""${escapeJson(t)}"""").mkString(",")}]}"""
+          } else {
+            """{"triggered": false, "conditions": []}"""
+          }
+        } catch {
+          case e: Throwable => """{"triggered": false, "conditions": [], "error": """" + escapeJson(e.getMessage) + "\"}"
+        }
+      case None => """{"triggered": false, "conditions": []}"""
+    }
+  }
+
+  @JSExport
   def runCTLExhaustive(formulaStr: String, maxStates: Int): String = {
     currentGraph match {
       case Some(startGraph) =>
         try {
           val formula = CtlParser.parseCtlFormula(formulaStr)
 
-          // Impulso do Limite de Extrapolação de Relógios (DBM MaxConstants) baseado nas Variáveis lidas na Fórmula
           val queryConstants = CtlEvaluator.getConstants(formula, startGraph.clocks)
           val boostedStartGraph = startGraph.copy(
             maxConstants = rta.backend.RxSemantics.MaxConstants.mergeMax(startGraph.maxConstants, queryConstants)

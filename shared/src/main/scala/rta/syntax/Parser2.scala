@@ -1,7 +1,21 @@
 package rta.syntax
 
 import rta.syntax.Program2.{RxGraph, QName, Edge}
-import rta.syntax.{Condition, UpdateExpr, Statement, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt, FunctionDef, RuntimeValue}
+import rta.syntax.{
+  Condition,
+  UpdateExpr,
+  Statement,
+  AssignStmt,
+  ArrayAssignStmt,
+  IfThenStmt,
+  ForeachStmt,
+  ReturnStmt,
+  PrintStmt,
+  FunctionDef,
+  RuntimeValue,
+  FuncCallStmt,
+  LocalDecl
+}
 import rta.syntax.Condition.*
 
 object Parser2 {
@@ -253,7 +267,7 @@ object Parser2 {
          updates = updates ::: parseStatementsBlock(reader)
          reader.expect("}")
        }
-       else if (t.endsWith("'") || reader.peekNext == ":=" || reader.peekNext == "[") {
+       else if (t.endsWith("'") || reader.peekNext == ":=" || reader.peekNext == "[" || reader.peekNext == "(") {
          updates = updates :+ parseUpdate(reader)
        }
        else parsingAttrs = false
@@ -354,50 +368,87 @@ object Parser2 {
 
   private def parseStatementsBlock(reader: TokenReader): List[Statement] = {
     var stmts = List.empty[Statement]
+
     while (reader.hasNext && reader.current != "}") {
-        if (reader.eat("if")) {
-            val c = parseCondition(reader); reader.expect("then"); reader.expect("{")
-            val inner = parseStatementsBlock(reader); reader.expect("}")
-            stmts = stmts :+ IfThenStmt(c, inner)
-        } else if (reader.eat("foreach")) {
-            reader.expect("(")
-            val iter = reader.parseQName()
-            reader.expect("in")
-            val arr = reader.parseQName()
-            reader.expect(")")
-            reader.expect("{")
-            val body = parseStatementsBlock(reader)
-            reader.expect("}")
-            stmts = stmts :+ ForeachStmt(iter, arr, body)
-        } else if (reader.eat("return")) {
-            stmts = stmts :+ ReturnStmt(parseExpr(reader))
-        } else if (reader.eat("print")) { 
-            reader.expect("(")
-            val expr = parseExpr(reader)
-            reader.expect(")")
-            stmts = stmts :+ PrintStmt(expr)
-        } else {
-            stmts = stmts :+ parseUpdate(reader)
-        }
-        reader.eat(";")
+      if (reader.eat("if")) {
+        val c = parseCondition(reader)
+        reader.expect("then")
+        reader.expect("{")
+        val inner = parseStatementsBlock(reader)
+        reader.expect("}")
+        stmts = stmts :+ IfThenStmt(c, inner)
+      } else if (reader.eat("foreach")) {
+        reader.expect("(")
+        val iter = reader.parseQName()
+        reader.expect("in")
+        val arr = reader.parseQName()
+        reader.expect(")")
+        reader.expect("{")
+        val body = parseStatementsBlock(reader)
+        reader.expect("}")
+        stmts = stmts :+ ForeachStmt(iter, arr, body)
+      } else if (reader.eat("return")) {
+        stmts = stmts :+ ReturnStmt(parseExpr(reader))
+      } else if (reader.eat("print")) {
+        reader.expect("(")
+        val expr = parseExpr(reader)
+        reader.expect(")")
+        stmts = stmts :+ PrintStmt(expr)
+      } else if (Set("int", "float", "bool").contains(reader.current)) {
+        val typeStr = reader.consume()
+        val name = reader.parseQName()
+        reader.expect("=")
+        val expr = parseExpr(reader)
+        stmts = stmts :+ LocalDecl(typeStr, name, expr)
+      } else {
+        stmts = stmts :+ parseUpdate(reader)
+      }
+
+      reader.eat(";")
     }
+
     stmts
+  }
+
+
+  def parseConditionFromString(str: String): Condition = {
+    val lexer = new Lexer(str)
+    val tokens = lexer.scanAll()
+    val reader = new TokenReader(tokens)
+    parseCondition(reader)
+  }
+
+  def parseExprFromString(str: String): UpdateExpr = {
+    val lexer = new Lexer(str)
+    val tokens = lexer.scanAll()
+    val reader = new TokenReader(tokens)
+    parseExpr(reader)
   }
 
   private def parseUpdate(reader: TokenReader): Statement = {
     val qRaw = reader.parseQName()
     
-    val q = if (qRaw.n.last.endsWith("'")) QName(qRaw.n.init :+ qRaw.n.last.dropRight(1)) else qRaw
-    
-    if (reader.eat("[")) {
-      val idx = parseExpr(reader)
-      reader.expect("]")
-      if (reader.current == "'") reader.consume() 
-      reader.expect(":=")
-      ArrayAssignStmt(q, idx, parseExpr(reader))
+    if (reader.eat("(")) {
+      var args = List.empty[UpdateExpr]
+      if (reader.current != ")") {
+          args = args :+ parseExpr(reader)
+          while(reader.eat(",")) { args = args :+ parseExpr(reader) }
+      }
+      reader.expect(")")
+      FuncCallStmt(qRaw, args)
     } else {
-      reader.expect(":=")
-      AssignStmt(q, parseExpr(reader))
+      val q = if (qRaw.n.last.endsWith("'")) QName(qRaw.n.init :+ qRaw.n.last.dropRight(1)) else qRaw
+      
+      if (reader.eat("[")) {
+        val idx = parseExpr(reader)
+        reader.expect("]")
+        if (reader.current == "'") reader.consume() 
+        reader.expect(":=")
+        ArrayAssignStmt(q, idx, parseExpr(reader))
+      } else {
+        reader.expect(":=")
+        AssignStmt(q, parseExpr(reader))
+      }
     }
   }
 

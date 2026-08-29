@@ -211,9 +211,21 @@
 
                 <div id="bottom-panel">
                     <div id="bottom-tabs">
-                        <div class="bottom-tab" onclick="showBottomTab('analysis')"><span class="glyphicon glyphicon-stats" style="margin-right:5px;"></span>Analysis</div>
-                        <div class="bottom-tab" onclick="showBottomTab('bestpath')"><span class="glyphicon glyphicon-map-marker" style="margin-right:5px;"></span>Path Optimizer</div>
-                        <div class="bottom-tab" onclick="showBottomTab('export')"><span class="glyphicon glyphicon-download-alt" style="margin-right:5px;"></span>Export</div>
+                        <div class="bottom-tab" onclick="showBottomTab('analysis')">
+                            <span class="glyphicon glyphicon-stats" style="margin-right:5px;"></span>Analysis
+                        </div>
+
+                        <div class="bottom-tab" onclick="showBottomTab('bestpath')">
+                            <span class="glyphicon glyphicon-map-marker" style="margin-right:5px;"></span>Path Optimizer
+                        </div>
+
+                        <div class="bottom-tab" onclick="showBottomTab('export')">
+                            <span class="glyphicon glyphicon-download-alt" style="margin-right:5px;"></span>Export
+                        </div>
+
+                        <div class="bottom-tab" onclick="showBottomTab('trace'); if(window.TraceRecorder) TraceRecorder.resize()">
+                            <span class="glyphicon glyphicon-facetime-video" style="margin-right:5px;"></span>Trace
+                        </div>
                     </div>
 
                     <div id="bottom-content">
@@ -295,6 +307,51 @@
                                 <button class="u-btn primary" onclick="downloadPNG()">PNG</button>
                             </div>
                         </div>
+
+                        <div class="bottom-pane" id="bpane-trace">
+  <div class="trace-toolbar">
+    <button class="u-btn success" id="traceLiveBtn">
+      <span class="glyphicon glyphicon-signal"></span> Live
+    </button>
+
+    <button class="u-btn" id="traceFirstBtn">⏮</button>
+    <button class="u-btn" id="tracePrevBtn">◀</button>
+    <button class="u-btn primary" id="tracePlayBtn">▶ Play</button>
+    <button class="u-btn" id="traceNextBtn">▶</button>
+    <button class="u-btn" id="traceLastBtn">⏭</button>
+
+    <input type="range" id="traceRange" min="0" max="0" value="0">
+
+    <span id="traceCounter" class="trace-counter">0/0</span>
+
+    <select id="traceSpeed" class="form-control input-sm">
+      <option value="2000">0.5x</option>
+      <option value="1000" selected>1x</option>
+      <option value="500">2x</option>
+      <option value="200">5x</option>
+      <option value="80">12x</option>
+    </select>
+
+    <input type="text" id="traceFilter" class="form-control input-sm" placeholder="filtrar label...">
+
+    <label class="trace-check">
+      <input type="checkbox" id="traceShowClocks" checked>
+      Clocks
+    </label>
+
+    <label class="trace-check">
+      <input type="checkbox" id="traceShowVars" checked>
+      Variáveis
+    </label>
+  </div>
+
+  <div class="trace-main">
+    <div id="traceList"></div>
+    <div class="trace-chart-wrap">
+      <canvas id="traceChart"></canvas>
+    </div>
+  </div>
+</div>
                     </div>
                 </div>
             </div>
@@ -564,6 +621,13 @@
     <script src="js/static/codemirror/addon/hint/show-hint.js"></script>
     <script src="js/static/codemirror/mode/caos/caos.js"></script>
     <script src="js/static/mermaid.min.js"></script>
+    <script src="js/static/codemirror/addon/fold/foldcode.min.js"></script>
+    <script src="js/static/codemirror/addon/fold/foldgutter.min.js"></script>
+    <script src="js/static/codemirror/addon/fold/brace-fold.min.js"></script>
+    
+    <script src="js/static/codemirror/addon/fold/indent-fold.min.js"></script>
+    <link rel="stylesheet" href="js/static/codemirror/addon/fold/foldgutter.min.css">
+    <script src="js/static/chart.umd.min.js"></script>
     <script src="js/cy/cytoscape.min.js"></script>
     <script src="js/cy/dagre.min.js"></script>
     <script src="js/cy/cytoscape-dagre.js"></script>
@@ -627,8 +691,21 @@
         });
  
         var editor = CodeMirror.fromTextArea(document.getElementById("codeEditor"), {
-            lineNumbers: true, mode: "rta", theme: "rta-light", matchBrackets: true
-        });
+            lineNumbers: true,
+            mode: "rta",
+            theme: "rta-light",
+            matchBrackets: true,
+            foldGutter: true,
+            gutters: [
+                "CodeMirror-linenumbers",
+                "CodeMirror-foldgutter"
+            ],
+            extraKeys: {
+                "Ctrl-Q": function(cm) {
+                cm.foldCode(cm.getCursor());
+                }
+            }
+            });
         editor.setSize("100%", "100%");
  
         document.addEventListener("DOMContentLoaded", function () {
@@ -674,7 +751,9 @@
     <script src="js/script/autocomplete.js"></script>
     <script src="js/script/linting.js"></script>
     <script src="js/script/undo-guard.js"></script>
-    
+    <script src="js/script/hoverDocs.js"></script>
+    <script src="js/script/watchBreakpoints.js"></script>
+    <script src="js/script/traceReplay.js"></script>
     <script>
     function runLTLTest() {
         if (typeof RTA === 'undefined') { alert("Backend Scala não carregado!"); return; }

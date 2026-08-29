@@ -5,14 +5,14 @@ let autoPlayTimer = null;
 
 function renderGlobalPanel(data, targetId) {
     var containerId = targetId || 'sidePanel';
-    var panelDiv    = document.getElementById(containerId);
+    var panelDiv = document.getElementById(containerId);
     if (!panelDiv) return;
 
     panelDiv.innerHTML = '';
     var panelData = data.panelData;
     lastModelData = data;
 
-    var t      = i18n[currentLang];
+    var t = i18n[currentLang];
     var suffix = containerId === 'sidePanel' ? '' : ('-' + containerId);
 
     var topBtns = document.createElement('div');
@@ -24,11 +24,22 @@ function renderGlobalPanel(data, targetId) {
     undoBtn.className = 'btn btn-warning btn-sm';
     undoBtn.style.flex = '1';
     undoBtn.innerHTML = '<span class="glyphicon glyphicon-step-backward"></span> Undo';
-    undoBtn.disabled  = !panelData.canUndo;
-    undoBtn.onclick   = function () {
-        if (autoPlayTimer) toggleAutoPlay(); 
+    undoBtn.disabled = !panelData.canUndo;
+    undoBtn.onclick = function () {
+        if (window.TraceRecorder && TraceRecorder.isReplaying()) return;
+
+        if (autoPlayTimer) toggleAutoPlay();
+
+        if (window.TraceRecorder) {
+            TraceRecorder.setLabel("undo");
+        }
+
         var json = RTA.undo();
-        if (jsTextHistory.length > 1) jsTextHistory.pop();
+
+        if (jsTextHistory.length > 1) {
+            jsTextHistory.pop();
+        }
+
         updateAllViews(json);
     };
 
@@ -43,26 +54,26 @@ function renderGlobalPanel(data, targetId) {
     panelDiv.appendChild(topBtns);
 
     if (
-        (panelData.clocks   && Object.keys(panelData.clocks).length   > 0) ||
+        (panelData.clocks && Object.keys(panelData.clocks).length > 0) ||
         (panelData.variables && Object.keys(panelData.variables).length > 0)
     ) {
-        var varHeader       = document.createElement('div');
+        var varHeader = document.createElement('div');
         varHeader.className = 'sec-label';
         varHeader.innerText = t.stat_header || 'Estado Atual:';
         panelDiv.appendChild(varHeader);
 
-        var infoList       = document.createElement('ul');
+        var infoList = document.createElement('ul');
         infoList.className = "list-unstyled";
         infoList.style.cssText = "font-size:12px; background:#fff; padding:10px; border:1px solid var(--border); border-radius:2px;";
 
         for (let [k, v] of Object.entries(panelData.clocks || {})) {
-            let li       = document.createElement('li');
+            let li = document.createElement('li');
             li.innerHTML = `<span class="text-info">🕒 ${k}</span>: <b>${v.toFixed(2)}s</b>`;
             infoList.appendChild(li);
         }
         for (let [k, v] of Object.entries(panelData.variables || {})) {
             if (k.startsWith("__")) continue;
-            let li       = document.createElement('li');
+            let li = document.createElement('li');
             li.innerHTML = `<span class="text-success"># ${k}</span>: <b>${v}</b>`;
             infoList.appendChild(li);
         }
@@ -90,7 +101,7 @@ function renderGlobalPanel(data, targetId) {
     }
 
     panelDiv.appendChild(document.createElement('hr'));
-    var transHeader       = document.createElement('div');
+    var transHeader = document.createElement('div');
     transHeader.className = 'sec-label';
     transHeader.innerText = t.enabled_trans || 'Transições Disponíveis:';
     panelDiv.appendChild(transHeader);
@@ -99,12 +110,12 @@ function renderGlobalPanel(data, targetId) {
         (panelData.enabled.length === 1 && panelData.enabled[0].label === "deadlock");
 
     if (isDeadlock) {
-        var dead       = document.createElement('div');
+        var dead = document.createElement('div');
         dead.className = "alert alert-danger text-center";
         dead.style.cssText = "padding:5px; font-size:12px; font-weight:bold;";
         dead.innerText = (t.deadlock || "DEADLOCK") + " (LOOP)";
         panelDiv.appendChild(dead);
-        if(autoPlayTimer) toggleAutoPlay();
+        if (autoPlayTimer) toggleAutoPlay();
     }
 
     if (panelData.enabled.length > 0) {
@@ -117,54 +128,88 @@ function renderGlobalPanel(data, targetId) {
     if (containerId === 'sidePanel') {
         _renderLayoutPanel(panelDiv, t, suffix);
     }
+
+    if (typeof refreshWatches === 'function') {
+        setTimeout(refreshWatches, 50);
+    }
 }
 
 function toggleAutoPlay() {
+    if (window.TraceRecorder && TraceRecorder.isReplaying()) return;
+
     if (autoPlayTimer) {
         clearInterval(autoPlayTimer);
         autoPlayTimer = null;
+
+        if (window.TraceRecorder) {
+            TraceRecorder.skipNext();
+        }
+
         updateAllViews(JSON.stringify(lastModelData));
     } else {
         autoPlayTimer = setInterval(() => {
-            if(!lastModelData || !lastModelData.panelData || !lastModelData.panelData.enabled) return;
+            if (!lastModelData || !lastModelData.panelData || !lastModelData.panelData.enabled) return;
+
             let enabled = lastModelData.panelData.enabled;
-            if(enabled.length === 0 || (enabled.length === 1 && enabled[0].label === 'deadlock')) {
-                toggleAutoPlay(); return;
+
+            if (enabled.length === 0 || (enabled.length === 1 && enabled[0].label === 'deadlock')) {
+                toggleAutoPlay();
+                return;
             }
-            
+
             let valid = enabled.filter(e => e.label !== 'deadlock');
-            if(valid.length === 0) return;
+            if (valid.length === 0) return;
+
             let choice = valid[Math.floor(Math.random() * valid.length)];
-            
+
             if (choice.isDelay) {
                 let rDelay = parseFloat((0.1 + Math.random() * 1.5).toFixed(2));
+
+                if (window.TraceRecorder) {
+                    TraceRecorder.setLabel(`delay(${rDelay})`);
+                }
+
                 updateAllViews(RTA.advanceTime(rDelay));
             } else {
+                if (window.TraceRecorder) {
+                    TraceRecorder.setLabel(choice.label);
+                }
+
                 var json = RTA.takeStep(JSON.stringify(choice));
                 var newStateText = RTA.getCurrentStateText();
-                jsTextHistory.push({ label: choice.label + " ->", text: newStateText });
+
+                jsTextHistory.push({
+                    label: choice.label + " ->",
+                    text: newStateText
+                });
+
                 updateAllViews(json);
             }
-        }, 1200); 
-        updateAllViews(JSON.stringify(lastModelData)); 
+        }, 1200);
+
+        if (window.TraceRecorder) {
+            TraceRecorder.skipNext();
+        }
+
+        updateAllViews(JSON.stringify(lastModelData));
     }
 }
 
 function _renderDelayControl(panelDiv, edge, suffix, containerId) {
-    var btnGroup       = document.createElement('div');
-    btnGroup.style.display     = 'flex';
-    btnGroup.style.gap         = '5px';
-    btnGroup.style.width       = '100%';
+    var btnGroup = document.createElement('div');
+    btnGroup.style.display = 'flex';
+    btnGroup.style.gap = '5px';
+    btnGroup.style.width = '100%';
     btnGroup.style.marginBottom = '5px';
 
-    var input    = document.createElement('input');
-    input.type   = 'number';
+    var input = document.createElement('input');
+    input.type = 'number';
     input.className = 'form-control input-sm';
-    input.value  = storedDelayValue;
-    input.step   = '0.001';
-    input.min    = '0.000001';
-    input.id     = 'delayInputVal' + suffix;
-    input.style.flex     = '1';
+    input.value = storedDelayValue;
+    input.step = '0.001';
+    input.min = '0.000001';
+    input.id = 'delayInputVal' + suffix;
+    input.style.flex = '1';
     input.style.minWidth = '0';
     input.onchange = function () {
         var val = parseFloat(this.value);
@@ -176,13 +221,20 @@ function _renderDelayControl(panelDiv, edge, suffix, containerId) {
         }
     };
 
-    var btn        = document.createElement('button');
-    btn.className  = 'btn btn-default btn-sm';
-    btn.innerHTML  = '⏱ Delay';
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-default btn-sm';
+    btn.innerHTML = '⏱ Delay';
     btn.style.whiteSpace = 'nowrap';
     btn.style.flexShrink = '0';
-    btn.onclick    = function () {
+    btn.onclick = function () {
         storedDelayValue = parseFloat(input.value);
+
+
+
+        if (window.TraceRecorder) {
+            TraceRecorder.setLabel(`delay(${storedDelayValue})`);
+        }
+
         updateAllViews(RTA.advanceTime(storedDelayValue));
     };
 
@@ -192,53 +244,65 @@ function _renderDelayControl(panelDiv, edge, suffix, containerId) {
 }
 
 function _renderTransitionButton(panelDiv, edge) {
-    var btn         = document.createElement('button');
+    var btn = document.createElement('button');
     var displayName = (edge.tId === edge.label) ? edge.label : edge.tId + " (" + edge.label + ")";
-    btn.className   = 'sim-btn';
+    btn.className = 'sim-btn';
 
     if (edge.label === 'deadlock') {
         btn.style.backgroundColor = '#FECACA';
-        btn.style.borderColor     = '#EF4444';
-        btn.style.color           = '#7F1D1D';
+        btn.style.borderColor = '#EF4444';
+        btn.style.color = '#7F1D1D';
     }
 
-    var icon       = document.createElement('span');
+    var icon = document.createElement('span');
     icon.className = 'glyphicon glyphicon-play-circle';
     icon.style.color = 'var(--gray-500)';
     if (edge.label === 'deadlock') icon.style.color = '#B91C1C';
     btn.appendChild(icon);
 
-    var txt       = document.createElement('span');
+    var txt = document.createElement('span');
     txt.innerText = displayName;
     btn.appendChild(txt);
 
     if (edge.p !== undefined && !window.isPossibilisticView) {
-        var pSpan       = document.createElement('span');
+        var pSpan = document.createElement('span');
         pSpan.className = 'sim-prob';
         pSpan.innerText = 'P=' + edge.p.toFixed(3);
         btn.appendChild(pSpan);
     }
 
     btn.onclick = function () {
-        stopAutoDelay();
-        var json         = RTA.takeStep(JSON.stringify(edge));
-        var newStateText = RTA.getCurrentStateText();
-        jsTextHistory.push({ label: edge.label + " ->", text: newStateText });
-        updateAllViews(json);
-    };
+  if (window.TraceRecorder && TraceRecorder.isReplaying()) return;
+
+  stopAutoDelay();
+
+  if (window.TraceRecorder) {
+    TraceRecorder.setLabel(edge.label);
+  }
+
+  var json = RTA.takeStep(JSON.stringify(edge));
+  var newStateText = RTA.getCurrentStateText();
+
+  jsTextHistory.push({
+    label: edge.label + " ->",
+    text: newStateText
+  });
+
+  updateAllViews(json);
+};
     panelDiv.appendChild(btn);
 }
 
 function _renderLayoutPanel(panelDiv, t, suffix) {
-    var panelGroup       = document.createElement('div');
+    var panelGroup = document.createElement('div');
     panelGroup.className = 'panel-group';
-    panelGroup.id        = 'layoutSettingsGroup' + suffix;
+    panelGroup.id = 'layoutSettingsGroup' + suffix;
     panelGroup.style.marginTop = '15px';
 
-    var layoutPanel       = document.createElement('div');
+    var layoutPanel = document.createElement('div');
     layoutPanel.className = 'panel panel-default';
 
-    var panelHeading       = document.createElement('div');
+    var panelHeading = document.createElement('div');
     panelHeading.className = 'panel-heading';
     panelHeading.style.padding = '0';
     panelHeading.innerHTML = `
@@ -248,11 +312,11 @@ function _renderLayoutPanel(panelDiv, t, suffix) {
             </a>
         </h4>`;
 
-    var collapseBody       = document.createElement('div');
-    collapseBody.id        = 'collapseLayout' + suffix;
+    var collapseBody = document.createElement('div');
+    collapseBody.id = 'collapseLayout' + suffix;
     collapseBody.className = 'panel-collapse collapse';
 
-    var panelBody       = document.createElement('div');
+    var panelBody = document.createElement('div');
     panelBody.className = 'panel-body';
     renderLayoutControls(panelBody);
 
@@ -267,13 +331,13 @@ function _renderLayoutPanel(panelDiv, t, suffix) {
 function renderLayoutControls(container) {
     var t = i18n[currentLang];
 
-    var layoutGroup   = document.createElement('div');
+    var layoutGroup = document.createElement('div');
     layoutGroup.className = 'form-group';
-    var layoutLabel   = document.createElement('label');
-    layoutLabel.innerText  = t.layout_label;
+    var layoutLabel = document.createElement('label');
+    layoutLabel.innerText = t.layout_label;
     layoutLabel.style.fontSize = '12px';
 
-    var layoutSelect  = document.createElement('select');
+    var layoutSelect = document.createElement('select');
     layoutSelect.className = 'form-control input-sm';
     layoutSelect.innerHTML = `
         <option value="preset">${t.opt_preset}</option>
@@ -285,30 +349,30 @@ function renderLayoutControls(container) {
     `;
     layoutSelect.onchange = function (e) {
         if (!currentCytoscapeInstance) return;
-        var name    = e.target.value;
+        var name = e.target.value;
         var options = { name: name, fit: true, padding: 50, animate: true };
         if (name === 'dagre') options.rankDir = 'LR';
-        if (name === 'cose')  { options.componentSpacing = 40; options.nodeRepulsion = 8000; }
+        if (name === 'cose') { options.componentSpacing = 40; options.nodeRepulsion = 8000; }
         currentCytoscapeInstance.layout(options).run();
     };
     layoutGroup.appendChild(layoutLabel);
     layoutGroup.appendChild(layoutSelect);
     container.appendChild(layoutGroup);
 
-    var styleGroup   = document.createElement('div');
+    var styleGroup = document.createElement('div');
     styleGroup.className = 'form-group';
-    var styleLabel   = document.createElement('label');
-    styleLabel.innerText  = t.edge_style_label;
+    var styleLabel = document.createElement('label');
+    styleLabel.innerText = t.edge_style_label;
     styleLabel.style.fontSize = '12px';
 
-    var styleSelect  = document.createElement('select');
+    var styleSelect = document.createElement('select');
     styleSelect.className = 'form-control input-sm';
     styleSelect.innerHTML = `
         <option value="straight">${t.opt_straight}</option>
         <option value="taxi">${t.opt_taxi}</option>
         <option value="bezier">${t.opt_bezier}</option>
     `;
-    styleSelect.value    = currentEdgeStyle || 'straight';
+    styleSelect.value = currentEdgeStyle || 'straight';
     styleSelect.onchange = function (e) { changeEdgeStyle(e.target.value); };
     styleGroup.appendChild(styleLabel);
     styleGroup.appendChild(styleSelect);
@@ -316,23 +380,23 @@ function renderLayoutControls(container) {
 
     container.appendChild(document.createElement('hr'));
 
-    var btnGroup       = document.createElement('div');
+    var btnGroup = document.createElement('div');
     btnGroup.className = 'btn-group-vertical btn-block';
 
-    var saveBtn       = document.createElement('button');
+    var saveBtn = document.createElement('button');
     saveBtn.className = 'btn btn-default btn-sm';
     saveBtn.innerText = t.btn_save_layout;
-    saveBtn.onclick   = exportAllLayoutsToFile;
+    saveBtn.onclick = exportAllLayoutsToFile;
 
-    var loadBtn       = document.createElement('button');
+    var loadBtn = document.createElement('button');
     loadBtn.className = 'btn btn-default btn-sm';
     loadBtn.innerText = t.btn_load_layout;
-    loadBtn.onclick   = function () { document.getElementById('hiddenFileInput').click(); };
+    loadBtn.onclick = function () { document.getElementById('hiddenFileInput').click(); };
 
     if (!document.getElementById('hiddenFileInput')) {
-        var fileInput    = document.createElement('input');
-        fileInput.type   = 'file';
-        fileInput.id     = 'hiddenFileInput';
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.id = 'hiddenFileInput';
         fileInput.style.display = 'none';
         fileInput.accept = '.json,application/json';
         fileInput.onchange = function (e) {

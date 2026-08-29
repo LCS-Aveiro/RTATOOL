@@ -1,8 +1,19 @@
 package rta.backend
 
 import rta.syntax.Program2.{Edge, RxGraph, QName}
-import rta.syntax.{Condition, UpdateExpr, Statement, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt}
-
+import rta.syntax.{
+  Condition,
+  UpdateExpr,
+  Statement,
+  AssignStmt,
+  ArrayAssignStmt,
+  IfThenStmt,
+  ForeachStmt,
+  ReturnStmt,
+  PrintStmt,
+  FuncCallStmt,
+  LocalDecl
+}
 object CytoscapeConverter {
 
   private def formatStatements(stmts: List[Statement], indent: String = ""): String = {
@@ -25,6 +36,10 @@ object CytoscapeConverter {
         s"${indent}return ${UpdateExpr.show(expr)}"
       case PrintStmt(expr) =>
         s"${indent}print(${UpdateExpr.show(expr)})"
+      case FuncCallStmt(funcName, args) =>
+        s"${indent}${funcName.show}(${args.map(UpdateExpr.show).mkString(", ")})"
+      case LocalDecl(typeName, variable, expr) =>
+        s"$indent$typeName ${variable.show} = ${UpdateExpr.show(expr)}"
     }.mkString("\n")
   }
 

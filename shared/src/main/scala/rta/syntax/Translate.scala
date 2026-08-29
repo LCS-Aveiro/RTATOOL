@@ -1,8 +1,11 @@
 package rta.syntax
 
 import rta.syntax.Program2.{Edge, QName, RxGraph}
-import rta.syntax.{Condition, Statement, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt, UpdateExpr}
-
+import rta.syntax.{
+  Condition, Statement, AssignStmt, ArrayAssignStmt,
+  IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt,
+  UpdateExpr, FuncCallStmt, LocalDecl
+}
 object RTATranslator {
 
   private case class Effect(effectType: String, targetLabel: QName, ruleId: QName, ruleLabel: QName, originalTrigger: QName)
@@ -54,6 +57,14 @@ object RTATranslator {
       if (trim.startsWith("int ") || trim.startsWith("init ") || trim.startsWith("clock ") || trim.startsWith("inv ") || trim.startsWith("float ") || trim.startsWith("bool ")) {
         if (!trim.contains("_active =")) builder.append(line).append("\n")
       }
+    }
+
+    builder.append("\n// --- Functions ---\n")
+    for ((name, f) <- stx.functions) {
+        val params = f.params.map(_.show).mkString(", ")
+        builder.append(s"def ${name.show}($params) {\n")
+        f.body.foreach(stmt => builder.append(s"  ${statementToString(stmt)}\n"))
+        builder.append("}\n")
     }
 
     builder.append("\n// --- Translated Edges ---\n")
@@ -135,6 +146,14 @@ object RTATranslator {
             getScope(v) == stateScope || v.n.mkString.contains("_") 
         }
         if (!belongsToAut || !isStrictlyLocal) builder.append(s"inv ${formatQName(state)}: ${conditionToString(cond)}\n")
+    }
+
+    builder.append("\n// Functions\n")
+    for ((name, f) <- stx.functions) {
+        val params = f.params.map(_.show).mkString(", ")
+        builder.append(s"def ${formatQName(name)}($params) {\n")
+        f.body.foreach(stmt => builder.append(s"  ${statementToString(stmt)}\n"))
+        builder.append("}\n")
     }
 
     for ((autName, edges) <- edgesByAut if autName.nonEmpty) {
@@ -224,11 +243,21 @@ object RTATranslator {
   private def conditionToString(cond: Condition): String = cond.toMermaidString
 
   private def statementToString(stmt: Statement): String = stmt match {
-    case AssignStmt(variable, expr) => s"${variable.show}' := ${UpdateExpr.show(expr)}"
-    case ArrayAssignStmt(arrName, index, expr) => s"${arrName.show}[${UpdateExpr.show(index)}]' := ${UpdateExpr.show(expr)}"
-    case IfThenStmt(c, ts) => s"if (${conditionToString(c)}) then { ${ts.map(statementToString).mkString("; ")} }"
-    case ForeachStmt(iter, arr, body) => s"foreach (${iter.show} in ${arr.show}) { ${body.map(statementToString).mkString("; ")} }"
-    case ReturnStmt(expr) => s"return ${UpdateExpr.show(expr)}"
-    case PrintStmt(expr) => s"print(${UpdateExpr.show(expr)})"
+    case AssignStmt(variable, expr) =>
+      s"${variable.show}' := ${UpdateExpr.show(expr)}"
+    case ArrayAssignStmt(arrName, index, expr) =>
+      s"${arrName.show}[${UpdateExpr.show(index)}]' := ${UpdateExpr.show(expr)}"
+    case IfThenStmt(c, ts) =>
+      s"if (${conditionToString(c)}) then { ${ts.map(statementToString).mkString("; ")} }"
+    case ForeachStmt(iter, arr, body) =>
+      s"foreach (${iter.show} in ${arr.show}) { ${body.map(statementToString).mkString("; ")} }"
+    case ReturnStmt(expr) =>
+      s"return ${UpdateExpr.show(expr)}"
+    case PrintStmt(expr) =>
+      s"print(${UpdateExpr.show(expr)})"
+    case FuncCallStmt(funcName, args) =>
+      s"${funcName.show}(${args.map(UpdateExpr.show).mkString(", ")})"
+    case LocalDecl(typeName, variable, expr) =>
+      s"$typeName ${variable.show} = ${UpdateExpr.show(expr)}"
   }
 }

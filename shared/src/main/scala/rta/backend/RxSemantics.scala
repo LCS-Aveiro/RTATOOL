@@ -1,13 +1,27 @@
 package rta.backend
 
 import rta.syntax.Program2.{Edge, Edges, QName, RxGraph}
-import rta.syntax.{Condition, Statement, UpdateExpr, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt, RuntimeValue}
+import rta.syntax.{
+  Condition,
+  Statement,
+  UpdateExpr,
+  AssignStmt,
+  ArrayAssignStmt,
+  IfThenStmt,
+  ForeachStmt,
+  ReturnStmt,
+  PrintStmt,
+  RuntimeValue,
+  FuncCallStmt,
+  LocalDecl
+}
 import scala.annotation.tailrec
 import rta.syntax.LtlFormula
 
 object RxSemantics {
 
   private val EPSILON = 1e-5
+  private val builtinRandom = new scala.util.Random(1)
 
   object MaxConstants {
     private def fromExpr(e: UpdateExpr, clock: QName): Option[Double] = e match {
@@ -56,6 +70,97 @@ object RxSemantics {
     }
   }
 
+
+  private def evalBuiltinFunc(
+    funcName: QName,
+    args: List[UpdateExpr],
+    env: Map[QName, RuntimeValue],
+    rx: RxGraph
+  ): Option[RuntimeValue] = {
+    val name = funcName.n.lastOption.getOrElse("")
+
+    val argVals = args.map(a => evalExpr(a, env, rx))
+
+    def doubleAt(i: Int): Option[Double] =
+      argVals.lift(i).map(Condition.extractDouble)
+
+    def anyFloat: Boolean =
+      argVals.exists(_.isInstanceOf[RuntimeValue.VFloat])
+
+    def numeric(v: Double): RuntimeValue =
+      if (anyFloat) RuntimeValue.VFloat(v)
+      else RuntimeValue.VInt(v.toInt)
+
+    name match {
+
+      case "floor" if args.size == 1 =>
+        doubleAt(0).map(v => RuntimeValue.VInt(Math.floor(v).toInt))
+
+      case "ceil" if args.size == 1 =>
+        doubleAt(0).map(v => RuntimeValue.VInt(Math.ceil(v).toInt))
+
+      case "round" if args.size == 1 =>
+        doubleAt(0).map(v => RuntimeValue.VInt(Math.round(v).toInt))
+
+      case "abs" if args.size == 1 =>
+        doubleAt(0).map(v => numeric(Math.abs(v)))
+
+      case "sqrt" if args.size == 1 =>
+        doubleAt(0).map(v => RuntimeValue.VFloat(Math.sqrt(Math.max(0.0, v))))
+
+      case "pow" if args.size == 2 =>
+        for {
+          x <- doubleAt(0)
+          y <- doubleAt(1)
+        } yield RuntimeValue.VFloat(Math.pow(x, y))
+
+      case "min" if args.size == 2 =>
+        for {
+          a <- doubleAt(0)
+          b <- doubleAt(1)
+        } yield numeric(Math.min(a, b))
+
+      case "max" if args.size == 2 =>
+        for {
+          a <- doubleAt(0)
+          b <- doubleAt(1)
+        } yield numeric(Math.max(a, b))
+
+      case "mod" if args.size == 2 =>
+        for {
+          a <- doubleAt(0)
+          b <- doubleAt(1)
+        } yield {
+          if (b == 0.0) RuntimeValue.VInt(0)
+          else numeric(a % b)
+        }
+
+      case "clamp" if args.size == 3 =>
+        for {
+          x <- doubleAt(0)
+          lo <- doubleAt(1)
+          hi <- doubleAt(2)
+        } yield {
+          val low = Math.min(lo, hi)
+          val high = Math.max(lo, hi)
+          numeric(Math.max(low, Math.min(high, x)))
+        }
+
+      case "random" if args.size == 2 =>
+        for {
+          lower <- doubleAt(0)
+          upper <- doubleAt(1)
+        } yield {
+          val lo = Math.min(lower, upper)
+          val hi = Math.max(lower, upper)
+          RuntimeValue.VFloat(lo + builtinRandom.nextDouble() * (hi - lo))
+        }
+
+      case _ =>
+        None
+    }
+  }
+
   def evalExpr(expr: UpdateExpr, env: Map[QName, RuntimeValue], rx: RxGraph): RuntimeValue = expr match {
     case UpdateExpr.LitInt(i) => RuntimeValue.VInt(i)
     case UpdateExpr.LitFloat(f) => RuntimeValue.VFloat(f)
@@ -89,16 +194,25 @@ object RxSemantics {
         case _ => RuntimeValue.VInt(0)
       }
     case UpdateExpr.FuncCall(funcName, args) =>
-      rx.functions.get(funcName) match {
-        case Some(funcDef) =>
-          val evalArgs = args.map(a => evalExpr(a, env, rx))
-          var localEnv = env
-          funcDef.params.zip(evalArgs).foreach { case (param, v) => localEnv += (param -> v) }
-          val (finalEnv, _) = applyUpdates(funcDef.body, rx.copy(val_env = localEnv))
-          finalEnv.getOrElse(QName(List("__return")), RuntimeValue.VInt(0))
-        case None => RuntimeValue.VInt(0)
+      evalBuiltinFunc(funcName, args, env, rx).getOrElse {
+        rx.functions.get(funcName) match {
+          case Some(funcDef) =>
+            val evalArgs = args.map(a => evalExpr(a, env, rx))
+
+            var localEnv = env
+            funcDef.params.zip(evalArgs).foreach { case (param, v) =>
+              localEnv += (param -> v)
+            }
+
+            val (finalEnv, _) = applyUpdates(funcDef.body, rx.copy(val_env = localEnv))
+            finalEnv.getOrElse(QName(List("__return")), RuntimeValue.VInt(0))
+
+          case None =>
+            RuntimeValue.VInt(0)
+        }
       }
   }
+
 
   def evalCondition(cond: Condition, rx: RxGraph): Boolean = cond match {
     case Condition.AtomicCond(l, op, r) =>
@@ -150,76 +264,263 @@ object RxSemantics {
     }
   }
 
-  def applyUpdates(stmts: List[Statement], rx: RxGraph): (Map[QName, RuntimeValue], Map[QName, Double]) = {
+  def applyUpdates(
+    stmts: List[Statement],
+    rx: RxGraph
+  ): (Map[QName, RuntimeValue], Map[QName, Double]) = {
+
     var currentEnv = rx.val_env
     var currentClockEnv = rx.clock_env
+
     val returnKey = QName(List("__return"))
+
+    var localScopes: List[scala.collection.mutable.Set[QName]] =
+      List(scala.collection.mutable.Set.empty[QName])
+
+
+    var scopeSaves: List[scala.collection.mutable.Map[QName, Option[RuntimeValue]]] =
+      List(scala.collection.mutable.Map.empty[QName, Option[RuntimeValue]])
+
+    def pushScope(): Unit = {
+      localScopes = scala.collection.mutable.Set.empty[QName] :: localScopes
+      scopeSaves = scala.collection.mutable.Map.empty[QName, Option[RuntimeValue]] :: scopeSaves
+    }
+
+    def declareLocal(q: QName): Unit = {
+      localScopes.headOption.foreach { scope =>
+        if (!scope.contains(q)) {
+          scope += q
+
+          scopeSaves.headOption.foreach { saves =>
+            if (!saves.contains(q)) {
+              saves(q) = currentEnv.get(q)
+            }
+          }
+        }
+      }
+    }
+
+    def popScope(): Unit = {
+      if (localScopes.nonEmpty) {
+        val saves = scopeSaves.headOption.getOrElse(
+          scala.collection.mutable.Map.empty[QName, Option[RuntimeValue]]
+        )
+
+        localScopes = localScopes.tail
+        scopeSaves = scopeSaves.tail
+
+        saves.foreach {
+          case (q, Some(oldValue)) =>
+            currentEnv += (q -> oldValue)
+
+          case (q, None) =>
+            currentEnv -= q
+        }
+      }
+    }
 
     def assignWithBounds(q: QName, newVal: RuntimeValue): Unit = {
       val existing = currentEnv.get(q)
+
       existing match {
         case Some(RuntimeValue.VInt(_, minOpt, maxOpt)) =>
           val v = newVal match {
-            case RuntimeValue.VInt(i, _, _) => i
-            case RuntimeValue.VFloat(f, _, _) => f.toInt
-            case _ => 0
+            case RuntimeValue.VInt(i, _, _)     => i
+            case RuntimeValue.VFloat(f, _, _)   => f.toInt
+            case _                              => 0
           }
+
           val cappedMin = minOpt.map(m => Math.max(m, v)).getOrElse(v)
           val finalVal = maxOpt.map(m => Math.min(m, cappedMin)).getOrElse(cappedMin)
+
           currentEnv += (q -> RuntimeValue.VInt(finalVal, minOpt, maxOpt))
+
         case Some(RuntimeValue.VFloat(_, minOpt, maxOpt)) =>
           val v = newVal match {
-            case RuntimeValue.VFloat(f, _, _) => f
-            case RuntimeValue.VInt(i, _, _) => i.toDouble
-            case _ => 0.0
+            case RuntimeValue.VFloat(f, _, _)   => f
+            case RuntimeValue.VInt(i, _, _)     => i.toDouble
+            case _                              => 0.0
           }
+
           val cappedMin = minOpt.map(m => Math.max(m, v)).getOrElse(v)
           val finalVal = maxOpt.map(m => Math.min(m, cappedMin)).getOrElse(cappedMin)
+
           currentEnv += (q -> RuntimeValue.VFloat(finalVal, minOpt, maxOpt))
-        case _ => currentEnv += (q -> newVal)
+
+        case _ =>
+          currentEnv += (q -> newVal)
       }
     }
 
     def process(ss: List[Statement]): Unit = {
       val it = ss.iterator
+
       while (it.hasNext && !currentEnv.contains(returnKey)) {
         it.next() match {
+
           case AssignStmt(v, expr) =>
-            val evaluated = evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv))
-            if (rx.clocks.contains(v)) currentClockEnv += (v -> Condition.extractDouble(evaluated))
-            else assignWithBounds(v, evaluated)
+            val evaluated = evalExpr(
+              expr,
+              currentEnv,
+              rx.copy(clock_env = currentClockEnv)
+            )
+
+            if (rx.clocks.contains(v)) {
+              currentClockEnv += (v -> Condition.extractDouble(evaluated))
+            } else {
+              assignWithBounds(v, evaluated)
+            }
 
           case ArrayAssignStmt(arrName, idxExpr, valExpr) =>
-            val idx = Condition.extractDouble(evalExpr(idxExpr, currentEnv, rx.copy(clock_env = currentClockEnv))).toInt
-            val value = evalExpr(valExpr, currentEnv, rx.copy(clock_env = currentClockEnv))
+            val idx = Condition
+              .extractDouble(
+                evalExpr(idxExpr, currentEnv, rx.copy(clock_env = currentClockEnv))
+              )
+              .toInt
+
+            val value = evalExpr(
+              valExpr,
+              currentEnv,
+              rx.copy(clock_env = currentClockEnv)
+            )
+
             currentEnv.get(arrName) match {
               case Some(RuntimeValue.VArray(elems, isDyn, maxOpt)) =>
                 if (idx >= 0 && idx < elems.length) {
-                  currentEnv += (arrName -> RuntimeValue.VArray(elems.updated(idx, value), isDyn, maxOpt))
+                  currentEnv += (
+                    arrName -> RuntimeValue.VArray(
+                      elems.updated(idx, value),
+                      isDyn,
+                      maxOpt
+                    )
+                  )
                 } else if (isDyn && idx == elems.length) {
                   val newElems = elems :+ value
-                  currentEnv += (arrName -> RuntimeValue.VArray(maxOpt.map(m => newElems.takeRight(m)).getOrElse(newElems), isDyn, maxOpt))
+                  currentEnv += (
+                    arrName -> RuntimeValue.VArray(
+                      maxOpt.map(m => newElems.takeRight(m)).getOrElse(newElems),
+                      isDyn,
+                      maxOpt
+                    )
+                  )
                 }
+
               case _ =>
             }
-          case IfThenStmt(cond, thens) => if (evalCondition(cond, rx.copy(val_env = currentEnv, clock_env = currentClockEnv))) process(thens)
+
+          case IfThenStmt(cond, thens) =>
+            if (
+              evalCondition(
+                cond,
+                rx.copy(val_env = currentEnv, clock_env = currentClockEnv)
+              )
+            ) {
+              process(thens)
+            }
+
           case ForeachStmt(iter, arr, body) =>
             currentEnv.get(arr) match {
               case Some(RuntimeValue.VArray(elems, _, _)) =>
                 val eIt = elems.iterator
-                while(eIt.hasNext && !currentEnv.contains(returnKey)) {
+
+                while (eIt.hasNext && !currentEnv.contains(returnKey)) {
                   currentEnv += (iter -> eIt.next())
                   process(body)
                 }
+
                 currentEnv -= iter
+
               case _ =>
             }
-          case ReturnStmt(expr) => currentEnv += (returnKey -> evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv)))
-          case PrintStmt(expr) => val evaluated = evalExpr(expr, currentEnv, rx.copy(clock_env = currentClockEnv)); println(s"🖨️ RTA Print | ${UpdateExpr.show(expr)} = ${evaluated.value}")
+
+          case LocalDecl(typeName, v, expr) =>
+            declareLocal(v)
+
+            currentEnv -= v
+
+            val evaluated = evalExpr(
+              expr,
+              currentEnv,
+              rx.copy(clock_env = currentClockEnv)
+            )
+
+            val typedValue = typeName match {
+              case "int" =>
+                RuntimeValue.VInt(Condition.extractDouble(evaluated).toInt)
+
+              case "float" =>
+                RuntimeValue.VFloat(Condition.extractDouble(evaluated))
+
+              case "bool" =>
+                RuntimeValue.VBool(Condition.extractDouble(evaluated) != 0.0)
+
+              case _ =>
+                evaluated
+            }
+
+            assignWithBounds(v, typedValue)
+
+          case ReturnStmt(expr) =>
+            currentEnv += (
+              returnKey -> evalExpr(
+                expr,
+                currentEnv,
+                rx.copy(clock_env = currentClockEnv)
+              )
+            )
+
+          case PrintStmt(expr) =>
+            val evaluated = evalExpr(
+              expr,
+              currentEnv,
+              rx.copy(clock_env = currentClockEnv)
+            )
+
+            println(
+              s"🖨️ RTA Print | ${UpdateExpr.show(expr)} = ${evaluated.value}"
+            )
+
+          case FuncCallStmt(funcName, args) =>
+            val builtin = evalBuiltinFunc(
+              funcName,
+              args,
+              currentEnv,
+              rx.copy(clock_env = currentClockEnv)
+            )
+
+            if (builtin.isEmpty) {
+              rx.functions.get(funcName) match {
+                case Some(funcDef) =>
+                  val evalArgs = args.map(
+                    a => evalExpr(a, currentEnv, rx.copy(clock_env = currentClockEnv))
+                  )
+
+                  pushScope()
+
+                  funcDef.params.foreach(declareLocal)
+
+                  funcDef.params.zip(evalArgs).foreach { case (param, v) =>
+                    currentEnv += (param -> v)
+                  }
+
+                  process(funcDef.body)
+
+                  currentEnv -= returnKey
+
+                  popScope()
+
+                case None =>
+                  ()
+              }
+            }
         }
       }
     }
+
     process(stmts)
+
+    popScope()
+
     (currentEnv, currentClockEnv)
   }
 

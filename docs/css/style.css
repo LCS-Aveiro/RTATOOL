@@ -830,3 +830,345 @@ hr { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
     background-color: var(--red);
     color: white;
 }
+
+
+.CodeMirror-foldmarker {
+  color: #2563eb;
+  text-shadow: none;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+}
+
+.CodeMirror-foldgutter {
+  width: 14px;
+}
+
+.CodeMirror-foldgutter-open,
+.CodeMirror-foldgutter-folded {
+  cursor: pointer;
+  font-size: 10px;
+  color: #6b7280;
+}
+
+.CodeMirror-foldgutter-open:after {
+  content: "▾";
+}
+
+.CodeMirror-foldgutter-folded:after {
+  content: "▸";
+}
+
+
+#rta-hover-tooltip {
+  position: absolute;
+  z-index: 999999;
+  max-width: 420px;
+  min-width: 240px;
+  background: #111827;
+  color: #f9fafb;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.35;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  pointer-events: none;
+}
+
+/* Watch Expressions Panel */
+.watch-panel {
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--white);
+}
+
+.watch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--gray-100);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gray-700);
+}
+
+.watch-list {
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.watch-item {
+  display: flex;
+  align-items: center;
+  padding: 3px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border-bottom: 1px solid var(--gray-50);
+  gap: 6px;
+}
+
+.watch-item:last-child { border-bottom: none; }
+
+.watch-item:hover { background: var(--gray-50); }
+
+.watch-expr {
+  flex: 1;
+  color: var(--gray-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.watch-value {
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+
+.watch-value.val-true { color: #16a34a; }
+.watch-value.val-false { color: #dc2626; }
+.watch-value.val-number { color: #2563eb; }
+.watch-value.val-error { color: #d97706; }
+
+.watch-remove {
+  cursor: pointer;
+  color: var(--gray-300);
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 2px;
+}
+.watch-remove:hover { color: #dc2626; }
+
+.watch-input-row {
+  display: flex;
+  padding: 6px 8px;
+  border-top: 1px solid var(--border);
+  gap: 4px;
+}
+
+.watch-input-row input {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  outline: none;
+}
+
+.watch-input-row input:focus { border-color: var(--red); }
+
+.watch-input-row button {
+  padding: 3px 8px;
+  font-size: 11px;
+  background: var(--red);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.watch-input-row button:hover { background: var(--red-dark); }
+
+/* Breakpoints */
+.bp-panel {
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--white);
+}
+
+.bp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #fef3c7;
+  border-bottom: 1px solid #fbbf24;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #92400e;
+}
+
+.bp-list { padding: 4px 0; max-height: 100px; overflow-y: auto; }
+
+.bp-item {
+  display: flex;
+  align-items: center;
+  padding: 3px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  gap: 6px;
+}
+
+.bp-item:hover { background: #fffbeb; }
+
+.bp-toggle {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: #d97706;
+}
+
+.bp-cond { flex: 1; color: var(--gray-900); }
+.bp-cond.disabled { text-decoration: line-through; opacity: 0.5; }
+
+.bp-triggered-flash {
+  animation: bp-flash 0.6s ease-in-out 3;
+}
+
+@keyframes bp-flash {
+  0%, 100% { background: transparent; }
+  50% { background: #fef08a; }
+}
+
+
+
+/* ───────────────────────── Trace Replay ───────────────────────── */
+
+#bpane-trace {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.trace-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--gray-50);
+}
+
+.trace-toolbar .form-control {
+  width: auto;
+  height: 24px;
+  padding: 2px 6px;
+  font-size: 11px;
+}
+
+.trace-toolbar input[type="range"] {
+  flex: 1;
+  min-width: 120px;
+}
+
+.trace-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--gray-700);
+  margin: 0;
+  user-select: none;
+}
+
+.trace-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gray-700);
+  min-width: 80px;
+  text-align: center;
+}
+
+.trace-main {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  padding: 8px;
+}
+
+#traceList {
+  width: 320px;
+  min-width: 220px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--white);
+  font-size: 11px;
+}
+
+.trace-item {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--gray-100);
+  cursor: pointer;
+}
+
+.trace-item:hover {
+  background: var(--gray-50);
+}
+
+.trace-item.active {
+  background: #eef2ff;
+  border-left: 3px solid var(--red);
+}
+
+.trace-item-title {
+  font-weight: 600;
+  color: var(--gray-900);
+  word-break: break-all;
+}
+
+.trace-item-sub {
+  color: var(--gray-500);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  margin-top: 2px;
+  word-break: break-all;
+}
+
+.trace-chart-wrap {
+  flex: 1;
+  min-width: 0;
+  min-height: 0; 
+  position: relative;
+  overflow: hidden; 
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--white);
+}
+
+.trace-chart-inner {
+  position: absolute;
+  inset: 6px;
+  min-height: 0;
+}
+.trace-chart-message {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500);
+  font-size: 12px;
+}
+
+.trace-replay-disabled {
+  pointer-events: none;
+  opacity: 0.65;
+  position: relative;
+}
+
+.trace-replay-disabled::after {
+  content: "REPLAY";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 999;
+  background: #dc2626;
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 3px;
+}

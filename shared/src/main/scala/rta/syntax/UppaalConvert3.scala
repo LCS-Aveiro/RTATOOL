@@ -2,7 +2,7 @@ package rta.backend
 
 import rta.syntax.Program2
 import rta.syntax.Program2.{Edge, QName, RxGraph}
-import rta.syntax.{Condition, Statement, UpdateExpr, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt, RuntimeValue}
+import rta.syntax.{Condition, Statement, UpdateExpr, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, PrintStmt, RuntimeValue,FuncCallStmt,LocalDecl}
 import java.util.concurrent.atomic.AtomicInteger
 import scala.xml._
 import scala.collection.mutable
@@ -49,6 +49,15 @@ object UppaalConverter3 {
       s"return ${exprToString(expr)};"
     case PrintStmt(_) =>
       "// print not supported in UPPAAL"
+    case FuncCallStmt(funcName, args) => 
+        s"${sanitizeQName(funcName)}(${args.map(exprToString).mkString(", ")});"
+    case LocalDecl(typeName, variable, expr) =>
+      val uppaalType = typeName match {
+        case "float" => "double"
+        case other   => other
+      }
+
+      s"$uppaalType ${sanitizeQName(variable)} = ${exprToString(expr)};"
   }
 
   private def stringToQName(str: String): QName = {
@@ -185,13 +194,29 @@ object UppaalConverter3 {
       s"$typeStr ${sanitizeQName(q)}$arrBrackets = $valStr;" 
     }.mkString("\n")
 
+    def getReturnType(stmts: List[Statement]): String = {
+        if (stmts.exists {
+            case _: ReturnStmt => true
+            case IfThenStmt(_, thens) => getReturnType(thens) == "int"
+            case ForeachStmt(_, _, body) => getReturnType(body) == "int"
+            case _ => false
+        }) "int" else "void"
+    }
+
+    val customFuncs = rxGraph.functions.values.map { f =>
+        val params = f.params.map(p => s"int ${sanitizeQName(p)}").mkString(", ")
+        val retType = getReturnType(f.body)
+        val body = f.body.map(statementToString).map("\t" + _).mkString("\n")
+        s"$retType ${sanitizeQName(f.name)}($params) {\n$body\n}"
+    }.mkString("\n\n")
+
     val declarationBuilder = new StringBuilder(
       s"""// -----------------------------------------------------------
          |// 1. Variáveis e Clocks Globais
          |// -----------------------------------------------------------
          |$clockDecl
          |$varDecl
-         |
+         |$customFuncs
          |// Constantes do Sistema
          |const int NUM_EDGES = ${simpleEdges.size};
          |const int NUM_HYPEREDGES = $finalNumHyperedges;

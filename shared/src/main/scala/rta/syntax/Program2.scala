@@ -2,7 +2,21 @@ package rta.syntax
 
 import rta.backend.RxSemantics
 import rta.syntax.Program2.EdgeMap
-import rta.syntax.{Condition, UpdateExpr, Statement, AssignStmt, ArrayAssignStmt, IfThenStmt, ForeachStmt, ReturnStmt, RuntimeValue, PrintStmt, FunctionDef}
+import rta.syntax.{
+  Condition,
+  UpdateExpr,
+  Statement,
+  AssignStmt,
+  ArrayAssignStmt,
+  IfThenStmt,
+  ForeachStmt,
+  ReturnStmt,
+  RuntimeValue,
+  PrintStmt,
+  FunctionDef,
+  FuncCallStmt,
+  LocalDecl
+}
 import rta.backend.DBM
 import scala.annotation.tailrec
 import scala.language.implicitConversions
@@ -88,6 +102,15 @@ object Program2:
         ForeachStmt(newIter, newArr, body.map(s => applyPrefixToStatement(prefix, s)))
       case ReturnStmt(expr) => ReturnStmt(applyPrefixToExpr(prefix, expr))
       case PrintStmt(expr) => PrintStmt(applyPrefixToExpr(prefix, expr))
+      case FuncCallStmt(funcName, args) =>
+        val newFuncName = if (isGlobalControlVar(funcName)) funcName else prefix / funcName
+        FuncCallStmt(newFuncName, args.map(a => applyPrefixToExpr(prefix, a)))
+      case LocalDecl(typeName, variable, expr) =>
+        val newVar =
+          if (isGlobalControlVar(variable)) variable
+          else prefix / variable
+
+        LocalDecl(typeName, newVar, applyPrefixToExpr(prefix, expr))
     }
   }
 

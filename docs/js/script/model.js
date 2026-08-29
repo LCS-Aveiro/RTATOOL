@@ -47,20 +47,12 @@ function loadAndRender() {
         jsTextHistory.push({ label: "Start ->", text: initialStateText });
 
         renderCytoscapeGraph("cytoscapeMainContainer", data, true);
+        if (window.TraceRecorder) {
+  TraceRecorder.reset("Start");
+}
         updateAllViews(jsonString);
         console.log(data);
         renderPdlHelpers(data);
     }
 }
 
-
-function translateToGLTS() {
-    var newCode = RTA.translateToGLTS();
-    if (newCode && !newCode.startsWith("Erro")) {
-        editor.setValue(newCode);
-        loadAndRender();
-        alert(i18n[currentLang].alert_trans_ok);
-    } else {
-        alert(newCode);
-    }
-}

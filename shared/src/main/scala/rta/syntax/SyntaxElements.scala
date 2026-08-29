@@ -15,7 +15,13 @@ case class IfThenStmt(condition: Condition, thenStmts: List[Statement]) extends 
 case class ForeachStmt(iteratorVar: QName, arrayName: QName, body: List[Statement]) extends Statement
 case class ReturnStmt(expr: UpdateExpr) extends Statement
 case class PrintStmt(expr: UpdateExpr) extends Statement
-
+case class FuncCallStmt(funcName: QName, args: List[UpdateExpr]) extends Statement {
+  override def toString: String = s"${funcName.show}(${args.map(UpdateExpr.show).mkString(", ")})"
+}
+case class LocalDecl(typeName: String, variable: QName, expr: UpdateExpr) extends Statement {
+  override def toString: String =
+    s"$typeName ${variable.show} = ${UpdateExpr.show(expr)}"
+}
 case class FunctionDef(name: QName, params: List[QName], body: List[Statement])
 
 sealed trait RuntimeValue {

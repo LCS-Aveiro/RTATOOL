@@ -2,9 +2,9 @@
 
 var currentCytoscapeInstance = null;
 var textTraceHistory = [];
-var autoDelayTimer   = null;
+var autoDelayTimer = null;
 var storedDelayValue = 1.0;
-var jsTextHistory    = [];
+var jsTextHistory = [];
 
 
 const simpleHash = s => {
@@ -27,17 +27,17 @@ window.updateAllViews = function (json) {
             return;
         }
 
-        if (typeof renderGlobalPanel  === 'function') renderGlobalPanel(data, 'sidePanel');
-        if (typeof renderGlobalPanel  === 'function') renderGlobalPanel(data, 'sidePanel-bottom');
+        if (typeof renderGlobalPanel === 'function') renderGlobalPanel(data, 'sidePanel');
+        if (typeof renderGlobalPanel === 'function') renderGlobalPanel(data, 'sidePanel-bottom');
         if (typeof renderCytoscapeGraph === 'function') renderCytoscapeGraph("cytoscapeMainContainer", data, false);
-        if (typeof renderTextView     === 'function') renderTextView();
-        if (typeof renderMermaidView  === 'function') renderMermaidView();
-        if (typeof renderPdlHelpers   === 'function') renderPdlHelpers(data);
+        if (typeof renderTextView === 'function') renderTextView();
+        if (typeof renderMermaidView === 'function') renderMermaidView();
+        if (typeof renderPdlHelpers === 'function') renderPdlHelpers(data);
         if (typeof updatePctlDropdowns === 'function') updatePctlDropdowns(data);
 
         if (data && data.panelData) {
             var sbStates = document.getElementById('sb-states');
-            var trans    = data.panelData.enabled || [];
+            var trans = data.panelData.enabled || [];
             if (sbStates) sbStates.textContent = trans.length + ' transition' + (trans.length !== 1 ? 's' : '') + ' enabled';
 
             var sbModel = document.getElementById('sb-model');
@@ -45,8 +45,13 @@ window.updateAllViews = function (json) {
         }
 
         lastModelData = data;
+
     } catch (e) {
         console.error("Erro ao processar updateAllViews:", e);
+    }
+
+    if (typeof checkBreakpointsAfterStep === 'function') {
+        checkBreakpointsAfterStep();
     }
 };
 
@@ -55,7 +60,7 @@ function renderCytoscapeGraph(mainContainerId, dataOrJson, isFirstRender) {
     var mainContainer = document.getElementById(mainContainerId);
     if (!mainContainer) return;
 
-    var data       = (typeof dataOrJson === 'string') ? JSON.parse(dataOrJson) : dataOrJson;
+    var data = (typeof dataOrJson === 'string') ? JSON.parse(dataOrJson) : dataOrJson;
     var sourceCode = (typeof editor !== 'undefined') ? editor.getValue() : "";
     applySavedPositions(data.graphElements, sourceCode);
 
@@ -66,15 +71,15 @@ function renderCytoscapeGraph(mainContainerId, dataOrJson, isFirstRender) {
 
     try {
         var existingNodes = currentCytoscapeInstance.nodes().map(n => n.id());
-        var newIds        = new Set(data.graphElements.map(el => el.data.id));
-        var toRemove      = currentCytoscapeInstance.elements().filter(el => !newIds.has(el.id()));
+        var newIds = new Set(data.graphElements.map(el => el.data.id));
+        var toRemove = currentCytoscapeInstance.elements().filter(el => !newIds.has(el.id()));
 
         currentCytoscapeInstance.remove(toRemove);
         currentCytoscapeInstance.json({ elements: data.graphElements });
 
         currentCytoscapeInstance.nodes().filter(n => !existingNodes.includes(n.id())).forEach(node => {
             if (node.hasClass('event-node') || node.hasClass('deadlock-node')) {
-                var parts     = node.id().split('_');
+                var parts = node.id().split('_');
                 var sourceNode = parts.length >= 2 ? currentCytoscapeInstance.getElementById(parts[1]) : null;
                 if (sourceNode && sourceNode.length > 0) {
                     var pos = sourceNode.position();
@@ -84,10 +89,10 @@ function renderCytoscapeGraph(mainContainerId, dataOrJson, isFirstRender) {
         });
 
         if (data.lastTransition) {
-            var trans       = data.lastTransition;
+            var trans = data.lastTransition;
             var actionNodeId = `event_${trans.from}_${trans.to}_${trans.tId}_${trans.label}`;
-            var edgeTo       = `s_to_a_${trans.from}_${actionNodeId}`;
-            var edgeFrom     = `a_to_s_${actionNodeId}_${trans.to}`;
+            var edgeTo = `s_to_a_${trans.from}_${actionNodeId}`;
+            var edgeFrom = `a_to_s_${actionNodeId}_${trans.to}`;
             var elementsToFlash = currentCytoscapeInstance.elements(`#${actionNodeId}, #${edgeTo}, #${edgeFrom}`);
             if (elementsToFlash.length > 0) {
                 elementsToFlash.addClass('transition-flash');
@@ -110,14 +115,14 @@ async function setupInitialCytoscape(mainContainerId, data) {
         currentCytoscapeInstance = null;
     }
 
-    mainContainer.innerHTML           = '';
-    mainContainer.style.display       = 'block';
-    mainContainer.style.width         = '100%';
-    mainContainer.style.height        = '100%';
+    mainContainer.innerHTML = '';
+    mainContainer.style.display = 'block';
+    mainContainer.style.width = '100%';
+    mainContainer.style.height = '100%';
     mainContainer.style.backgroundColor = '#ffffff';
 
-    var sourceCode    = (typeof editor !== 'undefined') ? editor.getValue() : JSON.stringify(data.graphElements);
-    const graphId     = getLayoutKey(sourceCode);
+    var sourceCode = (typeof editor !== 'undefined') ? editor.getValue() : JSON.stringify(data.graphElements);
+    const graphId = getLayoutKey(sourceCode);
 
     if (!hasExistingLayoutsInLocalStorage()) await loadDefaultLayoutsFromSeedFile();
 
@@ -125,15 +130,15 @@ async function setupInitialCytoscape(mainContainerId, data) {
 
     var cy = cytoscape({
         container: mainContainer,
-        elements:  data.graphElements,
-        style:     getCytoscapeStyles(),
+        elements: data.graphElements,
+        style: getCytoscapeStyles(),
         layout: {
-            name:          hasSavedLayout ? 'preset' : 'dagre',
-            rankDir:       'LR',
-            fit:           true,
-            padding:       50,
+            name: hasSavedLayout ? 'preset' : 'dagre',
+            rankDir: 'LR',
+            fit: true,
+            padding: 50,
             spacingFactor: 1.2,
-            animate:       false
+            animate: false
         },
         wheelSensitivity: 0.2,
         textureOnViewport: true,
@@ -167,14 +172,19 @@ async function setupInitialCytoscape(mainContainerId, data) {
             console.log("Layout salvo automaticamente!");
         }, 100);
     };
-    cy.on('dragfree',  'node', triggerAutoSave);
-    cy.on('cedragfree','edge', triggerAutoSave);
+    cy.on('dragfree', 'node', triggerAutoSave);
+    cy.on('cedragfree', 'edge', triggerAutoSave);
 
     cy.on('tap', 'node.event-node.enabled', function (evt) {
-        var node  = evt.target;
+        if (window.TraceRecorder && TraceRecorder.isReplaying()) return;
+        var node = evt.target;
         var parts = node.id().split('_');
         if (parts.length >= 5) {
             var edgeJson = JSON.stringify({ from: parts[1], to: parts[2], tId: parts[3], label: parts[4] });
+          
+            if (window.TraceRecorder) {
+                TraceRecorder.setLabel(parts[4]);
+            }
             var responseJson = RTA.takeStep(edgeJson);
             var newStateText = RTA.getCurrentStateText();
             jsTextHistory.push({ label: parts[4] + " ->", text: newStateText });
@@ -210,8 +220,8 @@ async function setupInitialCytoscape(mainContainerId, data) {
     });
 
     cy.on('dbltap', 'edge.has-details', function (evt) {
-        var rawText      = evt.target.data('full_label');
-        var contentPre   = document.getElementById('edgeDetailContent');
+        var rawText = evt.target.data('full_label');
+        var contentPre = document.getElementById('edgeDetailContent');
         contentPre.textContent = formatCode(rawText);
         if (typeof Prism !== 'undefined') {
             contentPre.className = "language-clike";
@@ -248,17 +258,26 @@ function changeEdgeStyle(styleName) {
     currentEdgeStyle = styleName;
     var edges = currentCytoscapeInstance.edges();
     edges.removeClass('taxi bezier straight');
-    if (styleName === 'taxi')   edges.style({ 'curve-style': 'taxi', 'taxi-direction': 'vertical' });
+    if (styleName === 'taxi') edges.style({ 'curve-style': 'taxi', 'taxi-direction': 'vertical' });
     else if (styleName === 'bezier') edges.style({ 'curve-style': 'bezier', 'control-point-step-size': 40 });
-    else                        edges.style({ 'curve-style': 'straight' });
+    else edges.style({ 'curve-style': 'straight' });
 }
 
 function doUndo() {
-    if (typeof RTA !== 'undefined') {
-        var json = RTA.undo();
-        var data = JSON.parse(json);
-        if (!data.error) updateAllViews(json);
+  if (window.TraceRecorder && TraceRecorder.isReplaying()) return;
+
+  if (typeof RTA !== 'undefined') {
+    if (window.TraceRecorder) {
+      TraceRecorder.setLabel("undo");
     }
+
+    var json = RTA.undo();
+    var data = JSON.parse(json);
+
+    if (!data.error) {
+      updateAllViews(json);
+    }
+  }
 }
 
 function stopAutoDelay() {
@@ -273,7 +292,7 @@ function toggleAutoDelay(isChecked) {
     if (isChecked) {
         if (autoDelayTimer) return;
         const runStep = () => {
-            var inp   = document.getElementById('delayInputVal');
+            var inp = document.getElementById('delayInputVal');
             var delay = inp ? parseFloat(inp.value) : 1.0;
             updateAllViews(RTA.advanceTime(delay));
         };
@@ -284,16 +303,10 @@ function toggleAutoDelay(isChecked) {
     }
 }
 
-function downloadString(filename, content) {
-    var blob = new Blob([content], { type: 'text/plain' });
-    var a    = document.createElement('a');
-    a.href   = window.URL.createObjectURL(blob);
-    a.download = filename;
-    a.click();
-}
 
-function showStats()    { document.getElementById("analysisResult").innerText = RTA.getStats(); }
-function checkProblems(){ document.getElementById("analysisResult").innerText = RTA.checkProblems(); }
+
+function showStats() { document.getElementById("analysisResult").innerText = RTA.getStats(); }
+function checkProblems() { document.getElementById("analysisResult").innerText = RTA.checkProblems(); }
 
 
 $(document).ready(function () {
