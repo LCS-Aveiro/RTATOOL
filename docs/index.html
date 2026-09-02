@@ -569,7 +569,22 @@
     <div id="cy-context-menu"><ul></ul></div>
 
 
-    
+    <div class="modal" id="quickModal" tabindex="-1" role="dialog" data-backdrop="false" style="z-index:100060; background:rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-sm" role="document" style="margin-top:15vh;">
+            <div class="modal-content">
+                <div class="modal-header" style="background:#f8f9fa; padding:10px 15px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="quickModalTitle" style="font-size:14px; font-weight:bold; color:#334155;"></h4>
+                </div>
+                <div class="modal-body" id="quickModalInputs" style="padding:15px;">
+                </div>
+                <div class="modal-footer" style="padding:10px 15px;">
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="quickModalSaveBtn">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal" id="edgeDetailModal" tabindex="-1" role="dialog" data-backdrop="false" style="z-index:100050; background:rgba(0,0,0,0.5);">
         <div class="modal-dialog" role="document" style="margin-top:10vh;">

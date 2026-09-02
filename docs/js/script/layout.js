@@ -81,6 +81,20 @@ function applySavedPositions(graphElements, sourceCode) {
                             foundSomething = true;
                         }
                     }
+                } else if (el.classes && el.classes.includes('note-node')) {
+                    if (savedData.nodes && savedData.nodes[el.data.id]) {
+                        el.position = savedData.nodes[el.data.id];
+                        foundSomething = true;
+                    } else if (el.data.targetId && el.data.targetId !== 'global') {
+                        var srcId = el.data.targetId;
+                        if (savedData.nodes && savedData.nodes[srcId]) {
+                            el.position = { x: savedData.nodes[srcId].x + 80, y: savedData.nodes[srcId].y - 80 };
+                            foundSomething = true;
+                        }
+                    } else {
+                        el.position = { x: 100, y: 100 };
+                        foundSomething = true;
+                    }
                 }
             } else if (el.data && el.data.source) {
                 if (savedData.edges && savedData.edges[el.data.id]) {

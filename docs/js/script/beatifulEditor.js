@@ -52,6 +52,14 @@ function setupContextMenu(cy) {
         menu.style.display = 'block';
 
         if (isBackground) {
+            addMenuItem(list, '📝 Add Floating Note', function() {
+                openSmartModal('Add Floating Note', [
+                    { label: 'Note Text:', placeholder: 'e.g. System overview', required: true }
+                ], function(text) {
+                    var safeText = text.replace(/"/g, "'");
+                    appendToCode(`// note: global "${safeText}"`);
+                });
+            });
             addMenuItem(list, '➕ Create Variable (int)', createVariable);
             addMenuItem(list, '➜ New Transition (-->)', function() { createTransition(); }); 
             addMenuItem(list, '🚩 New Initial State (init)', createInitState);
@@ -75,6 +83,30 @@ function setupContextMenu(cy) {
             var cls = target.classes() || [];
             var data = target.data();
 
+            if (cls.includes('note-node')) {
+                addMenuItem(list, '🗑️ Delete Note', function() {
+                    var code = editor.getValue();
+                    var lines = code.split('\n');
+                    var safeText = data.label.replace(/"/g, "'");
+                    var newLines = lines.filter(line => !(line.includes('// note:') && line.includes(`"${safeText}"`)));
+                    editor.setValue(newLines.join('\n'));
+                    loadAndRender();
+                });
+                return; 
+            }
+
+            addMenuItem(list, '💬 Add Comment (Note)', function() {
+                var id = target.id();
+                var lbl = data.label || id;
+                lbl = lbl.replace(/\n/g, ' ').split('(')[0].trim();
+                
+                openSmartModal('Add Note to ' + lbl, [
+                    { label: 'Note Text:', placeholder: 'e.g. Important state', required: true }
+                ], function(text) {
+                    var safeText = text.replace(/"/g, "'");
+                    appendToCode(`// note: ${id} "${safeText}"`);
+                });
+            });
 
             if (cls.includes('event-node')) {
                 var parts = data.id.split('_'); 

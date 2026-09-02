@@ -56,12 +56,44 @@ window.updateAllViews = function (json) {
 };
 
 
+function injectNotesToElements(sourceCode, elements) {
+    var regex = /\/\/\s*note\s*:\s*([^\s]+)\s+"([^"]+)"/g;
+    var match;
+    var addedNotes = new Set();
+    while ((match = regex.exec(sourceCode)) !== null) {
+        var targetId = match[1];
+        var text = match[2];
+        var noteId = 'note_' + simpleHash(targetId + text);
+        if (addedNotes.has(noteId)) continue;
+        addedNotes.add(noteId);
+        
+        if (targetId === 'global') {
+            if (!elements.some(el => el.data && el.data.id === noteId)) {
+                elements.push({ group: 'nodes', data: { id: noteId, label: text, targetId: targetId }, classes: 'note-node' });
+            }
+        } else {
+            var targetExists = elements.some(el => el.data && el.data.id === targetId);
+            if (targetExists) {
+                if (!elements.some(el => el.data && el.data.id === noteId)) {
+                    elements.push({ group: 'nodes', data: { id: noteId, label: text, targetId: targetId }, classes: 'note-node' });
+                    elements.push({ group: 'edges', data: { id: 'edge_' + noteId, source: noteId, target: targetId }, classes: 'note-edge' });
+                }
+            }
+        }
+    }
+}
+
 function renderCytoscapeGraph(mainContainerId, dataOrJson, isFirstRender) {
     var mainContainer = document.getElementById(mainContainerId);
     if (!mainContainer) return;
 
     var data = (typeof dataOrJson === 'string') ? JSON.parse(dataOrJson) : dataOrJson;
     var sourceCode = (typeof editor !== 'undefined') ? editor.getValue() : "";
+    
+    if (data && data.graphElements) {
+        injectNotesToElements(sourceCode, data.graphElements);
+    }
+    
     applySavedPositions(data.graphElements, sourceCode);
 
     if (isFirstRender || !currentCytoscapeInstance) {

@@ -25,7 +25,9 @@ function getCytoscapeStyles() {
         
         { selector: '.transition-flash', style: { 'background-color': '#F97316', 'line-color': '#F97316', 'target-arrow-color': '#F97316' } },
         
-        { selector: '.compound-parent', style: { 'background-color': '#F3F4F6', 'background-opacity': 1, 'border-color': '#D1D5DB', 'border-width': 2, 'content': 'data(label)', 'text-valign': 'top', 'text-halign': 'center', 'color': '#374151', 'font-weight': 'bold', 'font-size': '16px' } }
+        { selector: '.compound-parent', style: { 'background-color': '#F3F4F6', 'background-opacity': 1, 'border-color': '#D1D5DB', 'border-width': 2, 'content': 'data(label)', 'text-valign': 'top', 'text-halign': 'center', 'color': '#374151', 'font-weight': 'bold', 'font-size': '16px' } },
+
+        { selector: 'node.note-node', style: { 'background-color': '#FEF08A', 'shape': 'round-rectangle', 'border-color': '#EAB308', 'border-width': 2, 'color': '#854D0E', 'font-size': '13px', 'font-weight': 'bold', 'text-wrap': 'wrap', 'text-max-width': '200px', 'width': 'label', 'height': 'label', 'padding': '10px' } },
+        { selector: 'edge.note-edge', style: { 'width': 3, 'line-style': 'dashed', 'line-color': '#FDE047', 'target-arrow-shape': 'triangle', 'target-arrow-color': '#FDE047', 'curve-style': 'unbundled-bezier', 'z-index': 0 } }
     ];
 }
-
