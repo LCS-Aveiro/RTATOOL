@@ -262,7 +262,8 @@ object Program2:
         val isConditionSatisfied = rx.edgeConditions.getOrElse(edge, None).forall(c => RxSemantics.evalCondition(c, rx))
         val line = if (isGloballyActive && isConditionSatisfied) then "---" else "-.-"
 
-        val qNameLabel = if transId == lbl then lbl.show else s"${lbl.show}(${transId.show})"
+        val isAuto = (transId.show == s"${a.show}tau${b.show}")
+        val qNameLabel = if (isAuto) "" else if (transId == lbl) lbl.show else s"${lbl.show}(${transId.show})"
         val updText    = if withConditions then rx.edgeUpdates.getOrElse(edge, Nil).map(_.toString).mkString(" ") else ""
         val condText   = if withConditions then rx.edgeConditions.getOrElse(edge, None).map(_.toMermaidString).getOrElse("") else ""
         

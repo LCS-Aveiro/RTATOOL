@@ -44,6 +44,8 @@ function loadLayoutFromLocalStorage(cy, graphId) {
                     if (edge.length > 0) {
                         edge.data('cyedgecontroleditingDistances', savedData.edges[edgeId].distances);
                         edge.data('cyedgecontroleditingWeights',   savedData.edges[edgeId].weights);
+                        edge.data('edgeDistances', savedData.edges[edgeId].distances);
+                        edge.data('edgeWeights',   savedData.edges[edgeId].weights);
                     }
                 }
             }

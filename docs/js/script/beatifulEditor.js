@@ -56,6 +56,21 @@ function setupContextMenu(cy) {
             addMenuItem(list, '➜ New Transition (-->)', function() { createTransition(); }); 
             addMenuItem(list, '🚩 New Initial State (init)', createInitState);
         } 
+        else if (isEdge) {
+            addMenuItem(list, '🔄 Reset Curve (Straight Line)', function() {
+                target.removeData('cyedgecontroleditingDistances');
+                target.removeData('cyedgecontroleditingWeights');
+                target.removeData('edgeDistances');
+                target.removeData('edgeWeights');
+                target.removeData('bendPositions');
+                target.removeData('controlPointPositions');
+                
+                target.unselect();
+                
+                const stableId = getLayoutKey(editor.getValue());
+                autoSaveLayoutToLocalStorage(cy, stableId);
+            });
+        }
         else if (isNode) {
             var cls = target.classes() || [];
             var data = target.data();

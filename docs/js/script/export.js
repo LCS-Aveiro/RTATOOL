@@ -342,7 +342,7 @@ function downloadPDF() {
     const pngData = currentCytoscapeInstance.png({
         full: true,
         bg: 'rgb(255, 255, 255)',
-        scale: 1
+        scale: 2
     });
 
     const { jsPDF } = window.jspdf;

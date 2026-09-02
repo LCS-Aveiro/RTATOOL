@@ -148,13 +148,41 @@ async function setupInitialCytoscape(mainContainerId, data) {
     if (cy.edgeEditing) {
         cy.edgeEditing({
             undoable: false,
-            bendPositionsFunction: function (ele, val) {
-                if (val) ele.data('cyedgecontroleditingDistances', val);
-                return ele.data('cyedgecontroleditingDistances');
+            bendDistancesFunction: function (ele, val) {
+                if (val) {
+                    ele.data('cyedgecontroleditingDistances', val);
+                    ele.data('edgeDistances', val);
+                }
+                return ele.data('cyedgecontroleditingDistances') || ele.data('edgeDistances');
             },
             bendWeightsFunction: function (ele, val) {
-                if (val) ele.data('cyedgecontroleditingWeights', val);
-                return ele.data('cyedgecontroleditingWeights');
+                if (val) {
+                    ele.data('cyedgecontroleditingWeights', val);
+                    ele.data('edgeWeights', val);
+                }
+                return ele.data('cyedgecontroleditingWeights') || ele.data('edgeWeights');
+            },
+            controlPointDistancesFunction: function (ele, val) {
+                if (val) {
+                    ele.data('cyedgecontroleditingDistances', val);
+                    ele.data('edgeDistances', val);
+                }
+                return ele.data('cyedgecontroleditingDistances') || ele.data('edgeDistances');
+            },
+            controlPointWeightsFunction: function (ele, val) {
+                if (val) {
+                    ele.data('cyedgecontroleditingWeights', val);
+                    ele.data('edgeWeights', val);
+                }
+                return ele.data('cyedgecontroleditingWeights') || ele.data('edgeWeights');
+            },
+            bendPositionsFunction: function (ele, val) {
+                if (val) ele.data('bendPositions', val);
+                return ele.data('bendPositions');
+            },
+            controlPointPositionsFunction: function (ele, val) {
+                if (val) ele.data('controlPointPositions', val);
+                return ele.data('controlPointPositions');
             },
             anchorSize: 10,
             anchorColor: '#ff9e64',
@@ -170,10 +198,23 @@ async function setupInitialCytoscape(mainContainerId, data) {
             const stableId = getLayoutKey(editor.getValue());
             autoSaveLayoutToLocalStorage(cy, stableId);
             console.log("Layout salvo automaticamente!");
-        }, 100);
+        }, 300);
     };
     cy.on('dragfree', 'node', triggerAutoSave);
-    cy.on('cedragfree', 'edge', triggerAutoSave);
+    
+    cy.on('cyedgecontroleditingfree cyedgebendeditingfree', triggerAutoSave);
+    cy.on('mouseup touchend', triggerAutoSave);
+
+    cy.on('tapstart', 'edge', function(evt) {
+        cy.edges().unselect();
+        evt.target.select();
+    });
+
+    cy.on('tap', function(evt) {
+        if (evt.target === cy) {
+            cy.elements().unselect();
+        }
+    });
 
     cy.on('tap', 'node.event-node.enabled', function (evt) {
         if (window.TraceRecorder && TraceRecorder.isReplaying()) return;

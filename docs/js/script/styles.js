@@ -11,7 +11,9 @@ function getCytoscapeStyles() {
         
         { selector: '.current-state', style: { 'background-color': '#86EFAC', 'border-color': '#166534', 'border-width': 4 } },
         
-        { selector: 'node.event-node', style: { 'background-color': '#E5E7EB', 'shape': 'rectangle', 'width': 50, 'height': 30, 'border-width': 2, 'border-color': '#9CA3AF' } },
+        { selector: 'node.event-node', style: { 'background-color': '#ffffff', 'shape': 'rectangle', 'width': 50, 'height': 30, 'border-width': 2, 'border-color': '#9CA3AF' } },
+        { selector: 'node.rule-node', style: { 'background-color': '#E5E7EB' } },
+        { selector: 'node.event-node[label = ""]', style: { 'width': 16, 'height': 16 } },
         
         { selector: '.enable-rule', style: { 'line-color': '#2563EB', 'target-arrow-color': '#2563EB' } },
         
