@@ -156,8 +156,9 @@ async function setupInitialCytoscape(mainContainerId, data) {
     var sourceCode = (typeof editor !== 'undefined') ? editor.getValue() : JSON.stringify(data.graphElements);
     const graphId = getLayoutKey(sourceCode);
 
-    if (!hasExistingLayoutsInLocalStorage()) await loadDefaultLayoutsFromSeedFile();
-
+    if (!localStorage.getItem('cyLayout_' + graphId)) {
+    await loadDefaultLayoutsFromSeedFile();
+    }
     var hasSavedLayout = applySavedPositions(data.graphElements, sourceCode);
 
     var cy = cytoscape({

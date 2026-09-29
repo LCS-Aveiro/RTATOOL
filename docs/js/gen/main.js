@@ -8652,6 +8652,25 @@ $c_Lrta_backend_CytoscapeConverter$.prototype.apply__Lrta_syntax_Program2$RxGrap
     var isRuleDisabled = (!$n($n(rx).Lrta_syntax_Program2$RxGraph__f_act).contains__O__Z(ruleEdge$1));
     var disabledClass$1 = (isRuleDisabled ? " disabled" : "");
     var ruleClass = ($n(allOnEdges).contains__O__Z(ruleEdge$1) ? "enable-rule" : "disable-rule");
+    matchResult8: {
+      var delayText;
+      var x71 = $n($n(rx).Lrta_syntax_Program2$RxGraph__f_delays).get__O__s_Option(ruleLabel$2);
+      if ((x71 instanceof $c_s_Some)) {
+        var x73 = $as_T2($n($as_s_Some(x71)).s_Some__f_value);
+        if ((x73 !== null)) {
+          $as_Lrta_syntax_Program2$QName($n(x73)._1__O());
+          var time = $uD($n(x73)._2__O());
+          var delayText = (("{" + time) + "}");
+          break matchResult8
+        }
+      };
+      var x$3 = $m_s_None$();
+      if ((x$3 === x71)) {
+        var delayText = "";
+        break matchResult8
+      };
+      throw new $c_s_MatchError(x71)
+    };
     return $as_sc_IterableOnce($n(fromEventNodes).flatMap__F1__O(new $c_sjsr_AnonFunction1(((fNode) => {
       var fNode$1 = $as_T4(fNode);
       return $as_sc_IterableOnce($n(toEventNodes).map__F1__O(new $c_sjsr_AnonFunction1(((tNode) => {
@@ -8659,7 +8678,7 @@ $c_Lrta_backend_CytoscapeConverter$.prototype.apply__Lrta_syntax_Program2$RxGrap
         var fNodeId = ((((((("event_" + $n(fNode$1).T4__f__1) + "_") + $n(fNode$1).T4__f__2) + "_") + $n(fNode$1).T4__f__3) + "_") + $n(fNode$1).T4__f__4);
         var tNodeId = ((((((("event_" + $n(tNode$1).T4__f__1) + "_") + $n(tNode$1).T4__f__2) + "_") + $n(tNode$1).T4__f__3) + "_") + $n(tNode$1).T4__f__4);
         $n($m_s_package$().s_package$__f_List);
-        var elems$3 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([$p_Lrta_backend_CytoscapeConverter$__formatCyEdge__T__T__T__T__T__T__T(this, ((("rule_from_" + fNodeId) + "_") + ruleNodeId), fNodeId, ruleNodeId, "", (("rule-edge " + ruleClass) + disabledClass$1), ""), $p_Lrta_backend_CytoscapeConverter$__formatCyEdge__T__T__T__T__T__T__T(this, ((("rule_to_" + ruleNodeId) + "_") + tNodeId), ruleNodeId, tNodeId, "", (("rule-edge from-rule-node to-target " + ruleClass) + disabledClass$1), "")]));
+        var elems$3 = $m_sr_ScalaRunTime$().wrapRefArray__AO__sci_ArraySeq(new ($d_T.getArrayOf().constr)([$p_Lrta_backend_CytoscapeConverter$__formatCyEdge__T__T__T__T__T__T__T(this, ((("rule_from_" + fNodeId) + "_") + ruleNodeId), fNodeId, ruleNodeId, "", (("rule-edge " + ruleClass) + disabledClass$1), ""), $p_Lrta_backend_CytoscapeConverter$__formatCyEdge__T__T__T__T__T__T__T(this, ((("rule_to_" + ruleNodeId) + "_") + tNodeId), ruleNodeId, tNodeId, delayText, (("rule-edge from-rule-node to-target " + ruleClass) + disabledClass$1), "")]));
         return $m_sci_Nil$().prependedAll__sc_IterableOnce__sci_List(elems$3)
       }))))
     }))))

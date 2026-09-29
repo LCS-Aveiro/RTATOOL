@@ -189,17 +189,33 @@ function hasExistingLayoutsInLocalStorage() {
 }
 
 async function loadDefaultLayoutsFromSeedFile() {
-    try {
-        if (window.RTA_DEFAULT_LAYOUTS) {
-            const layouts = window.RTA_DEFAULT_LAYOUTS;
-            for (const k in layouts) {
-                if (k.startsWith('cyLayout_') && !localStorage.getItem(k)) {
-                    localStorage.setItem(k, JSON.stringify(layouts[k]));
-                }
-            }
-            console.log("✅ Layouts de semente carregados com sucesso via Script.");
-        }
-    } catch (e) {
-        console.warn("⚠️ Não foi possível carregar os layouts padrão:", e);
+  if (typeof localStorage === 'undefined') return 0;
+  if (!window.RTA_DEFAULT_LAYOUTS) {
+    console.warn("[layouts] window.RTA_DEFAULT_LAYOUTS não existe — o script js/cy/all-cytoscape-layouts-backup.js não carregou (verifica o <script src> e o Network à procura de 404).");
+    return 0;
+  }
+  var imported = 0;
+  try {
+    var layouts = window.RTA_DEFAULT_LAYOUTS;
+    for (var k in layouts) {
+      if (k.startsWith('cyLayout_') && !localStorage.getItem(k)) {
+        localStorage.setItem(k, JSON.stringify(layouts[k]));
+        imported++;
+      }
     }
+    console.log("✅ Layouts de semente: " + imported + " novos layouts importados (seed tem " + Object.keys(layouts).length + ").");
+  } catch (e) {
+    console.warn("⚠️ Não foi possível carregar os layouts padrão:", e);
+  }
+  return imported;
 }
+
+window.RTA_restoreDefaultLayouts = function () {
+  if (!confirm("Apagar TODOS os layouts guardados e repor os defaults do seed?")) return;
+  Object.keys(localStorage)
+    .filter(function (k) { return k.startsWith('cyLayout_'); })
+    .forEach(function (k) { localStorage.removeItem(k); });
+  loadDefaultLayoutsFromSeedFile().then(function (n) {
+    alert(n + " layouts default repostos. Agora faz Load & Simulate (F5).");
+  });
+};

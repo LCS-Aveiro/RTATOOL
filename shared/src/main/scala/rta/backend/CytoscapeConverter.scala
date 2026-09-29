@@ -149,6 +149,11 @@ object CytoscapeConverter {
       val disabledClass = if (isRuleDisabled) " disabled" else ""
       val ruleClass = if (allOnEdges.contains(ruleEdge)) "enable-rule" else "disable-rule"
 
+      val delayText = rx.delays.get(ruleLabel) match {
+        case Some((clock, time)) => s"{$time}"
+        case None                => ""
+      }
+
       for {
         fNode <- fromEventNodes
         tNode <- toEventNodes
@@ -157,7 +162,7 @@ object CytoscapeConverter {
         val tNodeId = s"event_${tNode._1}_${tNode._2}_${tNode._3}_${tNode._4}"
         List(
             formatCyEdge(s"rule_from_${fNodeId}_${ruleNodeId}", fNodeId, ruleNodeId, "", s"rule-edge $ruleClass$disabledClass"),
-            formatCyEdge(s"rule_to_${ruleNodeId}_${tNodeId}", ruleNodeId, tNodeId, "", s"rule-edge from-rule-node to-target $ruleClass$disabledClass")
+            formatCyEdge(s"rule_to_${ruleNodeId}_${tNodeId}", ruleNodeId, tNodeId, delayText, s"rule-edge from-rule-node to-target $ruleClass$disabledClass")
         )
       }
     }.flatten
