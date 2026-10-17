@@ -40,10 +40,10 @@ object AnalyseLTS:
   private def splitByConditions(rx: RxGraph, conds: List[Condition]): List[RxGraph] = conds match {
     case Nil => List(rx)
     case c :: rest =>
-      val trueZone  = RxSemantics.intersectConditionWithZone(c, rx.zone, rx)
-      val falseZone = RxSemantics.intersectConditionWithZone(RxSemantics.negateCondition(c), rx.zone, rx)
-      trueZone.toList.flatMap(z => splitByConditions(rx.copy(zone = z), rest)) ++
-      falseZone.toList.flatMap(z => splitByConditions(rx.copy(zone = z), rest))
+      val trueZones  = RxSemantics.intersectAll(c, rx.zone, rx)
+      val falseZones = RxSemantics.intersectAll(RxSemantics.negateCondition(c), rx.zone, rx)
+      trueZones.flatMap(z => splitByConditions(rx.copy(zone = z), rest)) ++
+      falseZones.flatMap(z => splitByConditions(rx.copy(zone = z), rest))
   }
 
   def verifyLTLSymbolic(start: RxGraph, formula: LtlFormula, requestedMaxStates: Int = 50000, requestedMaxDepth: Int = 30): (Boolean, List[String], List[String], Int, Boolean, List[String]) = {
@@ -138,17 +138,16 @@ object AnalyseLTS:
       satAt(f)(0)
     }
 
-    def isTimeDivergent(cycleStates: List[RxGraph], cycleEdgeIds: List[String]): Boolean = {
+    def isTimeDivergent(cycleStates: List[RxGraph], cycleArrivals: List[RxGraph]): Boolean = {
       if (start.clocks.isEmpty) return true
-      if (cycleEdgeIds.contains("delay_node")) return true
-      
-      cycleStates.sliding(2).exists { 
-        case List(a, b) => a.clocks.nonEmpty && a.zone.delay != a.zone
-        case _          => false
+      !start.clocks.exists { c =>
+        val neverReset = cycleArrivals.forall(a => a.zone.clocks.contains(c) && a.zone.matrix((c, DBM.ZERO_CLOCK)).value > 0)
+        val bounded = cycleStates.exists(s => s.zone.clocks.contains(c) && s.zone.matrix((c, DBM.ZERO_CLOCK)).value != DBM.INF)
+        neverReset && bounded
       }
     }
 
-    def dfs(current0: RxGraph, pathPrefix: List[RxGraph], labels: List[String], edgeIds: List[String], depth: Int, visitedInPath: Set[ZoneStateKey]): Unit = boundary {
+    def dfs(current0: RxGraph, pathPrefix: List[RxGraph], arrivals: List[RxGraph], labels: List[String], edgeIds: List[String], depth: Int, visitedInPath: Set[ZoneStateKey]): Unit = boundary {
       
       val currentWithTime = RxSemantics.advanceTimeZone(current0).getOrElse(current0)
       
@@ -167,6 +166,7 @@ object AnalyseLTS:
         val isDeadlock = nexts.isEmpty
         
         val currentPath = pathPrefix :+ current
+        val currentArrivals = arrivals :+ current0
 
         if (isCycle || isDeadlock || depth >= maxDepth) {
           
@@ -176,9 +176,9 @@ object AnalyseLTS:
               ZoneStateKey(s.inits, s.val_env, s.zone, s.pendingDelays, s.act) == key
             }
             val cycleStates = currentPath.drop(cycleStartIdx)
-            val cycleEdges = edgeIds.drop(cycleStartIdx)
+            val cycleArrivals = currentArrivals.drop(cycleStartIdx + 1)
             
-            if (!isTimeDivergent(cycleStates, cycleEdges)) {
+            if (!isTimeDivergent(cycleStates, cycleArrivals)) {
               skipEvaluation = true
             }
           }
@@ -189,8 +189,10 @@ object AnalyseLTS:
                 ZoneStateKey(s.inits, s.val_env, s.zone, s.pendingDelays, s.act) == key
               }
               evalOnLassoGeneral(currentPath.take(cycleStartIdx), currentPath.drop(cycleStartIdx), formula)
-            } else {
+            } else if (isDeadlock) {
               LtlEvaluator.eval(currentPath, formula, LtlEvaluator.Hybrid, isSymbolic = true)
+            } else {
+              !LtlEvaluator.refutedByPrefix(currentPath, formula, LtlEvaluator.Hybrid, isSymbolic = true)
             }
 
             if (!res) {
@@ -224,16 +226,16 @@ object AnalyseLTS:
           for ((edge, nextGraph) <- nexts) {
             if (counterExample.isEmpty) {
               val label = edge._4.show
-              val edgeId = if (label == "timeout") "delay_node" else s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
+              val edgeId = if (edge._3.show == "timeout" && edge._3 != edge._4) "delay_node" else s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
               
-              dfs(nextGraph, currentPath, labels :+ label, edgeIds :+ edgeId, depth + 1, visitedInPath + key)
+              dfs(nextGraph, currentPath, currentArrivals, labels :+ label, edgeIds :+ edgeId, depth + 1, visitedInPath + key)
             }
           }
         }
       }
     }
 
-    dfs(start, Nil, Nil, Nil, 0, Set())
+    dfs(start, Nil, Nil, Nil, Nil, 0, Set())
 
     counterExample match {
       case Some((lbls, ids)) => (false, lbls, ids, statesExplored, !isExhaustive, visitLog.toList)
@@ -275,7 +277,7 @@ object AnalyseLTS:
           aux(next-st, done, nEdges, fired, probs, limit)
 
         case Some(st) => 
-          val more = RxSemantics.nextEdge(st)
+          val more = if rx.clocks.nonEmpty then RxSemantics.nextEdgeSymbolic(st) else RxSemantics.nextEdge(st)
           val nEdges2 = more.size
           val newEdges = more.map(_._1)
           var incons = Set[String]()
@@ -346,7 +348,7 @@ object AnalyseLTS:
   }
 
   private def findShortestPathToConditionSymbolic(start: RxGraph, targetCond: Condition, maxStates: Int): Option[List[String]] = boundary:
-    if (RxSemantics.evalDataCondition(targetCond, start)) break(Some(Nil))
+    if (holdsInZone(targetCond, start)) break(Some(Nil))
 
     val queue = collection.mutable.Queue[RxGraph]()
     val parentOf = collection.mutable.Map[ZoneStateKey, (RxGraph, String)]()
@@ -369,7 +371,7 @@ object AnalyseLTS:
         if (!parentOf.contains(nextKey) && nextKey != startKey) {
           parentOf(nextKey) = (current, label)
 
-          if (RxSemantics.evalDataCondition(targetCond, nextGraph)) {
+          if (holdsInZone(targetCond, nextGraph)) {
             break(Some(reconstructZonePath(nextKey, parentOf)))
           }
 
@@ -396,6 +398,37 @@ object AnalyseLTS:
 
 
 
+  private def holdsInZone(cond: Condition, g: RxGraph): Boolean =
+    if (g.clocks.isEmpty) RxSemantics.evalCondition(cond, g)
+    else RxSemantics.advanceTimeZone(g).exists(t => RxSemantics.intersectAll(cond, t.zone, t).nonEmpty)
+
+  private val DelayEps = 0.001
+
+  private def clockBounds(cond: Condition, rx: RxGraph): List[(QName, Double)] = cond match {
+    case Condition.AtomicCond(UpdateExpr.Var(c), _, rhs) if rx.clocks.contains(c) =>
+      List(c -> Condition.extractDouble(RxSemantics.evalExpr(rhs, rx.val_env, rx)))
+    case Condition.AtomicCond(lhs, _, UpdateExpr.Var(c)) if rx.clocks.contains(c) =>
+      List(c -> Condition.extractDouble(RxSemantics.evalExpr(lhs, rx.val_env, rx)))
+    case Condition.And(l, r) => clockBounds(l, rx) ++ clockBounds(r, rx)
+    case Condition.Or(l, r) => clockBounds(l, rx) ++ clockBounds(r, rx)
+    case _ => Nil
+  }
+
+  private def showDelay(d: Double): String =
+    if (d == Math.rint(d)) d.toLong.toString else BigDecimal(d).setScale(3, BigDecimal.RoundingMode.HALF_UP).bigDecimal.stripTrailingZeros.toPlainString
+
+  private def timeSteps(rx: RxGraph): List[(String, RxGraph)] = {
+    if (rx.clocks.isEmpty) return Nil
+    val conds = rx.edgeConditions.values.flatten.toList ++ rx.invariants.values
+    val boundGaps = conds.flatMap(clockBounds(_, rx)).flatMap { case (c, k) =>
+      val d = k - rx.clock_env.getOrElse(c, 0.0)
+      List(d, d + DelayEps)
+    }
+    val pendingGaps = rx.pendingDelays.toList.map { case (_, _, clk, target) => target - rx.clock_env.getOrElse(clk, 0.0) }
+    val delays = (boundGaps ++ pendingGaps).filter(_ > 1e-9).map(d => Math.round(d * 1e6) / 1e6).distinct.sorted
+    delays.flatMap(d => RxSemantics.advanceTimeBy(rx, d).map(next => (s"delay(${showDelay(d)})", next)))
+  }
+
   private def findShortestPathDiscrete(start: RxGraph, targetName: QName, maxStates: Int): Option[List[String]] = {
     val queue = collection.mutable.Queue[(RxGraph, List[String])]()
     queue.enqueue((start, Nil))
@@ -419,20 +452,8 @@ object AnalyseLTS:
           queue.enqueue((nextGraph, path :+ label))
         }
         
-        if (current.clocks.nonEmpty) {
-          val delayedClockEnv = current.clock_env.map { case (c, v) => (c, v + 1.0) }
-          val nextTimeState = current.copy(clock_env = delayedClockEnv)
-          
-          val canTimePass = current.inits.forall(s => 
-            nextTimeState.invariants.get(s) match {
-              case Some(inv) => RxSemantics.evalCondition(inv, nextTimeState)
-              case None => true
-            }
-          )
-
-          if (canTimePass) {
-            queue.enqueue((nextTimeState, path :+ "delay(1)"))
-          }
+        for ((label, nextTimeState) <- timeSteps(current)) {
+          queue.enqueue((nextTimeState, path :+ label))
         }
       }
     }
@@ -459,19 +480,7 @@ object AnalyseLTS:
 
       val edgeTransitions = RxSemantics.nextEdge(current).map { case (e, n) => (e._4.show, n) }
       
-      val timeTransitions = if (current.clocks.nonEmpty) {
-        val delayedClockEnv = current.clock_env.map { case (c, v) => (c, v + 1.0) }
-        val nextTimeState = current.copy(clock_env = delayedClockEnv)
-        
-        val canTimePass = current.inits.forall(s => 
-          nextTimeState.invariants.get(s) match {
-            case Some(inv) => RxSemantics.evalCondition(inv, nextTimeState)
-            case None => true
-          }
-        )
-        
-        if (canTimePass) List(("delay(1)", nextTimeState)) else Nil
-      } else Nil
+      val timeTransitions = timeSteps(current)
 
       for ((label, nextGraph) <- edgeTransitions ++ timeTransitions) {
         val nextKey = FastStateKey(nextGraph.inits, nextGraph.val_env, nextGraph.clock_env, nextGraph.act)

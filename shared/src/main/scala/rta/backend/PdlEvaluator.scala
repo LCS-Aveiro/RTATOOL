@@ -119,7 +119,7 @@ object PdlEvaluator {
 
       case BoxP(prog, p) =>
         val finalConfigs = evaluateProgram(Set(config), prog)
-        finalConfigs.nonEmpty && finalConfigs.forall(finalConfig => evaluateFormula(finalConfig, p))
+        finalConfigs.forall(finalConfig => evaluateFormula(finalConfig, p))
 
       case Diamond(p) =>
         RxSemantics.next(config).exists { case (_, nextConfig) => evaluateFormula(nextConfig, p) }

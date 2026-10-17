@@ -69,6 +69,53 @@ object LtlEvaluator {
     }
   }
 
+  def refutedByPrefix(trace: List[RxGraph], phi: LtlFormula, mode: Mode = Hybrid, isSymbolic: Boolean = false): Boolean = {
+    if (trace.isEmpty) return false
+    !satAtPrefix(trace.toVector, phi, weak = true, mode, isSymbolic)(0)
+  }
+
+  private def satAtPrefix(tr: Vector[RxGraph], f: LtlFormula, weak: Boolean, mode: Mode, isSymbolic: Boolean): Array[Boolean] = {
+    val n = tr.size
+    def rec(g: LtlFormula, w: Boolean = weak) = satAtPrefix(tr, g, w, mode, isSymbolic)
+    f match {
+      case True  => Array.fill(n)(true)
+      case False => Array.fill(n)(false)
+      case StateProp(_) | CondProp(_) => Array.tabulate(n)(i => leaf(tr(i), f, mode, isSymbolic))
+
+      case Not(p)     => rec(p, !weak).map(!_)
+      case And(p, q)  => (rec(p), rec(q)).zipped.map(_ && _).toArray
+      case Or(p, q)   => (rec(p), rec(q)).zipped.map(_ || _).toArray
+      case Impl(p, q) => (rec(p, !weak), rec(q)).zipped.map((a, b) => !a || b).toArray
+      case Iff(p, q)  => rec(And(Impl(p, q), Impl(q, p)))
+
+      case Next(p) =>
+        val pOk = rec(p)
+        Array.tabulate(n)(i => if (i + 1 < n) pOk(i + 1) else weak)
+
+      case Globally(p) =>
+        val pOk = rec(p)
+        val res = new Array[Boolean](n)
+        var i = n - 1
+        while (i >= 0) { res(i) = pOk(i) && (if (i + 1 < n) res(i + 1) else weak); i -= 1 }
+        res
+
+      case Eventually(p) =>
+        val pOk = rec(p)
+        val res = new Array[Boolean](n)
+        var i = n - 1
+        while (i >= 0) { res(i) = pOk(i) || (if (i + 1 < n) res(i + 1) else weak); i -= 1 }
+        res
+
+      case Until(p, q) =>
+        val pOk = rec(p)
+        val qOk = rec(q)
+        val res = new Array[Boolean](n)
+        var i = n - 1
+        while (i >= 0) { res(i) = qOk(i) || (pOk(i) && (if (i + 1 < n) res(i + 1) else weak)); i -= 1 }
+        res
+    }
+  }
+
   def evalTimedUntil(
     trace: List[(RxGraph, Double)],
     phi: LtlFormula, psi: LtlFormula,

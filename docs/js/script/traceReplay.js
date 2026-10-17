@@ -497,7 +497,7 @@
         borderWidth: 1.2,
         pointRadius: 1,
         pointHoverRadius: 3,
-        tension: 0.15,
+        tension: 0,
         spanGaps: true
       };
     }

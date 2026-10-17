@@ -538,12 +538,12 @@ object RTAAPI {
             maxConstants = rta.backend.RxSemantics.MaxConstants.mergeMax(startGraph.maxConstants, queryConstants)
           )
 
-          val (success, explored, ceLabels, ceIds) = CtlEvaluator.verifyCTLSymbolic(boostedStartGraph, formula, maxStates)
+          val (success, explored, ceLabels, ceIds, limitReached) = CtlEvaluator.verifyCTLSymbolic(boostedStartGraph, formula, maxStates)
 
           val ceStr = if (ceLabels.isEmpty) "Omissão (Provas CTL em árvore nem sempre produzem traços lineares diretos, ou a sua query não gerou nenhum.)" else ceLabels.mkString(" ➔ ")
           val pathJson = js.JSON.stringify(js.Array(ceIds: _*))
 
-          s"""{"success": $success, "explored": $explored, "counterExample": "${escapeJson(ceStr)}", "path": $pathJson}"""
+          s"""{"success": $success, "explored": $explored, "limitReached": $limitReached, "counterExample": "${escapeJson(ceStr)}", "path": $pathJson}"""
         } catch {
           case e: Throwable => s"""{"error": "${escapeJson(s"Erro na Prova CTL: ${e.getMessage}")}"}"""
         }

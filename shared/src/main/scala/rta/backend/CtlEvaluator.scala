@@ -61,13 +61,13 @@ object CtlEvaluator {
   private def splitByConditions(rx: RxGraph, conds: List[Condition]): List[RxGraph] = conds match {
     case Nil => List(rx)
     case c :: rest =>
-      val trueZone  = RxSemantics.intersectConditionWithZone(c, rx.zone, rx)
-      val falseZone = RxSemantics.intersectConditionWithZone(RxSemantics.negateCondition(c), rx.zone, rx)
-      trueZone.toList.flatMap(z => splitByConditions(rx.copy(zone = z), rest)) ++
-      falseZone.toList.flatMap(z => splitByConditions(rx.copy(zone = z), rest))
+      val trueZones  = RxSemantics.intersectAll(c, rx.zone, rx)
+      val falseZones = RxSemantics.intersectAll(RxSemantics.negateCondition(c), rx.zone, rx)
+      trueZones.flatMap(z => splitByConditions(rx.copy(zone = z), rest)) ++
+      falseZones.flatMap(z => splitByConditions(rx.copy(zone = z), rest))
   }
 
-  def verifyCTLSymbolic(start: RxGraph, formula: CtlFormula, maxStates: Int): (Boolean, Int, List[String], List[String]) = {
+  def verifyCTLSymbolic(start: RxGraph, formula: CtlFormula, maxStates: Int): (Boolean, Int, List[String], List[String], Boolean) = {
     val clockConds = collectClockConds(formula, start.clocks).toList
 
     val states = collection.mutable.ArrayBuffer[RxGraph]()
@@ -120,13 +120,14 @@ object CtlEvaluator {
               idx
           }
           val label = edge._4.show
-          val edgeId = if (label == "timeout") "delay_node" else s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
+          val edgeId = if (edge._3.show == "timeout" && edge._3 != edge._4) "delay_node" else s"event_${edge._1}_${edge._2}_${edge._3}_${edge._4}"
           (nextIdx, label, edgeId)
         }
       }
       adj(currIdx) = transitions
     }
 
+    val limitReached = queue.nonEmpty
     val N = states.length
     val adjArray = adj.map(_.map(_._1)).toArray
 
@@ -216,7 +217,7 @@ object CtlEvaluator {
             res
 
           case EU(p, q) =>
-            val pRes = eval(p, env); val res = eval(q, env)
+            val pRes = eval(p, env); val res = eval(q, env).clone()
             var changed = true
             while (changed) { changed = false
               for (i <- 0 until N) {
@@ -226,7 +227,7 @@ object CtlEvaluator {
             res
 
           case AU(p, q) =>
-            val pRes = eval(p, env); val res = eval(q, env)
+            val pRes = eval(p, env); val res = eval(q, env).clone()
             var changed = true
             while (changed) { changed = false
               for (i <- 0 until N) {
@@ -275,6 +276,6 @@ object CtlEvaluator {
     if (!result) { formula match { case AG(p) => extractPath(i => !eval(p, Map.empty)(i)); case _ => } } 
     else { formula match { case EF(p) => extractPath(i => eval(p, Map.empty)(i)); case _ => } }
 
-    (result, explored, traceLabels, traceIds)
+    (result, explored, traceLabels, traceIds, limitReached)
   }
 }

@@ -91,6 +91,11 @@ function runCtlExhaustive() {
 
             document.getElementById("ctlSimStats").innerText = "Zonas/Estados Explorados: " + (resObj.explored || 0);
 
+            if (resObj.limitReached) {
+                consoleDiv.innerHTML += `<span style="color:#F59E0B; font-weight:bold;">⚠️ Limite de ${resObj.explored} estados atingido: o espaço não foi explorado por completo e o resultado é inconclusivo.</span>
+`;
+            }
+
             if (resObj.success) {
                 consoleDiv.innerHTML += `\n<span style="color:#10B981; font-weight:bold;">✅ PROVA CTL CONCLUÍDA!\nA propriedade é VÁLIDA sobre a árvore de computação.</span>\n`;
                 document.getElementById("ctlResult").innerHTML = '<span style="color:green"><span class="glyphicon glyphicon-ok"></span> Propriedade Satisfeita!</span>';

@@ -51,7 +51,7 @@ object Program2:
         inits = this /- rx.inits,
         act = this / rx.act,
         val_env = rx.val_env.map { case (k, v) => (this / k) -> v },
-        zone = rx.zone,
+        zone = DBM.initial(rx.clocks.map(this / _)),
         functions = rx.functions.map { case (k, f) => 
           (this / k) -> FunctionDef(this / f.name, f.params, f.body.map(s => applyPrefixToStatement(this, s))) 
         },
@@ -199,7 +199,7 @@ object Program2:
         inits++r.inits,
         act++r.act,
         val_env ++ r.val_env,
-        zone, 
+        DBM.initial(clocks ++ r.clocks),
         functions ++ r.functions,
         clocks ++ r.clocks,
         clock_env ++ r.clock_env,

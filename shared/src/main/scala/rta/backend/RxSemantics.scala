@@ -23,11 +23,18 @@ object RxSemantics {
   private val EPSILON = 1e-5
   private val builtinRandom = new scala.util.Random(1)
 
+  private def delayClock(hyperEdge: Edge): QName = QName("__delay" :: hyperEdge._4.n ::: hyperEdge._2.n)
+
+  def effectiveMax(rx: RxGraph): Map[QName, Double] =
+    rx.pendingDelays.foldLeft(rx.maxConstants) { case (m, (_, _, clk, target)) =>
+      m.updated(clk, Math.max(m.getOrElse(clk, 0.0), target))
+    }
+
   object MaxConstants {
     private def fromExpr(e: UpdateExpr, clock: QName): Option[Double] = e match {
       case UpdateExpr.LitInt(i) => Some(i.toDouble)
       case UpdateExpr.LitFloat(f) => Some(f)
-      case _ => None
+      case _ => Some(Double.PositiveInfinity)
     }
 
     def fromCond(cond: Condition, clocks: Set[QName]): Map[QName, Double] = cond match {
@@ -223,10 +230,9 @@ object RxSemantics {
 
   def evalConditionForLTL(cond: Condition, rx: RxGraph): Boolean = cond match {
     case Condition.AtomicCond(UpdateExpr.Var(c), _, _) if rx.clocks.contains(c) =>
-      intersectConditionWithZone(cond, rx.zone, rx).isDefined
-    case Condition.AtomicCond(lhs, op, UpdateExpr.Var(c)) if rx.clocks.contains(c) =>
-      val invOp = op match { case "<" => ">"; case "<=" => ">="; case ">" => "<"; case ">=" => "<="; case _ => op }
-      intersectConditionWithZone(Condition.AtomicCond(UpdateExpr.Var(c), invOp, lhs), rx.zone, rx).isDefined
+      intersectAll(cond, rx.zone, rx).nonEmpty
+    case Condition.AtomicCond(_, _, UpdateExpr.Var(c)) if rx.clocks.contains(c) =>
+      intersectAll(cond, rx.zone, rx).nonEmpty
     case Condition.AtomicCond(l, op, r) =>
       Condition.compareValues(evalExpr(l, rx.val_env, rx), op, evalExpr(r, rx.val_env, rx))
     case Condition.And(l, r) => evalConditionForLTL(l, rx) && evalConditionForLTL(r, rx)
@@ -268,7 +274,16 @@ object RxSemantics {
     stmts: List[Statement],
     rx: RxGraph
   ): (Map[QName, RuntimeValue], Map[QName, Double]) = {
+    val (env, clockEnv, _) = applyUpdatesFull(stmts, rx)
+    (env, clockEnv)
+  }
 
+  def applyUpdatesFull(
+    stmts: List[Statement],
+    rx: RxGraph
+  ): (Map[QName, RuntimeValue], Map[QName, Double], Set[QName]) = {
+
+    var assignedClocks = Set.empty[QName]
     var currentEnv = rx.val_env
     var currentClockEnv = rx.clock_env
 
@@ -366,7 +381,8 @@ object RxSemantics {
             )
 
             if (rx.clocks.contains(v)) {
-              currentClockEnv += (v -> Condition.extractDouble(evaluated))
+              currentClockEnv += (v -> Math.max(0.0, Condition.extractDouble(evaluated)))
+              assignedClocks += v
             } else {
               assignWithBounds(v, evaluated)
             }
@@ -521,7 +537,7 @@ object RxSemantics {
 
     popScope()
 
-    (currentEnv, currentClockEnv)
+    (currentEnv, currentClockEnv, assignedClocks)
   }
 
   def from(e: Edge, rx: RxGraph): Set[Edge] = cascade(Set(e._4), Set())(using rx)
@@ -583,102 +599,78 @@ object RxSemantics {
     if (rxTimeOpt.isEmpty) return Set.empty
     val rx = rxTimeOpt.get
 
-    val transitions = for {
-      st <- rx.inits
-      (st2, tid, lbl) <- rx.edg.getOrElse(st, Set.empty)
-      edge = (st, st2, tid, lbl)
-      if rx.act.contains(edge)
-    } yield {
-      val condOpt = rx.edgeConditions.getOrElse(edge, None)
-      val zoneAfterGuard = condOpt match {
-        case Some(cond) => intersectConditionWithZone(cond, rx.zone, rx)
-        case None => Some(rx.zone)
-      }
-
-      if (zoneAfterGuard.isDefined && condOpt.forall(c => evalDataCondition(c, rx))) {
-        val triggeredHyperEdges = from(edge, rx).filter(rx.act.contains).toList
-        
-        def splitZones(heList: List[Edge], currentZ: DBM.Zone): List[(DBM.Zone, Set[Edge])] = {
-          heList match {
-            case Nil => List((currentZ, Set.empty))
-            case he :: tail =>
-              val heCondOpt = rx.edgeConditions.getOrElse(he, None)
-              val dataHolds = heCondOpt.forall(c => evalDataCondition(c, rx))
-              
-              if (!dataHolds) {
-                splitZones(tail, currentZ)
-              } else {
-                val hasClocks = heCondOpt.exists(c => hasClockCondition(c, rx.clocks))
-                if (!hasClocks) {
-                  splitZones(tail, currentZ).map { case (fZ, fHE) => (fZ, fHE + he) }
-                } else {
-                  val zTrue = heCondOpt.flatMap(c => intersectConditionWithZone(c, currentZ, rx)).orElse(if(heCondOpt.isEmpty) Some(currentZ) else None)
-                  val zFalse = heCondOpt.flatMap(c => intersectConditionWithZone(negateCondition(c), currentZ, rx))
-
-                  val resTrue = zTrue.toList.flatMap(z => splitZones(tail, z).map { case (fZ, fHE) => (fZ, fHE + he) })
-                  val resFalse = zFalse.toList.flatMap(z => splitZones(tail, z))
-                  
-                  resTrue ++ resFalse
-                }
-              }
-          }
+    def splitZones(heList: List[Edge], currentZ: DBM.Zone): List[(DBM.Zone, Set[Edge])] = heList match {
+      case Nil => List((currentZ, Set.empty))
+      case he :: tail =>
+        rx.edgeConditions.getOrElse(he, None) match {
+          case None =>
+            splitZones(tail, currentZ).map { case (fZ, fHE) => (fZ, fHE + he) }
+          case Some(c) if !hasClockCondition(c, rx.clocks) =>
+            if (evalCondition(c, rx)) splitZones(tail, currentZ).map { case (fZ, fHE) => (fZ, fHE + he) }
+            else splitZones(tail, currentZ)
+          case Some(c) =>
+            val resTrue = intersectAll(c, currentZ, rx).flatMap(z => splitZones(tail, z).map { case (fZ, fHE) => (fZ, fHE + he) })
+            val resFalse = intersectAll(negateCondition(c), currentZ, rx).flatMap(z => splitZones(tail, z))
+            resTrue ++ resFalse
         }
-        
-        val splitResults = splitZones(triggeredHyperEdges, zoneAfterGuard.get)
-        
-        splitResults.map { case (finalZone, firedHEs) =>
-          var toAct = Set.empty[Edge]
-          var toDeact = Set.empty[Edge]
-          var updatesToApply = List.empty[Statement]
-          var newPending = Set.empty[(Edge, String, QName, Double)]
-
-          for (hyperEdge <- firedHEs) {
-            updatesToApply = updatesToApply ::: rx.edgeUpdates.getOrElse(hyperEdge, Nil)
-            val (triggerLabel, targetLabel, ruleId, ruleLabel) = hyperEdge
-            
-            val isOn = rx.on.getOrElse(triggerLabel, Set.empty).contains((targetLabel, ruleId, ruleLabel))
-            val isOff = rx.off.getOrElse(triggerLabel, Set.empty).contains((targetLabel, ruleId, ruleLabel))
-            
-            if (rx.delays.contains(ruleLabel)) {
-              val (clock, delayVal) = rx.delays(ruleLabel)
-              if (isOn) newPending += ((hyperEdge, "on", clock, delayVal))
-              if (isOff) newPending += ((hyperEdge, "off", clock, delayVal))
-            } else {
-              if (isOn) toAct = toAct ++ rx.lbls.getOrElse(targetLabel, Set.empty)
-              if (isOff) toDeact = toDeact ++ rx.lbls.getOrElse(targetLabel, Set.empty)
-            }
-          }
-          
-          val currentAct = (rx.act ++ toAct) -- toDeact
-          val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ updatesToApply
-          val (nextEnv, nextClockEnv) = applyUpdates(allStmts, rx)
-
-          val absolutePending = newPending.map { case (he, op, clk, dVal) =>
-            (he, op, clk, nextClockEnv.getOrElse(clk, 0.0) + dVal)
-          }
-          
-          val clockResets = allStmts.collect { 
-            case AssignStmt(v, _) if rx.clocks.contains(v) => v 
-          }
-          
-          val zoneAfterResets = clockResets.foldLeft(finalZone)(_.reset(_))
-          val zoneAfterUpdates = zoneAfterResets.extrapolate(rx.maxConstants)
-
-          (edge, rx.copy(
-            inits = (rx.inits - st) + st2,
-            act = currentAct,
-            val_env = nextEnv,
-            clock_env = nextClockEnv,
-            zone = zoneAfterUpdates,
-            pendingDelays = rx.pendingDelays ++ absolutePending
-          ))
-        }
-      } else Nil
     }
 
-    val standardTransitions = transitions.flatten.filter { case (_, nextRx) =>
+    val transitions = for {
+      st <- rx.inits.toList
+      (st2, tid, lbl) <- rx.edg.getOrElse(st, Set.empty).toList
+      edge = (st, st2, tid, lbl)
+      if rx.act.contains(edge)
+      guardZone <- (rx.edgeConditions.getOrElse(edge, None) match {
+        case Some(cond) => intersectAll(cond, rx.zone, rx)
+        case None => List(rx.zone)
+      })
+      triggeredHyperEdges = from(edge, rx).filter(rx.act.contains).toList.sortBy(_.toString)
+      (finalZone, firedHEs) <- splitZones(triggeredHyperEdges, guardZone)
+    } yield {
+      var toAct = Set.empty[Edge]
+      var toDeact = Set.empty[Edge]
+      var updatesToApply = List.empty[Statement]
+      var newPending = Set.empty[(Edge, String, QName, Double)]
+
+      for (hyperEdge <- triggeredHyperEdges if firedHEs.contains(hyperEdge)) {
+        updatesToApply = updatesToApply ::: rx.edgeUpdates.getOrElse(hyperEdge, Nil)
+        val (triggerLabel, targetLabel, ruleId, ruleLabel) = hyperEdge
+
+        val isOn = rx.on.getOrElse(triggerLabel, Set.empty).contains((targetLabel, ruleId, ruleLabel))
+        val isOff = rx.off.getOrElse(triggerLabel, Set.empty).contains((targetLabel, ruleId, ruleLabel))
+
+        if (rx.delays.contains(ruleLabel)) {
+          val delayVal = rx.delays(ruleLabel)._2
+          if (isOn) newPending += ((hyperEdge, "on", delayClock(hyperEdge), delayVal))
+          if (isOff) newPending += ((hyperEdge, "off", delayClock(hyperEdge), delayVal))
+        } else {
+          if (isOn) toAct = toAct ++ rx.lbls.getOrElse(targetLabel, Set.empty)
+          if (isOff) toDeact = toDeact ++ rx.lbls.getOrElse(targetLabel, Set.empty)
+        }
+      }
+
+      val currentAct = (rx.act ++ toAct) -- toDeact
+      val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ updatesToApply
+      val (nextEnv, nextClockEnv, assignedClocks) = applyUpdatesFull(allStmts, rx)
+
+      val zoneAfterAssign = assignedClocks.toList.sortBy(_.toString)
+        .foldLeft(finalZone)((z, c) => z.assign(c, nextClockEnv.getOrElse(c, 0.0)))
+      val zoneWithDelays = newPending.map(_._3).toList.sortBy(_.toString)
+        .foldLeft(zoneAfterAssign)(_.withClock(_))
+
+      val next = rx.copy(
+        inits = (rx.inits - st) + st2,
+        act = currentAct,
+        val_env = nextEnv,
+        clock_env = nextClockEnv,
+        pendingDelays = rx.pendingDelays ++ newPending
+      )
+      (edge, next.copy(zone = zoneWithDelays.extrapolate(effectiveMax(next))))
+    }
+
+    val standardTransitions = transitions.filter { case (_, nextRx) =>
       nextRx.inits.forall(s => nextRx.invariants.get(s) match {
-        case Some(inv) => intersectConditionWithZone(inv, nextRx.zone, nextRx).isDefined
+        case Some(inv) => intersectAll(inv, nextRx.zone, nextRx).nonEmpty
         case None => true
       })
     }.toSet
@@ -686,26 +678,29 @@ object RxSemantics {
     val timeoutTransitions = for {
       pending <- rx.pendingDelays
       (hyperEdge, opType, clock, targetVal) = pending
+      if rx.zone.clocks.contains(clock)
       maturedZoneOpt = rx.zone.constrain(DBM.ZERO_CLOCK, clock, -targetVal, isStrict = false)
       if maturedZoneOpt.isDefined
     } yield {
-      val maturedZone = maturedZoneOpt.get.extrapolate(rx.maxConstants)
+      val remaining = rx.pendingDelays - pending
+      val z0 = maturedZoneOpt.get
+      val z1 = if (!rx.clocks.contains(clock) && !remaining.exists(_._3 == clock)) z0.withoutClock(clock) else z0
       val targetLabel = hyperEdge._2
       val affectedEdges = rx.lbls.getOrElse(targetLabel, Set.empty)
-      
+
       val newAct = if (opType == "on") rx.act ++ affectedEdges else rx.act -- affectedEdges
-      
-      val nextRx = rx.copy(
+
+      val next = rx.copy(
         act = newAct,
-        pendingDelays = rx.pendingDelays - pending,
-        zone = maturedZone
+        pendingDelays = remaining
       )
-      
+      val nextRx = next.copy(zone = z1.extrapolate(effectiveMax(next)))
+
       val ruleLabel = hyperEdge._4
       val pseudoEdge: Edge = (
-        rx.inits.headOption.getOrElse(QName(Nil)), 
-        rx.inits.headOption.getOrElse(QName(Nil)), 
-        QName(List("timeout")), 
+        rx.inits.headOption.getOrElse(QName(Nil)),
+        rx.inits.headOption.getOrElse(QName(Nil)),
+        QName(List("timeout")),
         ruleLabel
       )
       (pseudoEdge, nextRx)
@@ -727,7 +722,7 @@ object RxSemantics {
     } yield {
       val condOpt = rx.edgeConditions.getOrElse(edge, None)
       val zoneAfterGuard = condOpt match {
-        case Some(cond) => intersectConditionWithZone(cond, rx.zone, rx)
+        case Some(cond) => intersectAll(cond, rx.zone, rx).headOption
         case None => Some(rx.zone)
       }
 
@@ -735,16 +730,14 @@ object RxSemantics {
         val (toAct, toDeact, hStmts, relativePending) = getHyperEdgeEffects(edge, rx)
         val currentAct = (rx.act ++ toAct) -- toDeact
         val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ hStmts
-        val (nextEnv, nextClockEnv) = applyUpdates(allStmts, rx)
+        val (nextEnv, nextClockEnv, assignedClocks) = applyUpdatesFull(allStmts, rx)
         
         val absolutePending = relativePending.map { case (he, op, clk, dVal) =>
           (he, op, clk, nextClockEnv.getOrElse(clk, 0.0) + dVal)
         }
         
-        val clockResets = allStmts.collect { 
-          case AssignStmt(v, _) if rx.clocks.contains(v) => v 
-        }
-        val zoneAfterUpdates = clockResets.foldLeft(zoneAfterGuard.get)(_.reset(_))
+        val zoneAfterUpdates = assignedClocks.toList.sortBy(_.toString)
+          .foldLeft(zoneAfterGuard.get)((z, c) => z.assign(c, nextClockEnv.getOrElse(c, 0.0)))
 
         Some((edge, rx.copy(
           inits = (rx.inits - st) + st2,
@@ -759,7 +752,7 @@ object RxSemantics {
 
     transitions.flatten.filter { case (_, nextRx) =>
       nextRx.inits.forall(s => nextRx.invariants.get(s) match {
-        case Some(inv) => intersectConditionWithZone(inv, nextRx.zone, nextRx).isDefined
+        case Some(inv) => intersectAll(inv, nextRx.zone, nextRx).nonEmpty
         case None => true
       })
     }
@@ -836,9 +829,10 @@ object RxSemantics {
     for (pending <- rx0.pendingDelays) {
       val clock = pending._3
       val targetVal = pending._4
-      currentZone = currentZone.flatMap(z => z.constrain(clock, DBM.ZERO_CLOCK, targetVal, isStrict = false))
+      currentZone = currentZone.flatMap(z =>
+        if (z.clocks.contains(clock)) z.constrain(clock, DBM.ZERO_CLOCK, targetVal, isStrict = false) else Some(z))
     }
-    currentZone.map(z => rx0.copy(zone = z.extrapolate(rx0.maxConstants)))
+    currentZone.map(z => rx0.copy(zone = z.extrapolate(effectiveMax(rx0))))
   }
 
   def intersectConditionWithZone(cond: Condition, zone: DBM.Zone, rx: RxGraph): Option[DBM.Zone] = cond match {
@@ -866,6 +860,24 @@ object RxSemantics {
       intersectConditionWithZone(l, zone, rx).orElse(intersectConditionWithZone(r, zone, rx))
       
     case _ => Some(zone)
+  }
+
+  def intersectAll(cond: Condition, zone: DBM.Zone, rx: RxGraph): List[DBM.Zone] = cond match {
+    case Condition.AtomicCond(UpdateExpr.Var(clock), op, rhs) if rx.clocks.contains(clock) =>
+      if (op == "!=") {
+        val v = Condition.extractDouble(evalExpr(rhs, rx.val_env, rx))
+        (zone.constrain(clock, DBM.ZERO_CLOCK, v, isStrict = true).toList ++
+          zone.constrain(DBM.ZERO_CLOCK, clock, -v, isStrict = true).toList).distinct
+      } else intersectConditionWithZone(cond, zone, rx).toList
+    case Condition.AtomicCond(lhs, op, UpdateExpr.Var(clock)) if rx.clocks.contains(clock) =>
+      val invOp = op match { case "<" => ">"; case "<=" => ">="; case ">" => "<"; case ">=" => "<="; case _ => op }
+      intersectAll(Condition.AtomicCond(UpdateExpr.Var(clock), invOp, lhs), zone, rx)
+    case Condition.And(l, r) =>
+      intersectAll(l, zone, rx).flatMap(z => intersectAll(r, z, rx)).distinct
+    case Condition.Or(l, r) =>
+      (intersectAll(l, zone, rx) ++ intersectAll(r, zone, rx)).distinct
+    case other =>
+      if (evalCondition(other, rx)) List(zone) else Nil
   }
 
   def next[Name >: QName](rx: RxGraph): Set[(Name, RxGraph)] =
