@@ -272,7 +272,111 @@ flowchart LR
 
 Repare-se que `s0` aparece duas vezes: no início, com `t = 0`, e depois do `escape`, com `0 ≤ t < 5`. A localização é a mesma, mas a zona com que lá se chega é diferente. Como o `start` repõe `t`, os dois caminhos voltam a juntar-se em `s1`. Ao todo são 4 estados simbólicos, que representam as infinitas execuções concretas do modelo.
 
+**Ver o grafo de zonas na interface:** o botão *Ver Zonas* (separador LTL) abre o grafo com três vistas:
+
+| Vista | O que mostra | Quando usar |
+|---|---|---|
+| **Por estado** (por omissão) | Um nó por estado do modelo, com o número de zonas que agrupa, o intervalo de cada relógio e o máximo de pendentes em Ω. Cada aresta mostra quantas transições de zona junta (`RI ×892`). Os vencimentos de Ω de um estado aparecem num único laço `⏱`. | Para explicar o comportamento geral, mesmo em modelos com milhares de zonas |
+| **Por configuração** | Junta as zonas com o mesmo estado, arestas ativas, pendentes e variáveis. O rótulo diz que arestas estão desligadas. | Para mostrar o efeito das hiper-arestas (o mesmo estado aparece várias vezes, com arestas diferentes ligadas) |
+| **Completo** | Uma zona por nó (até 300). | Modelos pequenos, ou para ver uma zona em detalhe |
+
+Clicar num nó mostra quantas zonas agrupa, que regras estão em Ω e que arestas estão ligadas ou desligadas.
+
 Uma propriedade que valha em **todas as zonas** alcançáveis vale para **qualquer** escolha de tempos reais. É por isso que a verificação simbólica dá **provas** e não apenas testes.
+
+### 6.6 Do modelo RTA a um grafo só de zonas: as três etapas
+
+A verificação passa por três representações do mesmo sistema. Em cada passagem, um dos ingredientes do modelo é **absorvido** pelo seguinte:
+
+```mermaid
+flowchart LR
+  M["<b>1. Modelo RTA</b><br/>estados, arestas<br/>guardas, atualizações<br/>relógios, invariantes<br/>hiper-arestas, delays"]
+  Z["<b>2. Zonas + hiper-arestas</b><br/>estado simbólico =<br/>estado + variáveis +<br/>arestas ativas (act) +<br/>pendentes Ω + zona"]
+  G["<b>3. Só zonas</b><br/>grafo finito:<br/>nós numerados,<br/>arestas etiquetadas"]
+  M -- "o tempo contínuo<br/>passa a ser uma zona<br/>(nextEdgeSymbolic)" --> Z
+  Z -- "as hiper-arestas ficam<br/>dentro da identidade do nó<br/>(ZoneStateKey)" --> G
+```
+
+Para acompanhar as três etapas usa-se este modelo pequeno:
+
+```rta
+clock x
+init A
+inv B: x <= 5
+A ---> B: entra then { x' := 0 }
+B ---> C: sai disabled
+entra ->> sai: abre
+delay abre: 2
+```
+
+Ao entrar em `B`, a regra `abre` agenda a ativação de `sai` para daqui a 2 unidades de tempo. `B` não deixa ficar mais de 5 unidades.
+
+#### Etapa 1 — o modelo RTA
+
+O `Parser2` lê o texto e constrói um `RxGraph`: as arestas (`edg`), as regras ligar/desligar (`on` / `off`), as guardas (`edgeConditions`), as atualizações (`edgeUpdates`), as invariantes, os relógios e os atrasos (`delays`, regra → expressão). Esta parte **nunca muda** durante a análise.
+
+Neste ponto o tempo ainda é contínuo: a partir de `B` há infinitos instantes possíveis (0.3, 1.7, 4.99, …) para fazer `sai`. Ainda não dá para explorar.
+
+#### Etapa 2 — zonas + hiper-arestas
+
+Em vez de um valor de tempo, cada estado guarda uma **zona**. Um estado simbólico (`ZoneStateKey` no código) é formado por:
+
+| Campo | O que é | Ainda é "RTA"? |
+|---|---|---|
+| `inits` | estado(s) atual(is) | discreto |
+| `vars` | valores das variáveis | discreto |
+| `act` | conjunto de arestas e regras **ativas** neste momento | **sim: é aqui que as hiper-arestas continuam vivas** |
+| `pending` | a lista Ω de regras com atraso | **sim: os delays continuam vivos** |
+| `zone` | DBM com os relógios do modelo **e** um relógio auxiliar por entrada de Ω | tempo, agora simbólico |
+
+Quem calcula os sucessores é `RxSemantics.nextEdgeSymbolic`. Por cada estado simbólico faz isto:
+
+1. **Deixa o tempo passar** (`advanceTimeZone`): faz `delay` da zona, corta pela invariante do estado atual e corta cada relógio de Ω pelo seu prazo, porque um pendente não pode passar do prazo. Depois **extrapola**.
+2. **Para cada aresta ativa** (que está em `act`) que sai do estado atual, intersecta a zona com a guarda (`intersectAll`). Se a guarda tiver `OR`, sai uma zona por disjunto.
+3. **Cascata de hiper-arestas** (`from`): recolhe todas as regras ativas disparadas pela etiqueta da aresta, incluindo regras sobre regras.
+   - Se uma regra tem guarda **com relógios**, a zona é **dividida** em duas (`splitZones`): a parte em que a regra dispara e a parte em que não dispara. Cada parte dá um sucessor diferente.
+   - Regras sem atraso: liga ou desliga logo as arestas-alvo, alterando `act`.
+   - Regras com atraso: calcula a duração, cria uma entrada em Ω e um relógio auxiliar novo (`__delay/k`) que começa em 0 na zona (`withClock`).
+4. **Aplica as atualizações** da aresta e das regras. Os relógios atribuídos são repostos na zona (`assign`).
+5. **Verifica a invariante** do estado de chegada (se a zona com ela ficar vazia, o sucessor é descartado) e **extrapola**.
+6. **Prazos de Ω**: para cada pendente cujo relógio pode chegar ao prazo, cria uma transição especial `timeout`. Fixa o relógio auxiliar no prazo, aplica o efeito da regra em `act`, retira a entrada de Ω e remove o relógio da zona (`withoutClock`).
+
+No exemplo, a etapa 2 dá estes estados:
+
+| # | `inits` | `act` (relevante) | Ω | zona à chegada | depois de deixar o tempo passar |
+|---|---|---|---|---|---|
+| 0 | A | `sai` inativa | — | x = 0 | x ≥ 0 |
+| 1 | B | `sai` inativa | (abre, 2) | x = 0, d = 0 | 0 ≤ x = d ≤ 2 (o prazo de `abre` trava) |
+| 2 | B | **`sai` ativa** | — | x = 2 | 2 ≤ x ≤ 5 (a invariante trava) |
+| 3 | C | `sai` ativa | — | 2 ≤ x ≤ 5 | x ≥ 2 |
+
+(`d` é o relógio auxiliar `__delay/0` da entrada de Ω.)
+
+Repare-se que os estados 1 e 2 estão ambos em `B` com zonas que se tocam, mas são **nós diferentes**: num deles `sai` está desligada e há um pendente; no outro `sai` está ligada. **É assim que as hiper-arestas e os delays entram na verificação: passam a fazer parte da identidade de cada nó.**
+
+#### Etapa 3 — só zonas: um grafo finito normal
+
+Os estados simbólicos são guardados num mapa `ZoneStateKey → número` e as transições numa lista de adjacência. É isto que `CtlEvaluator.verifyCTLSymbolic` constrói (`states`, `stateIndices`, `adj`). O que fica é um **grafo dirigido finito comum**:
+
+```mermaid
+flowchart LR
+  n0["n0"] -- entra --> n1["n1"]
+  n1 -- "timeout (abre)" --> n2["n2"]
+  n2 -- sai --> n3["n3"]
+```
+
+Nesta etapa os algoritmos já não sabem nada de relógios, regras nem atrasos:
+- **CTL**: pontos fixos sobre os nós (`EF`, `AG`, `EU`, …);
+- **LTL**: produto do grafo com o tableau da fórmula e procura de componentes fortemente ligadas (algoritmo de Tarjan);
+- **Path Optimizer**: pesquisa em largura (BFS).
+
+A única informação de tempo que ainda se consulta é a das **condições da fórmula** sobre relógios (por exemplo `[x <= 2]`). Para estas serem exatas, antes de construir o grafo cada zona é **dividida** pelos átomos de relógio da fórmula (`splitByConditions`), de modo que cada átomo é totalmente verdadeiro ou totalmente falso em cada nó.
+
+#### Resumo para dizer em voz alta
+
+> "O tempo contínuo é substituído por zonas. As hiper-arestas e os delays não desaparecem: passam a fazer parte de cada nó, através do conjunto de arestas ativas e da lista Ω com um relógio extra por pendente. No fim temos um grafo finito com nós numerados, onde a verificação é só correr algoritmos de grafos."
+
+**Atenção ao tamanho:** cada combinação diferente de `act`, Ω e zona é um nó. Modelos em que as regras com atraso se repetem muitas vezes acumulam entradas em Ω, e cada uma traz mais um relógio para a zona. Nesses casos o grafo cresce muito depressa. As provas LTL/CTL da interface param aos 50 000 estados e avisam que o resultado é limitado.
 
 ---
 
@@ -281,7 +385,7 @@ Uma propriedade que valha em **todas as zonas** alcançáveis vale para **qualqu
 | Separador | Pergunta típica | Como funciona |
 |---|---|---|
 | **PDL** | "Depois de `a; b`, chego a `fim`?" (`<a ; b> fim`) | Executa os programas (`;` sequência, `+` escolha, `*` repetição, `delay:5.0`) sobre configurações concretas a partir do estado escolhido. `[α]φ` é verdadeira quando α não se pode executar. |
-| **LTL** | "Em todas as execuções, `fechar` acaba sempre por acontecer?" (`G F fechar`) | *Único / Estatístico*: avalia em traços aleatórios (rápido, sem garantia). *Prova Exaustiva*: explora o grafo de zonas à procura de um **laço** (lasso) ou de um deadlock que viole a fórmula. |
+| **LTL** | "Em todas as execuções, `fechar` acaba sempre por acontecer?" (`G F fechar`) | *Único / Estatístico*: avalia em traços aleatórios (rápido, sem garantia). *Prova Exaustiva*: constrói o produto do grafo de zonas com o **tableau** da fórmula (um nó por estado × conjunto de subfórmulas que se afirmam verdadeiras). Primeiro procura em largura um **prefixo que já viola** a fórmula, qualquer que seja a continuação (violações de segurança, como `G [x <= 72]`). Depois procura uma **componente fortemente ligada** que dê um laço infinito a violar a fórmula (violações de vivacidade, como `F fim`). O custo é linear no tamanho do grafo, e os estados só são calculados quando a procura precisa deles. |
 | **CTL** | "De qualquer estado ainda é possível chegar a `s2`?" (`AG EF s2`) | Constrói o grafo de zonas completo e calcula, para cada operador, o conjunto de estados onde a fórmula vale, por **ponto fixo**. Em `AG` falsa e em `EF` verdadeira mostra um caminho testemunha. |
 | **Path Optimizer** | "Qual o caminho mais curto até `Alarme`?" | Pesquisa em largura (BFS): sobre zonas (simbólico) ou sobre valores concretos com delays escolhidos a partir das constantes das guardas (discreto). |
 
@@ -293,8 +397,8 @@ O que cada nome significa dentro de uma fórmula:
 
 Cuidados na prova LTL exaustiva:
 - **Caminhos finitos:** um caminho que acaba num deadlock é avaliado como traço finito.
-- **Execuções Zeno:** ciclos que obrigam a fazer infinitos passos num tempo limitado são ignorados.
-- **Limite de estados ou de profundidade:** se for atingido, o resultado vem marcado como **limitado**. Nesse caso, um "verdadeiro" quer dizer "não encontrei violação dentro do limite".
+- **Execuções Zeno:** laços que obrigam a fazer infinitos passos num tempo limitado não contam como contra-exemplo. Já uma violação de segurança num estado alcançável conta sempre, como no UPPAAL.
+- **Limite de estados:** se for atingido, o resultado vem marcado como **limitado**. Nesse caso, um "verdadeiro" quer dizer "não encontrei violação dentro do limite". Um contra-exemplo encontrado é sempre real.
 - **CTL:** quando atinge o limite de estados, mostra um aviso de **resultado inconclusivo**.
 
 ---
@@ -321,7 +425,8 @@ Sim, se o espaço de zonas foi explorado por completo. Se o limite foi atingido,
 | Estrutura do modelo | `shared/src/main/scala/rta/syntax/Program2.scala` |
 | Semântica (passos, tempo, Ω, grafo de zonas) | `shared/src/main/scala/rta/backend/RxSemantics.scala` |
 | Zonas / DBM | `shared/src/main/scala/rta/backend/DBM.scala` |
-| LTL exaustivo, caminhos, *Check Problems* | `shared/src/main/scala/rta/backend/AnalyseLTS.scala` |
+| LTL exaustivo | `shared/src/main/scala/rta/backend/LtlModelChecker.scala` |
+| Caminhos mais curtos, *Check Problems* | `shared/src/main/scala/rta/backend/AnalyseLTS.scala` |
 | CTL | `shared/src/main/scala/rta/backend/CtlEvaluator.scala` |
 | PDL | `shared/src/main/scala/rta/backend/PdlEvaluator.scala` |
 | Ponte para a interface | `js/src/main/scala/marge/frontend/RTAAPI.scala` |

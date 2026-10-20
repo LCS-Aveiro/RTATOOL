@@ -534,14 +534,29 @@ function runLTLExhaustive() {
 
 let dbmCyInstance = null;
 
-function showDBMGraphModal() {
-    var jsonStr = RTA.getSymbolicStepsJSON();
-    var elements = JSON.parse(jsonStr);
+const DBM_GRAPH_LIMITS = { state: 3000, config: 1500, full: 300 };
+
+function showDBMGraphModal(mode) {
+    mode = mode || 'state';
+    var result = JSON.parse(RTA.getZoneGraphJSON(mode, DBM_GRAPH_LIMITS[mode] || 300));
+    var elements = result.elements;
     
     if (elements.length === 0) {
         alert("Nenhum modelo carregado ou grafo vazio.");
         return;
     }
+
+    document.querySelectorAll('#dbmModeButtons button').forEach(function (b) {
+        b.classList.toggle('btn-primary', b.getAttribute('data-mode') === mode);
+        b.classList.toggle('btn-default', b.getAttribute('data-mode') !== mode);
+    });
+    var info = result.zones + ' zonas exploradas';
+    if (mode !== 'full') info += ' → ' + result.groups + ' nós';
+    if (result.limited) info += ' (limite de ' + DBM_GRAPH_LIMITS[mode] + ' atingido: o grafo está incompleto)';
+    document.getElementById('dbmGraphInfo').innerText = info;
+
+    var maxCount = 1;
+    elements.forEach(function (e) { if (e.data.count && e.data.count > maxCount) maxCount = e.data.count; });
     
     $('#dbmGraphModal').modal('show');
     
@@ -582,12 +597,16 @@ function showDBMGraphModal() {
                 {
                     selector: 'edge',
                     style: {
-                        'width': 2,
+                        'width': mode === 'full' ? 2 : 'mapData(count, 1, ' + maxCount + ', 1.5, 6)',
                         'line-color': '#94a3b8',
                         'target-arrow-color': '#94a3b8',
                         'target-arrow-shape': 'triangle',
                         'curve-style': 'bezier',
+                        'control-point-step-size': 60,
+                        'loop-direction': '0deg',
+                        'loop-sweep': '-40deg',
                         'label': 'data(label)',
+                        'text-wrap': 'wrap',
                         'font-size': '11px',
                         'font-weight': 'bold',
                         'color': '#0f172a',
@@ -595,22 +614,41 @@ function showDBMGraphModal() {
                         'text-background-opacity': 1,
                         'text-background-padding': '3px'
                     }
+                },
+                {
+                    selector: 'edge.back',
+                    style: {
+                        'curve-style': 'unbundled-bezier',
+                        'control-point-distances': [-170],
+                        'control-point-weights': [0.5]
+                    }
                 }
             ],
             layout: {
-                name: 'dagre', 
-                rankDir: 'TB',
+                name: 'dagre',
+                rankDir: mode === 'state' ? 'LR' : 'TB',
+                nodeSep: 60,
+                rankSep: mode === 'state' ? 140 : 80,
                 spacingFactor: 1.2
             },
             wheelSensitivity: 0.2
         });
     document.getElementById('dbmNodeDetails').style.display = 'none';
 
+        var horizontal = mode === 'state';
+        dbmCyInstance.edges().forEach(function (e) {
+            if (e.source().id() === e.target().id()) return;
+            var s = e.source().position(), t = e.target().position();
+            var goesBack = horizontal ? t.x < s.x - 1 : t.y < s.y - 1;
+            if (goesBack) e.addClass('back');
+        });
+
         dbmCyInstance.on('tap', 'node', function(evt){
             var node = evt.target;
             var actEdges = node.data('actEdges');
             var inactEdges = node.data('inactEdges');
 
+            document.getElementById('dbmGroupDetails').innerText = node.data('details') || '';
             document.getElementById('dbmActEdges').innerText = actEdges || "Nenhuma";
             document.getElementById('dbmInactEdges').innerText = inactEdges || "Nenhuma";
             

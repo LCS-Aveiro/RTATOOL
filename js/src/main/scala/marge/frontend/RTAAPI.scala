@@ -625,6 +625,157 @@ object RTAAPI {
   }
 
   @JSExport
+  def getZoneGraphJSON(mode: String, maxStates: Int): String = {
+    import rta.backend.AnalyseLTS.ZoneStateKey
+    import rta.backend.DBM
+
+    def num(d: Double): String =
+      if (d == Double.PositiveInfinity) "∞" else if (d == Math.rint(d)) d.toLong.toString else BigDecimal(d).setScale(3, BigDecimal.RoundingMode.HALF_UP).bigDecimal.stripTrailingZeros.toPlainString
+
+    case class Range(lo: Double, loStrict: Boolean, hi: Double, hiStrict: Boolean) {
+      def merge(o: Range): Range = {
+        val (l, ls) = if (o.lo < lo || (o.lo == lo && !o.loStrict)) (o.lo, o.loStrict) else (lo, loStrict)
+        val (h, hs) = if (o.hi > hi || (o.hi == hi && !o.hiStrict)) (o.hi, o.hiStrict) else (hi, hiStrict)
+        Range(l, ls, h, hs)
+      }
+      def show(c: String): String =
+        if (lo == hi && !loStrict && !hiStrict) s"$c = ${num(lo)}"
+        else if (hi == Double.PositiveInfinity) s"$c ${if (loStrict) ">" else "≥"} ${num(lo)}"
+        else s"$c ∈ ${if (loStrict) "(" else "["}${num(lo)}, ${num(hi)}${if (hiStrict) ")" else "]"}"
+    }
+
+    def ranges(g: RxGraph): Map[QName, Range] = {
+      val z = RxSemantics.advanceTimeZone(g).map(_.zone).getOrElse(g.zone)
+      g.clocks.toList.flatMap { c =>
+        for (up <- z.matrix.get((c, DBM.ZERO_CLOCK)); low <- z.matrix.get((DBM.ZERO_CLOCK, c)))
+          yield c -> Range(-low.value + 0.0, low.strict, up.value, up.strict)
+      }.toMap
+    }
+
+    currentGraph.map { root =>
+      def keyOf(g: RxGraph) = ZoneStateKey(g.inits, g.val_env, g.zone, g.pendingDelays, g.act)
+      val index = collection.mutable.LinkedHashMap[ZoneStateKey, (Int, RxGraph)]()
+      val zoneEdges = collection.mutable.ListBuffer[(Int, String, Int)]()
+      val queue = collection.mutable.Queue[RxGraph]()
+      def idOf(g: RxGraph): Int = index.getOrElseUpdate(keyOf(g), { queue.enqueue(g); (index.size, g) })._1
+      idOf(root)
+      var expandedCount = 0
+      while (queue.nonEmpty && expandedCount < maxStates) {
+        val cur = queue.dequeue()
+        expandedCount += 1
+        val src = idOf(cur)
+        for ((edge, next) <- RxSemantics.nextEdgeSymbolic(cur).toList.sortBy(_._1.toString)) {
+          val (_, _, tId, label) = edge
+          val shown =
+            if (tId.show == "timeout" && tId != label) s"⏱ ${label.show}"
+            else if (tId == label) label.show else s"${label.show}(${tId.show})"
+          zoneEdges += ((src, shown, idOf(next)))
+        }
+      }
+      val limited = queue.nonEmpty
+      val zones = index.values.toArray.sortBy(_._1).map(_._2)
+
+      def groupOf(g: RxGraph): String = mode match {
+        case "state" => g.inits.map(_.show).toList.sorted.mkString(",")
+        case "config" =>
+          g.inits.map(_.show).toList.sorted.mkString(",") + "|" + g.act.map(_._4.show).toList.sorted.mkString(",") +
+            "|" + g.pendingDelays.toList.map(p => p._1._4.show).sorted.mkString(",") +
+            "|" + g.val_env.toList.map(kv => kv._1.show + "=" + kv._2.value).sorted.mkString(",")
+        case _ => index(keyOf(g))._1.toString
+      }
+
+      val groupIds = collection.mutable.LinkedHashMap[String, String]()
+      val zoneGroup = zones.map(g => groupIds.getOrElseUpdate(groupOf(g), s"g${groupIds.size}"))
+      val members = zones.indices.groupBy(zoneGroup)
+      val allLabels = (root.edg.values.flatten.map(_._3) ++ root.on.values.flatten.map(_._3) ++ root.off.values.flatten.map(_._3)).map(_.show).toSet
+
+      val nodeJson = groupIds.values.toList.map { gid =>
+        val ms = members(gid).map(zones)
+        val rep = ms.head
+        val clockRanges = ms.map(ranges).reduce { (a, b) =>
+          (a.keySet ++ b.keySet).map { k =>
+            val merged = (a.get(k), b.get(k)) match {
+              case (Some(x), Some(y)) => x.merge(y)
+              case (Some(x), None) => x
+              case (None, Some(y)) => y
+              case _ => Range(0, false, 0, false)
+            }
+            k -> merged
+          }.toMap
+        }
+        val clocksLine = clockRanges.toList.sortBy(_._1.show).map { case (c, r) => r.show(c.show) }.mkString(", ")
+        val varValues = ms.flatMap(_.val_env.toList).groupBy(_._1).toList.sortBy(_._1.show).collect {
+          case (k, vs) if !k.n.contains("__return") =>
+            val distinct = vs.map(_._2.value.toString).distinct
+            if (distinct.size == 1) s"${k.show}=${distinct.head}" else s"${k.show}∈{${distinct.take(4).mkString(",")}${if (distinct.size > 4) ",…" else ""}}"
+        }.mkString(", ")
+        val pendSizes = ms.map(_.pendingDelays.size)
+        val pendLabels = ms.flatMap(_.pendingDelays.map(_._1._4.show)).distinct.sorted
+        val activeAlways = allLabels.filter(l => ms.forall(_.act.exists(_._4.show == l))).toList.sorted
+        val inactiveAlways = allLabels.filter(l => ms.forall(g => !g.act.exists(_._4.show == l))).toList.sorted
+        val varying = (allLabels -- activeAlways -- inactiveAlways).toList.sorted
+
+        val lines = mode match {
+          case "full" =>
+            List(
+              s"ESTADOS: ${rep.inits.map(_.show).mkString(", ")}",
+              s"ZONA: ${if (clocksLine.nonEmpty) clocksLine else "-"}",
+              if (varValues.nonEmpty) s"VARS: $varValues" else "",
+              if (rep.pendingDelays.nonEmpty) s"Ω: ${rep.pendingDelays.toList.map(p => s"${p._1._4.show}(${p._2})⌛${num(p._4)}").sorted.mkString(", ")}" else ""
+            )
+          case "config" =>
+            List(
+              rep.inits.map(_.show).mkString(", "),
+              s"${ms.size} zona${if (ms.size == 1) "" else "s"}",
+              if (inactiveAlways.nonEmpty) s"desligadas: ${inactiveAlways.mkString(", ")}" else "todas ligadas",
+              if (clocksLine.nonEmpty) clocksLine else "",
+              if (varValues.nonEmpty) varValues else "",
+              if (rep.pendingDelays.nonEmpty) s"Ω: ${rep.pendingDelays.toList.map(_._1._4.show).sorted.mkString(", ")}" else ""
+            )
+          case _ =>
+            List(
+              rep.inits.map(_.show).mkString(", "),
+              s"${ms.size} zona${if (ms.size == 1) "" else "s"}",
+              if (clocksLine.nonEmpty) clocksLine else "",
+              if (varValues.nonEmpty) varValues else "",
+              if (pendSizes.max > 0) s"Ω: até ${pendSizes.max} pendente${if (pendSizes.max == 1) "" else "s"}" else ""
+            )
+        }
+        val label = lines.filter(_.nonEmpty).mkString("\n")
+        val isStart = ms.contains(zones(0))
+        val details =
+          s"Zonas agrupadas: ${ms.size}\n" +
+            (if (pendLabels.nonEmpty) s"Regras em Ω: ${pendLabels.mkString(", ")}\n" else "") +
+            (if (varying.nonEmpty) s"Ativas só nalgumas zonas: ${varying.mkString(", ")}" else "")
+        s"""{"data": {"id": "$gid", "label": "${escapeJson(label)}", "isStart": $isStart, "zones": ${ms.size}, "actEdges": "${escapeJson(activeAlways.mkString(", "))}", "inactEdges": "${escapeJson(inactiveAlways.mkString(", "))}", "details": "${escapeJson(details)}"}}"""
+      }
+
+      val grouped = zoneEdges.toList
+        .map { case (s, l, t) => (zoneGroup(s), l, zoneGroup(t)) }
+        .groupBy(identity).toList
+        .map { case ((s, l, t), occ) => (s, l, t, occ.size) }
+
+      val (timeoutLoops, others) =
+        if (mode == "full") (Nil, grouped)
+        else grouped.partition { case (s, l, t, _) => s == t && l.startsWith("⏱") }
+
+      val mergedLoops = timeoutLoops.groupBy(_._1).toList.map { case (s, loops) =>
+        val names = loops.map(_._2.stripPrefix("⏱").trim).distinct.sorted
+        (s, "⏱ " + names.mkString("\n"), s, loops.map(_._4).sum)
+      }
+
+      val edgeJson = (others ++ mergedLoops)
+        .sortBy { case (s, l, t, _) => (s, t, l) }
+        .zipWithIndex.map { case ((s, l, t, count), i) =>
+          val shown = if (count > 1 && mode != "full" && !l.startsWith("⏱")) s"$l ×$count" else l
+          s"""{"data": {"id": "e$i", "source": "$s", "target": "$t", "label": "${escapeJson(shown)}", "count": $count}}"""
+        }
+
+      s"""{"elements": [${(nodeJson ++ edgeJson).mkString(",")}], "zones": ${zones.length}, "groups": ${groupIds.size}, "limited": $limited}"""
+    }.getOrElse("""{"elements": [], "zones": 0, "groups": 0, "limited": false}""")
+  }
+
+  @JSExport
   def findPathToValueZone(condStr: String): js.Any = {
     currentGraph match {
       case Some(rx) =>

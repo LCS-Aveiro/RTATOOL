@@ -78,7 +78,7 @@ object CtlEvaluator {
 
     val startWithTime = RxSemantics.advanceTimeZone(start).getOrElse(start)
     val initialStates = if (clockConds.isEmpty) List(startWithTime) else splitByConditions(startWithTime, clockConds)
-    var queue = List.empty[Int]
+    val queue = collection.mutable.Queue.empty[Int]
     
     for (s <- initialStates) {
       val key = getKey(s)
@@ -87,15 +87,14 @@ object CtlEvaluator {
         states += s
         stateIndices(key) = idx
         adj += List.empty
-        queue = queue :+ idx
+        queue.enqueue(idx)
       }
     }
 
     var explored = 0
 
     while (queue.nonEmpty && states.length <= maxStates) {
-      val currIdx = queue.head
-      queue = queue.tail
+      val currIdx = queue.dequeue()
       val currGraph = states(currIdx)
       explored += 1
 
@@ -116,7 +115,7 @@ object CtlEvaluator {
               states += refinedNext
               stateIndices(key) = idx
               adj += List.empty
-              queue = queue :+ idx
+              queue.enqueue(idx)
               idx
           }
           val label = edge._4.show
