@@ -33,10 +33,8 @@ object RTACLI {
     try {
       val source = Source.fromFile(inputFile).mkString
       
-      // 1. Parsing do Código
       val parsedGraph = Parser2.parseProgram(source)
       
-      // 2. Cálculo das Constantes Máximas para garantir Finitude do Espaço (Zonas DBM)
       val maxC = RxSemantics.MaxConstants.compute(parsedGraph)
       val graph = parsedGraph.copy(maxConstants = maxC)
 
@@ -62,7 +60,7 @@ object RTACLI {
 
           
         case "-uppaal" =>
-          val xml = UppaalConverter3.convert(graph, source) // SEM O "{}" AQUI
+          val xml = UppaalConverter3.convert(graph, source)
           saveOrPrint(xml, args, inputFile)
 
         case "-step" =>
@@ -90,19 +88,16 @@ object RTACLI {
             try {
               val formula = LtlParser.parseLtlFormula(formulaStr)
               
-              // Booster de constantes para assegurar corretude com a query LTL
               val queryConstants = RxSemantics.MaxConstants.fromLTL(formula, graph.clocks)
               val boostedStartGraph = graph.copy(
                 maxConstants = RxSemantics.MaxConstants.mergeMax(graph.maxConstants, queryConstants)
               )
 
-              // CUIDADO: O 5º elemento retornado é 'limitReached' (se atingiu o limite ou não)
               val (success, ceLabels, _, explored, limitReached, _) = 
                   AnalyseLTS.verifyLTLSymbolic(boostedStartGraph, formula, 50000, 100)
               
               val isExhaustive = !limitReached
               
-              // --- OUTPUT FORMATADO PARA O SCRIPT PYTHON ---
               println("--- RESULTADOS LTL ---")
               println(s"[RESULT] ${if (success) "VALID" else "FAILED"}")
               println(s"[EXHAUSTIVE] ${if (isExhaustive) "TRUE" else "FALSE"}")
@@ -162,7 +157,6 @@ object RTACLI {
     }
   }
 
-  // Auxiliar para os comandos Uppaal e Translate
   private def saveOrPrint(content: String, args: Array[String], inputFile: String): Unit = {
     if (args.length > 2) {
       val outName = args(1)
@@ -203,7 +197,7 @@ object RTACLI {
       
       for ((edge, nextState) <- nexts) {
         val targetId = getId(nextState)
-        val label = edge._4.show // Nova Quadra Edge -> Label está em _4
+        val label = edge._4.show
         transitionsStr = s"$sourceId -->|\"$label\"| $targetId" :: transitionsStr
         
         if (!visited.contains(nextState)) {

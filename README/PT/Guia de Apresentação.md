@@ -286,6 +286,8 @@ Uma propriedade que valha em **todas as zonas** alcançáveis vale para **qualqu
 
 ### 6.6 Do modelo RTA a um grafo só de zonas: as três etapas
 
+> Há uma explicação muito mais detalhada, com as matrizes reais de cada passo, em [Do Modelo às Zonas.md](Do%20Modelo%20%C3%A0s%20Zonas.md).
+
 A verificação passa por três representações do mesmo sistema. Em cada passagem, um dos ingredientes do modelo é **absorvido** pelo seguinte:
 
 ```mermaid
