@@ -64,8 +64,8 @@ object Program2:
         clocks = rx.clocks.map(this / _),
         clock_env = rx.clock_env.map { case (k, v) => (this / k) -> v },
         invariants = rx.invariants.map { case (k, v) => (this / k) -> applyPrefixToCondition(this, v) },
-        delays = rx.delays.map { case (rule, (clock, value)) => (this / rule) -> (this / clock, value) },
-        pendingDelays = rx.pendingDelays.map { case (edge, op, clock, value) => ((this / edge._1, this / edge._2, this / edge._3, this / edge._4), op, this / clock, value) },
+        delays = rx.delays.map { case (rule, expr) => (this / rule) -> applyPrefixToExpr(this, expr) },
+        pendingDelays = rx.pendingDelays.map { case (edge, op, slot, value) => ((this / edge._1, this / edge._2, this / edge._3, this / edge._4), op, slot, value) },
         maxConstants = rx.maxConstants.map { case (k, v) => (this / k) -> v }
       )
   
@@ -143,7 +143,7 @@ object Program2:
                      invariants: Map[QName, Condition],
                      edgeConditions: Map[Edge, Option[Condition]], 
                      edgeUpdates: Map[Edge, List[Statement]],
-                     delays: Map[QName, (QName, Double)] = Map.empty,
+                     delays: Map[QName, UpdateExpr] = Map.empty,
                      pendingDelays: Set[(Edge, String, QName, Double)] = Set.empty,
                      maxConstants: Map[QName, Double] = Map.empty
                     ):
@@ -169,7 +169,7 @@ object Program2:
       )
     }
     def addInvariant(state: QName, cond: Condition) = this.copy(invariants = invariants + (state -> cond))
-    def addDelay(rule: QName, clock: QName, value: Double) = this.copy(delays = delays + (rule -> (clock, value)))
+    def addDelay(rule: QName, value: UpdateExpr) = this.copy(delays = delays + (rule -> value))
 
     def addEdge(s1:QName, s2:QName, transId:QName, label:QName, cond: Option[Condition] = None, upd: List[Statement] = Nil) = {
       val edge: Edge = (s1, s2, transId, label)

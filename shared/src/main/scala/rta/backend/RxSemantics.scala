@@ -23,7 +23,20 @@ object RxSemantics {
   private val EPSILON = 1e-5
   private val builtinRandom = new scala.util.Random(1)
 
-  private def delayClock(hyperEdge: Edge): QName = QName("__delay" :: hyperEdge._4.n ::: hyperEdge._2.n)
+  private val DelaySlotPrefix = "__delay"
+
+  def isDelaySlot(q: QName): Boolean = q.n.headOption.contains(DelaySlotPrefix)
+
+  def hasTime(rx: RxGraph): Boolean = rx.clocks.nonEmpty || rx.delays.nonEmpty || rx.pendingDelays.nonEmpty
+
+  def delayDuration(ruleLabel: QName, rx: RxGraph): Double =
+    rx.delays.get(ruleLabel).map(e => Math.max(0.0, Condition.extractDouble(evalExpr(e, rx.val_env, rx)))).getOrElse(0.0)
+
+  def remainingTime(pending: (Edge, String, QName, Double), rx: RxGraph): Double =
+    pending._4 - rx.clock_env.getOrElse(pending._3, 0.0)
+
+  private def freshSlot(used: Set[QName]): QName =
+    Iterator.from(0).map(i => QName(List(DelaySlotPrefix, i.toString))).find(q => !used.contains(q)).get
 
   def effectiveMax(rx: RxGraph): Map[QName, Double] =
     rx.pendingDelays.foldLeft(rx.maxConstants) { case (m, (_, _, clk, target)) =>
@@ -69,9 +82,6 @@ object RxSemantics {
       var acc = Map.empty[QName, Double]
       rx.invariants.values.foreach(c => acc = mergeMax(acc, fromCond(c, clocks)))
       rx.edgeConditions.values.flatten.foreach(c => acc = mergeMax(acc, fromCond(c, clocks)))
-      rx.delays.values.foreach { case (clock, v) =>
-        if (clocks.contains(clock)) acc = mergeMax(acc, Map(clock -> v))
-      }
       clocks.foreach(c => if (!acc.contains(c)) acc += (c -> 0.0))
       acc
     }
@@ -559,9 +569,10 @@ object RxSemantics {
           val isOff = rx.off.getOrElse(triggerLabel, Set.empty).contains((targetLabel, ruleId, ruleLabel))
           
           if (rx.delays.contains(ruleLabel)) {
-            val (clock, delayVal) = rx.delays(ruleLabel)
-            if (isOn) newPending += ((hyperEdge, "on", clock, delayVal))
-            if (isOff) newPending += ((hyperEdge, "off", clock, delayVal))
+            val delayVal = delayDuration(ruleLabel, rx)
+            def slot() = freshSlot(rx.pendingDelays.map(_._3) ++ newPending.map(_._3))
+            if (isOn) newPending += ((hyperEdge, "on", slot(), delayVal))
+            if (isOff) newPending += ((hyperEdge, "off", slot(), delayVal))
           } else {
             if (isOn) toActivate = toActivate ++ rx.lbls.getOrElse(targetLabel, Set.empty)
             if (isOff) toDeactivate = toDeactivate ++ rx.lbls.getOrElse(targetLabel, Set.empty)
@@ -640,9 +651,10 @@ object RxSemantics {
         val isOff = rx.off.getOrElse(triggerLabel, Set.empty).contains((targetLabel, ruleId, ruleLabel))
 
         if (rx.delays.contains(ruleLabel)) {
-          val delayVal = rx.delays(ruleLabel)._2
-          if (isOn) newPending += ((hyperEdge, "on", delayClock(hyperEdge), delayVal))
-          if (isOff) newPending += ((hyperEdge, "off", delayClock(hyperEdge), delayVal))
+          val delayVal = delayDuration(ruleLabel, rx)
+          def slot() = freshSlot(rx.pendingDelays.map(_._3) ++ newPending.map(_._3))
+          if (isOn) newPending += ((hyperEdge, "on", slot(), delayVal))
+          if (isOff) newPending += ((hyperEdge, "off", slot(), delayVal))
         } else {
           if (isOn) toAct = toAct ++ rx.lbls.getOrElse(targetLabel, Set.empty)
           if (isOff) toDeact = toDeact ++ rx.lbls.getOrElse(targetLabel, Set.empty)
@@ -684,7 +696,7 @@ object RxSemantics {
     } yield {
       val remaining = rx.pendingDelays - pending
       val z0 = maturedZoneOpt.get
-      val z1 = if (!rx.clocks.contains(clock) && !remaining.exists(_._3 == clock)) z0.withoutClock(clock) else z0
+      val z1 = z0.withoutClock(clock)
       val targetLabel = hyperEdge._2
       val affectedEdges = rx.lbls.getOrElse(targetLabel, Set.empty)
 
@@ -692,6 +704,7 @@ object RxSemantics {
 
       val next = rx.copy(
         act = newAct,
+        clock_env = rx.clock_env - clock,
         pendingDelays = remaining
       )
       val nextRx = next.copy(zone = z1.extrapolate(effectiveMax(next)))
@@ -732,10 +745,8 @@ object RxSemantics {
         val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ hStmts
         val (nextEnv, nextClockEnv, assignedClocks) = applyUpdatesFull(allStmts, rx)
         
-        val absolutePending = relativePending.map { case (he, op, clk, dVal) =>
-          (he, op, clk, nextClockEnv.getOrElse(clk, 0.0) + dVal)
-        }
-        
+        val newSlots = relativePending.toList.map(_._3).sortBy(_.toString)
+
         val zoneAfterUpdates = assignedClocks.toList.sortBy(_.toString)
           .foldLeft(zoneAfterGuard.get)((z, c) => z.assign(c, nextClockEnv.getOrElse(c, 0.0)))
 
@@ -743,9 +754,9 @@ object RxSemantics {
           inits = (rx.inits - st) + st2,
           act = currentAct,
           val_env = nextEnv,
-          clock_env = nextClockEnv,
-          zone = zoneAfterUpdates, 
-          pendingDelays = rx.pendingDelays ++ absolutePending
+          clock_env = nextClockEnv ++ newSlots.map(_ -> 0.0),
+          zone = newSlots.foldLeft(zoneAfterUpdates)(_.withClock(_)),
+          pendingDelays = rx.pendingDelays ++ relativePending
         )))
       } else None
     }
@@ -760,7 +771,7 @@ object RxSemantics {
 
   def nextDelay(rx0: RxGraph): Set[(QName, RxGraph)] = {
     val rx = applyTimeouts(rx0)
-    if (rx.clocks.isEmpty) return Set.empty
+    if (!hasTime(rx)) return Set.empty
     val step = 0.000001 
         
     val canPass = rx.pendingDelays.forall { case (_, _, clock, targetVal) => 
@@ -790,22 +801,35 @@ object RxSemantics {
           if (opType == "on") toAct = toAct ++ rx.lbls.getOrElse(targetLabel, Set.empty)
           if (opType == "off") toDeact = toDeact ++ rx.lbls.getOrElse(targetLabel, Set.empty)
        }
+       val slots = matured.map(_._3)
        val nextRx = rx.copy(
          act = (rx.act ++ toAct) -- toDeact, 
+         clock_env = rx.clock_env -- slots,
+         zone = slots.foldLeft(rx.zone)(_.withoutClock(_)),
          pendingDelays = rx.pendingDelays -- matured
        )
        applyTimeouts(nextRx)
     } else rx
   }
 
+  @tailrec
   def advanceTimeBy(rx0: RxGraph, delay: Double): Option[RxGraph] = {
     if (delay <= 0) return Some(rx0)
     val rx = applyTimeouts(rx0)
-    val canPass = rx.pendingDelays.forall { case (_, _, clock, targetVal) => 
-        rx.clock_env.getOrElse(clock, 0.0) + delay <= targetVal + EPSILON
+    val gaps = rx.pendingDelays.toList
+      .map(remainingTime(_, rx))
+      .filter(g => g > EPSILON && g < delay - EPSILON)
+    if (gaps.isEmpty) advanceExactly(rx, delay)
+    else {
+      val first = gaps.min
+      advanceExactly(rx, first) match {
+        case Some(mid) => advanceTimeBy(mid, delay - first)
+        case None => None
+      }
     }
-    if (!canPass) return None
+  }
 
+  private def advanceExactly(rx: RxGraph, delay: Double): Option[RxGraph] = {
     val delayedClockEnv = rx.clock_env.map { case (c, v) => (c, v + delay) }
     val potentialNextRx = rx.copy(clock_env = delayedClockEnv)
     val invariantsHold = rx.inits.forall(s => 
@@ -818,7 +842,7 @@ object RxSemantics {
   }
 
   def advanceTimeZone(rx0: RxGraph): Option[RxGraph] = {
-    if (rx0.clocks.isEmpty) return Some(rx0)
+    if (rx0.clocks.isEmpty && rx0.pendingDelays.isEmpty) return Some(rx0)
     val delayedZone = rx0.zone.delay
     var currentZone = Option(delayedZone)
     for (st <- rx0.inits) {

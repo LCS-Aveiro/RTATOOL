@@ -618,8 +618,8 @@
        <!--  <h3>Delays on Rules</h3>
         <p>You can force a rule (hyper-edge) to only take effect a certain amount of time <em>after</em> the trigger transition fired.</p>
         <div class="code-block">
-          <div class="code-body"><pre><span class="cm">// delay ruleName : clockToUse , timeAmount</span>
-<span class="kw">delay</span> <span class="rl">slowEnable</span> : <span class="va">x</span>, <span class="nu">2.0</span>
+          <div class="code-body"><pre><span class="cm">// delay ruleName : timeAmount  (an expression, evaluated when the rule fires)</span>
+<span class="kw">delay</span> <span class="rl">slowEnable</span> : <span class="nu">2.0</span>
 
 <span class="ac">trigger</span> <span class="ar">->></span> <span class="ac">target</span> : <span class="rl">slowEnable</span>
 <span class="cm">// When 'trigger' fires, 'target' will only be enabled after 2.0 time units.</span></pre></div>
@@ -1224,7 +1224,7 @@ RobotA.start <span class="ar">->></span> RobotB.start : <span class="rl">sync</s
           <tr><td>init</td><td>init s0</td><td>Set initial state</td></tr>
           <tr><td>clock</td><td>clock t</td><td>Declares a continuous time clock</td></tr>
           <tr><td>inv</td><td>inv s1: t &lt;= 5</td><td>State invariant restricting time progress</td></tr>
-          <tr><td>delay</td><td>delay rule: t, 2.5</td><td>Delays a rule execution by 2.5 time units</td></tr>
+          <tr><td>delay</td><td>delay rule: 2.5</td><td>Delays a rule execution by 2.5 time units (each firing is counted down on its own)</td></tr>
           <tr><td>int</td><td>int x = 0</td><td>Integer variable</td></tr>
           <tr><td>float</td><td>float r = 0.5</td><td>Float variable</td></tr>
           <tr><td>bool</td><td>bool ok = true</td><td>Boolean variable</td></tr>

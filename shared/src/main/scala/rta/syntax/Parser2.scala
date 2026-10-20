@@ -147,10 +147,7 @@ object Parser2 {
       else if (reader.eat("delay")) {
         val ruleName = reader.parseQName()
         reader.expect(":")
-        val clockName = reader.parseQName()
-        reader.expect(",")
-        val delayValue = reader.tryParseDouble()
-        rx = rx.addDelay(ruleName, clockName, delayValue)
+        rx = rx.addDelay(ruleName, parseExpr(reader))
       }
       else if (Set("int", "float", "bool", "dyn").contains(reader.current)) {
         var isDyn = false

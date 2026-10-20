@@ -150,7 +150,7 @@ object CytoscapeConverter {
       val ruleClass = if (allOnEdges.contains(ruleEdge)) "enable-rule" else "disable-rule"
 
       val delayText = rx.delays.get(ruleLabel) match {
-        case Some((clock, time)) => s"{$time}"
+        case Some(expr) => s"{${UpdateExpr.show(expr)}}"
         case None                => ""
       }
 

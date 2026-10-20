@@ -162,18 +162,8 @@ object RTAAPI {
           }
         }
 
-        if (current.clocks.nonEmpty) {
-          val delayedClockEnv = current.clock_env.map { case (c, v) => (c, v + 1.0) }
-          val nextTimeState = current.copy(clock_env = delayedClockEnv)
-          
-          val canTimePass = current.inits.forall(s => 
-            nextTimeState.invariants.get(s) match {
-              case Some(inv) => RxSemantics.evalCondition(inv, nextTimeState)
-              case None => true
-            }
-          )
-
-          if (canTimePass) {
+        if (RxSemantics.hasTime(current)) {
+          RxSemantics.advanceTimeBy(current, 1.0).foreach { nextTimeState =>
             val targetId = getId(nextTimeState)
             transitionsStr = s"""$sourceId --->|"delay(1)"| $targetId""" :: transitionsStr
             if (!visited.contains(nextTimeState)) {
@@ -185,7 +175,7 @@ object RTAAPI {
       }
        
       val nodeDefinitions = stateToId.map { case (state, id) =>
-        val clockValues = state.clock_env.map(kv => s"${kv._1.show}=${kv._2.toInt}").mkString(", ")
+        val clockValues = state.clock_env.filterNot(kv => RxSemantics.isDelaySlot(kv._1)).map(kv => s"${kv._1.show}=${kv._2.toInt}").mkString(", ")
         val label = s"${state.inits.mkString(", ")} <br/>($clockValues)"
         val style = if (state == root) s"\nstyle $id fill:#9ece6a,stroke:#333,stroke-width:2px" else ""
         s"""$id("$label")$style"""
@@ -267,28 +257,16 @@ object RTAAPI {
   def advanceTime(delayAmount: Double): String = {
     currentGraph match {
       case Some(currentState) =>
-        if (currentState.clocks.isEmpty || delayAmount <= 0) {
+        if (!RxSemantics.hasTime(currentState) || delayAmount <= 0) {
           generateSimulationJson(currentState, None)
         } else {
-          val delayedClockEnv = currentState.clock_env.map { case (c, v) => (c, v + delayAmount) }
-          val stateWithTime = currentState.copy(clock_env = delayedClockEnv)
-
-          val potentialNextState = RxSemantics.applyTimeouts(stateWithTime)
-
-          val allInvariantsHold = potentialNextState.inits.forall { s =>
-            potentialNextState.invariants.get(s) match {
-              
-              case Some(inv) => RxSemantics.evalCondition(inv, potentialNextState)
-              case None => true
-            }
-          }
-
-          if (allInvariantsHold) {
-            history = potentialNextState :: history
-            currentGraph = Some(potentialNextState)
-            generateSimulationJson(potentialNextState, None)
-          } else {
-            generateSimulationJson(currentState, None)
+          RxSemantics.advanceTimeBy(currentState, delayAmount) match {
+            case Some(potentialNextState) =>
+              history = potentialNextState :: history
+              currentGraph = Some(potentialNextState)
+              generateSimulationJson(potentialNextState, None)
+            case None =>
+              generateSimulationJson(currentState, None)
           }
         }
       case None => "{}"
@@ -592,7 +570,7 @@ object RTAAPI {
          val zoneStr = sanitizeLabel(showZoneCompact(displayZone))
          val varsStr = sanitizeLabel(key.vars.filterNot(_._1.n.contains("__return")).map(kv => s"${kv._1.show}=${kv._2.value}").mkString(", "))
          val pendingStr = sanitizeLabel(key.pending.map { case (edge, op, clock, target) =>
-            s"${edge._4.show}(${op})@${clock.show}=${target}"
+            s"${edge._4.show}(${op})⌛${target}"
          }.mkString(", "))
          
          val labelParts = List(
@@ -1051,7 +1029,7 @@ object RTAAPI {
         val zoneStr = sanitizeForMermaid(showZoneCompact(key.zone))
         val varsStr = sanitizeForMermaid(key.vars.filterNot(_._1.n.contains("__return")).map(kv => s"${kv._1.show}=${kv._2.value}").mkString(", "))
         val pendingStr = sanitizeForMermaid(key.pending.map { case (edge, op, clock, target) =>
-          s"${edge._4.show}(${op})@${clock.show}=${target}"
+          s"${edge._4.show}(${op})⌛${target}"
         }.mkString(", "))
         
         val labelParts = List(
@@ -1128,12 +1106,13 @@ object RTAAPI {
      val delayTransitionJson = if (RxSemantics.nextDelay(graph).nonEmpty) s"""{"label":"delay", "displayName":"⏱ delay", "isDelay": true}""" else ""
      val allEnabledTransitions = Seq(eventTransitionsJson, delayTransitionJson).filter(_.nonEmpty).mkString(",")
 
-     val clocksJson = graph.clock_env.map { case (n, v) => s""""${n.show}": $v""" }.mkString(",")
+     val clocksJson = graph.clock_env.filterNot(kv => RxSemantics.isDelaySlot(kv._1)).map { case (n, v) => s""""${n.show}": $v""" }.mkString(",")
      val valEnvJson = graph.val_env.map { case (n, v) => s""""${n.show}": ${runtimeValueToJson(v)}""" }.mkString(",")
 
-     val pendingJson = graph.pendingDelays.map { case (edge, op, clk, target) =>
+     val pendingJson = graph.pendingDelays.toList.sortBy(p => RxSemantics.remainingTime(p, graph)).map { p =>
+       val (edge, op, _, target) = p
        val lbl = edge._4.show
-       s"""{"label": "$lbl", "op": "$op", "clock": "${clk.show}", "target": $target}"""
+       s"""{"label": "$lbl", "op": "$op", "remaining": ${RxSemantics.remainingTime(p, graph)}, "duration": $target}"""
      }.mkString("[", ",", "]")
 
      val traversedJson = traversedEdge match {

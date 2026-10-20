@@ -94,7 +94,7 @@ function renderGlobalPanel(data, targetId) {
             let li = document.createElement('li');
             let color = p.op === 'on' ? '#2563EB' : '#DC2626';
             let opTxt = p.op === 'on' ? 'Ligar' : 'Desligar';
-            li.innerHTML = `<b style="color:${color}">${p.label} (${opTxt})</b> aos <b>${p.target.toFixed(2)}s</b> do relógio [${p.clock}]`;
+            li.innerHTML = `<b style="color:${color}">${p.label} (${opTxt})</b> daqui a <b>${p.remaining.toFixed(2)}s</b> (de ${p.duration.toFixed(2)}s)`;
             pendList.appendChild(li);
         });
         panelDiv.appendChild(pendList);

@@ -277,7 +277,7 @@ object AnalyseLTS:
           aux(next-st, done, nEdges, fired, probs, limit)
 
         case Some(st) => 
-          val more = if rx.clocks.nonEmpty then RxSemantics.nextEdgeSymbolic(st) else RxSemantics.nextEdge(st)
+          val more = if RxSemantics.hasTime(rx) then RxSemantics.nextEdgeSymbolic(st) else RxSemantics.nextEdge(st)
           val nEdges2 = more.size
           val newEdges = more.map(_._1)
           var incons = Set[String]()
@@ -418,7 +418,7 @@ object AnalyseLTS:
     if (d == Math.rint(d)) d.toLong.toString else BigDecimal(d).setScale(3, BigDecimal.RoundingMode.HALF_UP).bigDecimal.stripTrailingZeros.toPlainString
 
   private def timeSteps(rx: RxGraph): List[(String, RxGraph)] = {
-    if (rx.clocks.isEmpty) return Nil
+    if (!RxSemantics.hasTime(rx)) return Nil
     val conds = rx.edgeConditions.values.flatten.toList ++ rx.invariants.values
     val boundGaps = conds.flatMap(clockBounds(_, rx)).flatMap { case (c, k) =>
       val d = k - rx.clock_env.getOrElse(c, 0.0)

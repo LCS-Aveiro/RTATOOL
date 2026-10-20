@@ -5,8 +5,8 @@ clock t, g
 // --- CONFIGURAÇÃO DOS DELAYS ---
 // Usamos 'g' porque ele nunca reseta, garantindo que o delay 
 // de 2 segundos seja contado corretamente independente das transições.
-delay offA: g, 2
-delay onA: g, 3
+delay offA: 2
+delay onA: 3
 
 // --- INVARIANTES ---
 // Forçamos o sistema a sair de cada estado em no máximo 5 segundos

@@ -346,7 +346,7 @@ object UppaalConverter4 {
     // INSTANCIAR OS TIMERS NA SECÇÃO DO SYSTEM
     val delayedInstantiations = delayedHyperEdges.zipWithIndex.map { case (hEdge, idx) =>
       val (opType, triggerLbl, targetLbl, _, ruleLabel) = hEdge
-      val delayVal = rxGraph.delays(ruleLabel)._2.toInt // O UPPAAL só aceita Inteiros no tempo dos Timer Automata!
+      val delayVal = rta.backend.RxSemantics.delayDuration(ruleLabel, rxGraph).toInt // O UPPAAL só aceita Inteiros no tempo dos Timer Automata!
       val triggerId = labelToId.getOrElse(triggerLbl, -1)
       val effectType = if (opType == "on") 1 else 0
 

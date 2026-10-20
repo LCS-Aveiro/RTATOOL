@@ -78,7 +78,7 @@ object TraceGenerator {
     boundary {
       for (_ <- 0 until length) {
         val nextEdges = RxSemantics.nextEdge(current).toList
-        val canDelay = current.clocks.nonEmpty
+        val canDelay = RxSemantics.hasTime(current)
 
         if (nextEdges.isEmpty && !canDelay) {
           break()
