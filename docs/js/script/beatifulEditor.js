@@ -307,32 +307,17 @@ function createTransition() {
             placeholder: 'e.g.: t1 (leave empty for default)', 
             required: false 
         },
-        { 
-            label: 'Label:', 
-            placeholder: 'e.g.: insertCoin', 
+        {
+            label: 'Label:',
+            placeholder: 'e.g.: insertCoin',
             required: true,
-            suggestions: data.actions 
-        },
-        { 
-            label: 'Weight (P):', 
-            type: 'number', 
-            value: '1.0', 
-            required: true 
-        },
-        { 
-            label: 'Aggregation:', 
-            value: 'arith', 
-            required: false,
-            suggestions: ['arith', 'prod', 'max', 'min', 'geom']
+            suggestions: data.actions
         }
-    ], function(source, target, tId, label, weight, agg) {
-        let weightPart = `(${weight})`;
-        let aggPart = (agg && agg !== 'arith') ? ` ${agg}` : "";
-        
+    ], function(source, target, tId, label) {
         if (!tId || tId.trim() === "") {
-            appendToCode(`${source} ---> ${target}: ${label} ${weightPart}${aggPart}`);
+            appendToCode(`${source} ---> ${target}: ${label}`);
         } else {
-            appendToCode(`${source} -${tId}-> ${target}: ${label} ${weightPart}${aggPart}`);
+            appendToCode(`${source} -${tId}-> ${target}: ${label}`);
         }
     });
 }
@@ -348,24 +333,10 @@ function createInteraction(sourceLabel, symbol) {
             label: `'${sourceLabel}' will ${typeText.toLowerCase()}:`, 
             placeholder: 'Select target action...', 
             required: true,
-            suggestions: data.actions 
-        },
-        { 
-            label: 'Rule Weight (Δ):', 
-            type: 'number', 
-            value: '0.1', 
-            required: true 
-        },
-        { 
-            label: 'Aggregation:', 
-            value: 'arith', 
-            required: false,
-            suggestions: ['arith', 'prod', 'max', 'min', 'geom']
+            suggestions: data.actions
         }
-    ], function(targetLabel, weight, agg) {
-        let weightPart = `(${weight})`;
-        let aggPart = (agg && agg !== 'arith') ? ` ${agg}` : "";
-        appendToCode(`${sourceLabel} ${symbol} ${targetLabel} ${weightPart}${aggPart}`);
+    ], function(targetLabel) {
+        appendToCode(`${sourceLabel} ${symbol} ${targetLabel}`);
     });
 }
 

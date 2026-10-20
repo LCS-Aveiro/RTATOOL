@@ -220,6 +220,8 @@ flowchart TD
 
 A zona que daqui sai representa "todos os instantes em que, a partir deste estado, ainda posso fazer alguma coisa".
 
+> **Prioridade dos prazos:** para as transições **normais** (passos 5.2 a 5.10), cada relógio de Ω é ainda limitado **estritamente** pela sua duração (`d < duração`). No instante exato em que um pendente vence, a única coisa que pode acontecer é a transição `⏱` desse pendente (passo 5.11). É a mesma regra da simulação: quando um pendente chega a 0, o efeito aplica-se nesse instante, antes de qualquer outra transição.
+
 > **Nota:** o motor não cria nós "só de espera". A passagem de tempo é **absorvida** em cada transição. Cada sucessor representa "esperar um tempo qualquer permitido e depois disparar a transição".
 
 ### 5.2 Arestas candidatas
@@ -272,6 +274,8 @@ Para cada regra que disparou:
 
 Se a mesma aresta for ligada e desligada no mesmo passo, ganha o desligar.
 
+**Pendentes repetidos no mesmo instante:** se a regra já tem um pendente igual (mesma regra, mesmo efeito, mesma duração) criado **neste mesmo instante** (o relógio dele ainda está em 0), o novo pendente não é criado. Os dois venceriam ao mesmo tempo e fariam exatamente o mesmo, por isso o segundo não muda nada. Sem esta regra, um laço que dispara várias vezes sem o tempo passar (por exemplo `L0 ---> L0: e if (x == 3)` com uma regra com atraso) faria Ω crescer sem fim.
+
 ### 5.7 Atualizações e resets — `applyUpdatesFull` + `assign`
 
 As atualizações da aresta e das regras que dispararam são executadas por ordem. Cada atribuição a um relógio (mesmo dentro de `if` ou de uma função) é registada, e na zona é aplicada `assign(x, valor)`.
@@ -292,13 +296,17 @@ Se a zona de chegada não tiver nenhum valor compatível com a invariante do nov
 
 ### 5.11 Prazos de Ω — transições `timeout`
 
-Para cada pendente cujo relógio auxiliar pode chegar à duração, há uma transição especial:
-1. fixa o relógio auxiliar **exatamente** na duração;
-2. aplica o efeito da regra a `act` (liga ou desliga as arestas-alvo);
-3. retira a entrada de Ω e apaga o relógio auxiliar (`withoutClock`);
+Para cada **conjunto** de pendentes que pode vencer no mesmo instante, há uma transição especial:
+1. fixa os relógios auxiliares desse conjunto **exatamente** na sua duração, e os dos outros pendentes **abaixo** da sua;
+2. aplica de uma vez os efeitos de todas as regras do conjunto a `act` (se uma aresta for ligada e desligada ao mesmo tempo, ganha o desligar, como na simulação);
+3. retira essas entradas de Ω e apaga os seus relógios auxiliares (`withoutClock`);
 4. extrapola.
 
-O estado do modelo **não muda**. É uma transição "interna", com o id `timeout` e a etiqueta da regra, e na interface aparece como `⏱ regra`.
+Na maior parte dos casos o conjunto tem um só pendente. Quando dois pendentes vencem no mesmo instante, disparam **juntos**, como na simulação (`applyTimeouts`), e não aparece nenhum estado intermédio com só um deles aplicado.
+
+O estado do modelo **não muda**. É uma transição "interna", com o id `timeout` e a etiqueta da regra (ou `r1+r2` quando são várias), e na interface aparece como `⏱ regra`.
+
+Como as transições normais exigem `d < duração` (nota do passo 5.1), quando um relógio de Ω chega à sua duração só esta transição está disponível: o pendente dispara **antes** de qualquer outra coisa.
 
 ---
 
@@ -391,7 +399,7 @@ Zona à chegada de ambos (`x = d0 = 0`):
 (Repare-se nas células `(d0, x) ≤ 0` e `(x, d0) ≤ 0`: dizem que `d0 = x`. É uma **restrição de diferença**, e é por isso que se usa uma matriz e não só intervalos.)
 
 Sucessores:
-- `volta` (guarda `x ≤ 1`) → **S4**: volta para `A` com o pendente **ainda vivo**;
+- `volta` (guarda `x ≤ 1`, e `d0 < 2`) → **S4**: volta para `A` com o pendente **ainda vivo**;
 - `⏱ abre` (prazo `d0 = 2`) → **S5**: liga `sai`, apaga `d0`, fica `x = 2`.
 
 | Nó | Estado | Desligadas | Ω | Zona à chegada | Depois do tempo |
@@ -402,19 +410,19 @@ Em S5, `sai` está ligada e a guarda `x >= 3 OR n >= 2` (com n = 1, só conta o 
 
 ### S4 → S8 — o pendente sobrevive e acumula
 
-Em **S4** (`A`, com `(abre, d0, 2)` ainda pendente), a zona à chegada é `0 ≤ x = d0 ≤ 1`. Se `entra` disparar outra vez antes de `abre` vencer, é criado **um segundo pendente**, com outro relógio auxiliar. Resultado: **S8**, com dois pendentes.
+Em **S4** (`A`, com `(abre, d0, 2)` ainda pendente), a zona à chegada é `0 ≤ x = d0 ≤ 1`. Se `entra` disparar outra vez **antes** de `abre` vencer (`x ≥ 1` e `d0 < 2`), é criado **um segundo pendente**, com outro relógio auxiliar. Resultado: **S8**, com dois pendentes.
 
 **S8**: estado B, n = 2, Ω = (abre, d0, 2), (abre, d1, 2). Zona à chegada:
 
 |   | 0 | d0 | d1 | x |
 |---|---|---|---|---|
 | **0** | ≤ 0 | ≤ −1 | ≤ 0 | ≤ 0 |
-| **d0** | ≤ 2 | ≤ 0 | ≤ 2 | ≤ 2 |
+| **d0** | < 2 | ≤ 0 | < 2 | < 2 |
 | **d1** | ≤ 0 | ≤ −1 | ≤ 0 | ≤ 0 |
 | **x** | ≤ 0 | ≤ −1 | ≤ 0 | ≤ 0 |
 
 Lê-se assim:
-- o primeiro pendente já correu entre 1 e 2 (`1 ≤ d0 ≤ 2`);
+- o primeiro pendente já correu pelo menos 1 e **menos** de 2 (`1 ≤ d0 < 2`; o `<` vem da prioridade dos prazos);
 - o segundo acabou de começar (`d1 = x = 0`).
 
 Cada entrada de Ω traz o seu relógio, e a zona passa de 2×2 para 4×4.
@@ -423,14 +431,14 @@ Cada entrada de Ω traz o seu relógio, e a zona passa de 2×2 para 4×4.
 
 Em **S17** (B, n = 2, `volta` desligada, Ω vazio), a zona depois do tempo é `2 ≤ x ≤ 5`, e a guarda de `sai` é `x >= 3 OR n >= 2`:
 
-- lado `x >= 3` → zona `3 ≤ x ≤ 5` → **S26**;
-- lado `n >= 2` → como n = 2 é verdadeiro, a zona inteira `2 ≤ x ≤ 5` → **S27**.
+- lado `x >= 3` → zona `3 ≤ x ≤ 5` → **S25**;
+- lado `n >= 2` → como n = 2 é verdadeiro, a zona inteira `2 ≤ x ≤ 5` → **S26**.
 
-As duas zonas **sobrepõem-se** (S26 está contida em S27), mas são dois nós diferentes. É o preço de representar um `OR` exatamente.
+As duas zonas **sobrepõem-se** (S25 está contida em S26), mas são dois nós diferentes. É o preço de representar um `OR` exatamente.
 
 ### Visão de conjunto
 
-O grafo completo do exemplo tem **150 estados simbólicos** (chega a haver 3 pendentes em Ω ao mesmo tempo), distribuídos por apenas **3 estados do modelo**. A vista **"Por estado"** do *Ver Zonas* mostra precisamente isso: 3 nós com o número de zonas de cada um.
+O grafo completo do exemplo tem **62 estados simbólicos** (chega a haver 2 pendentes em Ω ao mesmo tempo), distribuídos por apenas **3 estados do modelo**. A vista **"Por estado"** do *Ver Zonas* mostra precisamente isso: 3 nós com o número de zonas de cada um.
 
 ---
 
@@ -474,8 +482,8 @@ Cada combinação diferente de (estado, variáveis, `act`, Ω, zona) é um nó. 
 | Causa | Exemplo | Efeito |
 |---|---|---|
 | **Regras com atraso que voltam a disparar antes de vencer** | S4 → S8: dois `abre` pendentes ao mesmo tempo | cada pendente acrescenta um relógio à zona; mais relógios dão muito mais zonas diferentes |
-| **O mesmo Ω com nomes de relógio diferentes** | S19 e S22 são iguais em tudo exceto em `d0` contra `d1` | nós "gémeos" que o motor não junta |
-| **Guardas com `OR`** | S26 e S27 | um sucessor por disjunto, mesmo que se sobreponham |
+| **O mesmo Ω com nomes de relógio diferentes** | S22 e S47 (ambos em `A`, tudo ligado, um pendente `abre`, a mesma zona) só diferem em `d1` contra `d0`; há 8 pares destes nos 62 estados | nós "gémeos" que o motor não junta |
+| **Guardas com `OR`** | S25 e S26 | um sucessor por disjunto, mesmo que se sobreponham |
 | **Regras com guarda de relógio** | S1 e S2 | até `2ᵏ` sucessores por transição |
 | **Variáveis** | `n` = 0, 1, 2 | multiplica tudo pelo número de valores possíveis |
 | **Constantes grandes** | `x <= 72` no exemploB | a extrapolação só junta zonas acima da constante máxima |
@@ -500,7 +508,7 @@ No **exemploB** da apresentação, a primeira causa domina. Cada passagem por `R
 2. **Estado simbólico:** estado + variáveis + **arestas ligadas** + **Ω** + **zona**. É a chave `ZoneStateKey`.
 3. **Zona:** matriz de diferenças entre relógios (DBM), sempre na forma canónica. Cada entrada de Ω tem o seu relógio dentro da zona.
 4. **Sucessores** (`nextEdgeSymbolic`):
-   - deixar o tempo passar (invariante, prazos de Ω);
+   - deixar o tempo passar (invariante, prazos de Ω), com os prazos a terem prioridade sobre as outras transições;
    - guarda ∩ zona (`OR` dá várias zonas);
    - cascata de regras;
    - regras com guarda de relógio partem a zona;

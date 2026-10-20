@@ -171,7 +171,6 @@ function applyTranslations() {
     });
 
     $('#pdlFormula').attr('placeholder', i18n[currentLang]['pdl_placeholder']);
-    $('#trainingArea').attr('placeholder', i18n[currentLang]['training_ph']);
 
     if (typeof updateExampleDescription === "function") {
         updateExampleDescription();

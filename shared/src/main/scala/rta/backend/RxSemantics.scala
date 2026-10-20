@@ -571,8 +571,10 @@ object RxSemantics {
           if (rx.delays.contains(ruleLabel)) {
             val delayVal = delayDuration(ruleLabel, rx)
             def slot() = freshSlot(rx.pendingDelays.map(_._3) ++ newPending.map(_._3))
-            if (isOn) newPending += ((hyperEdge, "on", slot(), delayVal))
-            if (isOff) newPending += ((hyperEdge, "off", slot(), delayVal))
+            def alreadyPending(op: String) = rx.pendingDelays.exists(q =>
+              q._1 == hyperEdge && q._2 == op && q._4 == delayVal && Math.abs(rx.clock_env.getOrElse(q._3, -1.0)) < EPSILON)
+            if (isOn && !alreadyPending("on")) newPending += ((hyperEdge, "on", slot(), delayVal))
+            if (isOff && !alreadyPending("off")) newPending += ((hyperEdge, "off", slot(), delayVal))
           } else {
             if (isOn) toActivate = toActivate ++ rx.lbls.getOrElse(targetLabel, Set.empty)
             if (isOff) toDeactivate = toDeactivate ++ rx.lbls.getOrElse(targetLabel, Set.empty)
@@ -626,14 +628,19 @@ object RxSemantics {
         }
     }
 
+    val actionZone: Option[DBM.Zone] = rx.pendingDelays.foldLeft(Option(rx.zone)) { case (zOpt, (_, _, clock, target)) =>
+      zOpt.flatMap(z => if (z.clocks.contains(clock)) z.constrain(clock, DBM.ZERO_CLOCK, target, isStrict = true) else Some(z))
+    }
+
     val transitions = for {
+      az <- actionZone.toList
       st <- rx.inits.toList
       (st2, tid, lbl) <- rx.edg.getOrElse(st, Set.empty).toList
       edge = (st, st2, tid, lbl)
       if rx.act.contains(edge)
       guardZone <- (rx.edgeConditions.getOrElse(edge, None) match {
-        case Some(cond) => intersectAll(cond, rx.zone, rx)
-        case None => List(rx.zone)
+        case Some(cond) => intersectAll(cond, az, rx)
+        case None => List(az)
       })
       triggeredHyperEdges = from(edge, rx).filter(rx.act.contains).toList.sortBy(_.toString)
       (finalZone, firedHEs) <- splitZones(triggeredHyperEdges, guardZone)
@@ -653,8 +660,11 @@ object RxSemantics {
         if (rx.delays.contains(ruleLabel)) {
           val delayVal = delayDuration(ruleLabel, rx)
           def slot() = freshSlot(rx.pendingDelays.map(_._3) ++ newPending.map(_._3))
-          if (isOn) newPending += ((hyperEdge, "on", slot(), delayVal))
-          if (isOff) newPending += ((hyperEdge, "off", slot(), delayVal))
+          def alreadyPending(op: String) = rx.pendingDelays.exists(q =>
+            q._1 == hyperEdge && q._2 == op && q._4 == delayVal &&
+              finalZone.matrix.get((q._3, DBM.ZERO_CLOCK)).exists(_.value <= 0))
+          if (isOn && !alreadyPending("on")) newPending += ((hyperEdge, "on", slot(), delayVal))
+          if (isOff && !alreadyPending("off")) newPending += ((hyperEdge, "off", slot(), delayVal))
         } else {
           if (isOn) toAct = toAct ++ rx.lbls.getOrElse(targetLabel, Set.empty)
           if (isOff) toDeact = toDeact ++ rx.lbls.getOrElse(targetLabel, Set.empty)
@@ -687,29 +697,32 @@ object RxSemantics {
       })
     }.toSet
 
-    val timeoutTransitions = for {
-      pending <- rx.pendingDelays
-      (hyperEdge, opType, clock, targetVal) = pending
-      if rx.zone.clocks.contains(clock)
-      maturedZoneOpt = rx.zone.constrain(DBM.ZERO_CLOCK, clock, -targetVal, isStrict = false)
-      if maturedZoneOpt.isDefined
-    } yield {
-      val remaining = rx.pendingDelays - pending
-      val z0 = maturedZoneOpt.get
-      val z1 = z0.withoutClock(clock)
-      val targetLabel = hyperEdge._2
-      val affectedEdges = rx.lbls.getOrElse(targetLabel, Set.empty)
+    val timedPending = rx.pendingDelays.toList.filter(p => rx.zone.clocks.contains(p._3)).sortBy(_.toString)
 
-      val newAct = if (opType == "on") rx.act ++ affectedEdges else rx.act -- affectedEdges
+    def deadlineGroups(z: DBM.Zone, rest: List[(Edge, String, QName, Double)], matured: List[(Edge, String, QName, Double)]): List[(DBM.Zone, List[(Edge, String, QName, Double)])] =
+      rest match {
+        case Nil => if (matured.nonEmpty) List((z, matured.reverse)) else Nil
+        case (p @ (_, _, clock, target)) :: tail =>
+          z.constrain(DBM.ZERO_CLOCK, clock, -target, isStrict = false).toList.flatMap(za => deadlineGroups(za, tail, p :: matured)) ++
+            z.constrain(clock, DBM.ZERO_CLOCK, target, isStrict = true).toList.flatMap(zb => deadlineGroups(zb, tail, matured))
+      }
+
+    val timeoutTransitions = for {
+      (zoneAtDeadline, matured) <- deadlineGroups(rx.zone, timedPending, Nil)
+    } yield {
+      val maturedSet = matured.toSet
+      val toAct = matured.filter(_._2 == "on").flatMap(p => rx.lbls.getOrElse(p._1._2, Set.empty)).toSet
+      val toDeact = matured.filter(_._2 == "off").flatMap(p => rx.lbls.getOrElse(p._1._2, Set.empty)).toSet
+      val z1 = matured.foldLeft(zoneAtDeadline)((z, p) => z.withoutClock(p._3))
 
       val next = rx.copy(
-        act = newAct,
-        clock_env = rx.clock_env - clock,
-        pendingDelays = remaining
+        act = (rx.act ++ toAct) -- toDeact,
+        clock_env = rx.clock_env -- matured.map(_._3),
+        pendingDelays = rx.pendingDelays -- maturedSet
       )
       val nextRx = next.copy(zone = z1.extrapolate(effectiveMax(next)))
 
-      val ruleLabel = hyperEdge._4
+      val ruleLabel = QName(List(matured.map(_._1._4.show).distinct.sorted.mkString("+")))
       val pseudoEdge: Edge = (
         rx.inits.headOption.getOrElse(QName(Nil)),
         rx.inits.headOption.getOrElse(QName(Nil)),
@@ -723,9 +736,7 @@ object RxSemantics {
   }
 
   def nextEdge(rx0: RxGraph): Set[(Edge, RxGraph)] = {
-    val rxTimeOpt = advanceTimeZone(rx0)
-    if (rxTimeOpt.isEmpty) return Set.empty
-    val rx = rxTimeOpt.get
+    val rx = advanceTimeZone(rx0).getOrElse(rx0)
 
     val transitions = for {
       st <- rx.inits
@@ -735,11 +746,11 @@ object RxSemantics {
     } yield {
       val condOpt = rx.edgeConditions.getOrElse(edge, None)
       val zoneAfterGuard = condOpt match {
-        case Some(cond) => intersectAll(cond, rx.zone, rx).headOption
+        case Some(cond) => intersectAll(cond, rx.zone, rx).headOption.orElse(Some(rx.zone))
         case None => Some(rx.zone)
       }
 
-      if (zoneAfterGuard.isDefined && condOpt.forall(c => evalCondition(c, rx))) {
+      if (condOpt.forall(c => evalCondition(c, rx))) {
         val (toAct, toDeact, hStmts, relativePending) = getHyperEdgeEffects(edge, rx)
         val currentAct = (rx.act ++ toAct) -- toDeact
         val allStmts = rx.edgeUpdates.getOrElse(edge, Nil) ++ hStmts
@@ -762,10 +773,7 @@ object RxSemantics {
     }
 
     transitions.flatten.filter { case (_, nextRx) =>
-      nextRx.inits.forall(s => nextRx.invariants.get(s) match {
-        case Some(inv) => intersectAll(inv, nextRx.zone, nextRx).nonEmpty
-        case None => true
-      })
+      nextRx.inits.forall(s => checkInvariant(s, nextRx))
     }
   }
 

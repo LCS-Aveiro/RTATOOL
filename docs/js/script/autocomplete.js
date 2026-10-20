@@ -2,11 +2,9 @@
 (function () {
   var KEYWORDS = [
     "name", "init", "aut", "int", "float", "bool", "dyn",
-    "training", "laplace", "aggregation",
-    "calibration", "proportional", "normalize", "equal",
-    "paradigm", "fuzzy", "probabilistic",
-    "if", "then", "else", "disabled",
-    "arith", "prod", "max", "min", "geom",
+    "clock", "inv", "delay",
+    "if", "then", "disabled",
+    "floor", "ceil", "round", "abs", "sqrt", "pow", "min", "max", "mod", "clamp", "random",
     "AND", "OR", "true", "false", "return", "print", "foreach", "in",
     "def"
   ];
