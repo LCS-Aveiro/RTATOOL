@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Do código às zonas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@500;600;700&display=swap">
+<style>
+:root {
+  --bg: #f3f5f8; --panel: #ffffff; --ink: #18202b; --muted: #6a7586; --line: #d3dae4; --soft: #eef2f7;
+  --accent: #1f5fbf; --accent-soft: #dce8fb; --time: #c46f0c; --time-soft: #fbecd9; --off: #c03b3b; --ok: #2c7a4b;
+  --font: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141b; --panel: #161d27; --ink: #e6ebf2; --muted: #95a1b2; --line: #2c3746; --soft: #1c2532;
+    --accent: #6ea4f5; --accent-soft: #1c2f4d; --time: #f0a64a; --time-soft: #3a2a14; --off: #f07a7a; --ok: #6fcf97; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f141b; --panel: #161d27; --ink: #e6ebf2; --muted: #95a1b2; --line: #2c3746; --soft: #1c2532;
+  --accent: #6ea4f5; --accent-soft: #1c2f4d; --time: #f0a64a; --time-soft: #3a2a14; --off: #f07a7a; --ok: #6fcf97; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font);
+  padding: 16px max(16px, env(safe-area-inset-right, 0px)) 20px max(16px, env(safe-area-inset-left, 0px));
+}
+.wrap { max-width: 1240px; margin: 0 auto; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.caption { font-size: 1.35rem; font-weight: 700; min-height: 1.6em; }
+.caption .n { display: inline-block; min-width: 1.7em; height: 1.7em; line-height: 1.7em; text-align: center; border-radius: 50%; background: var(--accent); color: var(--panel); font-size: 0.9rem; margin-right: 10px; vertical-align: 2px; }
+.btns { display: flex; gap: 8px; }
+.btns button { font: 600 0.95rem var(--font); border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+.btns button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+.btns button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stage { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+svg { display: block; width: 100%; height: auto; user-select: none; }
+
+.box { fill: var(--soft); stroke: var(--line); stroke-width: 1.5; transition: stroke 0.3s, fill 0.3s; }
+.box.live { stroke: var(--accent); stroke-width: 2.5; fill: var(--accent-soft); }
+.boxt { font: 700 16px var(--font); fill: var(--ink); }
+.boxs { font: 500 12.5px var(--font); fill: var(--muted); }
+.code { font: 400 14.5px var(--mono); fill: var(--ink); transition: opacity 0.35s; }
+.code.hide { opacity: 0; }
+.code.used { fill: var(--muted); }
+.code .kw { fill: var(--accent); font-weight: 600; }
+.code .ck { fill: var(--time); }
+.pipe { fill: none; stroke: var(--line); stroke-width: 2; stroke-dasharray: 4 5; }
+.chip rect { fill: var(--panel); stroke: var(--accent); stroke-width: 1.3; }
+.chip text { font: 500 13px var(--mono); fill: var(--ink); }
+.chip.t rect { stroke: var(--time); fill: var(--time-soft); }
+.chip { opacity: 0; }
+.chip.on { opacity: 1; }
+.fly { font: 600 14px var(--mono); fill: var(--accent); }
+.dot { fill: var(--accent); }
+.gear { transform-box: fill-box; transform-origin: center; }
+.gear.spin { animation: spin 1.6s linear infinite; }
+.gear path { fill: none; stroke: var(--accent); stroke-width: 3; }
+.motorlbl { font: 600 15px var(--mono); fill: var(--accent); }
+
+.node { opacity: 0; }
+.node.on { opacity: 1; }
+.node rect { fill: var(--panel); stroke: var(--line); stroke-width: 1.8; transition: stroke 0.25s, fill 0.25s, stroke-width 0.25s; }
+.node.cur rect { stroke: var(--accent); stroke-width: 3.5; fill: var(--accent-soft); }
+.node.dead rect { stroke: var(--off); stroke-width: 2.5; }
+.node .nm { font: 700 15px var(--font); fill: var(--ink); }
+.node .z { font: 400 12.5px var(--mono); fill: var(--muted); }
+.node .pd { font: 600 12.5px var(--mono); fill: var(--time); }
+.node .ab { font: 600 12.5px var(--mono); fill: var(--off); }
+.edge path { fill: none; stroke: var(--muted); stroke-width: 2; }
+.edge.t path { stroke: var(--time); }
+.edge text { font: 600 12.5px var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 5px; stroke-linejoin: round; }
+.edge.t text { fill: var(--time); }
+.edge { opacity: 0; }
+.edge.on { opacity: 1; }
+.edge.flash path { stroke: var(--accent); stroke-width: 3.5; }
+.badge rect { fill: var(--ok); }
+.badge text { font: 700 16px var(--font); fill: var(--panel); }
+.badge { opacity: 0; transition: opacity 0.5s; }
+.badge.on { opacity: 1; }
+.legend text { font: 500 12.5px var(--font); fill: var(--muted); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .gear.spin { animation: none; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top">
+    <div class="caption" id="cap" aria-live="polite"></div>
+    <div class="btns">
+      <button type="button" id="play" class="primary">❚❚ Pausar</button>
+      <button type="button" id="again">↺ Recomeçar</button>
+    </div>
+  </div>
+  <div class="stage">
+    <svg viewBox="0 0 1200 640" id="svg" role="img" aria-label="Animação: código, parser, motor e grafo de zonas">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"></path>
+        </marker>
+      </defs>
+
+      <rect class="box" id="bCode" x="16" y="40" width="290" height="390" rx="10"></rect>
+      <text class="boxt" x="32" y="68">Código</text>
+      <g id="codeLines"></g>
+
+      <path class="pipe" d="M306,95 L340,95" marker-end="url(#arr)"></path>
+      <rect class="box" id="bParser" x="345" y="40" width="330" height="110" rx="10"></rect>
+      <text class="boxt" x="510" y="88" text-anchor="middle">Parser</text>
+      <text class="boxs" x="510" y="110" text-anchor="middle">lê o texto</text>
+
+      <path class="pipe" d="M510,150 L510,180" marker-end="url(#arr)"></path>
+      <rect class="box" id="bGraph" x="345" y="185" width="330" height="270" rx="10"></rect>
+      <text class="boxt" x="361" y="212">RxGraph</text>
+      <g id="chips"></g>
+
+      <path class="pipe" d="M510,455 L510,485" marker-end="url(#arr)"></path>
+      <rect class="box" id="bMotor" x="345" y="490" width="330" height="120" rx="10"></rect>
+      <g transform="translate(395,550)"><g class="gear" id="gear">
+        <path d="M0,-22 L0,-14 M0,22 L0,14 M-22,0 L-14,0 M22,0 L14,0 M-15.5,-15.5 L-10,-10 M15.5,15.5 L10,10 M-15.5,15.5 L-10,10 M15.5,-15.5 L10,-10"></path>
+        <circle r="12" fill="none" stroke="var(--accent)" stroke-width="3"></circle>
+      </g></g>
+      <text class="boxt" x="435" y="545">Motor</text>
+      <text class="motorlbl" id="motorLbl" x="435" y="570"></text>
+
+      <path class="pipe" d="M675,550 L700,550" marker-end="url(#arr)"></path>
+      <g id="edges"></g>
+      <g id="nodes"></g>
+      <g id="fx"></g>
+
+      <g class="badge" id="badge"><rect x="905" y="20" width="270" height="36" rx="18"></rect><text x="1040" y="44" text-anchor="middle">9 zonas · 10 transições</text></g>
+      <g class="legend" transform="translate(20,470)">
+        <line x1="0" y1="-4" x2="22" y2="-4" stroke="var(--muted)" stroke-width="2"></line><text x="28" y="0">transição</text>
+        <line x1="0" y1="20" x2="22" y2="20" stroke="var(--time)" stroke-width="2"></line><text x="28" y="24">⏱ o atraso chegou ao fim</text>
+        <text x="0" y="48" fill="var(--time)">⏳ atraso a contar</text>
+        <text x="0" y="72" fill="var(--off)">ab✕ transição ab desligada</text>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const NS = "http://www.w3.org/2000/svg";
+  const $ = (id) => document.getElementById(id);
+  function mk(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  const CODE = ["name simple", "", "init a", "clock x", "inv a: x<=3", "inv b: x<=3", "",
+    "a ---> b: ab if (x>=1)", "  then { x':=0 }", "b ---> a: ba x':=0", "", "ba --! ab: off", "delay off: 2.0"];
+  const LY = (i) => 100 + i * 24;
+  const codeEls = CODE.map((line, i) => {
+    const t = mk("text", { x: 34, y: LY(i), class: "code hide" }, $("codeLines"));
+    t.innerHTML = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/\b(init|clock|inv|if|then|delay|name)\b/g, '<tspan class="kw">$1</tspan>')
+      .replace(/\bx\b/g, '<tspan class="ck">x</tspan>');
+    return t;
+  });
+
+  const GROUPS = [
+    { lines: [2], chip: "início: a" },
+    { lines: [3], chip: "relógio x" },
+    { lines: [4, 5], chip: "a, b: x ≤ 3" },
+    { lines: [7, 8], chip: "a → b  ab  (x ≥ 1)" },
+    { lines: [9], chip: "b → a  ba" },
+    { lines: [11], chip: "ba desliga ab", t: true },
+    { lines: [12], chip: "⏳ atraso de 2", t: true }
+  ];
+  const chipEls = GROUPS.map((g, i) => {
+    const c = mk("g", { class: "chip" + (g.t ? " t" : "") }, $("chips"));
+    c.style.transform = "translate(365px," + (228 + i * 31) + "px)";
+    mk("rect", { x: 0, y: 0, width: 290, height: 25, rx: 12.5 }, c);
+    mk("text", { x: 14, y: 17 }, c).textContent = g.chip;
+    return c;
+  });
+
+  const NW = 132, NH = 58;
+  const N = {
+    S0: { x: 790, y: 70, st: "a", z: "0 ≤ x ≤ 3" },
+    S1: { x: 790, y: 190, st: "b", z: "0 ≤ x ≤ 3" },
+    S2: { x: 790, y: 310, st: "a", z: "0 ≤ x ≤ 2", p: true },
+    S4: { x: 960, y: 310, st: "b", z: "0 ≤ x ≤ 1", p: true },
+    S5: { x: 960, y: 430, st: "a", z: "0 ≤ x ≤ 1", p: "⏳⏳" },
+    S6: { x: 1120, y: 430, st: "b", z: "0 < x ≤ 3", off: true },
+    S3: { x: 790, y: 550, st: "a", z: "2 ≤ x ≤ 3", off: true },
+    S7: { x: 960, y: 550, st: "a", z: "0 < x ≤ 2", p: true, off: true },
+    S8: { x: 1120, y: 550, st: "a", z: "0 ≤ x ≤ 2", p: true, off: true }
+  };
+  const E = {
+    e01: ["S0", "S1", "ab"], e12: ["S1", "S2", "ba"], e23: ["S2", "S3", "⏱", 1], e24: ["S2", "S4", "ab"],
+    e45: ["S4", "S5", "ba"], e46: ["S4", "S6", "⏱", 1], e57: ["S5", "S7", "⏱", 1], e68: ["S6", "S8", "ba"],
+    e73: ["S7", "S3", "⏱", 1], e83: ["S8", "S3", "⏱", 1, 1]
+  };
+  function clip(a, b) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const s = Math.min(dx ? (NW / 2) / Math.abs(dx) : Infinity, dy ? (NH / 2) / Math.abs(dy) : Infinity);
+    return [a.x + dx * s, a.y + dy * s];
+  }
+  const edgeEls = {};
+  for (const id in E) {
+    const [a, b, l, t, curve] = E[id], A = N[a], B = N[b];
+    const g = mk("g", { class: "edge" + (t ? " t" : "") }, $("edges"));
+    let d, lx, ly, anchor = "middle";
+    if (curve) {
+      d = "M" + A.x + "," + (A.y + NH / 2) + " C" + A.x + ",632 " + (B.x + 30) + ",632 " + (B.x + 30) + "," + (B.y + NH / 2 + 2);
+      lx = (A.x + B.x) / 2 + 15; ly = 625;
+    } else {
+      const p = clip(A, B), q = clip(B, A);
+      d = "M" + p[0] + "," + p[1] + " L" + q[0] + "," + q[1];
+      lx = (p[0] + q[0]) / 2; ly = (p[1] + q[1]) / 2 + 4;
+      if (p[0] === q[0]) { lx += 8; anchor = "start"; } else if (p[1] === q[1]) ly -= 9;
+    }
+    const path = mk("path", { d: d, "marker-end": "url(#arr)" }, g);
+    mk("text", { x: lx, y: ly, "text-anchor": anchor }, g).textContent = l;
+    edgeEls[id] = { g, path };
+  }
+  const nodeEls = {};
+  for (const id in N) {
+    const n = N[id];
+    const g = mk("g", { class: "node" }, $("nodes"));
+    g.style.transform = "translate(" + n.x + "px," + n.y + "px)";
+    mk("rect", { x: -NW / 2, y: -NH / 2, width: NW, height: NH, rx: 8 }, g);
+    mk("text", { x: -NW / 2 + 10, y: -6, class: "nm" }, g).textContent = id + " · " + n.st;
+    mk("text", { x: -NW / 2 + 10, y: 17, class: "z" }, g).textContent = n.z;
+    if (n.p) mk("text", { x: NW / 2 - 8, y: -6, class: "pd", "text-anchor": "end" }, g).textContent = n.p === true ? "⏳" : n.p;
+    if (n.off) mk("text", { x: NW / 2 - 8, y: n.p ? 17 : -6, class: "ab", "text-anchor": "end" }, g).textContent = "ab✕";
+    nodeEls[id] = g;
+  }
+
+  const MOTOR = { x: 395, y: 550 };
+  const EXPLORE = [
+    { cur: "S0", out: [["e01", "S1"]] },
+    { cur: "S1", out: [["e12", "S2"]] },
+    { cur: "S2", out: [["e23", "S3"], ["e24", "S4"]] },
+    { cur: "S3", out: [], dead: true },
+    { cur: "S4", out: [["e45", "S5"], ["e46", "S6"]] },
+    { cur: "S5", out: [["e57", "S7"]] },
+    { cur: "S6", out: [["e68", "S8"]] },
+    { cur: "S7", out: [["e73", null]] },
+    { cur: "S8", out: [["e83", null]] }
+  ];
+
+  let run = 0, paused = false;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function sleep(ms) {
+    const my = run;
+    return new Promise((res, rej) => {
+      let left = ms, t0 = performance.now();
+      (function tick() {
+        if (my !== run) return rej("stop");
+        const now = performance.now();
+        if (!paused) left -= now - t0;
+        t0 = now;
+        if (left <= 0) res(); else requestAnimationFrame(tick);
+      })();
+    });
+  }
+  function anim(el, frames, ms) {
+    if (reduce) return sleep(30);
+    const a = el.animate(frames, { duration: ms, easing: "cubic-bezier(.4,0,.2,1)" });
+    if (paused) a.pause();
+    return sleep(ms);
+  }
+  function caption(n, text) { $("cap").innerHTML = '<span class="n">' + n + "</span>" + text; }
+  function live(id, on) { $(id).classList.toggle("live", on); }
+
+  async function flyText(text, x1, y1, x2, y2, ms) {
+    const g = mk("g", {}, $("fx"));
+    g.style.transform = "translate(" + x2 + "px," + y2 + "px)";
+    g.style.opacity = "0";
+    mk("text", { class: "fly", x: 0, y: 0 }, g).textContent = text;
+    try {
+      await anim(g, [{ transform: "translate(" + x1 + "px," + y1 + "px)", opacity: 1 }, { transform: "translate(" + x2 + "px," + y2 + "px) scale(0.4)", opacity: 0 }], ms);
+    } finally { g.remove(); }
+  }
+  async function dot(x1, y1, x2, y2, ms) {
+    const c = mk("circle", { class: "dot", r: 7, cx: 0, cy: 0 }, $("fx"));
+    c.style.opacity = "0";
+    try {
+      await anim(c, [{ transform: "translate(" + x1 + "px," + y1 + "px)", opacity: 1 }, { transform: "translate(" + x2 + "px," + y2 + "px)", opacity: 1 }], ms);
+    } finally { c.remove(); }
+  }
+  async function popNode(id) {
+    const n = N[id], g = nodeEls[id];
+    g.classList.add("on");
+    await anim(g, [{ transform: "translate(" + MOTOR.x + "px," + MOTOR.y + "px) scale(0.2)", opacity: 0 }, { transform: "translate(" + n.x + "px," + n.y + "px) scale(1)", opacity: 1 }], 650);
+  }
+  async function drawEdge(id) {
+    const e = edgeEls[id], len = e.path.getTotalLength();
+    e.g.classList.add("on", "flash");
+    await anim(e.path, [{ strokeDasharray: len, strokeDashoffset: len }, { strokeDasharray: len, strokeDashoffset: 0 }], 550);
+    await sleep(450);
+    e.g.classList.remove("flash");
+  }
+
+  function reset() {
+    run++;
+    document.getAnimations().forEach((a) => { if (a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest("svg")) a.cancel(); });
+    $("fx").innerHTML = "";
+    codeEls.forEach((c) => { c.classList.add("hide"); c.classList.remove("used"); });
+    chipEls.forEach((c) => c.classList.remove("on"));
+    Object.values(nodeEls).forEach((g) => g.classList.remove("on", "cur", "dead"));
+    Object.values(edgeEls).forEach((e) => e.g.classList.remove("on", "flash"));
+    ["bCode", "bParser", "bGraph", "bMotor"].forEach((b) => live(b, false));
+    $("gear").classList.remove("spin");
+    $("motorLbl").textContent = "";
+    $("badge").classList.remove("on");
+  }
+
+  async function story() {
+    caption(1, "O modelo é só texto");
+    live("bCode", true);
+    for (const c of codeEls) { c.classList.remove("hide"); await sleep(110); }
+    await sleep(900);
+    live("bCode", false);
+
+    caption(2, "O parser lê cada linha e monta o RxGraph");
+    for (let i = 0; i < GROUPS.length; i++) {
+      const g = GROUPS[i];
+      live("bParser", true);
+      g.lines.forEach((l) => codeEls[l].classList.add("used"));
+      await Promise.all(g.lines.map((l) => flyText(CODE[l].trim(), 34, LY(l), 470, 95, 700)));
+      live("bParser", false);
+      live("bGraph", true);
+      chipEls[i].classList.add("on");
+      await anim(chipEls[i], [{ opacity: 0, transform: "translate(510px,160px) scale(0.3)" }, { opacity: 1, transform: "translate(365px," + (228 + i * 31) + "px) scale(1)" }], 450);
+      await sleep(250);
+      live("bGraph", false);
+    }
+    await sleep(500);
+
+    caption(3, "O motor recebe o RxGraph e começa no estado inicial");
+    live("bGraph", true);
+    await dot(510, 440, 510, 500, 500);
+    live("bGraph", false);
+    live("bMotor", true);
+    $("gear").classList.add("spin");
+    await sleep(400);
+    await popNode("S0");
+    await sleep(600);
+
+    caption(4, "O motor explora: cada zona gera as seguintes");
+    for (const step of EXPLORE) {
+      const cur = nodeEls[step.cur];
+      cur.classList.add("cur");
+      $("motorLbl").textContent = "a explorar " + step.cur;
+      await dot(MOTOR.x + 30, MOTOR.y, N[step.cur].x - NW / 2, N[step.cur].y, 450);
+      await sleep(350);
+      if (step.dead) {
+        cur.classList.add("dead");
+        $("motorLbl").textContent = step.cur + ": sem saída";
+        await sleep(1100);
+      }
+      for (const [eid, nid] of step.out) {
+        if (nid) { popNode(nid).catch(() => {}); await sleep(250); }
+        await drawEdge(eid);
+      }
+      if (step.out.length && !step.out.some((o) => o[1])) {
+        $("motorLbl").textContent = step.cur + " → S3 (já existe)";
+        await sleep(900);
+      }
+      await sleep(300);
+      cur.classList.remove("cur");
+    }
+
+    caption(5, "Fila vazia: o grafo de zonas está completo");
+    $("gear").classList.remove("spin");
+    $("motorLbl").textContent = "terminado";
+    live("bMotor", false);
+    $("badge").classList.add("on");
+    await sleep(7000);
+    start();
+  }
+
+  function start() {
+    reset();
+    paused = false;
+    $("gear").style.animationPlayState = "";
+    $("play").textContent = "❚❚ Pausar";
+    story().catch(() => {});
+  }
+  $("play").addEventListener("click", () => {
+    paused = !paused;
+    document.getAnimations().forEach((a) => (paused ? a.pause() : a.play()));
+    $("gear").style.animationPlayState = paused ? "paused" : "";
+    $("play").textContent = paused ? "▶ Continuar" : "❚❚ Pausar";
+  });
+  $("again").addEventListener("click", start);
+  start();
+})();
+</script>
+</body>
+</html>

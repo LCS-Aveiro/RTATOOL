@@ -35,6 +35,26 @@ object RxSemantics {
   def remainingTime(pending: (Edge, String, QName, Double), rx: RxGraph): Double =
     pending._4 - rx.clock_env.getOrElse(pending._3, 0.0)
 
+  private def slotIndex(q: QName): Int = q.n.lastOption.flatMap(_.toIntOption).getOrElse(Int.MaxValue)
+
+  private def mergeEqualPendings(rx: RxGraph): RxGraph = {
+    def equalInZone(a: QName, b: QName): Boolean =
+      rx.zone.matrix.get((a, b)).exists(_.value <= 0) && rx.zone.matrix.get((b, a)).exists(_.value <= 0)
+    val ordered = rx.pendingDelays.toList.sortBy(p => slotIndex(p._3))
+    val kept = collection.mutable.ListBuffer[(Edge, String, QName, Double)]()
+    val dropped = collection.mutable.ListBuffer[(Edge, String, QName, Double)]()
+    for (p <- ordered) {
+      if (kept.exists(q => q._1 == p._1 && q._2 == p._2 && q._4 == p._4 && equalInZone(q._3, p._3))) dropped += p
+      else kept += p
+    }
+    if (dropped.isEmpty) rx
+    else rx.copy(
+      pendingDelays = rx.pendingDelays -- dropped,
+      zone = dropped.foldLeft(rx.zone)((z, p) => z.withoutClock(p._3)),
+      clock_env = rx.clock_env -- dropped.map(_._3)
+    )
+  }
+
   private def freshSlot(used: Set[QName]): QName =
     Iterator.from(0).map(i => QName(List(DelaySlotPrefix, i.toString))).find(q => !used.contains(q)).get
 
@@ -687,7 +707,8 @@ object RxSemantics {
         clock_env = nextClockEnv,
         pendingDelays = rx.pendingDelays ++ newPending
       )
-      (edge, next.copy(zone = zoneWithDelays.extrapolate(effectiveMax(next))))
+      val merged = mergeEqualPendings(next.copy(zone = zoneWithDelays))
+      (edge, merged.copy(zone = merged.zone.extrapolate(effectiveMax(merged))))
     }
 
     val standardTransitions = transitions.filter { case (_, nextRx) =>
@@ -720,7 +741,8 @@ object RxSemantics {
         clock_env = rx.clock_env -- matured.map(_._3),
         pendingDelays = rx.pendingDelays -- maturedSet
       )
-      val nextRx = next.copy(zone = z1.extrapolate(effectiveMax(next)))
+      val merged = mergeEqualPendings(next.copy(zone = z1))
+      val nextRx = merged.copy(zone = merged.zone.extrapolate(effectiveMax(merged)))
 
       val ruleLabel = QName(List(matured.map(_._1._4.show).distinct.sorted.mkString("+")))
       val pseudoEdge: Edge = (

@@ -1,0 +1,452 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{parskip}
+\usepackage[hidelinks]{hyperref}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\Om}{$\Omega$}
+
+\lstdefinestyle{rta}{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{gray},
+  backgroundcolor=\color{gray!8},
+  xleftmargin=1em,
+  xrightmargin=1em,
+  aboveskip=1em,
+  belowskip=1em
+}
+\lstset{style=rta}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+\title{RTA Tool\\[0.3em]\large Como funciona a ferramenta e como um modelo com tempo,\\hiper-arestas e atrasos se transforma num grafo de zonas}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este texto explica a RTA Tool de ponta a ponta: o que é, como se usa, como o motor executa um modelo e, sobretudo, como um modelo com relógios, guardas, invariantes, hiper-arestas e regras com atraso é transformado, passo a passo, num grafo finito de zonas onde se podem fazer provas. Foi escrito para ser lido ou ouvido do princípio ao fim: as listas estão em prosa e as matrizes vêm sempre acompanhadas de uma explicação por palavras. Os estados e as matrizes do exemplo detalhado foram gerados pelo próprio motor.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%======================================================================
+\part{A ferramenta}
+%======================================================================
+
+\section{O que é a RTA Tool}
+
+A RTA Tool serve para modelar, simular e verificar sistemas reativos com tempo. A sigla vem de \emph{Reconfigurable Timed Automata}, autómatos temporizados reconfiguráveis.
+
+Um modelo começa por ser um autómato normal: estados ligados por transições. A isso juntam-se três ingredientes.
+
+O primeiro são as \textbf{regras}, também chamadas hiper-arestas. Quando uma transição dispara, pode ligar ou desligar outras transições. Ou seja, o próprio sistema muda a sua estrutura enquanto corre. Por exemplo, a regra \code{bloquear --! abrir} diz que, quando \code{bloquear} acontece, a transição \code{abrir} deixa de estar disponível.
+
+O segundo ingrediente são os \textbf{dados}: variáveis inteiras, reais, booleanas e listas, guardas do tipo \code{if (tentativas < 3)} e atualizações do tipo \code{then \{ tentativas' := tentativas + 1 \}}.
+
+O terceiro ingrediente é o \textbf{tempo}: relógios que avançam de forma contínua, invariantes que dizem quanto tempo se pode ficar num estado e atrasos nas regras, que fazem com que o efeito de uma regra só aconteça algum tempo depois.
+
+Numa frase: a RTA Tool trabalha com autómatos temporizados cujas próprias transições mudam ao longo da execução.
+
+\section{A arquitetura em um minuto}
+
+Todo o motor está escrito uma única vez, em Scala, na pasta \code{shared}. Há um leitor de modelos, chamado \code{Parser2}, que transforma o texto numa estrutura chamada \code{RxGraph}. Há a semântica, em \code{RxSemantics}, que sabe dar passos e fazer passar o tempo. Há as zonas, em \code{DBM}. E há os verificadores: CTL, LTL, PDL e os caminhos mais curtos.
+
+Esse código Scala é compilado de duas maneiras. Com o Scala.js, vira JavaScript, que é o que a página web usa. A interface chama o motor através de um objeto global chamado \code{RTA}, com funções como \code{loadModel}, \code{takeStep} ou \code{runLTLExhaustive}. Não há servidor: tudo corre no próprio browser. Com a JVM, o mesmo código dá uma aplicação de linha de comandos, o ficheiro \code{RTATool.jar}.
+
+Quando se altera o Scala, recompila-se a parte web com o comando \code{sbt rtaJS/fastLinkJS} e o jar com \code{sbt rtaJVM/assembly}.
+
+\section{Como se usa a aplicação}
+
+\subsection{O ecrã}
+
+O ecrã está dividido em quatro zonas.
+
+À esquerda fica o \textbf{projeto}, com os exemplos incluídos e os ficheiros guardados no browser. Clicar num exemplo abre-o no editor.
+
+Ao centro fica o \textbf{editor}, onde se escreve o modelo. A tecla F5, ou o botão ``Executar modelo'', carrega-o no motor. No mesmo sítio há outros separadores. O ``Graph'' desenha o modelo: os estados são círculos, as transições são setas com etiqueta e as regras são setas azuis quando ligam e vermelhas quando desligam. Uma aresta tracejada está inativa. Há também a vista Mermaid e a vista de texto.
+
+Por baixo do editor há quatro separadores. A ``Analysis'' tem estatísticas e a verificação de problemas: deadlocks, arestas que nunca são alcançadas e regras que ligam e desligam a mesma coisa ao mesmo tempo. O ``Path Optimizer'' calcula o caminho mais curto até um estado ou até uma condição, por exemplo \code{counter == 5}, com o motor simbólico de zonas ou com o motor discreto de passos. O ``Export'' gera UPPAAL, TikZ, SVG ou PNG. O ``Trace'' grava a simulação, permite reproduzi-la e mostra um gráfico dos relógios e das variáveis ao longo do tempo.
+
+À direita fica a \textbf{simulação}, no separador SIM: os valores dos relógios e das variáveis, as regras agendadas, os botões das transições disponíveis e o botão de Delay para deixar passar tempo. Há ainda uma lista de expressões para observar (Watch) e pontos de paragem (Breakpoints). Ao lado estão os separadores dos verificadores PDL, LTL e CTL. Os botões coloridos inserem nomes de estados, de arestas e operadores na fórmula.
+
+\subsection{Uma demonstração de cinco minutos}
+
+Abre-se o exemplo TIMER e carrega-se com F5. No grafo vê-se que há três estados, \code{s0}, \code{s1} e \code{s2}. O estado \code{s1} tem a invariante \code{t <= 10}, ou seja, não se pode ficar lá mais de dez unidades de tempo.
+
+Na simulação, clica-se em \code{start}. Depois põe-se 3 no campo do Delay e carrega-se no botão: o relógio \code{t} passa para 3 e a transição \code{escape}, que exige \code{t < 5}, fica disponível. Mais um delay de 3 leva o relógio a 6 e o \code{escape} desaparece. Se agora se pedir um delay de 5, a ferramenta recusa, porque o relógio passaria de 10 e violaria a invariante.
+
+No Trace vê-se o gráfico de \code{t}: sobe em diagonal enquanto o tempo passa e cai a pique para zero quando é reposto.
+
+No CTL, a fórmula \code{EF s2} é verdadeira, e a ferramenta anima no grafo o caminho que o mostra: \code{start} e depois \code{timeout}. Já \code{AG [t <= 10]} é falsa, porque nos estados \code{s0} e \code{s2} o relógio não tem limite.
+
+Por fim, no Path Optimizer com alvo \code{s2}, o motor simbólico devolve \code{start, timeout} e o motor discreto devolve \code{start, delay(10), timeout}, com o tempo de espera explícito.
+
+\section{A linguagem}
+
+Este é um modelo pequeno que usa quase tudo:
+
+\begin{lstlisting}
+clock t
+int tentativas = 0
+init Fechada
+inv Aberta: t <= 5
+
+Fechada --> Aberta: abrir if (tentativas < 3) then {
+  t' := 0
+  tentativas' := tentativas + 1
+}
+Aberta --> Fechada: fechar
+Aberta --> Alarme: alarme if (t >= 5)
+Alarme --> Fechada: rearmar disabled
+
+alarme --! abrir: bloqueia
+alarme ->> rearmar: permiteRearmar
+rearmar ->> abrir: desbloqueia
+delay desbloqueia: 2 * tentativas
+\end{lstlisting}
+
+Lê-se assim. A porta abre no máximo três vezes e tem de fechar em menos de cinco unidades de tempo. Se não fechar, dispara o alarme. O alarme desliga a transição \code{abrir} e liga a transição \code{rearmar}. Quando se rearma, \code{abrir} volta a ligar-se, mas só \code{2 * tentativas} unidades de tempo depois: é uma regra com atraso.
+
+Em resumo, a sintaxe tem estes elementos. O estado inicial declara-se com \code{init}. Os relógios com \code{clock}. As variáveis com \code{int}, \code{float}, \code{bool} ou listas, e um inteiro pode ter limites, como \code{int n[0..10] = 0}. Uma invariante escreve-se \code{inv estado: condição}. Uma transição escreve-se \code{origem --> destino: etiqueta}, opcionalmente com \code{disabled}, com uma guarda \code{if (...)} e com atualizações \code{then \{ ... \}}. Uma regra que liga escreve-se \code{a ->> b} e uma que desliga \code{a --! b}. O atraso de uma regra escreve-se \code{delay nomeDaRegra: expressão}. Uma atualização usa uma plica, como \code{x' := x + 1}, e repor um relógio é \code{t' := 0}. Há ainda funções definidas pelo utilizador, funções matemáticas prontas a usar, e módulos com \code{aut}, que dão prefixo aos nomes.
+
+Um ponto importante: as regras ligam etiquetas a etiquetas, não estados a estados. E uma regra pode ter como alvo outra regra; quando isso acontece, os efeitos propagam-se em cascata.
+
+\section{Como o motor executa um modelo}
+
+\subsection{A configuração}
+
+Em cada instante o motor guarda uma configuração. Tem o estado atual (ou vários, quando se usam módulos), o conjunto das arestas e regras que estão ligadas nesse momento, chamado \code{act}, os valores das variáveis, os valores dos relógios e a lista das regras com atraso que já dispararam e ainda estão à espera. A essa lista chamamos \Om.
+
+A estrutura do modelo, ou seja, as arestas, as regras, as guardas, as atualizações e as invariantes, nunca muda. O que muda de passo para passo são as arestas ligadas, os dados, o tempo e a lista \Om.
+
+\subsection{Um passo}
+
+Para disparar uma transição, o motor verifica primeiro que ela sai do estado atual e está ligada. Depois verifica a guarda. Se a guarda for verdadeira, recolhe todas as regras que essa transição faz disparar, incluindo as que vêm em cascata. Para cada regra ligada cuja guarda seja verdadeira, aplica o efeito: liga, desliga ou, se a regra tiver atraso, agenda-a em \Om. A seguir aplica as atualizações da transição e das regras e repõe os relógios. No fim, verifica se a invariante do novo estado é respeitada. Se for, temos a nova configuração.
+
+Há três regras do jogo. As guardas das regras são avaliadas antes das atualizações, ou seja, todas as regras de um passo veem o mesmo estado de partida. Se no mesmo passo uma aresta for ligada e desligada, ganha o desligar. E a cascata nunca entra em ciclo, porque cada regra conta uma única vez por passo.
+
+\subsection{O tempo e a lista de pendentes}
+
+Fazer um delay de valor \(d\) aumenta todos os relógios em \(d\), desde que nenhuma invariante do estado atual fique violada.
+
+Uma regra com atraso não atua de imediato. Quando dispara, calcula a sua expressão de atraso com os valores desse instante e entra em \Om\ com essa duração. Cada delay desconta o tempo a todos os pendentes. O pendente que chega a zero aplica o seu efeito e sai da lista. Um delay maior do que o prazo de um pendente não fica bloqueado: o tempo para nesse prazo, a regra dispara e o resto do delay continua. A mesma regra pode estar várias vezes na lista, se disparar várias vezes.
+
+Um exemplo. Suponha-se que há duas regras, \code{e1} com atraso \code{k} e \code{e2} com atraso 2. Dispara-se \code{e1} quando \code{k} vale 3, depois \code{e2}, depois outra vez \code{e1} quando \code{k} já vale 4. A lista fica com três entradas: \code{e1} a 3, \code{e2} a 2 e \code{e1} a 4. Um delay de 1,6 deixa-as em 1,4, 0,4 e 2,4. Mais um delay de 0,5 faz \code{e2} chegar a zero e disparar, e ficam só as duas entradas de \code{e1}, com 0,9 e 1,9.
+
+Internamente, cada entrada da lista tem um relógio auxiliar próprio, com nomes como \code{\_\_delay/0} ou \code{\_\_delay/1}. Esse relógio começa em zero quando a regra dispara, e o tempo que falta é a duração menos o valor do relógio. É esta escolha que permite que a mesma lista funcione na simulação e na verificação por zonas. Estes relógios não aparecem na interface.
+
+Há dois cuidados que o motor tem com a lista. Primeiro, se dois pendentes vencerem exatamente no mesmo instante, disparam juntos, como se fossem um só passo. Segundo, se a mesma regra disparar duas vezes no mesmo instante, o segundo pendente seria igual ao primeiro, venceria ao mesmo tempo e faria exatamente o mesmo, por isso não é criado. Sem esta segunda regra, um laço que dispara muitas vezes sem o tempo passar faria a lista crescer sem fim.
+
+\section{Os verificadores}
+
+O verificador \textbf{PDL} responde a perguntas do tipo ``depois de fazer \code{a} e depois \code{b}, consigo chegar ao estado \code{fim}?''. Os programas combinam-se em sequência com ponto e vírgula, em escolha com o sinal mais, em repetição com o asterisco, e podem incluir esperas como \code{delay:5.0}. Trabalha sobre configurações concretas.
+
+O verificador \textbf{LTL} responde a perguntas sobre todas as execuções, por exemplo ``a transição \code{fechar} acaba sempre por voltar a estar disponível?'', que se escreve \code{G F fechar}. Tem um modo rápido, que avalia traços aleatórios sem dar garantias, e uma prova exaustiva sobre o grafo de zonas, explicada mais à frente.
+
+O verificador \textbf{CTL} responde a perguntas sobre a árvore de todas as possibilidades, por exemplo ``a partir de qualquer estado ainda é possível chegar a \code{s2}?'', que se escreve \code{AG EF s2}. Quando uma fórmula \code{AG} falha, ou uma fórmula \code{EF} é verdadeira, mostra o caminho que o comprova.
+
+O \textbf{Path Optimizer} procura o caminho mais curto até um estado ou condição.
+
+Atenção ao significado de um nome dentro de uma fórmula. No PDL, \code{s1} quer dizer ``estou no estado \code{s1}''. No LTL, um nome solto quer dizer ``a aresta ou regra com esta etiqueta está ligada''. No CTL, um nome solto vale se for o estado atual ou uma etiqueta ligada. Em todos, as condições sobre dados e relógios escrevem-se entre parênteses retos, como \code{[t <= 10]}.
+
+Na prova LTL exaustiva há quatro cuidados. Um caminho que acaba num deadlock é avaliado como um traço que termina ali. Os laços que obrigam a fazer infinitos passos num tempo limitado, chamados execuções Zeno, não contam como contra-exemplo, mas uma violação de segurança num estado alcançável conta sempre, como no UPPAAL. Se o limite de estados for atingido, o resultado vem marcado como limitado: um ``verdadeiro'' passa a querer dizer ``não encontrei violação dentro do limite'', mas um contra-exemplo encontrado é sempre real. E no CTL, quando o limite é atingido, a interface avisa que o resultado é inconclusivo.
+
+%======================================================================
+\part{Do modelo às zonas}
+%======================================================================
+
+\section{A ideia central}
+
+Para provar uma propriedade de um sistema com tempo contínuo teríamos de testar todos os valores reais de tempo possíveis, que são infinitos. A solução clássica, a mesma do UPPAAL, é trabalhar com \textbf{conjuntos} de valores de relógios, chamados zonas, em vez de valores soltos.
+
+A verificação passa por três representações do mesmo sistema, e em cada passagem um dos ingredientes do modelo é absorvido pelo seguinte.
+
+A \textbf{primeira} representação é o modelo RTA tal como foi escrito: estados, arestas, guardas, atualizações, relógios, invariantes, hiper-arestas e atrasos.
+
+A \textbf{segunda} é a de zonas mais hiper-arestas. O tempo contínuo foi substituído por zonas, mas cada estado ainda sabe que arestas estão ligadas e que regras estão pendentes. Um estado desta representação, a que chamamos estado simbólico, é formado pelo estado atual, pelas variáveis, pelo conjunto de arestas ligadas, pela lista \Om\ e pela zona.
+
+A \textbf{terceira} é um grafo só de zonas: um grafo finito normal, com nós numerados e arestas com etiqueta. As hiper-arestas e os atrasos já não aparecem como regras: ficaram ``congeladas'' dentro da identidade de cada nó.
+
+A frase que resume tudo é esta: o tempo contínuo é substituído por zonas, e as hiper-arestas e os atrasos não desaparecem, passam a fazer parte de cada nó, através do conjunto de arestas ativas e da lista de pendentes, cada um com o seu relógio extra. No fim temos um grafo finito, e verificar passa a ser correr algoritmos de grafos.
+
+\section{O modelo de exemplo}
+
+Para acompanhar o processo usa-se este modelo, que tem todos os ingredientes ao mesmo tempo:
+
+\begin{lstlisting}
+clock x
+int n[0..2] = 0
+init A
+inv B: x <= 5
+
+A ---> B: entra if (x >= 1) then { x' := 0; n' := n + 1 }
+B ---> C: sai disabled if (x >= 3 OR n >= 2)
+B ---> A: volta if (x <= 1)
+C ---> A: reinicia then { x' := 0 }
+
+entra ->> sai: abre
+delay abre: 2
+entra --! volta: fechaVolta if (x >= 4)
+reinicia ->> volta: abreVolta
+reinicia --! sai: fechaSai
+\end{lstlisting}
+
+Há guardas com relógio, em \code{entra} e em \code{volta}. Há uma guarda com um OR que mistura um relógio com uma variável, em \code{sai}. Há uma invariante: não se pode ficar em \code{B} mais de cinco unidades. Há resets de relógio, uma variável com limites entre 0 e 2, e uma aresta que começa desligada, \code{sai}. A regra \code{abre} tem atraso: quando \code{entra} dispara, liga \code{sai}, mas só duas unidades de tempo depois. A regra \code{fechaVolta} tem guarda de relógio: quando \code{entra} dispara, desliga \code{volta}, mas só se nesse instante \code{x} for pelo menos 4. E há regras que repõem as coisas: \code{abreVolta} religa \code{volta} e \code{fechaSai} volta a desligar \code{sai}.
+
+\section{Primeira etapa: do texto à estrutura RxGraph}
+
+O leitor lê o texto e constrói uma estrutura com duas partes.
+
+A \textbf{parte fixa} descreve o modelo e nunca muda durante a análise. Tem as arestas normais, que neste exemplo são \code{entra}, \code{sai}, \code{volta} e \code{reinicia}. Tem as regras que ligam, \code{abre} e \code{abreVolta}, e as que desligam, \code{fechaVolta} e \code{fechaSai}. Tem um índice que, para cada etiqueta, dá as arestas com essa etiqueta: é isso que as regras usam para saber o que ligar ou desligar. E tem as guardas, as atualizações, as invariantes, os relógios e as expressões dos atrasos.
+
+A \textbf{parte variável} é a configuração inicial: o estado \code{A}, todas as arestas e regras ligadas menos \code{sai}, a variável \code{n} a zero, o relógio \code{x} a zero e a lista de pendentes vazia.
+
+Um pormenor importante: uma regra também é uma aresta. Internamente, a regra \code{abre} é guardada como uma aresta que vai da etiqueta \code{entra} para a etiqueta \code{sai}. Por isso uma regra pode estar ligada ou desligada, e pode ser alvo de outras regras.
+
+Antes de explorar, o motor calcula para cada relógio a maior constante com que ele é comparado. Neste exemplo, \code{x} é comparado com 1, 3, 4 e 5, por isso a constante máxima é 5. Se a comparação for com uma variável, a constante máxima fica infinita, porque o valor só se conhece durante a execução. Os relógios auxiliares dos pendentes têm como constante máxima a sua própria duração. Estas constantes servem para a extrapolação, que é o que garante que o grafo final é finito.
+
+\section{O estado simbólico}
+
+Um estado simbólico é uma configuração discreta mais uma zona. Dois estados simbólicos são o mesmo nó se, e só se, tiverem o mesmo estado atual, as mesmas variáveis, a mesma zona, a mesma lista de pendentes e o mesmo conjunto de arestas ligadas.
+
+Daqui se vê onde fica cada ingrediente. O tempo dos relógios do utilizador fica na zona. As hiper-arestas, ou seja, o que está ligado agora, ficam no conjunto de arestas ligadas. Os atrasos ficam na lista de pendentes e, além disso, cada pendente acrescenta um relógio auxiliar à zona. As variáveis e o estado atual ficam como estão.
+
+Por isso, o mesmo estado \code{B} com \code{volta} ligada ou desligada são dois nós diferentes. E o mesmo estado com um pendente a mais também é outro nó.
+
+\section{As zonas}
+
+\subsection{O que é uma zona}
+
+Uma zona é um conjunto de valores dos relógios descrito apenas por restrições de dois tipos: um relógio comparado com uma constante, como \(x \leq 5\) ou \(x > 2\), e a diferença entre dois relógios comparada com uma constante, como \(x - y \leq 3\). Com dois relógios, uma zona é um polígono convexo no plano.
+
+\subsection{Como se guarda: a matriz de diferenças}
+
+Uma zona guarda-se numa matriz chamada DBM, de \emph{Difference Bound Matrix}. A célula da linha \(i\) e coluna \(j\) diz que o relógio \(i\) menos o relógio \(j\) é menor ou igual, ou estritamente menor, do que um certo valor. Usa-se um relógio fictício chamado zero, que vale sempre zero, para exprimir os limites simples.
+
+Por exemplo, a zona em que \(x\) está entre 1 e 4, \(y\) é não negativo e a diferença \(x - y\) está entre 0 e 1 guarda-se assim:
+
+\begin{center}
+\begin{tabular}{c|ccc}
+ & 0 & \(x\) & \(y\) \\ \hline
+0 & \(\leq 0\) & \(\leq -1\) & \(\leq 0\) \\
+\(x\) & \(\leq 4\) & \(\leq 0\) & \(\leq 1\) \\
+\(y\) & \(\leq 4\) & \(\leq 0\) & \(\leq 0\)
+\end{tabular}
+\end{center}
+
+A linha \(x\), coluna zero, diz \(x - 0 \leq 4\), ou seja, \(x\) é no máximo 4. A linha zero, coluna \(x\), diz \(0 - x \leq -1\), ou seja, \(x\) é pelo menos 1. A linha \(x\), coluna \(y\), diz que \(x\) menos \(y\) é no máximo 1.
+
+Depois de cada operação, a matriz é posta na forma canónica: cada célula passa a guardar o limite mais apertado que se consegue deduzir das outras, com o algoritmo de Floyd-Warshall, o mesmo dos caminhos mais curtos. Na forma canónica, duas zonas iguais têm sempre a mesma matriz, e uma zona é vazia quando algum elemento da diagonal fica negativo. No código, a matriz é guardada em dois arrays, um com os números e outro a dizer se cada limite é estrito, com os relógios sempre pela mesma ordem, para que comparar zonas seja barato.
+
+\subsection{As operações}
+
+Deixar o tempo passar apaga os limites superiores dos relógios: \(x \leq c\) passa a \(x \leq \infty\). Como todos os relógios avançam ao mesmo ritmo, as diferenças entre eles mantêm-se.
+
+Intersetar com uma restrição, como \(x \geq 5\), aperta uma célula e propaga as consequências. Se a zona ficar vazia, a transição é impossível. É assim que se aplicam as guardas e as invariantes.
+
+Repor um relógio, \(x := 0\), faz \(x\) valer exatamente zero, e a relação de \(x\) com os outros relógios passa a ser a do relógio zero.
+
+Acrescentar um relógio novo a zero é o que acontece quando se cria um pendente, e remover um relógio é o que acontece quando um pendente vence.
+
+A extrapolação usa as constantes máximas: acima da maior constante com que um relógio é comparado, o valor exato deixa de importar. Saber que \(t\) é maior do que 10 já chega, se 10 for a maior constante. Os limites acima dessa constante passam a infinito. É isto que impede o número de zonas de crescer para sempre.
+
+\section{Segunda etapa: calcular os sucessores de um estado simbólico}
+
+Tudo acontece numa função chamada \code{nextEdgeSymbolic}. Para um estado simbólico, faz os passos seguintes.
+
+\subsection{Deixar o tempo passar}
+
+Primeiro, deixa o tempo passar na zona. Depois corta pela invariante do estado atual: no exemplo, em \code{B}, \(x\) não pode passar de 5. Depois corta cada relógio auxiliar pela duração do seu pendente, porque um pendente não pode passar do prazo; quando lá chega, tem de disparar. Por fim, extrapola. A zona resultante representa todos os instantes em que, a partir deste estado, ainda se pode fazer alguma coisa.
+
+O motor não cria nós só de espera. A passagem do tempo é absorvida em cada transição: cada sucessor representa ``esperar um tempo qualquer permitido e depois disparar a transição''.
+
+Há uma regra de prioridade. Para as transições normais, cada relógio de pendente tem de estar estritamente abaixo da sua duração. No instante exato em que um pendente vence, a única coisa que pode acontecer é ele disparar. É a mesma regra da simulação: quando um pendente chega a zero, o efeito aplica-se nesse instante, antes de qualquer outra transição.
+
+\subsection{Arestas candidatas e guardas}
+
+As arestas candidatas são as que saem do estado atual e estão ligadas. Uma aresta desligada simplesmente não é tentada.
+
+Para cada candidata, a zona é intersetada com a guarda. Cada comparação de um relógio com uma constante vira uma restrição na matriz. Uma comparação de igualdade vira duas restrições. Uma desigualdade, ``diferente de'', dá duas zonas, uma para cada lado. Uma comparação só com dados, como \(n \geq 2\), é simplesmente avaliada: se for verdadeira, a zona fica igual; se for falsa, a transição é descartada. Os AND aplicam as restrições uma a seguir à outra. Os OR são o caso especial: a união de duas zonas não é, em geral, uma zona, porque não é convexa. Por isso o resultado é uma lista de zonas, uma por cada lado do OR, e cada zona da lista dá um sucessor diferente.
+
+\subsection{A cascata de regras e as regras com guarda de relógio}
+
+Quando uma aresta dispara, o motor recolhe todas as regras ligadas que são disparadas pela sua etiqueta. Se alguma dessas regras tiver como alvo outra regra, a recolha continua a partir dela, sem repetir regras. No exemplo, \code{entra} dispara as regras \code{abre} e \code{fechaVolta}.
+
+A guarda de uma regra é avaliada no instante em que a aresta dispara, sobre a zona que saiu da guarda, ainda antes dos resets. Se a guarda não tiver relógios, avalia-se e a regra dispara ou não. Se tiver relógios, a regra pode disparar para uns valores e não para outros. Nesse caso a zona é dividida em duas: a parte em que a guarda é verdadeira e a regra dispara, e a parte em que é falsa e a regra não dispara. Com \(k\) regras deste tipo podem sair até \(2^k\) combinações, cada uma um sucessor diferente.
+
+\subsection{Os efeitos, as atualizações e os novos pendentes}
+
+Para cada regra que disparou: se ligar e não tiver atraso, junta as arestas-alvo ao conjunto das ligadas; se desligar e não tiver atraso, retira-as. Se tiver atraso, não mexe já no conjunto das ligadas: calcula a duração com as variáveis deste instante, escolhe um relógio auxiliar livre e acrescenta uma entrada à lista \Om.
+
+Depois aplicam-se as atualizações da aresta e das regras. Cada atribuição a um relógio, mesmo dentro de um \code{if} ou de uma função, é aplicada à zona. Cada pendente novo ganha o seu relógio auxiliar na zona, a começar em zero.
+
+Se, no fim, a mesma regra tiver dois pendentes cujos relógios são iguais em toda a zona, fica só um, porque venceriam ao mesmo tempo e fariam o mesmo.
+
+\subsection{Extrapolação e invariante de chegada}
+
+A zona é extrapolada e, se não tiver nenhum valor compatível com a invariante do novo estado, o sucessor é descartado. Atenção: neste passo a zona de chegada é só verificada, não cortada. O corte pela invariante acontece quando, no estado seguinte, se deixa o tempo passar.
+
+\subsection{Os prazos dos pendentes}
+
+Além das transições normais, há transições internas para os prazos. Para cada conjunto de pendentes que pode vencer no mesmo instante, há uma transição que fixa os relógios desse conjunto exatamente na sua duração, deixa os dos outros pendentes abaixo da sua, aplica de uma vez os efeitos de todas as regras do conjunto, retira-as da lista, apaga os seus relógios auxiliares e extrapola. Na maior parte dos casos o conjunto tem um só pendente. O estado do modelo não muda: é uma transição interna, que na interface aparece com um pequeno relógio e o nome da regra.
+
+\section{O exemplo, passo a passo}
+
+Nesta secção, \(d_0\) e \(d_1\) são os relógios auxiliares dos pendentes.
+
+\subsection{O início}
+
+O primeiro nó, a que chamamos S0, está no estado \code{A}, com \(n = 0\), com \code{sai} desligada e sem pendentes. A zona à chegada é simplesmente \(x = 0\).
+
+Ao deixar o tempo passar, como \code{A} não tem invariante, a zona passa a ser \(x \geq 0\) sem limite superior:
+
+\begin{center}
+\begin{tabular}{c|cc}
+ & 0 & \(x\) \\ \hline
+0 & \(\leq 0\) & \(\leq 0\) \\
+\(x\) & \(\infty\) & \(\leq 0\)
+\end{tabular}
+\end{center}
+
+A única aresta candidata é \code{entra}, com a guarda \(x \geq 1\). A célula da linha zero, coluna \(x\), passa a menos 1, que quer dizer \(x \geq 1\).
+
+\subsection{A regra com guarda de relógio parte a zona}
+
+A aresta \code{entra} dispara as regras \code{abre} e \code{fechaVolta}. A guarda de \code{fechaVolta} é \(x \geq 4\), por isso a zona parte-se em duas: uma parte com \(x \geq 4\), em que a regra dispara, e outra com \(x\) entre 1 e 4, sem incluir o 4, em que não dispara.
+
+Em cada metade, a regra \code{abre}, que tem atraso, entra na lista com o relógio \(d_0\) a zero; o relógio \(x\) é reposto e \(n\) passa a 1. Só na primeira metade a regra \code{fechaVolta} desliga \code{volta}.
+
+O resultado são dois sucessores com a mesma zona, em que \(x\) e \(d_0\) valem ambos zero, mas com arestas ligadas diferentes. O nó S1 está em \code{B} com \code{sai} e \code{volta} desligadas. O nó S2 está em \code{B} só com \code{sai} desligada. Ambos têm o pendente \code{abre}.
+
+É aqui que se vê a hiper-aresta com guarda de relógio a funcionar: o que decide se \code{volta} fica ligada é o tempo que se esperou em \code{A}. Como esse tempo é uma zona, o motor parte-a e cria um nó para cada caso.
+
+\subsection{O pendente trava o tempo}
+
+Em S2, ao deixar o tempo passar, a invariante de \code{B} diria que \(x\) pode ir até 5. Mas o prazo do pendente diz que \(d_0\) não pode passar de 2, e como \(x\) e \(d_0\) começaram juntos, \(x\) também não passa de 2:
+
+\begin{center}
+\begin{tabular}{c|ccc}
+ & 0 & \(d_0\) & \(x\) \\ \hline
+0 & \(\leq 0\) & \(\leq 0\) & \(\leq 0\) \\
+\(d_0\) & \(\leq 2\) & \(\leq 0\) & \(\leq 0\) \\
+\(x\) & \(\leq 2\) & \(\leq 0\) & \(\leq 0\)
+\end{tabular}
+\end{center}
+
+Repare-se nas duas células que cruzam \(d_0\) e \(x\): ambas dizem ``menor ou igual a zero'', o que, em conjunto, quer dizer que \(d_0\) é igual a \(x\). É uma restrição de diferença entre dois relógios, e é por isso que se usa uma matriz e não apenas um intervalo por relógio.
+
+A partir de S2 há dois sucessores. A transição \code{volta}, que exige \(x \leq 1\), leva de novo a \code{A}, ao nó S4, com o pendente ainda vivo. E o prazo de \code{abre}, quando \(d_0\) chega a 2, leva ao nó S5: \code{sai} fica ligada, o relógio \(d_0\) desaparece e \(x\) vale exatamente 2. Em S5, deixar o tempo passar dá \(x\) entre 2 e 5, travado pela invariante. A guarda de \code{sai} é \(x \geq 3\) ou \(n \geq 2\); como \(n\) vale 1, só conta o lado do relógio, e o sucessor em \code{C} tem \(x\) entre 3 e 5.
+
+\subsection{Os pendentes acumulam-se}
+
+Em S4, de volta a \code{A} com o pendente ainda a correr, a zona à chegada tem \(x\) igual a \(d_0\), entre 0 e 1. Se \code{entra} disparar outra vez antes de \code{abre} vencer, ou seja, com \(x \geq 1\) e \(d_0\) ainda abaixo de 2, é criado um segundo pendente com outro relógio auxiliar, \(d_1\). Chegamos ao nó S8, em \code{B}, com \(n = 2\) e dois pendentes \code{abre}:
+
+\begin{center}
+\begin{tabular}{c|cccc}
+ & 0 & \(d_0\) & \(d_1\) & \(x\) \\ \hline
+0 & \(\leq 0\) & \(\leq -1\) & \(\leq 0\) & \(\leq 0\) \\
+\(d_0\) & \(< 2\) & \(\leq 0\) & \(< 2\) & \(< 2\) \\
+\(d_1\) & \(\leq 0\) & \(\leq -1\) & \(\leq 0\) & \(\leq 0\) \\
+\(x\) & \(\leq 0\) & \(\leq -1\) & \(\leq 0\) & \(\leq 0\)
+\end{tabular}
+\end{center}
+
+Lê-se assim: o primeiro pendente já correu pelo menos 1 e menos de 2; o ``menos'' estrito vem da regra de prioridade dos prazos. O segundo pendente acabou de começar: \(d_1\) e \(x\) valem zero. Cada pendente traz o seu relógio, e a matriz passou de dois por dois para quatro por quatro.
+
+\subsection{Um OR dá dois sucessores sobrepostos}
+
+No nó S17, em \code{B}, com \(n = 2\), \code{volta} desligada e sem pendentes, deixar o tempo passar dá \(x\) entre 2 e 5. A guarda de \code{sai} é \(x \geq 3\) ou \(n \geq 2\). O lado do relógio dá uma zona com \(x\) entre 3 e 5, que é o nó S25. O lado da variável é verdadeiro, porque \(n\) vale 2, e dá a zona inteira, com \(x\) entre 2 e 5, que é o nó S26. As duas zonas sobrepõem-se, a primeira está contida na segunda, mas são dois nós diferentes. É o preço de representar um OR de forma exata.
+
+\subsection{Visão de conjunto}
+
+O grafo completo deste exemplo tem 62 estados simbólicos, com no máximo dois pendentes ao mesmo tempo, distribuídos por apenas três estados do modelo. Na interface, o botão ``Ver Zonas'' mostra o grafo com três vistas: por estado, que junta todas as zonas de cada estado do modelo; por configuração, que junta as zonas com as mesmas arestas ligadas, os mesmos pendentes e as mesmas variáveis, e mostra o efeito das hiper-arestas; e a vista completa, com uma zona por nó.
+
+\section{Terceira etapa: o grafo só de zonas}
+
+Os verificadores constroem um grafo dirigido normal. Começam no estado inicial depois de deixar o tempo passar. Para cada estado simbólico novo, calculam os sucessores e deixam o tempo passar em cada um. Dão a cada estado simbólico novo um número e guardam, para cada número, a lista das arestas que saem dele, com a etiqueta. Param ao atingir o limite de estados, que na interface é de cinquenta mil, e nesse caso marcam o resultado como limitado.
+
+Neste grafo já não há relógios, regras nem atrasos: está tudo congelado na identidade de cada nó. Os verificadores correm algoritmos de grafos comuns. O CTL calcula pontos fixos, ou seja, vai marcando os nós onde cada subfórmula é verdadeira até nada mudar. O LTL constrói o produto do grafo com uma tabela de todas as combinações de subfórmulas da fórmula, chamada tableau. Primeiro procura em largura um prefixo que já viole a fórmula, seja qual for a continuação: é assim que encontra violações de segurança. Depois procura, com o algoritmo de Tarjan, um grupo de nós fortemente ligados que forme um laço infinito a violar a fórmula e que não seja uma execução Zeno: é assim que encontra violações de vivacidade. O Path Optimizer faz uma pesquisa em largura.
+
+Há uma única informação de tempo que ainda se consulta nesta etapa: as condições sobre relógios que aparecem nas fórmulas, como \(x \leq 2\). Como um nó tem uma zona, essa condição pode ser verdadeira para uns valores e falsa para outros. Para que a resposta seja exata, antes de construir o grafo cada zona é dividida pelas condições de relógio da fórmula, de modo que cada condição seja totalmente verdadeira ou totalmente falsa em cada nó. Por isso o mesmo modelo pode dar grafos de tamanhos diferentes conforme a fórmula.
+
+\section{Porque é que o grafo pode ficar enorme}
+
+Cada combinação diferente de estado, variáveis, arestas ligadas, pendentes e zona é um nó. Há várias fontes de crescimento.
+
+A primeira e a mais importante são as regras com atraso que voltam a disparar antes de vencer: cada pendente acrescenta um relógio à zona, e mais relógios dão muitas mais zonas diferentes. Foi o que se viu na passagem de S4 para S8.
+
+A segunda é a de pendentes iguais com relógios de nome diferente: no exemplo há oito pares de nós que só diferem no nome do relógio auxiliar, e o motor não os junta.
+
+A terceira são as guardas com OR, que dão um sucessor por cada lado, mesmo quando se sobrepõem. A quarta são as regras com guarda de relógio, que partem a zona. A quinta são as variáveis, que multiplicam tudo pelo número de valores possíveis. E a sexta são as constantes grandes, porque a extrapolação só junta zonas acima da constante máxima.
+
+No exemploB, o modelo de tratamento de uma inflamação, a primeira causa domina. Cada volta pelo ciclo de redução e regresso à inflamação volta a agendar as regras \code{voltaDoenca} e \code{voltaDoenca2} enquanto as anteriores ainda correm. A lista chega a ter sete entradas, ou seja, oito relógios na zona, e o espaço passa de trezentos mil estados simbólicos, embora o modelo só tenha seis estados. A vista ``por estado'' junta-os nesses seis.
+
+Há ainda modelos que são, na prática, infinitos: os que têm um laço que pode ser percorrido em tempo tão curto quanto se queira e que agenda uma regra com atraso a cada volta. Com tempo contínuo cabem infinitas voltas antes de o primeiro pendente vencer, por isso a lista não tem limite. O motor não fica preso: para no limite de estados e avisa.
+
+\section{O que este método não faz}
+
+Há algumas limitações conhecidas. Uma guarda que compara dois relógios entre si, como \(x < y\), não é traduzida para uma restrição de diferença. Uma invariante com OR sobre relógios fica só com o primeiro lado que tenha solução, porque uma invariante deve ser convexa, como no UPPAAL. A passagem do tempo está dentro das transições, por isso não há nós a meio de uma espera. Pendentes iguais com relógios de nome diferente não são reconhecidos como o mesmo nó. E um nó sem sucessores é tratado como o fim do traço.
+
+\section{Como se confirmou que isto está certo}
+
+O motor de zonas foi comparado com a simulação concreta, explorada de forma exaustiva numa grelha fina de tempo, em mais de duzentos modelos: os exemplos da aplicação, os modelos desta explicação e duzentos modelos gerados aleatoriamente com relógios, invariantes, guardas com OR, variáveis e regras com e sem atraso. Em todos, cada estado da simulação está dentro de alguma zona, ou seja, o motor nunca perde um comportamento real, e nenhuma zona corresponde a um comportamento impossível. As respostas do CTL e do Path Optimizer coincidem com a simulação.
+
+\section{Resumo}
+
+Primeiro, o texto do modelo é lido e transformado numa estrutura com uma parte fixa, o modelo, e uma parte variável, a configuração.
+
+Segundo, cada estado simbólico junta o estado atual, as variáveis, as arestas ligadas, a lista de pendentes e uma zona.
+
+Terceiro, a zona é uma matriz de diferenças entre relógios, sempre na forma canónica, e cada pendente tem o seu relógio dentro dela.
+
+Quarto, os sucessores calculam-se assim: deixa-se o tempo passar, respeitando a invariante e os prazos dos pendentes, que têm prioridade; interseta-se a zona com a guarda, sabendo que um OR dá várias zonas; recolhem-se as regras em cascata; as regras com guarda de relógio partem a zona; aplicam-se os efeitos, ligando, desligando ou agendando; aplicam-se as atualizações e os resets; extrapola-se; e verifica-se a invariante de chegada. Os prazos dos pendentes são transições internas.
+
+Quinto, cada estado simbólico diferente recebe um número e as transições ficam numa lista. As hiper-arestas e os atrasos passam a fazer parte da identidade dos nós.
+
+Sexto, CTL, LTL e caminhos mais curtos são algoritmos de grafos sobre esse grafo, e as condições de relógio das fórmulas obrigam primeiro a dividir as zonas.
+
+E sétimo, o tamanho do grafo cresce com os pendentes simultâneos, os OR, as regras com guarda de relógio e as variáveis. Quando o limite é atingido, a ferramenta avisa, e um contra-exemplo encontrado é sempre real.
+
+\appendix
+\section{Onde está o código}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{lL}
+\toprule
+Parte & Ficheiro \\
+\midrule
+Leitor de modelos & \nolinkurl{shared/src/main/scala/rta/syntax/Parser2.scala} \\
+Estrutura do modelo & \nolinkurl{shared/src/main/scala/rta/syntax/Program2.scala} \\
+Semântica, tempo, pendentes, zonas & \nolinkurl{shared/src/main/scala/rta/backend/RxSemantics.scala} \\
+Matriz de diferenças & \nolinkurl{shared/src/main/scala/rta/backend/DBM.scala} \\
+LTL exaustivo & \nolinkurl{shared/src/main/scala/rta/backend/LtlModelChecker.scala} \\
+Caminhos e verificação de problemas & \nolinkurl{shared/src/main/scala/rta/backend/AnalyseLTS.scala} \\
+CTL & \nolinkurl{shared/src/main/scala/rta/backend/CtlEvaluator.scala} \\
+PDL & \nolinkurl{shared/src/main/scala/rta/backend/PdlEvaluator.scala} \\
+Ponte para a interface & \nolinkurl{js/src/main/scala/marge/frontend/RTAAPI.scala} \\
+Interface & \nolinkurl{docs/editor.html} e \nolinkurl{docs/js/script} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\end{document}
