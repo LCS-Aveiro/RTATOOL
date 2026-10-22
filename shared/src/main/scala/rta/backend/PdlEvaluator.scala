@@ -71,20 +71,8 @@ object PdlEvaluator {
   }
 
 
-  private def advanceTimeExplicit(config: RxGraph, delta: Double): Set[RxGraph] = {
-    val delayedClockEnv = config.clock_env.map { case (c, v) => (c, v + delta) }
-    val nextRx = config.copy(clock_env = delayedClockEnv)
-    
-    val canTimePass = config.inits.forall(s => 
-      config.invariants.get(s) match {
-        
-        case Some(inv) => RxSemantics.evalCondition(inv, nextRx)
-        case None => true
-      }
-    )
-    
-    if (canTimePass) Set(nextRx) else Set.empty
-  }
+  private def advanceTimeExplicit(config: RxGraph, delta: Double): Set[RxGraph] =
+    RxSemantics.advanceTimeBy(config, delta).toSet
 
 
   private def evaluateFormula(config: RxGraph, formula: PdlFormula): Boolean = {
