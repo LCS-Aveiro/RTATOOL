@@ -73,3 +73,25 @@ s1 --> s0: b
 a --! a: offA disabled
 ```
 ```
+
+<!-- ORGANIZA-BRAIN-SECTION -->
+---
+
+## 🧠 Segundo Cérebro (Organiza) & RAG Local — Instruções para IA
+
+> **Ficha Técnica deste Projeto no Organiza:**
+> - **Nota ID:** `62` — **`RTATOOL (Verificação LTL, CTL & DBM)`** (Espaço: `Projetos`, Pai: `Ferramentas Formais LCS (React-Tool, RePaTool, ReTOOL, RTATOOL)`)
+> - **API Base URL:** `https://sites.joshuadourado.pt/organiza/public/api.php`
+> - **Chave API Escondida (NUNCA fazer commit):** Ler de `C:\Users\Utilizador\.organiza_key` (`$HOME\.organiza_key`)
+> - **Servidor MCP & Motor RAG Local:** `C:\Users\Utilizador\.organiza-rag\server.mjs` (Índice SQLite FTS5 BM25 em `C:\Users\Utilizador\.organiza-rag\index.db`)
+> - **Backup do RAG (se mudares de PC/Servidor):** Nota `id: 58` tem em anexo `organiza-brain-rag-kit.zip` (`api.php?r=files/91ae2f6c8177cbd2e6f88d72af67b9b5`)
+> - **Python no Windows:** Usar sempre o launcher `py` (`Python 3.14` por omissão) em vez de `python` (`3.9`).
+
+### Fluxo Rápido para Agentes (Claude, Antigravity, Cursor)
+1. **Consultar a ficha técnica, diagnósticos e cenários de teste deste projeto:**
+   - Via MCP (`organiza-brain-rag`): chamar `brain_read_note(id=62)` e `rag_search(query="...", workspace="ProjetosUA")`.
+   - Via Terminal/HTTP: `GET https://sites.joshuadourado.pt/organiza/public/api.php?r=notes/62` com header `X-API-Key: (Get-Content "$HOME\.organiza_key" -Raw).Trim()`.
+2. **Pesquisar rotas, SQL e funções localmente sem gastar tokens:**
+   - `node "C:\Users\Utilizador\.organiza-rag\server.mjs" --search "TERMO" --workspace ProjetosUA`
+3. **Ao concluir alterações neste projeto:**
+   - Registar no Organiza via `POST ?r=brain/learn` (`mode: "append"`, `space: "Projetos"`, `title: "RTATOOL (Verificação LTL, CTL & DBM)"`) e atualizar o índice local com `node "C:\Users\Utilizador\.organiza-rag\server.mjs" --reindex`.

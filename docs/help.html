@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RTALang Reference — RTA Tool</title>
+<title>Re-Lang Reference — RTA Tool</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 
@@ -523,7 +523,7 @@
       <!-- HERO -->
       <div class="hero">
         <div class="hero-eyebrow">RTA Tool — Language Reference</div>
-        <h1>The <span>RTALang</span> Handbook</h1>
+        <h1>The <span>Re-Lang</span> Handbook</h1>
         <p class="hero-sub">Everything you need to model, simulate, and verify Reconfigurable Timed Automata. From basic states and clocks to dynamic reconfiguration rules and PDL formulae.</p>
       </div>
 
@@ -565,10 +565,10 @@
       <section class="doc-section" id="structure">
         <div class="section-eyebrow">Section 02</div>
         <h2>File Structure</h2>
-        <p>An <code>.rta</code> file is plain text. The order of declarations is flexible — but a recommended layout is shown below.</p>
+        <p>A <code>.Re</code> file is plain text. The order of declarations is flexible — but a recommended layout is shown below.</p>
 
         <div class="code-block">
-          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>timer-model.rta</span></div>
+          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>timer-model.Re</span></div>
           <div class="code-body"><pre><span class="cm">// 1. Optional model name</span>
 <span class="kw">name</span> MyModel
 
@@ -688,7 +688,7 @@
         </div>
 
         <div class="code-block">
-          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>rules.rta</span></div>
+          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>rules.Re</span></div>
           <div class="code-body"><pre><span class="cm">// Every time 'unlock' fires, it activates the 'open' transition</span>
 <span class="ac">unlock</span>  <span class="ar">->></span>  <span class="ac">open</span> : <span class="rl">rule1</span>
 
@@ -1169,7 +1169,7 @@ RobotA.start <span class="ar">->></span> RobotB.start : <span class="rl">sync</s
         <h3>1. Simple Timer</h3>
         <p>A fundamental example using clocks, invariants, and time-based guards.</p>
         <div class="code-block">
-          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>timer.rta</span></div>
+          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>timer.Re</span></div>
           <div class="code-body"><pre><span class="kw">name</span> TIMER
 <span class="kw">clock</span> <span class="va">t</span>
 <span class="kw">init</span> <span class="st">s0</span>
@@ -1189,7 +1189,7 @@ RobotA.start <span class="ar">->></span> RobotB.start : <span class="rl">sync</s
         <!-- Example 2 -->
         <h3>2. Reconfigurable Content Feed</h3>
         <div class="code-block">
-          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>feed.rta</span></div>
+          <div class="code-header"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span>feed.Re</span></div>
           <div class="code-body"><pre><span class="kw">name</span> LikeAlgorithm
 <span class="kw">init</span> <span class="st">Feed</span>
 
@@ -1245,7 +1245,7 @@ RobotA.start <span class="ar">->></span> RobotB.start : <span class="rl">sync</s
       </section>
 
       <footer>
-        <p>RTA Tool — RTALang Reference &nbsp;·&nbsp; <a href="index.html">← Back to Tool</a></p>
+        <p>RTA Tool — Re-Lang Reference &nbsp;·&nbsp; <a href="index.html">← Back to Tool</a></p>
       </footer>
 
     </div>

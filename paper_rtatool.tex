@@ -1,0 +1,141 @@
+% =========================================================================
+% SECÇÃO 3 (APENAS A TUA PARTE DA FERRAMENTA - PRONTA A COLAR NO ARTIGO)
+% =========================================================================
+
+\section{Overview of the \RTATool}\label{sec:overview_on_the_rtatool}
+
+In this section we introduce the \RTATool. We first present a general overview of the interface, architecture, verification engines, and language syntax supported by the tool. Next, the graphical modeler is introduced, followed by an illustration based on our running example initially presented in Fig.~\ref{fig:reactivemodel}.
+
+\subsection{The tool}
+The $\RTATool$\footnote{Available at: \url{https://lcs.web.ua.pt/projects/RTAtool/}} is an integrated web-based environment designed for the modeling, simulation, and formal analysis of Reconfigurable Timed Automata ($\Reta$). Implemented in Scala~3 and compiled to JavaScript via Scala.js, it provides a comprehensive workspace (Fig.~\ref{fig:tool_dashboard}) where users can specify system behavior, interactively explore timed reconfiguration executions, verify modal and temporal properties, and export models to \textsf{Uppaal}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Tool/Tool1.png} 
+    \caption{Overview of the \RTATool integrated development environment.}
+    \label{fig:tool_dashboard}
+\end{figure}
+
+\subsubsection*{Architecture and Verification Engines.}
+The architecture of \RTATool is a direct implementation of the $\Reta$ formalism. It processes specifications written in \textsf{Re-Lang} to construct and analyze the corresponding temporal reactive graph through four main stages:
+\begin{enumerate}
+    \item \textbf{Parser and Model Generator:} Processes the \textsf{Re-Lang} source code to extract the formal components ($L, \Act, C, \mi{Inv}, \alpha_0, \ell_0$) and the transition and hyper-edge relations ($E, E_{\twoheadrightarrow_T}, E_{\arrowOff_T}$), supporting modular sub-automata (\texttt{aut}), data variables, arrays, and user-defined functions.
+    \item \textbf{Visual Reactive Graph and Symbolic DBM Engine:} Generates an interactive rendering in Cytoscape.js for immediate visual feedback, allowing users to manually trigger transitions, inspect active/inactive edges, and step backward or forward in execution history (\emph{Time Travel} Undo/Redo). Dense-time progression and clock constraints are managed using \emph{Difference Bound Matrices (DBMs)} with Floyd-Warshall canonical closure.
+    \item \textbf{Built-in Model Checking (PDL, LTL, and CTL):} In addition to interactive simulation, the tool integrates three native verification engines:
+    \begin{itemize}
+        \item \emph{Propositional Dynamic Logic (PDL):} Evaluates regular action programs ($\alpha ; \beta$, $\alpha + \beta$, $\alpha^*$) and explicit time-passage modalities ($\langle \texttt{delay:}d \rangle \varphi$, $[\alpha]\varphi$) over locations, clocks, and variables.
+        \item \emph{Linear Temporal Logic (LTL):} Verifies trace properties ($\mathsf{X}, \mathsf{F}, \mathsf{G}, \mathsf{U}$) via random trace sampling, batch statistical checking, or exhaustive symbolic lasso search over DBM zones, and provides automated equivalence testing between a $\Reta$ and its translated $\Regat$.
+        \item \emph{Computation Tree Logic (CTL) and Path Optimizer:} Performs exhaustive symbolic fixed-point verification of branching-time properties ($\mathsf{EX}, \mathsf{EF}, \mathsf{EG}, \mathsf{EU}$, $\mathsf{AX}, \mathsf{AF}, \mathsf{AG}, \mathsf{AU}$, and the hybrid state binder ${\downarrow}x.\,\varphi$) with BFS witness/counter-example generation.
+    \end{itemize}
+    \item \textbf{Multi-Format Export:} Supports translating $\Reta$ models into flattened guarded transition systems ($\Regat$), exporting \Uppaal XML templates for external verification, and generating diagrams in \LaTeX\ TikZ (converted from Mermaid/SVG), SVG, PNG, and PDF formats.
+\end{enumerate}
+
+\subsubsection*{Language Syntax (\textsf{Re-Lang}).}
+The \textsf{Re-Lang} modeling language employs a concise and explicit syntax. Rather than duplicating explanations across multiple tables and text lists, Table~\ref{tab:syntax_declarations} summarizes all global declarations, ground edge and hyper-edge operators, guards, updates, and initial state modifiers supported by the language, mapping each construct directly to \textbf{Definition~1}.
+
+\begin{table}[H]
+\centering
+\caption{Summary of \textsf{Re-Lang} syntax and correspondence to \textbf{Definition~1}.}
+\label{tab:syntax_declarations}
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{6pt}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Construct} & \textbf{Syntax / Example} & \textbf{Description and Formal Mapping} \\ \midrule
+Model / Init & \texttt{name Sys; init s0} & Defines the model identifier and initial location $\ell_0 \in L$. \\
+Clocks & \texttt{clock t1, t2} & Declares continuous clocks in $C$ (initialized to $0$). \\
+Variables & \texttt{int c = 0; bool b = true} & Declares state variables (integers, booleans, floats, or arrays). \\
+Invariants & \texttt{inv s0: t1 <= 5} & Associates a clock invariant $\mi{Inv}(\ell) \in \Ce(C)$ with location $\ell$. \\
+Modules & \texttt{aut Motor \{...\}} & Encapsulates declarations into a modular component namespace. \\ \midrule
+Ground Edge & \texttt{s0 -act-> s1: lbl} & Discrete transition $\ell_1 \xrightarrow{g,\mathit{act},U} \ell_2 \in E$ with nominal label $\mathit{lbl}$ (or shorthand \texttt{-->}). \\
+Activation & \texttt{trig ->> targ: r1} & Activating hyper-edge $(\mathit{trig}, \mathit{targ}) \in E_{\twoheadrightarrow_T}$ with label $\mathit{r1}$ that enables $\mathit{targ}$. \\
+Deactivation & \texttt{trig --! targ: r2} & Deactivating hyper-edge $(\mathit{trig}, \mathit{targ}) \in E_{\arrowOff_T}$ with label $\mathit{r2}$ that disables $\mathit{targ}$. \\ \midrule
+Guards (\texttt{if}) & \texttt{if (t1 >= 10 \&\& c < 5)} & Logical condition over clocks and variables required to enable the edge. \\
+Updates (\texttt{then}) & \texttt{then \{ t1' := 0; c' := c+1 \}} & Next-state assignments (\texttt{'}) and clock resets executed upon firing. \\
+Initial Status & \texttt{... : lbl disabled} & Forces the edge or hyper-edge $\mathit{lbl}$ to start inactive ($\mathit{lbl} \notin \alpha_0$); active by default. \\ \bottomrule
+\end{tabularx}
+\end{table}
+
+\subsubsection*{Interactive Graphical Modeling.}
+In addition to writing \textsf{Re-Lang} code, \RTATool offers a visual interface that allows users to build and edit models using only the mouse. As shown in Fig.~\ref{fig:context_menus}, elements can be added and configured through right-click context menus across three interaction levels:
+\begin{itemize}
+    \item \textbf{Canvas Level (Fig.~\ref{fig:menu_canvas}):} Right-clicking an empty area of the workspace adds integer variables (\texttt{int}), clocks (\texttt{clock}), defines the initial location (\texttt{init}), or creates ground transitions (\texttt{-act->}).
+    \item \textbf{Edge Level (Fig.~\ref{fig:menu_edge}):} Right-clicking an existing transition creates activation (\texttt{->>}) or deactivation (\texttt{--!}) hyper-edges, attaches guards (\texttt{if}) and variable updates (\texttt{then}), or toggles its initial \texttt{disabled} state.
+    \item \textbf{Location Level (Fig.~\ref{fig:menu_state}):} Right-clicking a location defines its temporal invariant (\texttt{inv}).
+\end{itemize}
+A comprehensive language guide and additional examples are available in the \href{https://lcs.web.ua.pt/projects/RTAtool/help.html}{online documentation} of \RTATool.
+
+\begin{figure}[H]
+     \centering
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth,height=3cm,keepaspectratio]{Tool/Init.png} 
+         \caption{Canvas Context Menu}
+         \label{fig:menu_canvas}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth,height=3cm,keepaspectratio]{Tool/label.png} 
+         \caption{Edge Context Menu}
+         \label{fig:menu_edge}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth,height=3cm,keepaspectratio]{Tool/node.png} 
+         \caption{State Context Menu}
+         \label{fig:menu_state}
+     \end{subfigure}
+     \vspace{2mm}
+     \caption{Graphical modeling context menus: (a) global declarations and transitions, (b) reconfiguration hyper-edges and guards, and (c) location invariants.}
+     \label{fig:context_menus}
+\end{figure}
+
+\subsection{An illustration: the Like/Dislike system in \RTATool}
+
+To illustrate a use case of \RTATool, we revisit the media recommendation system of Fig.~\ref{fig:reactivemodel} discussed in the introduction.
+
+\subsubsection*{Model Specification.}
+We specify the model in \textsf{Re-Lang} using three locations (\texttt{Feed}, \texttt{Watch}, \texttt{List}) and six ground transitions, two of which (\texttt{refresh} and \texttt{watchLike}) are initially \texttt{disabled}:
+
+{\scriptsize
+\begin{codeblock}
+name LikeAlgorithm
+init Feed
+// Transitions
+Feed -watch-> Watch: w
+Watch -like-> Watch: like
+Watch -dontLike-> Feed: dontLike
+Watch -refresh-> Feed: refresh disabled
+Feed -watchLike-> List: watchLike disabled
+List -watch-> Watch: w2
+// Reconfiguration Rules (Hyper-edges)
+w ->> dontLike: wd         // Activating the rejection option
+like --! dontLike: ld      // Like deactivates rejection
+like ->> refresh: lr       // Like enables refresh
+like ->> watchLike: lw     // Like enables access to List
+dontLike --! watchLike: dw // Rejection disables List access
+\end{codeblock}
+}
+
+\noindent The model captures how user interactions dynamically reconfigure the available platform features:
+\begin{enumerate}
+    \item \textbf{Initial Configuration:} The system starts at \texttt{Feed}, where \texttt{refresh} and \texttt{watchLike} begin as \texttt{disabled}.
+    \item \textbf{Positive Engagement:} Taking the \texttt{like} transition ($\twoheadrightarrow$) reconfigures the system as a reward:
+    \begin{itemize}
+        \item \textbf{Feature Unlocking:} Activation hyper-edges (\texttt{->>}) enable \texttt{refresh} (to update content) and \texttt{watchLike} (to access the curated \texttt{List}).
+        \item \textbf{Conflict Prevention:} Through a deactivation hyper-edge (\texttt{--!}), \texttt{like} disables \texttt{dontLike}, preventing contradictory feedback on the same item.
+    \end{itemize}
+    \item \textbf{Negative Engagement:} Taking the \texttt{dontLike} transition triggers the deactivation hyper-edge \texttt{dontLike --! watchLike}, immediately revoking access to the curated \texttt{List}.
+\end{enumerate}
+
+\subsubsection*{Modeling and Executing Behaviors.}
+The user interface (Fig.~\ref{fig:usecase_app}) features an interactive visualizer that allows users to explore the possible behaviors of the model by executing available transitions in each configuration. The current location is highlighted in green, while disabled transitions are represented by dotted lines. Executions can be simulated either by clicking directly on enabled transitions originating from the current location or by selecting an action from the Enabled Transitions simulation panel.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Tool/fig_app_view.png}
+    \caption{Model of Fig.~\ref{fig:reactivemodel} in \RTATool.}
+    \label{fig:usecase_app}
+\end{figure}
